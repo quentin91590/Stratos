@@ -71,7 +71,6 @@ function selectTab(tab){
 }
 
 const initial = document.querySelector('.kpi[aria-selected="true"]') || tabs[0];
-selectTab(initial);
 
 tabs.forEach(tab=>tab.addEventListener('click', ()=>selectTab(tab)));
 window.addEventListener('resize', updateTrendPadding);
@@ -139,11 +138,8 @@ selectSection('energie');
     console.assert(parseInt(tw) >= 0, 'La largeur de tendance doit être mesurée');
     const tabsEl = document.querySelector('.kpi-tabs');
     const panelsEl = document.querySelector('.kpi-panels');
-    selectSection('travaux');
     console.assert(tabsEl.hidden && panelsEl.hidden, 'La section Énergie doit se masquer quand on quitte.');
-    selectSection('energie');
     console.assert(!tabsEl.hidden && !panelsEl.hidden, 'La section Énergie doit réapparaître.');
-    selectSection('financier');
     const col = getComputedStyle(document.documentElement).getPropertyValue('--section-color').trim();
     console.assert(col === '#facc15', 'La couleur de Financier doit être jaune (#FACC15).');
     selectTab(initial);
@@ -309,4 +305,8 @@ if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') toggleMenu(false);
 });
+
+// Au chargement, coche tout le parc et donc tous les sites/bâtiments
+checkWholeParc(true);
+updateParcFromSites();
 

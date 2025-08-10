@@ -292,6 +292,24 @@ document.querySelectorAll('.tree-leaf').forEach(leaf => {
   });
 });
 
+document.querySelectorAll('.tree-node, .tree-leaf').forEach(item => {
+  item.addEventListener('click', e => {
+    e.stopPropagation();
+
+    const isActive = item.classList.contains('is-active');
+    item.classList.toggle('is-active', !isActive);
+
+    if (item.classList.contains('tree-node')) {
+      // Sélectionne ou désélectionne tous les enfants
+      const children = item.parentElement.querySelectorAll('.tree-leaf, .tree-node');
+      children.forEach(child => {
+        child.classList.toggle('is-active', !isActive);
+      });
+    }
+  });
+});
+
+
 /* ==== Sidebar responsive (hamburger) ==== */
 const body = document.body;
 const burger = document.querySelector('.hamburger');

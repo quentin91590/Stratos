@@ -32,48 +32,6 @@ function updateTrendPadding(){
   });
 }
 
-function alignPanelToTabs(){
-  const wrap  = document.querySelector('.kpi-wrap');
-  const panel = document.querySelector('.kpi-panels .panel-box');
-  const allTabs = document.querySelectorAll('.kpi-tabs [role="tab"]');
-  if(!wrap || !panel || !allTabs.length) return;
-
-  // on prend le premier et le dernier onglet réellement visibles
-  const visibleTabs = Array.from(allTabs).filter(t=>{
-    const st = getComputedStyle(t);
-    return st.display !== 'none' && st.visibility !== 'hidden';
-  });
-  if(!visibleTabs.length) return;
-
-  const wrapRect   = wrap.getBoundingClientRect();
-  const firstRect  = visibleTabs[0].getBoundingClientRect();
-  const lastRect   = visibleTabs[visibleTabs.length - 1].getBoundingClientRect();
-
-  // marge gauche = distance entre le bord gauche du wrap et le début du 1er onglet
-  const ml = Math.max(0, Math.round(firstRect.left - wrapRect.left));
-  // marge droite = distance entre le bord droit du wrap et la fin du dernier onglet
-  const mr = Math.max(0, Math.round(wrapRect.right - lastRect.right));
-
-  panel.style.marginLeft  = ml + 'px';
-  panel.style.marginRight = mr + 'px';
-}
-
-
-// recalculs fiables
-window.addEventListener('load', alignPanelToTabs);
-window.addEventListener('resize', alignPanelToTabs);
-
-// si les fonts Google changent la largeur, attendre leur chargement
-if (document.fonts && document.fonts.ready) {
-  document.fonts.ready.then(alignPanelToTabs);
-}
-
-// observer les changements de layout de la grille d’onglets
-const tabsEl = document.querySelector('.kpi-tabs');
-if ('ResizeObserver' in window && tabsEl) {
-  new ResizeObserver(()=> alignPanelToTabs()).observe(tabsEl);
-}
-
 function selectTab(tab){
   tabs.forEach(t=>{t.setAttribute('aria-selected','false'); t.setAttribute('aria-expanded','false');});
   tab.setAttribute('aria-selected','true');
@@ -187,12 +145,6 @@ function selectSection(name){
 
 }
 
-const originalSelectSection = selectSection;
-selectSection = function(name){
-  originalSelectSection(name);
-  requestAnimationFrame(alignPanelToTabs);
-};
-
 
 topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
 selectSection('energie');
@@ -204,6 +156,7 @@ window.addEventListener('load', () => {
   checkWholeParc(true);
   updateParcFromSites();
 });
+
 
 /* ===== Tiny tests (console) ===== */
 (function runTests(){
@@ -392,4 +345,3 @@ window.addEventListener('keydown', (e) => {
 // Au chargement, coche tout le parc et donc tous les sites/bâtiments
 checkWholeParc(true);
 updateParcFromSites();
-

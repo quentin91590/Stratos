@@ -1,6 +1,7 @@
 :root{
-  --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76, 132, 255, .35);
+  --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76,132,255,.35);
   --section-color:#94a3b8;
+  --sticky-top: 60px; /* valeur par défaut, recalculée en JS */
 }
 *{box-sizing:border-box}
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
@@ -228,18 +229,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 /* --- Mobile : sidebar en panneau coulissant gauche --- */
 @media (max-width: 960px){
   .app{ grid-template-columns: 1fr; }
-
-  .side-nav{
-    position: fixed;
-    inset: 0 auto 0 0;          /* top:0; right:auto; bottom:0; left:0 */
-    width: 80vw; max-width: 280px;
-    background: #ffffff;        /* fond pour la lisibilité en off-canvas */
-    border-right: 1px solid rgba(0,0,0,.08);
-    padding: 12px;
-    transform: translateX(-100%);
-    transition: transform .2s ease-out;
-    z-index: 50;
-  }
 
   .hamburger{ display:flex; }
 

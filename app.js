@@ -7,6 +7,7 @@ const topSentinel = panelBox ? panelBox.querySelector('.panel-top-sentinel') : n
 let atTopVisible = true;
 let idleTimer = null;
 
+
 if(topSentinel && 'IntersectionObserver' in window){
   const io = new IntersectionObserver(entries => {
     atTopVisible = entries[0].isIntersecting;
@@ -94,6 +95,17 @@ window.addEventListener('load', updateTrendPadding);
 
 /* ===== Top menu (sections) ===== */
 const topItems = document.querySelectorAll('.top-nav .top-item');
+
+
+  function syncStickyTop() {
+    const topNav = document.querySelector('.top-nav');
+    const header = document.querySelector('.sidebar-header'); // si présent au-dessus du menu
+    const extra = header ? header.offsetHeight : 0;
+    const h = (topNav ? topNav.offsetHeight : 0);
+    document.documentElement.style.setProperty('--sticky-top', (h) + 'px');
+  }
+  window.addEventListener('load', syncStickyTop);
+  window.addEventListener('resize', syncStickyTop);
 function selectSection(name){
   // 1) caler l’offset sticky avant de basculer
   syncStickyTop();
@@ -102,6 +114,9 @@ function selectSection(name){
   const isEnergy = (name === 'energie');
   const tabsEl = document.querySelector('.kpi-tabs');
   const panelsEl = document.querySelector('.kpi-panels');
+
+
+
 
   if(tabsEl) tabsEl.hidden = !isEnergy;
   if(panelsEl) panelsEl.hidden = !isEnergy;
@@ -127,6 +142,7 @@ function selectSection(name){
 
   // 2) remonter proprement en haut pour éviter les à-coups
   window.scrollTo({ top: 0, behavior: 'smooth' });
+
 }
 
 

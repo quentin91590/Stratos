@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard — Énergie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="kpi-wrap">
+    <!-- Menu principal -->
+    <nav class="top-nav" role="navigation" aria-label="Sections">
+      <button class="top-item is-active" data-section="energie" aria-current="page">
+        <span class="ti-ico" aria-hidden="true">
+          <!-- gauge icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13a9 9 0 10-18 0"/><path d="M12 13l5-5"/><circle cx="12" cy="13" r="1.3" fill="currentColor"/></svg>
+        </span>
+        <span class="ti-label">Énergie</span>
+      </button>
+      <button class="top-item" data-section="travaux">
+        <span class="ti-ico" aria-hidden="true">
+          <!-- toolbox icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+        </span>
+        <span class="ti-label">Travaux</span>
+      </button>
+      <button class="top-item" data-section="regs">
+        <span class="ti-ico" aria-hidden="true">
+          <!-- document icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M4 5h16v14H4z"/><path d="M8 9h8M8 13h6"/></svg>
+        </span>
+        <span class="ti-label">Réglementations</span>
+      </button>
+      <button class="top-item" data-section="financier">
+        <span class="ti-ico" aria-hidden="true">
+          <!-- currency icon -->
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h9a4 4 0 1 0 0-8H9a6 6 0 0 0 0 12h7"/></svg>
+        </span>
+        <span class="ti-label">Financier</span>
+      </button>
+    </nav>
+
+    <!-- Onglets Énergie -->
+    <div class="kpi-tabs" role="tablist" aria-label="Indicateurs" aria-describedby="tabs-help">
+      <p id="tabs-help" class="sr-only">Cliquez ou utilisez les flèches gauche/droite pour changer d’onglet. Le détail s’affiche en dessous.</p>
+
+      <!-- Général -->
+      <button role="tab" aria-selected="true" aria-expanded="true" id="tab-energie" aria-controls="panel-energie" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="warn">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 13a9 9 0 10-18 0"/>
+              <path d="M12 13l5-5"/>
+              <circle cx="12" cy="13" r="1.3" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="kpi-label">Général</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité énergétique</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">196</span>
+          <span class="kpi-trend trend-down"><span class="arr">▼</span> 8%</span>
+        </span>
+        <span class="kpi-unit">kWh/m²SRE</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <!-- Chaleur -->
+      <button role="tab" aria-selected="false" aria-expanded="false" id="tab-chaleur" aria-controls="panel-chaleur" class="kpi" data-sites="27" data-sre="39210" data-tip="Voir le contenu" data-status="warn">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V4.5a2 2 0 0 0-4 0v10.26a4 4 0 1 0 4 0z"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+          </span>
+          <span class="kpi-label">Chaleur</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité de chaleur corrigée</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">118</span>
+          <span class="kpi-trend trend-up"><span class="arr">▲</span> 3%</span>
+        </span>
+        <span class="kpi-unit">kWh/m²SRE</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <!-- Froid -->
+      <button role="tab" aria-selected="false" aria-expanded="false" id="tab-froid" aria-controls="panel-froid" class="kpi" data-sites="19" data-sre="25840" data-tip="Voir le contenu" data-status="good">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18M4.5 7.5l15 9M19.5 7.5l-15 9"/><path d="M8 5l4 3 4-3M8 19l4-3 4 3"/></svg>
+          </span>
+          <span class="kpi-label">Froid</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité de froid corrigée</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">13</span>
+          <span class="kpi-trend trend-down"><span class="arr">▼</span> 12%</span>
+        </span>
+        <span class="kpi-unit">kWh/m²SRE</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <!-- Électricité -->
+      <button role="tab" aria-selected="false" aria-expanded="false" id="tab-elec" aria-controls="panel-elec" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="good">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M13 2L4 13h6l-1 9 9-12h-6l1-8z"/></svg>
+          </span>
+          <span class="kpi-label">Électricité</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité électrique</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">78</span>
+          <span class="kpi-trend trend-down"><span class="arr">▼</span> 5%</span>
+        </span>
+        <span class="kpi-unit">kWh/m²SRE</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <!-- CO₂ -->
+      <button role="tab" aria-selected="false" aria-expanded="false" id="tab-co2" aria-controls="panel-co2" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="warn">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H7a5 5 0 1 1 1.2-9.85A6 6 0 0 1 20 10a4.5 4.5 0 0 1-2.5 9"/></svg>
+          </span>
+          <span class="kpi-label">CO₂</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité CO₂</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">26</span>
+          <span class="kpi-trend trend-down"><span class="arr">▼</span> 9%</span>
+        </span>
+        <span class="kpi-unit">kgCO₂e/m²</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+
+      <!-- Eau -->
+      <button role="tab" aria-selected="false" aria-expanded="false" id="tab-eau" aria-controls="panel-eau" class="kpi" data-sites="28" data-sre="32000" data-tip="Voir le contenu" data-status="good">
+        <span class="kpi-head">
+          <span class="kpi-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2s-6 7-6 11.5S8.9 21 12.5 21 19 18.1 19 13.5 12 2 12 2z"/></svg>
+          </span>
+          <span class="kpi-label">Eau</span>
+          <span class="kpi-dot" aria-hidden="true"></span>
+        </span>
+        <span class="kpi-title">Intensité d’eau</span>
+        <span class="kpi-value-wrap">
+          <span class="kpi-value">1,45</span>
+          <span class="kpi-trend trend-down"><span class="arr">▼</span> 4%</span>
+        </span>
+        <span class="kpi-unit">m³/m²SRE</span>
+        <span class="kpi-chevron" aria-hidden="true">
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </span>
+      </button>
+    </div>
+
+    <!-- Panneaux de détail -->
+    <div class="kpi-panels">
+      <div class="panel-box">
+        <div class="panel-top-sentinel" aria-hidden="true"></div>
+        <div class="panel-sticky" role="status" aria-live="polite">
+          <span class="ps-icon" aria-hidden="true"></span>
+          <span class="ps-label"><span id="panel-of">Général</span></span>
+          <span class="ps-dot" aria-hidden="true"></span>
+        </div>
+
+        <!-- KPIs contextuels (pills) -->
+        <div class="panel-summary" aria-label="Synthèse du périmètre">
+          <div class="pill">
+            <span class="pill-ico" aria-hidden="true">
+              <!-- building icon -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="8" height="14" rx="2"/><rect x="13" y="3" width="8" height="18" rx="2"/><path d="M7 11h0M7 15h0M17 7h0M17 11h0M17 15h0"/></svg>
+            </span>
+            <span class="pill-label">Nb immeubles</span>
+            <span class="pill-value" id="sum-sites-val">33</span>
+          </div>
+          <div class="pill">
+            <span class="pill-ico" aria-hidden="true">
+              <!-- grid icon -->
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><rect x="13" y="13" width="8" height="8" rx="2"/></svg>
+            </span>
+            <span class="pill-label">SRE totale</span>
+            <span class="pill-value" id="sum-sre-val">47 158</span><span class="pill-unit">m²</span>
+          </div>
+        </div>
+
+        <section id="panel-energie" role="tabpanel" aria-labelledby="tab-energie">
+          <h3>Intensité énergétique</h3>
+          <p>Seuil légal: 180 kWh/m²SRE — Cible: 170 kWh/m²SRE.</p>
+          <div class="meter"><div style="width: 196px"></div></div>
+
+          <!-- Demo blocks to test scroll -->
+          <div class="panel-grid">
+            <section class="panel-card">
+              <header><h4>Tendance 30 jours (kWh)</h4><span class="badge">Live</span></header>
+              <figure class="chart-area">
+                <svg width="100%" viewBox="0 0 640 220" preserveAspectRatio="none">
+                  <defs><linearGradient id="fillActive" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--active-color)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--active-color)" stop-opacity="0"/></linearGradient></defs>
+                  <g stroke="#e5e7eb" stroke-width="1"><line x1="0" y1="40" x2="640" y2="40"/><line x1="0" y1="90" x2="640" y2="90"/><line x1="0" y1="140" x2="640" y2="140"/><line x1="0" y1="190" x2="640" y2="190"/></g>
+                  <path d="M0,160 L40,150 80,155 120,130 160,120 200,140 240,110 280,115 320,100 360,105 400,90 440,95 480,80 520,85 560,78 600,70 640,72 L640,220 L0,220 Z" fill="url(#fillActive)"/>
+                  <path d="M0,160 L40,150 80,155 120,130 160,120 200,140 240,110 280,115 320,100 360,105 400,90 440,95 480,80 520,85 560,78 600,70 640,72" fill="none" stroke="var(--active-color)" stroke-width="3" stroke-linecap="round"/>
+                </svg>
+              </figure>
+              <footer class="mini-stats"><div><strong>⌀ 7j</strong><span>182 kWh</span></div><div><strong>Pic</strong><span>241 kWh</span></div><div><strong>Creux</strong><span>96 kWh</span></div></footer>
+            </section>
+
+            <section class="panel-card">
+              <header><h4>Comparatif mensuel</h4><span class="sub">kWh/m²SRE</span></header>
+              <figure class="chart-bars">
+                <svg width="100%" viewBox="0 0 640 220" preserveAspectRatio="none">
+                  <g stroke="#e5e7eb" stroke-width="1"><line x1="0" y1="200" x2="640" y2="200"/><line x1="0" y1="150" x2="640" y2="150"/><line x1="0" y1="100" x2="640" y2="100"/><line x1="0" y1="50" x2="640" y2="50"/></g>
+                  <g fill="#e2e8f0"><rect x="20" width="40" y="120" height="80" rx="6"/><rect x="80" width="40" y="140" height="60" rx="6"/><rect x="140" width="40" y="100" height="100" rx="6"/><rect x="200" width="40" y="160" height="40" rx="6"/><rect x="260" width="40" y="130" height="70" rx="6"/><rect x="320" width="40" y="90" height="110" rx="6"/><rect x="380" width="40" y="110" height="90" rx="6"/><rect x="440" width="40" y="170" height="30" rx="6"/><rect x="500" width="40" y="150" height="50" rx="6"/><rect x="560" width="40" y="130" height="70" rx="6"/></g>
+                  <g fill="var(--active-color)"><rect x="500" width="40" y="120" height="80" rx="6"/></g>
+                </svg>
+              </figure>
+              <footer class="mini-stats"><div><strong>M-1</strong><span>176</span></div><div><strong>M</strong><span>196</span></div><div><strong>Δ</strong><span>+11%</span></div></footer>
+            </section>
+
+            <section class="panel-card">
+              <header><h4>Répartition des usages</h4><span class="sub">% du total</span></header>
+              <figure class="chart-donut">
+                <svg width="220" height="220" viewBox="0 0 220 220"><circle cx="110" cy="110" r="80" fill="none" stroke="#eef2f7" stroke-width="28"/><circle cx="110" cy="110" r="80" fill="none" stroke="var(--active-color)" stroke-width="28" stroke-dasharray="176 502" stroke-dashoffset="0"/><circle cx="110" cy="110" r="80" fill="none" stroke="#94a3b8" stroke-width="28" stroke-dasharray="120 558" stroke-dashoffset="-176"/><circle cx="110" cy="110" r="80" fill="none" stroke="#cbd5e1" stroke-width="28" stroke-dasharray="80 598" stroke-dashoffset="-296"/></svg>
+                <figcaption>
+                  <div><span class="dot" style="--c: var(--active-color)"></span>Chauffage <strong>35%</strong></div>
+                  <div><span class="dot" style="--c: #94a3b8"></span>Éclairage <strong>24%</strong></div>
+                  <div><span class="dot" style="--c: #cbd5e1"></span>Auxiliaires <strong>16%</strong></div>
+                </figcaption>
+              </figure>
+            </section>
+
+            <section class="panel-card span-2">
+              <header><h4>Sites principaux</h4><span class="sub">kWh/jour</span></header>
+              <table class="tbl">
+                <thead><tr><th>Site</th><th class="num">⌀ 7j</th><th class="spark">Trend</th><th class="num">Δ</th></tr></thead>
+                <tbody>
+                  <tr><td>T1 — Bât. A</td><td class="num">812</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="var(--active-color)" stroke-width="2" points="0,22 10,20 20,21 30,18 40,15 50,14 60,12 70,10 80,9 90,7 100,6"/></svg></td><td class="num up">+6%</td></tr>
+                  <tr><td>T2 — Bât. B</td><td class="num">430</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#94a3b8" stroke-width="2" points="0,10 10,12 20,14 30,13 40,12 50,12 60,13 70,14 80,16 90,15 100,14"/></svg></td><td class="num down">-2%</td></tr>
+                  <tr><td>T3 — Bât. C</td><td class="num">298</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#cbd5e1" stroke-width="2" points="0,18 10,16 20,15 30,16 40,14 50,12 60,12 70,13 80,11 90,12 100,11"/></svg></td><td class="num down">-1%</td></tr>
+                  <tr><td>T4 — Bât. D</td><td class="num">221</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#94a3b8" stroke-width="2" points="0,25 10,24 20,23 30,20 40,19 50,18 60,17 70,15 80,15 90,14 100,13"/></svg></td><td class="num up">+3%</td></tr>
+                </tbody>
+              </table>
+            </section>
+
+            <section class="panel-card">
+              <header><h4>Actions en cours</h4><span class="sub">suivi exploitation</span></header>
+              <ul class="todo">
+                <li><span class="todo-dot" style="--c: var(--active-color)"></span> Optimiser consigne nuit (–1°C) — siège</li>
+                <li><span class="todo-dot" style="--c: #94a3b8"></span> Étanchéité réseau ECS — site B</li>
+                <li><span class="todo-dot" style="--c: #cbd5e1"></span> Recette GTB — tranche D</li>
+              </ul>
+            </section>
+          </div>
+        </section>
+
+        <section id="panel-chaleur" role="tabpanel" aria-labelledby="tab-chaleur" hidden>
+          <h3>Chaleur (corrigée DJU)</h3>
+          <p>Mix: Gaz 60 % / PAC 25 % / Réseau 15 %</p>
+          <div class="meter"><div style="width: 118px"></div></div>
+        </section>
+        <section id="panel-froid" role="tabpanel" aria-labelledby="tab-froid" hidden>
+          <h3>Froid</h3>
+          <p>EER moyen: 3.1 — Heures: 820 h</p>
+          <div class="meter"><div style="width: 13px"></div></div>
+        </section>
+        <section id="panel-elec" role="tabpanel" aria-labelledby="tab-elec" hidden>
+          <h3>Électricité</h3>
+          <p>Auto-prod PV: 11 % — Nuit/WE: 37 %</p>
+          <div class="meter"><div style="width: 78px"></div></div>
+        </section>
+        <section id="panel-co2" role="tabpanel" aria-labelledby="tab-co2" hidden>
+          <h3>CO₂ (Scope 1+2)</h3>
+          <p>Facteur réseau: 0,10 kgCO₂e/kWh — Gaz: 0,204</p>
+          <div class="meter"><div style="width: 26px"></div></div>
+        </section>
+        <section id="panel-eau" role="tabpanel" aria-labelledby="tab-eau" hidden>
+          <h3>Eau</h3>
+          <p>Fuites suspectes: non — Sanitaires: 63 %</p>
+          <div class="meter"><div style="width: 145px"></div></div>
+        </section>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sections principales hors Énergie -->
+  <div class="section" id="section-travaux" hidden>
+    <div class="panel-box">
+      <h3 style="margin:.2rem 0 .4rem 0">Travaux</h3>
+      <p style="margin:0 0 8px 0; color:#475569">Section à définir. Ajoute ici KPI/graphes liés aux travaux.</p>
+    </div>
+  </div>
+  <div class="section" id="section-regs" hidden>
+    <div class="panel-box">
+      <h3 style="margin:.2rem 0 .4rem 0">Réglementations et normes</h3>
+      <p style="margin:0 0 8px 0; color:#475569">Section à définir. Exemples: conformité, échéances, audits.</p>
+    </div>
+  </div>
+  <div class="section" id="section-financier" hidden>
+    <div class="panel-box">
+      <h3 style="margin:.2rem 0 .4rem 0">Financier</h3>
+      <p style="margin:0 0 8px 0; color:#475569">Section à définir. Exemples: CAPEX/OPEX, ROI, subventions.</p>
+    </div>
+  </div>
+
+  <script src="app.js" defer></script>
+</body>
+</html>

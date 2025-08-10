@@ -112,15 +112,6 @@
 .section{margin-top:18px}
 .section[hidden]{display:none}
 
-/* Panels */
-.kpi-panels{
-  margin-top:18px; background:transparent; border:none; border-radius:16px; padding:16px 0 0; box-shadow:none
-}
-.kpi-panels section[hidden]{display:none}
-.kpi-panels h3{margin:.2rem 0 .4rem 0}
-.meter{height:10px; background:#eef2f6; border-radius:8px; overflow:hidden; border:1px solid var(--border)}
-.meter > div{height:100%; width:0; background:var(--active-color, #94a3b8)}
-
 /* important pour éviter les surprises de largeur */
 .kpi-panels .panel-box{
   border:2px solid var(--active-color, #cbd5e1); border-radius:16px; background:#fff; padding:16px;

@@ -32,6 +32,28 @@ function updateTrendPadding(){
   });
 }
 
+function alignPanelToTabs(){
+  const wrap  = document.querySelector('.kpi-wrap');
+  const tabs  = document.querySelector('.kpi-tabs');
+  const panel = document.querySelector('.kpi-panels .panel-box');
+  if(!wrap || !tabs || !panel) return;
+
+  const first = tabs.querySelector('.kpi');
+  const last  = tabs.querySelector('.kpi:last-of-type');
+  if(!first || !last) return;
+
+  const wrapRect  = wrap.getBoundingClientRect();
+  const firstRect = first.getBoundingClientRect();
+  const lastRect  = last.getBoundingClientRect();
+
+  const leftMargin  = firstRect.left - wrapRect.left;
+  const rightMargin = wrapRect.right - lastRect.right;
+
+  panel.style.marginLeft  = `${leftMargin}px`;
+  panel.style.marginRight = `${rightMargin}px`;
+}
+
+
 function selectTab(tab){
   tabs.forEach(t=>{t.setAttribute('aria-selected','false'); t.setAttribute('aria-expanded','false');});
   tab.setAttribute('aria-selected','true');
@@ -157,6 +179,11 @@ window.addEventListener('load', () => {
   updateParcFromSites();
 });
 
+const originalSelectSection = selectSection;
+selectSection = function(name){
+  originalSelectSection(name);
+  requestAnimationFrame(alignPanelToTabs);
+};
 
 /* ===== Tiny tests (console) ===== */
 (function runTests(){

@@ -188,11 +188,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .tree-node:hover::before, .tree-leaf:hover::before{ height:14px; }
 
 /* états */
-.tree-leaf.is-active{
-  color:#0b1220; font-weight:700;
+.tree-leaf.is-active {
+  background: #e0f7ec;
+  box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.5);
+  font-weight: 700;
+  position: relative;
 }
-.tree-leaf.is-active::before{ height:16px; }
-
+.tree-leaf.is-active::before {
+  content: "✓";
+  position: absolute;
+  left: -18px;
+  color: #10b981;
+  font-size: 0.85rem;
+}
 /* chevron + icônes minimalistes */
 .chev{ width:14px; display:inline-block; transform-origin:center; opacity:.6; }
 .tree-node[aria-expanded="false"] .chev{ transform:rotate(-90deg); }

@@ -159,11 +159,24 @@ document.querySelectorAll('.tree .toggle').forEach(btn=>{
   });
 });
 
-document.querySelectorAll('.tree-leaf').forEach(leaf=>{
-  leaf.addEventListener('click', ()=>{
-    document.querySelectorAll('.tree-leaf').forEach(l=>l.classList.remove('is-active'));
-    leaf.classList.add('is-active');
-    // ici plus tard: filtrer les KPIs selon le bâtiment sélectionné
+document.querySelectorAll('.tree-leaf').forEach(leaf => {
+  leaf.addEventListener('click', (e) => {
+    // Si tu veux un toggle direct au clic :
+    leaf.classList.toggle('is-active');
+
+    // --- Si tu veux plutôt un mode "Ctrl pour multi", décommente :
+    
+    if (e.ctrlKey || e.metaKey) {
+      leaf.classList.toggle('is-active');
+    } else {
+      document.querySelectorAll('.tree-leaf').forEach(l => l.classList.remove('is-active'));
+      leaf.classList.add('is-active');
+    }
+    
+    // Ici, plus tard : filtrer les KPIs pour tous les bâtiments sélectionnés
+    const selection = Array.from(document.querySelectorAll('.tree-leaf.is-active'))
+                           .map(el => el.textContent.trim());
+    console.log('Bâtiments sélectionnés :', selection);
   });
 });
 /* ==== Sidebar responsive (hamburger) ==== */
@@ -184,3 +197,4 @@ if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') toggleMenu(false);
 });
+

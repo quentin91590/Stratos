@@ -10,16 +10,14 @@
 </head>
 <body>
   <div class="app">
-    <!-- Sidebar hiérarchique -->
-    <aside class="side-nav" aria-label="Navigation hiérarchique">
+    <!-- Sidebar (arborescence) -->
+    <aside id="sidebar" class="side-nav" aria-label="Arborescence">
       <nav class="tree" role="tree">
-        <!-- Racine Parc (sélection courante) -->
         <button class="tree-node is-current" role="treeitem" aria-selected="true" aria-level="1">
           <span class="node-ico" aria-hidden="true">🏷️</span>
           Parc <span class="badge">2 sites</span>
         </button>
 
-        <!-- Site 1 -->
         <div class="tree-group" role="group" aria-level="2">
           <button class="tree-node toggle" role="treeitem" aria-expanded="true">
             <span class="chev" aria-hidden="true">▾</span>
@@ -27,13 +25,12 @@
             Site Alpha <span class="badge">3 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment A</button></li>
+            <li><button class="tree-leaf is-active" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment A</button></li>
             <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment B</button></li>
             <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment C</button></li>
           </ul>
         </div>
 
-        <!-- Site 2 -->
         <div class="tree-group" role="group" aria-level="2">
           <button class="tree-node toggle" role="treeitem" aria-expanded="true">
             <span class="chev" aria-hidden="true">▾</span>
@@ -51,31 +48,42 @@
     <!-- Contenu principal -->
     <main class="main">
       <div class="kpi-wrap">
-        <!-- Menu principal (inchangé, icône Financier mise à jour) -->
+        <!-- Top navigation -->
         <nav class="top-nav" role="navigation" aria-label="Sections">
           <button class="hamburger" aria-label="Ouvrir le menu" aria-controls="sidebar" aria-expanded="false">
             <span></span><span></span><span></span>
           </button>
+
+          <button class="top-item is-active" data-section="energie" aria-current="page">
             <span class="ti-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 13a9 9 0 10-18 0"/><path d="M12 13l5-5"/><circle cx="12" cy="13" r="1.3" fill="currentColor"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 13a9 9 0 10-18 0"/><path d="M12 13l5-5"/><circle cx="12" cy="13" r="1.3" fill="currentColor"/>
+              </svg>
             </span>
             <span class="ti-label">Énergie</span>
           </button>
+
           <button class="top-item" data-section="travaux">
             <span class="ti-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="12" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="7" width="18" height="12" rx="2"/><path d="M7 7V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/><path d="M3 12h18"/>
+              </svg>
             </span>
             <span class="ti-label">Travaux</span>
           </button>
+
           <button class="top-item" data-section="regs">
             <span class="ti-ico" aria-hidden="true">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h16M4 5h16v14H4z"/><path d="M8 9h8M8 13h6"/></svg>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M4 19h16M4 5h16v14H4z"/><path d="M8 9h8M8 13h6"/>
+              </svg>
             </span>
             <span class="ti-label">Réglementations</span>
           </button>
+
           <button class="top-item" data-section="financier">
             <span class="ti-ico" aria-hidden="true">
-              <!-- Pièce avec symbole $ (barre unique) -->
+              <!-- Pièce + $ à barre unique -->
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="12" cy="12" r="9"></circle>
                 <path d="M10 8h3a2 2 0 1 1 0 4h-2a2 2 0 1 0 0 4h3"></path>
@@ -86,7 +94,7 @@
           </button>
         </nav>
 
-        <!-- Onglets Énergie -->
+        <!-- Onglets KPI -->
         <div class="kpi-tabs" role="tablist" aria-label="Indicateurs" aria-describedby="tabs-help">
           <p id="tabs-help" class="sr-only">Cliquez ou utilisez les flèches gauche/droite pour changer d’onglet. Le détail s’affiche en dessous.</p>
 
@@ -225,7 +233,6 @@
               <span class="ps-dot" aria-hidden="true"></span>
             </div>
 
-            <!-- KPIs contextuels (pills) -->
             <div class="panel-summary" aria-label="Synthèse du périmètre">
               <div class="pill">
                 <span class="pill-ico" aria-hidden="true">
@@ -364,6 +371,9 @@
       </div>
     </main>
   </div>
+
+  <!-- Overlay pour mobile (liée au burger) -->
+  <div class="side-overlay" hidden></div>
 
   <script src="app.js" defer></script>
 </body>

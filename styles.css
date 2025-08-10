@@ -309,3 +309,62 @@
   color: #0d47a1;
   letter-spacing: 1px;
 }
+/* -------- POLICE GLOBALE -------- */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Arial, sans-serif;
+}
+
+/* -------- VARIABLES -------- */
+:root {
+  --radius-card: 16px;
+  --radius-icon: 10px;
+}
+
+/* -------- ONGLET KPI -------- */
+.kpi {
+  border-radius: var(--radius-card) !important;
+  overflow: hidden;
+  background: var(--card);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(16,24,40,.06);
+  flex: 1 1 auto; /* permet d'afficher tous les onglets sur une ligne */
+  min-width: 0;
+}
+
+/* Icône arrondie */
+.kpi-icon,
+.kpi[aria-selected="true"] .kpi-icon {
+  border-radius: var(--radius-icon) !important;
+}
+
+/* Pastille ronde */
+.kpi-dot {
+  border-radius: 999px !important;
+}
+
+/* -------- PANNEAU EN DESSOUS -------- */
+.kpi-panels .panel-box {
+  border-radius: var(--radius-card) !important;
+  box-sizing: border-box;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+/* -------- CONTENEUR D'ONGLETS -------- */
+.kpi-tabs {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 8px;
+  overflow: visible; /* empêche la barre de scroll */
+}
+
+/* -------- SÉCURITÉ : hérite des arrondis -------- */
+.kpi *, .panel-box * {
+  border-radius: inherit;
+}

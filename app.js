@@ -34,16 +34,30 @@ function updateTrendPadding(){
 
 function alignPanelToTabs(){
   const wrap  = document.querySelector('.kpi-wrap');
-  const tabs  = document.querySelector('.kpi-tabs');
   const panel = document.querySelector('.kpi-panels .panel-box');
-  if(!wrap || !tabs || !panel) return;
+  const allTabs = document.querySelectorAll('.kpi-tabs [role="tab"]');
+  if(!wrap || !panel || !allTabs.length) return;
 
-  const wrapRect = wrap.getBoundingClientRect();
-  const tabsRect = tabs.getBoundingClientRect();
+  // on prend le premier et le dernier onglet réellement visibles
+  const visibleTabs = Array.from(allTabs).filter(t=>{
+    const st = getComputedStyle(t);
+    return st.display !== 'none' && st.visibility !== 'hidden';
+  });
+  if(!visibleTabs.length) return;
 
-  panel.style.marginLeft  = (tabsRect.left  - wrapRect.left) + 'px';
-  panel.style.marginRight = (wrapRect.right - tabsRect.right) + 'px';
+  const wrapRect   = wrap.getBoundingClientRect();
+  const firstRect  = visibleTabs[0].getBoundingClientRect();
+  const lastRect   = visibleTabs[visibleTabs.length - 1].getBoundingClientRect();
+
+  // marge gauche = distance entre le bord gauche du wrap et le début du 1er onglet
+  const ml = Math.max(0, Math.round(firstRect.left - wrapRect.left));
+  // marge droite = distance entre le bord droit du wrap et la fin du dernier onglet
+  const mr = Math.max(0, Math.round(wrapRect.right - lastRect.right));
+
+  panel.style.marginLeft  = ml + 'px';
+  panel.style.marginRight = mr + 'px';
 }
+
 
 // recalculs fiables
 window.addEventListener('load', alignPanelToTabs);

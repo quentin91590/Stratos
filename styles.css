@@ -143,40 +143,104 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* === Sidebar / Tree === */
-.side-nav {
+/* --- Sidebar : collée à gauche, liseré droit --- */
+.side-nav{
   position: sticky;
-  top: 0;                            /* reste collée en haut */
-  align-self: start;                 /* empêche l’étirement */
-  background: transparent;           /* plus de fond blanc */
+  top: 0;
+  align-self: start;
   background: transparent;
-  border-right: 1px solid rgba(0,0,0,.05); /* même style que top menu */
+  border: none;
+  border-right: 1px solid rgba(0,0,0,.05);
   padding-right: 12px;
-  padding-top: 6px; /* même top spacing que top-nav */
-  max-height: 100vh;                  /* limite à hauteur écran */
-  overflow-y: auto;                   /* scroll interne si contenu long */
+  max-height: 100vh;
+  overflow-y: auto;
 }
-.tree{ display:flex; flex-direction:column; gap:6px; }
-.tree-node, .tree-leaf {
-  border-radius: 8px;
-  padding: 6px 10px;
-}
-.tree-node:hover, .tree-leaf:hover {
-  background: rgba(0,0,0,0.03);
-}
-.tree-node:focus-visible, .tree-leaf:focus-visible{ outline:none; box-shadow:0 0 0 6px var(--ring); }
-.tree-node.is-current{
-  background:#eef5ff; box-shadow: inset 0 0 0 2px rgba(96,165,250,.45);
-  font-weight:700;
-}
-.tree-group{ margin-top:4px; }
-.tree-children{ list-style:none; margin:4px 0 8px 24px; padding:0; display:flex; flex-direction:column; gap:4px; }
-.chev{ width:14px; display:inline-block; transform-origin:center; }
-.tree-node[aria-expanded="false"] .chev{ transform:rotate(-90deg); opacity:.75; }
-.node-ico{ width:18px; height:18px; display:inline-grid; place-items:center; opacity:.9; }
-.badge{
-  margin-left:auto; font-size:.75rem; font-weight:700; color:#475569;
-  background:#f1f5f9; border:1px solid #e2e8f0; padding:2px 6px; border-radius:999px;
-}
-.tree-leaf .dot{ width:8px; height:8px; border-radius:999px; background:#cbd5e1; display:inline-block; margin-right:6px; }
-.tree-leaf.is-active{ background:#f0fdf4; box-shadow: inset 0 0 0 2px rgba(22,163,74,.35); font-weight:700; }
 
+/* --- Arborescence : sans “cartes”, plus élégante --- */
+.tree{ display:flex; flex-direction:column; gap:4px; }
+.tree-group{ margin-top:2px; }
+
+/* sous-listes avec filet d’indentation */
+.tree-children{
+  list-style:none; margin:4px 0 6px 14px; padding:0 0 0 10px;
+  border-left: 1px dashed rgba(0,0,0,.12);
+  display:flex; flex-direction:column; gap:2px;
+}
+.tree-children[hidden]{ display:none !important; }
+
+/* items “nus” (pas d’encadré) */
+.tree-node, .tree-leaf{
+  appearance:none; border:none; background:transparent; cursor:pointer;
+  width:100%; text-align:left; color:#0f172a;
+  padding:6px 8px 6px 6px;
+  display:flex; align-items:center; gap:8px;
+  border-radius:6px; transition: color .15s ease, background .15s ease;
+}
+
+/* accent à gauche au survol/actif, sans encadré */
+.tree-node::before, .tree-leaf::before{
+  content:""; width:3px; height:0; background:var(--section-color, #60a5fa);
+  border-radius:2px; margin-right:6px; transition:height .15s ease;
+}
+.tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
+.tree-node:hover::before, .tree-leaf:hover::before{ height:14px; }
+
+/* états */
+.tree-leaf.is-active{
+  color:#0b1220; font-weight:700;
+}
+.tree-leaf.is-active::before{ height:16px; }
+
+/* chevron + icônes minimalistes */
+.chev{ width:14px; display:inline-block; transform-origin:center; opacity:.6; }
+.tree-node[aria-expanded="false"] .chev{ transform:rotate(-90deg); }
+.node-ico{ width:16px; height:16px; display:inline-grid; place-items:center; opacity:.85; }
+.tree-leaf .dot{ width:6px; height:6px; border-radius:999px; background:#94a3b8; display:inline-block; }
+
+/* --- Layout global : sidebar à gauche en desktop --- */
+.app{
+  display:grid;
+  grid-template-columns: 260px 1fr;
+  gap:16px; max-width:1280px; margin:0 auto; padding:12px 12px 24px;
+}
+.main{ min-width:0; }
+
+/* --- Hamburger --- */
+.hamburger{
+  display:none; /* visible seulement en mobile */
+  width:38px; height:34px; border:none; background:transparent; border-radius:8px;
+  align-items:center; justify-content:center; gap:5px; padding:0 6px; cursor:pointer;
+}
+.hamburger span{
+  display:block; width:22px; height:2px; background:#0f172a; border-radius:2px;
+}
+
+/* --- Mobile : sidebar en panneau coulissant gauche --- */
+@media (max-width: 960px){
+  .app{ grid-template-columns: 1fr; }
+
+  .side-nav{
+    position: fixed;
+    inset: 0 auto 0 0;          /* top:0; right:auto; bottom:0; left:0 */
+    width: 80vw; max-width: 280px;
+    background: #ffffff;        /* fond pour la lisibilité en off-canvas */
+    border-right: 1px solid rgba(0,0,0,.08);
+    padding: 12px;
+    transform: translateX(-100%);
+    transition: transform .2s ease-out;
+    z-index: 50;
+  }
+
+  .hamburger{ display:flex; }
+
+  .side-overlay{
+    position: fixed; inset:0; background: rgba(16,24,40,.28);
+    backdrop-filter: blur(2px);
+    z-index: 40;
+  }
+
+  /* état ouvert : ajouté sur <body> */
+  body.menu-open #sidebar{ transform: translateX(0); }
+  body.menu-open .side-overlay{ display:block; }
+  .side-overlay[hidden]{ display:none; }
+}

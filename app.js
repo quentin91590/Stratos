@@ -166,3 +166,21 @@ document.querySelectorAll('.tree-leaf').forEach(leaf=>{
     // ici plus tard: filtrer les KPIs selon le bâtiment sélectionné
   });
 });
+/* ==== Sidebar responsive (hamburger) ==== */
+const body = document.body;
+const burger = document.querySelector('.hamburger');
+const sidebar = document.getElementById('sidebar');
+const overlay = document.querySelector('.side-overlay');
+
+function toggleMenu(open) {
+  const willOpen = (typeof open === 'boolean') ? open : !body.classList.contains('menu-open');
+  body.classList.toggle('menu-open', willOpen);
+  if (burger) burger.setAttribute('aria-expanded', String(willOpen));
+  if (overlay) overlay.hidden = !willOpen;
+}
+
+if (burger) burger.addEventListener('click', () => toggleMenu());
+if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
+window.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') toggleMenu(false);
+});

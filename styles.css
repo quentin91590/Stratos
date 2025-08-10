@@ -1,37 +1,40 @@
 :root{
   --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76,132,255,.35);
   --section-color:#94a3b8;
-  --sticky-top: 60px; /* valeur par défaut, recalculée en JS */
+  --sticky-top:60px;
+  /* nouvelle variable : bord externe de la rangée d’onglets */
+  --tabs-edge:12px; /* prends la même valeur que le gap */
 }
-*{box-sizing:border-box}
-body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
 .kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
 
-/* ==== ONGLETs : SHRINK-WRAP ==== */
-.kpi{
-  --status:#8a8a8a; --tint:rgba(0,0,0,.04);
-  position:relative; display:grid; grid-template-rows:auto auto 1fr auto; gap:6px; padding:16px; border-radius:16px;
-  background:var(--card); border:1px solid var(--border); cursor:pointer; text-align:center; justify-items:center;
-  transition:transform .14s ease, box-shadow .14s ease, border-color .14s ease;
-  box-shadow:0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(16,24,40,.06);
-  /* largeur réelle mesurable par le JS */
-  width: clamp(170px, 18vw, 220px);
-}
+/* ===== Onglets ===== */
 .kpi-tabs{
-  /* au lieu d’une grille 1fr qui s’étire à 100% */
-  display: inline-grid;                 /* shrink-wrap à son contenu */
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;       /* colonnes à la largeur des .kpi */
-  gap: 12px;
-  align-items: stretch;
-  /* en mobile : scroll horizontal doux si ça ne tient pas */
-  max-width: 100%;
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x proximity;
+  display:grid;
+  grid-template-columns:repeat(6, minmax(170px, 1fr));
+  gap:12px;
+  align-items:stretch;
+  /* bord externe pour que le 1er/dernier onglet ne soient pas collés au bord du wrap */
+  padding-inline: var(--tabs-edge);
 }
-.kpi-tabs > *{ scroll-snap-align: start; }
+
+/* ===== Panels ===== */
+.kpi-panels{
+  margin-top:18px;
+  background:transparent; border:none; border-radius:16px;
+  /* on met le même bord externe que les onglets → alignement parfait */
+  padding:16px var(--tabs-edge) 0;
+  box-shadow:none;
+}
+
+.kpi-panels .panel-box{
+  border:2px solid var(--active-color, #cbd5e1);
+  border-radius:16px; background:#fff; padding:16px;
+  box-shadow:0 6px 16px rgba(16,24,40,.06);
+  position:relative; width:100%; box-sizing:border-box;
+  /* si ton JS a mis des marges inline, on neutralise */
+  margin-inline: 0 !important;
+}
 
 .kpi::before{content:""; display:none;}
 .kpi[data-status="good"]{--status:#16a34a; --tint:rgba(22,163,74,.12)}

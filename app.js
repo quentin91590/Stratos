@@ -168,19 +168,37 @@ function siteBuildings(siteBtn){
 }
 
 /* états partiels / complets pour un site */
-function updateSiteState(siteBtn){
-  const bs = siteBuildings(siteBtn);
-  const selected = bs.filter(b => b.classList.contains('is-active')).length;
-  siteBtn.classList.toggle('is-active', selected === bs.length && bs.length>0);
-  siteBtn.classList.toggle('is-partial', selected>0 && selected<bs.length);
+function updateSiteState(siteNode) {
+  const blds = siteBuildings(siteNode);
+  const activeCount = blds.filter(b => b.classList.contains('is-active')).length;
+
+  if (activeCount === blds.length) {
+    siteNode.classList.add('is-active'); // ✅ Sélection visuelle du site
+    siteNode.classList.remove('is-partial');
+  } else if (activeCount > 0) {
+    siteNode.classList.remove('is-active');
+    siteNode.classList.add('is-partial');
+  } else {
+    siteNode.classList.remove('is-active');
+    siteNode.classList.remove('is-partial');
+  }
 }
 
 /* état partiel/complet pour Parc */
-function updateParcState(){
-  const all = leaves();
-  const selected = all.filter(b => b.classList.contains('is-active')).length;
-  parcBtn.classList.toggle('is-active', selected === all.length && all.length>0);
-  parcBtn.classList.toggle('is-partial', selected>0 && selected<all.length);
+function updateParcState() {
+  const sites = qsa('.tree > .tree-group > .tree-node');
+  const activeCount = sites.filter(s => s.classList.contains('is-active')).length;
+
+  if (activeCount === sites.length) {
+    parcBtn.classList.add('is-active'); // ✅ Sélection visuelle du parc
+    parcBtn.classList.remove('is-partial');
+  } else if (activeCount > 0) {
+    parcBtn.classList.remove('is-active');
+    parcBtn.classList.add('is-partial');
+  } else {
+    parcBtn.classList.remove('is-active');
+    parcBtn.classList.remove('is-partial');
+  }
 }
 
 /* applique sélection sur un site entier */

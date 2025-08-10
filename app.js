@@ -149,77 +149,155 @@ selectSection('energie');
     selectTab(initial);
   }catch(e){ console.warn('Tests UI: ', e); }
 })();
-/* ===== Sidebar: multi-sélection hiérarchique (Parc / Sites / Bâtiments) ===== */
+/* ===== Sidebar: cases à cocher Parc / Sites / Bâtiments ===== */
 
-// helpers
-const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const setSel = (el, on) => {
-  el.classList.toggle('is-active', !!on);
-  el.setAttribute('aria-selected', !!on);
+// Utils DOM
+const $all = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const $one = (sel, root=document) => root.querySelector(sel);
+
+// Racine, sites, bâtiments
+const parcBtn   = $one('.tree > .tree-node:not(.toggle)');
+const parcCheck = parcBtn?.querySelector('.tree-check');
+
+const siteBtns  = $all('.tree-group > .tree-node.toggle');
+const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
+const siteLeaves = (siteBtn) => {
+  const list = siteBtn.nextElementSibling; // .tree-children
+  return list ? $all('.tree-leaf', list) : [];
 };
-const leaves = () => qsa('.tree-leaf');
-const sites  = () => qsa('.tree-node.toggle');
-const parcBtn = document.querySelector('.tree .tree-node:not(.toggle)'); // le bouton "Parc" (racine)
+const leafCheck = (leafBtn) => leafBtn.querySelector('.tree-check');
 
-/* bâtiments d'un site (ul suivant le bouton .toggle) */
-function siteBuildings(siteBtn){
-  const list = siteBtn.nextElementSibling;
-  return list ? qsa('.tree-leaf', list) : [];
+// Style visuel (vert) selon l’état
+function setVisualSelected(btn, on) {
+  btn.classList.toggle('is-active', !!on);
+  btn.classList.toggle('is-partial', false);
+  btn.setAttribute('aria-selected', !!on);
 }
 
-/* états partiels / complets pour un site */
-function updateSiteState(siteNode) {
-  const blds = siteBuildings(siteNode);
-  const activeCount = blds.filter(b => b.classList.contains('is-active')).length;
+// Met à jour l’état visuel/checkbox d’un site d’après ses bâtiments
+function updateSiteFromLeaves(siteBtn) {
+  const leaves = siteLeaves(siteBtn);
+  const checks = leaves.map(leafCheck);
+  const n = checks.length;
+  const sel = checks.filter(c => c.checked).length;
+  const cb = siteCheck(siteBtn);
 
-  if (activeCount === blds.length) {
-    siteNode.classList.add('is-active'); // ✅ Sélection visuelle du site
-    siteNode.classList.remove('is-partial');
-  } else if (activeCount > 0) {
-    siteNode.classList.remove('is-active');
-    siteNode.classList.add('is-partial');
-  } else {
-    siteNode.classList.remove('is-active');
-    siteNode.classList.remove('is-partial');
-  }
+  if (!cb) return;
+
+  cb.indeterminate = sel > 0 && sel < n;
+  cb.checked = sel === n && n > 0;
+
+  siteBtn.classList.toggle('is-partial', cb.indeterminate);
+  setVisualSelected(siteBtn, cb.checked);
 }
 
-/* état partiel/complet pour Parc */
-function updateParcState() {
-  const siteNodes = qsa('.tree-group > .tree-node.toggle'); // plus précis
-  const allSelected = siteNodes.length>0 && siteNodes.every(s => s.classList.contains('is-active'));
-  const anySelected = siteNodes.some(s => s.classList.contains('is-active') || s.classList.contains('is-partial'));
+// Met à jour l’état du Parc d’après les sites
+function updateParcFromSites() {
+  if (!parcCheck) return;
+  const checks = siteBtns.map(siteCheck).filter(Boolean);
+  const n = checks.length;
+  const sel = checks.filter(c => c.checked || c.indeterminate).length;
+  const allChecked = checks.every(c => c.checked);
 
-  parcBtn.classList.toggle('is-active', allSelected);
-  parcBtn.classList.toggle('is-partial', !allSelected && anySelected);
+  parcCheck.indeterminate = sel > 0 && !allChecked;
+  parcCheck.checked = allChecked && n > 0;
+
+  parcBtn.classList.toggle('is-partial', parcCheck.indeterminate);
+  setVisualSelected(parcBtn, parcCheck.checked);
 }
 
-/* applique sélection sur un site entier */
-function selectSite(siteBtn, on){
-  siteBuildings(siteBtn).forEach(b => setSel(b, on));
-  updateSiteState(siteBtn);
-  updateParcState();
+// Coche/décoche tout un site
+function checkWholeSite(siteBtn, on) {
+  const cb = siteCheck(siteBtn);
+  if (cb) { cb.indeterminate = false; cb.checked = !!on; }
+  setVisualSelected(siteBtn, !!on);
+
+  siteLeaves(siteBtn).forEach(leaf => {
+    const lcb = leafCheck(leaf);
+    if (lcb) lcb.checked = !!on;
+    setVisualSelected(leaf, !!on);
+  });
+
+  updateSiteFromLeaves(siteBtn);
+  updateParcFromSites();
 }
 
-/* applique sélection sur tout le parc */
-function selectParc(on){
-  sites().forEach(s => selectSite(s, on));
-  // Force l’état du bouton Parc en cohérence
-  if (parcBtn) {
-    parcBtn.classList.toggle('is-active', on);
-    parcBtn.classList.toggle('is-partial', false);
-  }
-  updateParcState();
+// Coche/décoche tout le parc
+function checkWholeParc(on) {
+  siteBtns.forEach(site => checkWholeSite(site, on));
+  updateParcFromSites();
 }
 
+// ————— Listeners —————
 
-/* sélection unique (clear others) d’un ensemble d’éléments */
-function selectOnly(elements){
-  leaves().forEach(b => setSel(b, false));
-  elements.forEach(b => setSel(b, true));
-  sites().forEach(updateSiteState);
-  updateParcState();
+// 1) Bâtiments (leaf) : change → met à jour site + parc
+$all('.tree-leaf').forEach(leafBtn => {
+  const cb = leafCheck(leafBtn);
+  if (!cb) return;
+
+  // Click sur le bouton (hors chevron) → toggle la case
+  leafBtn.addEventListener('click', (e) => {
+    if (e.target === cb) return; // déjà géré par change
+    cb.checked = !cb.checked;
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
+  });
+
+  // Changement de la case
+  cb.addEventListener('change', () => {
+    setVisualSelected(leafBtn, cb.checked);
+    const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
+    if (siteBtn) updateSiteFromLeaves(siteBtn);
+    updateParcFromSites();
+  });
+});
+
+// 2) Sites : change → propage aux bâtiments
+siteBtns.forEach(siteBtn => {
+  const cb = siteCheck(siteBtn);
+  if (!cb) return;
+
+  // Chevron = plier/déplier seulement
+  siteBtn.addEventListener('click', (e) => {
+    const onChevron = !!e.target.closest('.chev');
+    if (onChevron) {
+      const expanded = siteBtn.getAttribute('aria-expanded') === 'true';
+      siteBtn.setAttribute('aria-expanded', String(!expanded));
+      const list = siteBtn.parentElement.querySelector('.tree-children');
+      if (list) list.style.display = expanded ? 'none' : 'flex';
+      return;
+    }
+    // Sinon, cliquer le bouton → toggle la case
+    if (e.target !== cb) {
+      cb.checked = !cb.checked;
+      cb.indeterminate = false;
+      cb.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  cb.addEventListener('change', () => {
+    checkWholeSite(siteBtn, cb.checked);
+  });
+});
+
+// 3) Parc : change → propage à tous les sites/bâtiments
+if (parcCheck) {
+  parcBtn.addEventListener('click', (e) => {
+    if (e.target !== parcCheck) {
+      parcCheck.checked = !parcCheck.checked;
+      parcCheck.indeterminate = false;
+      parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
+    }
+  });
+
+  parcCheck.addEventListener('change', () => {
+    checkWholeParc(parcCheck.checked);
+  });
 }
+
+// Init des états au chargement
+siteBtns.forEach(updateSiteFromLeaves);
+updateParcFromSites();
+
 
 /* === Expand/Collapse des sites en cliquant sur le chevron uniquement === */
 qsa('.tree .toggle').forEach(btn=>{

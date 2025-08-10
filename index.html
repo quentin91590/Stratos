@@ -12,7 +12,45 @@
   <div class="app">
 <!-- Sidebar (arborescence) -->
 <aside id="sidebar" class="side-nav" aria-label="Arborescence">
+  
+  <!-- Logo / titre -->
+  <div class="sidebar-header">
+    <h1 class="logo-title">Stratos</h1>
+  </div>
+
   <nav class="tree" role="tree">
+    <button class="tree-node" role="treeitem" aria-selected="true" aria-level="1">
+      <input type="checkbox" class="tree-check" />
+      Parc <span class="badge">2 sites</span>
+    </button>
+
+    <div class="tree-group" role="group" aria-level="2">
+      <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+        <span class="chev" aria-hidden="true">▾</span>
+        <input type="checkbox" class="tree-check" />
+        Site Alpha <span class="badge">3 bât.</span>
+      </button>
+      <ul class="tree-children" role="group">
+        <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
+        <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
+        <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
+      </ul>
+    </div>
+
+    <div class="tree-group" role="group" aria-level="2">
+      <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+        <span class="chev" aria-hidden="true">▾</span>
+        <input type="checkbox" class="tree-check" />
+        Site Beta <span class="badge">2 bât.</span>
+      </button>
+      <ul class="tree-children" role="group">
+        <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
+        <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
+      </ul>
+    </div>
+  </nav>
+</aside>
+
     <!-- Parc -->
     <button class="tree-node" role="treeitem" aria-selected="false" aria-level="1">
       <input type="checkbox" class="tree-check" aria-label="Tout le parc" />

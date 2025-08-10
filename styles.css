@@ -285,3 +285,27 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   width: 16px;
   height: 16px;
 }
+/* Alignement avec les onglets */
+.side-nav {
+  position: sticky;
+  top: 60px; /* hauteur du bandeau avec les onglets */
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 0;
+}
+
+/* Logo */
+.sidebar-header {
+  padding: 1rem;
+  background: #f8f9fa;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+.logo-title {
+  font-family: 'Segoe UI', sans-serif;
+  font-weight: 800;
+  font-size: 1.4rem;
+  color: #0d47a1;
+  letter-spacing: 1px;
+}

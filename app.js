@@ -149,15 +149,123 @@ selectSection('energie');
     selectTab(initial);
   }catch(e){ console.warn('Tests UI: ', e); }
 })();
-/* ===== Sidebar: toggles & sélection ===== */
-document.querySelectorAll('.tree .toggle').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    const expanded = btn.getAttribute('aria-expanded') === 'true';
-    btn.setAttribute('aria-expanded', String(!expanded));
-    const list = btn.parentElement.querySelector('.tree-children');
-    if (list) list.style.display = expanded ? 'none' : 'flex';
+/* ===== Sidebar: multi-sélection hiérarchique (Parc / Sites / Bâtiments) ===== */
+
+// helpers
+const qsa = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const setSel = (el, on) => {
+  el.classList.toggle('is-active', !!on);
+  el.setAttribute('aria-selected', !!on);
+};
+const leaves = () => qsa('.tree-leaf');
+const sites  = () => qsa('.tree-node.toggle');
+const parcBtn = document.querySelector('.tree .tree-node:not(.toggle)'); // le bouton "Parc" (racine)
+
+/* bâtiments d'un site (ul suivant le bouton .toggle) */
+function siteBuildings(siteBtn){
+  const list = siteBtn.nextElementSibling;
+  return list ? qsa('.tree-leaf', list) : [];
+}
+
+/* états partiels / complets pour un site */
+function updateSiteState(siteBtn){
+  const bs = siteBuildings(siteBtn);
+  const selected = bs.filter(b => b.classList.contains('is-active')).length;
+  siteBtn.classList.toggle('is-active', selected === bs.length && bs.length>0);
+  siteBtn.classList.toggle('is-partial', selected>0 && selected<bs.length);
+}
+
+/* état partiel/complet pour Parc */
+function updateParcState(){
+  const all = leaves();
+  const selected = all.filter(b => b.classList.contains('is-active')).length;
+  parcBtn.classList.toggle('is-active', selected === all.length && all.length>0);
+  parcBtn.classList.toggle('is-partial', selected>0 && selected<all.length);
+}
+
+/* applique sélection sur un site entier */
+function selectSite(siteBtn, on){
+  siteBuildings(siteBtn).forEach(b => setSel(b, on));
+  updateSiteState(siteBtn);
+  updateParcState();
+}
+
+/* applique sélection sur tout le parc */
+function selectParc(on){
+  sites().forEach(s => selectSite(s, on));
+  updateParcState();
+}
+
+/* sélection unique (clear others) d’un ensemble d’éléments */
+function selectOnly(elements){
+  leaves().forEach(b => setSel(b, false));
+  elements.forEach(b => setSel(b, true));
+  sites().forEach(updateSiteState);
+  updateParcState();
+}
+
+/* === Expand/Collapse des sites en cliquant sur le chevron uniquement === */
+qsa('.tree .toggle').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    if (e.target.closest('.chev')) { // clic sur la flèche => expand/collapse
+      const expanded = btn.getAttribute('aria-expanded') === 'true';
+      btn.setAttribute('aria-expanded', String(!expanded));
+      const list = btn.parentElement.querySelector('.tree-children');
+      if (list) list.style.display = expanded ? 'none' : 'flex';
+      return;
+    }
+
+    // sinon: sélection du site
+    if (e.ctrlKey || e.metaKey) {
+      // toggle en bloc
+      const bs = siteBuildings(btn);
+      const hasUnselected = bs.some(b => !b.classList.contains('is-active'));
+      selectSite(btn, hasUnselected); // s'il manque un, on sélectionne tout; sinon on désélectionne tout
+    } else {
+      // sélection unique: tout ce site uniquement
+      selectOnly(siteBuildings(btn));
+    }
   });
 });
+
+/* === Sélection des bâtiments === */
+leaves().forEach(leaf=>{
+  leaf.addEventListener('click', (e)=>{
+    if (e.ctrlKey || e.metaKey) {
+      setSel(leaf, !leaf.classList.contains('is-active'));
+    } else {
+      selectOnly([leaf]);
+      return; // l’état parents/parc sera mis à jour plus bas
+    }
+
+    // MAJ états parents et parc
+    // remonte jusqu’au .tree-group le plus proche => bouton site (toggle)
+    const group = leaf.closest('.tree-group');
+    const siteBtn = group ? group.querySelector('.tree-node.toggle') : null;
+    if (siteBtn) updateSiteState(siteBtn);
+    updateParcState();
+  });
+});
+
+/* === Sélection du Parc (racine) === */
+if (parcBtn) {
+  parcBtn.addEventListener('click', (e)=>{
+    if (e.ctrlKey || e.metaKey) {
+      // toggle global
+      const all = leaves();
+      const hasUnselected = all.some(b => !b.classList.contains('is-active'));
+      selectParc(hasUnselected);
+    } else {
+      // sélection unique: tout le parc uniquement
+      selectOnly(leaves());
+    }
+  });
+}
+
+/* init visuels partiels au chargement */
+sites().forEach(updateSiteState);
+updateParcState();
+
 
 // ===== Sidebar: multi-sélection avec Ctrl/⌘ =====
 document.querySelectorAll('.tree-leaf').forEach(leaf => {

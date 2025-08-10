@@ -186,19 +186,12 @@ function updateSiteState(siteNode) {
 
 /* état partiel/complet pour Parc */
 function updateParcState() {
-  const sites = qsa('.tree > .tree-group > .tree-node');
-  const activeCount = sites.filter(s => s.classList.contains('is-active')).length;
+  const siteNodes = qsa('.tree-group > .tree-node.toggle'); // plus précis
+  const allSelected = siteNodes.length>0 && siteNodes.every(s => s.classList.contains('is-active'));
+  const anySelected = siteNodes.some(s => s.classList.contains('is-active') || s.classList.contains('is-partial'));
 
-  if (activeCount === sites.length) {
-    parcBtn.classList.add('is-active'); // ✅ Sélection visuelle du parc
-    parcBtn.classList.remove('is-partial');
-  } else if (activeCount > 0) {
-    parcBtn.classList.remove('is-active');
-    parcBtn.classList.add('is-partial');
-  } else {
-    parcBtn.classList.remove('is-active');
-    parcBtn.classList.remove('is-partial');
-  }
+  parcBtn.classList.toggle('is-active', allSelected);
+  parcBtn.classList.toggle('is-partial', !allSelected && anySelected);
 }
 
 /* applique sélection sur un site entier */
@@ -211,8 +204,14 @@ function selectSite(siteBtn, on){
 /* applique sélection sur tout le parc */
 function selectParc(on){
   sites().forEach(s => selectSite(s, on));
+  // Force l’état du bouton Parc en cohérence
+  if (parcBtn) {
+    parcBtn.classList.toggle('is-active', on);
+    parcBtn.classList.toggle('is-partial', false);
+  }
   updateParcState();
 }
+
 
 /* sélection unique (clear others) d’un ensemble d’éléments */
 function selectOnly(elements){

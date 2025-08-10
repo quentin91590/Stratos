@@ -263,3 +263,18 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   background: var(--section-color, #60a5fa);
   opacity:.7;
 }
+.tree-node.is-active {
+  background: #e0f7ec;
+  box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.5);
+  font-weight: 700;
+  position: relative;
+}
+
+.tree-node.is-active::before {
+  content: none; /* pas de coche */
+}
+/* Conserve le vert même au survol */
+.tree .tree-leaf.is-active:hover,
+.tree .tree-node.is-active:hover {
+  background: #dbf5ea;
+}

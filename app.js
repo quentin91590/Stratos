@@ -38,21 +38,27 @@ function alignPanelToTabs(){
   const panel = document.querySelector('.kpi-panels .panel-box');
   if(!wrap || !tabs || !panel) return;
 
-  const first = tabs.querySelector('.kpi');
-  const last  = tabs.querySelector('.kpi:last-of-type');
-  if(!first || !last) return;
+  const wrapRect = wrap.getBoundingClientRect();
+  const tabsRect = tabs.getBoundingClientRect();
 
-  const wrapRect  = wrap.getBoundingClientRect();
-  const firstRect = first.getBoundingClientRect();
-  const lastRect  = last.getBoundingClientRect();
-
-  const leftMargin  = firstRect.left - wrapRect.left;
-  const rightMargin = wrapRect.right - lastRect.right;
-
-  panel.style.marginLeft  = `${leftMargin}px`;
-  panel.style.marginRight = `${rightMargin}px`;
+  panel.style.marginLeft  = (tabsRect.left  - wrapRect.left) + 'px';
+  panel.style.marginRight = (wrapRect.right - tabsRect.right) + 'px';
 }
 
+// recalculs fiables
+window.addEventListener('load', alignPanelToTabs);
+window.addEventListener('resize', alignPanelToTabs);
+
+// si les fonts Google changent la largeur, attendre leur chargement
+if (document.fonts && document.fonts.ready) {
+  document.fonts.ready.then(alignPanelToTabs);
+}
+
+// observer les changements de layout de la grille d’onglets
+const tabsEl = document.querySelector('.kpi-tabs');
+if ('ResizeObserver' in window && tabsEl) {
+  new ResizeObserver(()=> alignPanelToTabs()).observe(tabsEl);
+}
 
 function selectTab(tab){
   tabs.forEach(t=>{t.setAttribute('aria-selected','false'); t.setAttribute('aria-expanded','false');});

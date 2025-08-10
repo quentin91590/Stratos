@@ -143,20 +143,26 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* === Sidebar / Tree === */
-.side-nav{
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:14px;
-  box-shadow:0 6px 16px rgba(16,24,40,.06);
-  padding:12px;
+.side-nav {
+  position: sticky;
+  top: 0;                            /* reste collée en haut */
+  align-self: start;                 /* empêche l’étirement */
+  background: transparent;           /* plus de fond blanc */
+  background: transparent;
+  border-right: 1px solid rgba(0,0,0,.05); /* même style que top menu */
+  padding-right: 12px;
+  padding-top: 6px; /* même top spacing que top-nav */
+  max-height: 100vh;                  /* limite à hauteur écran */
+  overflow-y: auto;                   /* scroll interne si contenu long */
 }
 .tree{ display:flex; flex-direction:column; gap:6px; }
-.tree-node, .tree-leaf{
-  width:100%; text-align:left; background:transparent; border:none; cursor:pointer;
-  padding:8px 10px; border-radius:10px; color:#0f172a;
-  display:flex; align-items:center; gap:8px; transition: background .15s ease, transform .1s ease;
+.tree-node, .tree-leaf {
+  border-radius: 8px;
+  padding: 6px 10px;
 }
-.tree-node:hover, .tree-leaf:hover{ background:#f6f8fb; }
+.tree-node:hover, .tree-leaf:hover {
+  background: rgba(0,0,0,0.03);
+}
 .tree-node:focus-visible, .tree-leaf:focus-visible{ outline:none; box-shadow:0 0 0 6px var(--ring); }
 .tree-node.is-current{
   background:#eef5ff; box-shadow: inset 0 0 0 2px rgba(96,165,250,.45);

@@ -266,50 +266,6 @@ if (parcBtn) {
 sites().forEach(updateSiteState);
 updateParcState();
 
-
-// ===== Sidebar: multi-sélection avec Ctrl/⌘ =====
-document.querySelectorAll('.tree-leaf').forEach(leaf => {
-  leaf.addEventListener('click', (e) => {
-    const leaves = document.querySelectorAll('.tree-leaf');
-
-    if (e.ctrlKey || e.metaKey) {
-      // multi-sélection: on bascule seulement l’élément cliqué
-      leaf.classList.toggle('is-active');
-      leaf.setAttribute('aria-selected', leaf.classList.contains('is-active'));
-    } else {
-      // sélection unique: on nettoie puis on active celui cliqué
-      leaves.forEach(l => { 
-        l.classList.remove('is-active'); 
-        l.setAttribute('aria-selected', 'false');
-      });
-      leaf.classList.add('is-active');
-      leaf.setAttribute('aria-selected', 'true');
-    }
-
-    const selection = Array.from(document.querySelectorAll('.tree-leaf.is-active'))
-      .map(el => el.textContent.trim());
-    console.log('Bâtiments sélectionnés :', selection);
-  });
-});
-
-document.querySelectorAll('.tree-node, .tree-leaf').forEach(item => {
-  item.addEventListener('click', e => {
-    e.stopPropagation();
-
-    const isActive = item.classList.contains('is-active');
-    item.classList.toggle('is-active', !isActive);
-
-    if (item.classList.contains('tree-node')) {
-      // Sélectionne ou désélectionne tous les enfants
-      const children = item.parentElement.querySelectorAll('.tree-leaf, .tree-node');
-      children.forEach(child => {
-        child.classList.toggle('is-active', !isActive);
-      });
-    }
-  });
-});
-
-
 /* ==== Sidebar responsive (hamburger) ==== */
 const body = document.body;
 const burger = document.querySelector('.hamburger');

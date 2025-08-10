@@ -56,13 +56,30 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .pill-value{font-size:1.05rem; font-weight:800; letter-spacing:-0.01em; font-variant-numeric: tabular-nums}
 .pill-unit{font-size:.8rem; color:#94a3b8; margin-left:2px}
 
-.top-nav{display:flex; gap:12px; margin:0 0 12px; padding:0; border:none; border-radius:0; background:transparent; box-shadow:none; align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible}
-.top-item{appearance:none; border:none; background:transparent; color:#0f172a; padding:8px 6px; border-radius:0; font-weight:700; font-size:.95rem; cursor:pointer; display:flex; align-items:center; gap:8px; position:relative} 
+/* Menu du haut */
+.top-nav{
+  display:flex; 
+  gap:20px;                     /* + d’espace entre items */
+  margin:0 0 24px;              /* + d’air sous le menu */
+  padding:0 0 6px;              /* place pour la petite ligne */
+  border:none; border-radius:0; background:transparent; box-shadow:none;
+  border-bottom:1px solid rgba(0,0,0,.05);  /* liseré doux */
+  align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible
+}
+.top-item{
+  appearance:none; border:none; background:transparent; color:#0f172a;
+  padding:8px 6px; border-radius:0; font-weight:700; font-size:.95rem; cursor:pointer;
+  display:flex; align-items:center; gap:8px; position:relative
+} 
 .top-item:focus-visible{outline:none; box-shadow:0 0 0 6px var(--ring)}
-.top-item.is-active::after{content:""; position:absolute; left:0; right:0; bottom:-4px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa)}  
+.top-item.is-active::after{
+  content:""; position:absolute; left:0; right:0; bottom:-10px;  /* soulignement un peu plus bas */
+  height:3px; border-radius:2px; background:var(--section-color, #60a5fa)
+}  
 .top-item:hover{opacity:.9}
 .top-item.is-active{color:#0f172a} 
-@media (max-width:640px){ .top-nav{flex-wrap:nowrap} }
+@media (max-width:640px){ .top-nav{flex-wrap:nowrap; gap:14px; margin-bottom:16px} }
+
 .section{margin-top:18px} 
 .section[hidden]{display:none}
 
@@ -86,7 +103,10 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .ps-label{font-weight:700; color:#111827}
 .ps-dot{margin-left:auto; width:12px; height:12px; border-radius:999px; background:var(--active-color, #cbd5e1); position:relative; box-shadow:0 0 4px var(--active-color, #94a3b8), 0 0 10px var(--active-color, #94a3b8);}
 
-.panel-box{border:2px solid var(--active-color, #cbd5e1); border-radius:16px; background:#fff; padding:16px; box-shadow:0 6px 16px rgba(16,24,40,.06); position:relative; width:100%;}
+.panel-box{
+  border:2px solid var(--active-color, #cbd5e1); border-radius:16px; background:#fff; padding:16px;
+  box-shadow:0 6px 16px rgba(16,24,40,.06); position:relative; width:100%;
+}
 .panel-sticky.is-idle{opacity:0; transform:translateY(-8px); pointer-events:none}
 .panel-top-sentinel{position:absolute; top:0; left:0; width:1px; height:1px; pointer-events:none}
 
@@ -107,13 +127,3 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .ti-ico svg{width:18px; height:18px; display:block}
 .ti-label{white-space:nowrap}
-/* Espacement harmonieux entre le menu principal et les onglets KPI */
-.top-nav {
-  margin-bottom: 24px; /* espace vertical plus large */
-}
-
-@media (max-width: 640px) {
-  .top-nav {
-    margin-bottom: 16px; /* espace un peu réduit sur mobile */
-  }
-}

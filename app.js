@@ -173,6 +173,12 @@ function selectSection(name){
 
 }
 
+const originalSelectSection = selectSection;
+selectSection = function(name){
+  originalSelectSection(name);
+  requestAnimationFrame(alignPanelToTabs);
+};
+
 
 topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
 selectSection('energie');
@@ -184,12 +190,6 @@ window.addEventListener('load', () => {
   checkWholeParc(true);
   updateParcFromSites();
 });
-
-const originalSelectSection = selectSection;
-selectSection = function(name){
-  originalSelectSection(name);
-  requestAnimationFrame(alignPanelToTabs);
-};
 
 /* ===== Tiny tests (console) ===== */
 (function runTests(){

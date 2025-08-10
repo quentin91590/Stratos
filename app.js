@@ -95,29 +95,40 @@ window.addEventListener('load', updateTrendPadding);
 /* ===== Top menu (sections) ===== */
 const topItems = document.querySelectorAll('.top-nav .top-item');
 function selectSection(name){
+  // 1) caler l’offset sticky avant de basculer
+  syncStickyTop();
+
   const root = document.documentElement;
   const isEnergy = (name === 'energie');
   const tabsEl = document.querySelector('.kpi-tabs');
   const panelsEl = document.querySelector('.kpi-panels');
+
   if(tabsEl) tabsEl.hidden = !isEnergy;
   if(panelsEl) panelsEl.hidden = !isEnergy;
+
   ['travaux','regs','financier'].forEach(n=>{
     const el = document.getElementById('section-'+n);
     if(el) el.hidden = (n !== name);
   });
+
   if(isEnergy){
     root.style.setProperty('--section-color', '#60a5fa');
   } else {
     const map = { travaux:'#b45309', regs:'#ef4444', financier:'#facc15' };
     root.style.setProperty('--section-color', map[name] || '#94a3b8');
   }
+
   topItems.forEach(btn=>{
     const active = (btn.dataset.section === name);
     btn.classList.toggle('is-active', active);
     if(active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
+    if(active) btn.blur(); // 3) évite que le focus force un scroll
   });
-  if(isEnergy){ updateTrendPadding(); handleScroll(); }
+
+  // 2) remonter proprement en haut pour éviter les à-coups
+  window.scrollTo({ top: 0, behavior: 'smooth' });
 }
+
 
 topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
 selectSection('energie');

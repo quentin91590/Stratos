@@ -58,6 +58,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* Menu du haut */
 .top-nav{
+  background:#fff;
   position: relative;
   z-index: 1000;
   display:flex; 
@@ -145,16 +146,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* === Sidebar / Tree === */
+:root{
+  --sticky-top: 60px; /* valeur par défaut */
+}
 /* --- Sidebar : collée à gauche, liseré droit --- */
 .side-nav{
   position: sticky;
-  top: 0;
+  top: var(--sticky-top);
   align-self: start;
   background: transparent;
   border: none;
   border-right: 1px solid rgba(0,0,0,.05);
   padding-right: 12px;
-  max-height: 100vh;
+  max-height: calc(100vh - var(--sticky-top));
   overflow-y: auto;
 }
 

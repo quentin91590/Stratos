@@ -97,13 +97,13 @@ window.addEventListener('load', updateTrendPadding);
 const topItems = document.querySelectorAll('.top-nav .top-item');
 
 
-  function syncStickyTop() {
-    const topNav = document.querySelector('.top-nav');
-    const header = document.querySelector('.sidebar-header'); // si présent au-dessus du menu
-    const extra = header ? header.offsetHeight : 0;
-    const h = (topNav ? topNav.offsetHeight : 0);
-    document.documentElement.style.setProperty('--sticky-top', (h) + 'px');
-  }
+function syncStickyTop() {
+  const topNav = document.querySelector('.top-nav');
+  const header = document.querySelector('.sidebar-header');
+  const h = (topNav ? topNav.offsetHeight : 0) + (header ? header.offsetHeight : 0);
+  document.documentElement.style.setProperty('--sticky-top', h + 'px');
+}
+
   window.addEventListener('load', syncStickyTop);
   window.addEventListener('resize', syncStickyTop);
 function selectSection(name){
@@ -148,6 +148,15 @@ function selectSection(name){
 
 topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
 selectSection('energie');
+
+window.addEventListener('load', () => {
+  syncStickyTop();
+  selectSection('energie');
+  selectTab(initial || tabs[0]);
+  checkWholeParc(true);
+  updateParcFromSites();
+});
+
 
 /* ===== Tiny tests (console) ===== */
 (function runTests(){

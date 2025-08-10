@@ -11,39 +11,70 @@
 <body>
   <div class="app">
     <!-- Sidebar (arborescence) -->
-    <aside id="sidebar" class="side-nav" aria-label="Arborescence">
-      <nav class="tree" role="tree">
-        <button class="tree-node is-current" role="treeitem" aria-selected="true" aria-level="1">
-          <span class="node-ico" aria-hidden="true">🏷️</span>
-          Parc <span class="badge">2 sites</span>
-        </button>
+<aside id="sidebar" class="side-nav" aria-label="Arborescence">
+  <nav class="tree" role="tree">
 
-        <div class="tree-group" role="group" aria-level="2">
-          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
-            <span class="chev" aria-hidden="true">▾</span>
-            <span class="node-ico" aria-hidden="true">🏢</span>
-            Site Alpha <span class="badge">3 bât.</span>
-          </button>
-          <ul class="tree-children" role="group">
-            <li><button class="tree-leaf is-active" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment A</button></li>
-            <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment B</button></li>
-            <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment C</button></li>
-          </ul>
-        </div>
+    <!-- Parc -->
+    <button class="tree-node is-current" role="treeitem" aria-selected="true" aria-level="1">
+      <input type="checkbox" class="tree-check" aria-hidden="true">
+      Parc <span class="badge">2 sites</span>
+    </button>
 
-        <div class="tree-group" role="group" aria-level="2">
-          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
-            <span class="chev" aria-hidden="true">▾</span>
-            <span class="node-ico" aria-hidden="true">🏢</span>
-            Site Beta <span class="badge">2 bât.</span>
+    <!-- Site Alpha -->
+    <div class="tree-group" role="group" aria-level="2">
+      <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+        <input type="checkbox" class="tree-check" aria-hidden="true">
+        <span class="chev" aria-hidden="true">▾</span>
+        Site Alpha <span class="badge">3 bât.</span>
+      </button>
+      <ul class="tree-children" role="group">
+        <li>
+          <button class="tree-leaf is-active" role="treeitem" aria-level="3">
+            <input type="checkbox" class="tree-check" aria-hidden="true" checked>
+            Bâtiment A
           </button>
-          <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment D</button></li>
-            <li><button class="tree-leaf" role="treeitem" aria-level="3"><span class="dot" aria-hidden="true"></span>Bâtiment E</button></li>
-          </ul>
-        </div>
-      </nav>
-    </aside>
+        </li>
+        <li>
+          <button class="tree-leaf" role="treeitem" aria-level="3">
+            <input type="checkbox" class="tree-check" aria-hidden="true">
+            Bâtiment B
+          </button>
+        </li>
+        <li>
+          <button class="tree-leaf" role="treeitem" aria-level="3">
+            <input type="checkbox" class="tree-check" aria-hidden="true">
+            Bâtiment C
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <!-- Site Beta -->
+    <div class="tree-group" role="group" aria-level="2">
+      <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+        <input type="checkbox" class="tree-check" aria-hidden="true">
+        <span class="chev" aria-hidden="true">▾</span>
+        Site Beta <span class="badge">2 bât.</span>
+      </button>
+      <ul class="tree-children" role="group">
+        <li>
+          <button class="tree-leaf" role="treeitem" aria-level="3">
+            <input type="checkbox" class="tree-check" aria-hidden="true">
+            Bâtiment D
+          </button>
+        </li>
+        <li>
+          <button class="tree-leaf" role="treeitem" aria-level="3">
+            <input type="checkbox" class="tree-check" aria-hidden="true">
+            Bâtiment E
+          </button>
+        </li>
+      </ul>
+    </div>
+
+  </nav>
+</aside>
+
 
     <!-- Contenu principal -->
     <main class="main">

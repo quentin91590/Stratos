@@ -278,3 +278,10 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .tree .tree-node.is-active:hover {
   background: #dbf5ea;
 }
+.tree-check {
+  margin-right: 6px;
+  accent-color: #10b981; /* vert */
+  cursor: pointer;
+  width: 16px;
+  height: 16px;
+}

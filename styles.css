@@ -58,6 +58,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* Menu du haut */
 .top-nav{
+  position: relative;
+  z-index: 30;
   display:flex; 
   gap:20px;                     /* + d’espace entre items */
   margin:0 0 24px;              /* + d’air sous le menu */

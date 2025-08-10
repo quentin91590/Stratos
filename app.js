@@ -149,3 +149,20 @@ selectSection('energie');
     selectTab(initial);
   }catch(e){ console.warn('Tests UI: ', e); }
 })();
+/* ===== Sidebar: toggles & sélection ===== */
+document.querySelectorAll('.tree .toggle').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    btn.setAttribute('aria-expanded', String(!expanded));
+    const list = btn.parentElement.querySelector('.tree-children');
+    if (list) list.style.display = expanded ? 'none' : 'flex';
+  });
+});
+
+document.querySelectorAll('.tree-leaf').forEach(leaf=>{
+  leaf.addEventListener('click', ()=>{
+    document.querySelectorAll('.tree-leaf').forEach(l=>l.classList.remove('is-active'));
+    leaf.classList.add('is-active');
+    // ici plus tard: filtrer les KPIs selon le bâtiment sélectionné
+  });
+});

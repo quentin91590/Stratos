@@ -107,3 +107,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .ti-ico svg{width:18px; height:18px; display:block}
 .ti-label{white-space:nowrap}
+/* Espacement harmonieux entre le menu principal et les onglets KPI */
+.top-nav {
+  margin-bottom: 24px; /* espace vertical plus large */
+}
+
+@media (max-width: 640px) {
+  .top-nav {
+    margin-bottom: 16px; /* espace un peu réduit sur mobile */
+  }
+}

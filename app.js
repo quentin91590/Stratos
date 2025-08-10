@@ -159,26 +159,31 @@ document.querySelectorAll('.tree .toggle').forEach(btn=>{
   });
 });
 
+// ===== Sidebar: multi-sélection avec Ctrl/⌘ =====
 document.querySelectorAll('.tree-leaf').forEach(leaf => {
   leaf.addEventListener('click', (e) => {
-    // Si tu veux un toggle direct au clic :
-    leaf.classList.toggle('is-active');
+    const leaves = document.querySelectorAll('.tree-leaf');
 
-    // --- Si tu veux plutôt un mode "Ctrl pour multi", décommente :
-    
     if (e.ctrlKey || e.metaKey) {
+      // multi-sélection: on bascule seulement l’élément cliqué
       leaf.classList.toggle('is-active');
+      leaf.setAttribute('aria-selected', leaf.classList.contains('is-active'));
     } else {
-      document.querySelectorAll('.tree-leaf').forEach(l => l.classList.remove('is-active'));
+      // sélection unique: on nettoie puis on active celui cliqué
+      leaves.forEach(l => { 
+        l.classList.remove('is-active'); 
+        l.setAttribute('aria-selected', 'false');
+      });
       leaf.classList.add('is-active');
+      leaf.setAttribute('aria-selected', 'true');
     }
-    
-    // Ici, plus tard : filtrer les KPIs pour tous les bâtiments sélectionnés
+
     const selection = Array.from(document.querySelectorAll('.tree-leaf.is-active'))
-                           .map(el => el.textContent.trim());
+      .map(el => el.textContent.trim());
     console.log('Bâtiments sélectionnés :', selection);
   });
 });
+
 /* ==== Sidebar responsive (hamburger) ==== */
 const body = document.body;
 const burger = document.querySelector('.hamburger');

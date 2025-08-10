@@ -59,7 +59,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 /* Menu du haut */
 .top-nav{
   position: relative;
-  z-index: 30;
+  z-index: 1000;
   display:flex; 
   gap:20px;                     /* + d’espace entre items */
   margin:0 0 24px;              /* + d’air sous le menu */
@@ -100,7 +100,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @keyframes chev{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
 
 /* Sticky header in panel */
-.panel-sticky{position:sticky; top:0; display:flex; align-items:center; gap:10px; padding:12px 16px; background:#fff; z-index:10; transition:opacity .25s ease, transform .25s ease; opacity:1; transform:translateY(0); border-top-left-radius:14px; border-top-right-radius:14px;}
+.panel-sticky{pointer-events: none; position:sticky; top:0; display:flex; align-items:center; gap:10px; padding:12px 16px; background:#fff; z-index:10; transition:opacity .25s ease, transform .25s ease; opacity:1; transform:translateY(0); border-top-left-radius:14px; border-top-right-radius:14px;}
 .ps-icon svg{width:18px; height:18px; display:block}
 .ps-label{font-weight:700; color:#111827}
 .ps-dot{margin-left:auto; width:12px; height:12px; border-radius:999px; background:var(--active-color, #cbd5e1); position:relative; box-shadow:0 0 4px var(--active-color, #94a3b8), 0 0 10px var(--active-color, #94a3b8);}

@@ -216,3 +216,16 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @media (max-width: 640px){
   .year-picker{ height: 32px; font-size: .9rem; }
 }
+
+/* Coupe les débordements (ombre + glow) des onglets */
+.kpi-wrap,
+.section .tabset,
+.kpi-tabs{
+  overflow-x: clip;           /* ou hidden si clip non supporté */
+}
+
+/* Optionnel : sécurise le zoom pour ne pas mordre d’1px */
+.kpi[aria-selected="true"]{ transform: translateY(-4px) scale(1.01); }
+
+/* Optionnel : lueur un poil moins large sur le point */
+.kpi-dot::after{ inset: -4px; }   /* était -6px */

@@ -302,3 +302,28 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   color: #0d47a1;
   letter-spacing: 1px;
 }
+/* ===== Mini KPI (sections hors Énergie) ===== */
+.mini-kpis{
+  display:grid; grid-template-columns:repeat(3, minmax(200px,1fr));
+  gap:12px; margin-top:8px;
+}
+@media (max-width: 960px){ .mini-kpis{ grid-template-columns:repeat(2,1fr);} }
+@media (max-width: 520px){ .mini-kpis{ grid-template-columns:1fr;} }
+
+.mini-kpi{
+  background:#fff; border:1px solid var(--border); border-radius:14px; padding:14px;
+  box-shadow:0 1px 0 rgba(0,0,0,.02), 0 8px 24px rgba(16,24,40,.06);
+}
+.mk-head{ display:flex; align-items:center; gap:8px; margin-bottom:6px; }
+.mk-title{ font-weight:700; color:#0f172a; }
+.mk-ico{
+  width:32px; height:32px; display:grid; place-items:center; border-radius:10px;
+  background: color-mix(in srgb, var(--section-color) 18%, #fff);
+  color: var(--section-color);
+}
+.mk-ico svg{ width:18px; height:18px; }
+.mk-value{
+  font-size:1.4rem; font-weight:800; letter-spacing:-0.01em; color:#111827;
+  font-variant-numeric: tabular-nums;
+}
+.mk-sub{ font-size:.85rem; color:#64748b; }

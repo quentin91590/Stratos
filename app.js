@@ -2,133 +2,148 @@
 (() => {
   /* ========== Helpers ========== */
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-  const $  = (sel, root = document) => root.querySelector(sel);
+  const $ = (sel, root = document) => root.querySelector(sel);
 
   /* ========== Sticky (uniquement pour le bloc Énergie) ========== */
-  function setupSticky(container){
+  function setupSticky(container) {
     const sticky = container.querySelector('.panel-sticky');
     const topSentinel = container.querySelector('.panel-top-sentinel');
-    if(!sticky || !topSentinel) return;
+    if (!sticky || !topSentinel) return;
 
     let atTopVisible = true;
     let idleTimer = null;
 
-    if('IntersectionObserver' in window){
+    if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver(entries => {
         atTopVisible = entries[0]?.isIntersecting ?? true;
-        if(atTopVisible) sticky.classList.remove('is-idle');
-      }, {root:null, threshold:0.01});
+        if (atTopVisible) sticky.classList.remove('is-idle');
+      }, { root: null, threshold: 0.01 });
       io.observe(topSentinel);
     }
 
-    function handleScroll(){
+    function handleScroll() {
       sticky.classList.remove('is-idle');
-      if(idleTimer) clearTimeout(idleTimer);
-      if(atTopVisible) return;
-      idleTimer = setTimeout(()=> sticky.classList.add('is-idle'), 900);
+      if (idleTimer) clearTimeout(idleTimer);
+      if (atTopVisible) return;
+      idleTimer = setTimeout(() => sticky.classList.add('is-idle'), 900);
     }
 
-    window.addEventListener('scroll', handleScroll, {passive:true});
+    window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
   /* ========== Tabset générique (Énergie + sections alt) ========== */
-  function updateTrendPadding(scope=document){
-    scope.querySelectorAll('.kpi-value-wrap').forEach(w=>{
+  function updateTrendPadding(scope = document) {
+    scope.querySelectorAll('.kpi-value-wrap').forEach(w => {
       const t = w.querySelector('.kpi-trend');
-      if(!t) return;
+      if (!t) return;
       const wpx = Math.ceil(t.getBoundingClientRect().width);
       w.style.setProperty('--trend-w', wpx + 'px');
     });
   }
 
-  function initTabset(container){
-    if(!container){ console.warn('[tabset] container manquant'); return; }
+  function initTabset(container) {
+    if (!container) { console.warn('[tabset] container manquant'); return; }
 
-    const tabs   = container.querySelectorAll('[role="tab"]');
+    const tabs = container.querySelectorAll('[role="tab"]');
     const panels = container.querySelectorAll('[role="tabpanel"]');
     const panelsWrap = container.querySelector('.kpi-panels');
     const sticky = container.querySelector('.panel-sticky'); // présent seulement sur Énergie
 
-    if(tabs.length === 0){
+    // --- [ADD] assure un chevron animé pour chaque onglet ---
+    tabs.forEach(tab => {
+      if (!tab.querySelector('.kpi-chevron')) {
+        const chev = document.createElement('span');
+        chev.className = 'kpi-chevron';
+        chev.setAttribute('aria-hidden', 'true');
+        chev.innerHTML = `
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M6 9l6 6 6-6"/>
+      </svg>`;
+        tab.appendChild(chev); // le chevron vient en dernier, comme dans Énergie
+      }
+    });
+
+    if (tabs.length === 0) {
       console.warn('[tabset] aucun onglet trouvé dans', container);
       return;
     }
 
     // Vérifie le mapping aria-controls -> panel
-    tabs.forEach(tab=>{
+    tabs.forEach(tab => {
       const id = tab.getAttribute('aria-controls');
-      if(!id || !container.querySelector('#'+CSS.escape(id))){
+      if (!id || !container.querySelector('#' + CSS.escape(id))) {
         console.warn('[tabset] aria-controls sans panneau correspondant:', tab);
       }
     });
 
-    function selectTab(tab){
-      if(!tab) return;
+    function selectTab(tab) {
+      if (!tab) return;
 
       // États ARIA
-      tabs.forEach(t=>{ t.setAttribute('aria-selected','false'); t.setAttribute('aria-expanded','false'); });
-      tab.setAttribute('aria-selected','true');
-      tab.setAttribute('aria-expanded','true');
+      tabs.forEach(t => { t.setAttribute('aria-selected', 'false'); t.setAttribute('aria-expanded', 'false'); });
+      tab.setAttribute('aria-selected', 'true');
+      tab.setAttribute('aria-expanded', 'true');
 
       // Panneaux
       const target = tab.getAttribute('aria-controls');
       panels.forEach(p => p.hidden = (p.id !== target));
 
       // Couleur active
-      try{
+      try {
         const c = getComputedStyle(tab).getPropertyValue('--status').trim();
-        if(c && panelsWrap) panelsWrap.style.setProperty('--active-color', c);
+        if (c && panelsWrap) panelsWrap.style.setProperty('--active-color', c);
         // Sticky (énergie)
-        if(sticky){
+        if (sticky) {
           const psIcon = sticky.querySelector('.ps-icon');
           const srcIcon = tab.querySelector('.kpi-icon');
-          if(psIcon && srcIcon && srcIcon.firstElementChild){
+          if (psIcon && srcIcon && srcIcon.firstElementChild) {
             psIcon.innerHTML = '';
             psIcon.appendChild(srcIcon.firstElementChild.cloneNode(true));
           }
           const psDot = sticky.querySelector('.ps-dot');
-          if(psDot && c) psDot.style.background = c;
+          if (psDot && c) psDot.style.background = c;
           const label = tab.querySelector('.kpi-label');
           const ofEl = sticky.querySelector('#panel-of');
-          if(label && ofEl) ofEl.textContent = label.textContent;
+          if (label && ofEl) ofEl.textContent = label.textContent;
         }
-      }catch(e){ console.warn('[tabset] color/sticky:', e); }
+      } catch (e) { console.warn('[tabset] color/sticky:', e); }
 
       // Synthèse (présente uniquement dans Énergie, sinon no-op)
       const nSites = tab.dataset.sites || '';
       const nSre = tab.dataset.sre || '';
       const s1 = document.getElementById('sum-sites-val');
       const s2 = document.getElementById('sum-sre-val');
-      const fmt = v => v? new Intl.NumberFormat('fr-FR').format(Number(v)) : '—';
-      if(s1) s1.textContent = fmt(nSites);
-      if(s2) s2.textContent = fmt(nSre);
+      const fmt = v => v ? new Intl.NumberFormat('fr-FR').format(Number(v)) : '—';
+      if (s1) s1.textContent = fmt(nSites);
+      if (s2) s2.textContent = fmt(nSre);
 
       // Trend padding + anim
       updateTrendPadding(container);
-      container.querySelectorAll('.kpi .arr').forEach(a=>a.classList.remove('animate-up','animate-down'));
+      container.querySelectorAll('.kpi .arr').forEach(a => a.classList.remove('animate-up', 'animate-down'));
       const tr = tab.querySelector('.kpi-trend');
-      if(tr){
+      if (tr) {
         const a = tr.querySelector('.arr');
-        if(a){ a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up'); }
+        if (a) { a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up'); }
       }
     }
 
     // Click
-    tabs.forEach(tab=> tab.addEventListener('click', ()=> selectTab(tab)));
+    tabs.forEach(tab => tab.addEventListener('click', () => selectTab(tab)));
 
     // A11y clavier
     const tabsEl = container.querySelector('.kpi-tabs');
     const idxOf = el => Array.from(tabs).indexOf(el);
-    if(tabsEl){
-      tabsEl.addEventListener('keydown', (e)=>{
-        if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return;
+    if (tabsEl) {
+      tabsEl.addEventListener('keydown', (e) => {
+        if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
         e.preventDefault();
         const current = document.activeElement.closest('[role="tab"]') || tabs[0];
         let idx = idxOf(current);
-        if(e.key==='ArrowRight') idx = (idx+1)%tabs.length;
-        if(e.key==='ArrowLeft') idx = (idx-1+tabs.length)%tabs.length;
-        if(e.key==='Home') idx = 0;
-        if(e.key==='End') idx = tabs.length-1;
+        if (e.key === 'ArrowRight') idx = (idx + 1) % tabs.length;
+        if (e.key === 'ArrowLeft') idx = (idx - 1 + tabs.length) % tabs.length;
+        if (e.key === 'Home') idx = 0;
+        if (e.key === 'End') idx = tabs.length - 1;
         tabs[idx].focus(); selectTab(tabs[idx]);
       });
     }
@@ -136,7 +151,7 @@
     // Init
     const initial = container.querySelector('[role="tab"][aria-selected="true"]') || tabs[0];
     // Laisse le layout se poser pour des mesures correctes
-    requestAnimationFrame(()=>{ selectTab(initial); updateTrendPadding(container); });
+    requestAnimationFrame(() => { selectTab(initial); updateTrendPadding(container); });
 
     // Sticky si dispo
     setupSticky(container);
@@ -150,45 +165,45 @@
     const h = (topNav ? topNav.offsetHeight : 0) + (header ? header.offsetHeight : 0);
     document.documentElement.style.setProperty('--sticky-top', h + 'px');
   }
-  function selectSection(name){
+  function selectSection(name) {
     syncStickyTop();
     const root = document.documentElement;
 
     // Affiche uniquement le tabset de la section active
     const energyBlock = document.getElementById('energy-block');
-    if(energyBlock) energyBlock.hidden = (name !== 'energie');
+    if (energyBlock) energyBlock.hidden = (name !== 'energie');
 
-    ['etat','travaux','financier'].forEach(n=>{
-      const el = document.getElementById('section-'+n);
-      if(el) el.hidden = (n !== name);
+    ['etat', 'travaux', 'financier'].forEach(n => {
+      const el = document.getElementById('section-' + n);
+      if (el) el.hidden = (n !== name);
     });
 
     // Couleur
-    if(name === 'energie') root.style.setProperty('--section-color', '#60a5fa');
+    if (name === 'energie') root.style.setProperty('--section-color', '#60a5fa');
     else {
-      const map = { etat:'#10b981', travaux:'#b45309', financier:'#facc15' };
+      const map = { etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
       root.style.setProperty('--section-color', map[name] || '#94a3b8');
     }
 
     // Visuel actif
-    topItems.forEach(btn=>{
+    topItems.forEach(btn => {
       const active = (btn.dataset.section === name);
       btn.classList.toggle('is-active', active);
-      if(active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
-      if(active) btn.blur();
+      if (active) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+      if (active) btn.blur();
     });
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
+  topItems.forEach(btn => btn.addEventListener('click', () => selectSection(btn.dataset.section)));
 
   window.addEventListener('resize', syncStickyTop);
 
   /* ========== Sidebar (cases + hamburger) ========== */
-  const parcBtn   = $('.tree > .tree-node:not(.toggle)');
+  const parcBtn = $('.tree > .tree-node:not(.toggle)');
   const parcCheck = parcBtn?.querySelector('.tree-check');
-  const siteBtns  = $$('.tree-group > .tree-node.toggle');
+  const siteBtns = $$('.tree-group > .tree-node.toggle');
   const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
   const siteLeaves = (siteBtn) => {
     const list = siteBtn?.nextElementSibling;
@@ -196,90 +211,90 @@
   };
   const leafCheck = (leafBtn) => leafBtn?.querySelector('.tree-check');
 
-  function setActive(btn, on){ if(btn){ btn.classList.toggle('is-active', !!on); btn.setAttribute('aria-selected', !!on); } }
-  function clearPartial(btn){ btn?.classList.remove('is-partial'); }
+  function setActive(btn, on) { if (btn) { btn.classList.toggle('is-active', !!on); btn.setAttribute('aria-selected', !!on); } }
+  function clearPartial(btn) { btn?.classList.remove('is-partial'); }
 
-  function updateSiteFromLeaves(siteBtn){
-    if(!siteBtn) return;
+  function updateSiteFromLeaves(siteBtn) {
+    if (!siteBtn) return;
     const leaves = siteLeaves(siteBtn);
     const checks = leaves.map(leafCheck).filter(Boolean);
     const n = checks.length;
     const sel = checks.filter(c => c.checked).length;
-    const cb  = siteCheck(siteBtn);
-    if(!cb) return;
-    cb.indeterminate = sel>0 && sel<n;
-    cb.checked = sel===n && n>0;
+    const cb = siteCheck(siteBtn);
+    if (!cb) return;
+    cb.indeterminate = sel > 0 && sel < n;
+    cb.checked = sel === n && n > 0;
     siteBtn.classList.toggle('is-partial', cb.indeterminate);
     setActive(siteBtn, cb.checked);
-    if(cb.checked===false && !cb.indeterminate) clearPartial(siteBtn);
+    if (cb.checked === false && !cb.indeterminate) clearPartial(siteBtn);
   }
-  function updateParcFromSites(){
-    if(!parcCheck) return;
+  function updateParcFromSites() {
+    if (!parcCheck) return;
     const checks = siteBtns.map(siteCheck).filter(Boolean);
     const n = checks.length;
     const allChecked = checks.every(c => c.checked);
     const any = checks.some(c => c.checked || c.indeterminate);
     parcCheck.indeterminate = any && !allChecked;
-    parcCheck.checked = allChecked && n>0;
-    if(parcBtn){
+    parcCheck.checked = allChecked && n > 0;
+    if (parcBtn) {
       parcBtn.classList.toggle('is-partial', parcCheck.indeterminate);
       setActive(parcBtn, parcCheck.checked);
-      if(!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
+      if (!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
     }
   }
-  function checkWholeSite(siteBtn, on){
-    if(!siteBtn) return;
+  function checkWholeSite(siteBtn, on) {
+    if (!siteBtn) return;
     const cb = siteCheck(siteBtn);
-    if(cb){ cb.indeterminate = false; cb.checked = !!on; }
+    if (cb) { cb.indeterminate = false; cb.checked = !!on; }
     setActive(siteBtn, !!on);
-    siteLeaves(siteBtn).forEach(leaf=>{
+    siteLeaves(siteBtn).forEach(leaf => {
       const lcb = leafCheck(leaf);
-      if(lcb) lcb.checked = !!on;
+      if (lcb) lcb.checked = !!on;
       setActive(leaf, !!on);
     });
     updateSiteFromLeaves(siteBtn);
     updateParcFromSites();
   }
-  function checkWholeParc(on){
+  function checkWholeParc(on) {
     siteBtns.forEach(site => checkWholeSite(site, on));
     updateParcFromSites();
   }
 
-  $$('.tree-leaf').forEach(leafBtn=>{
+  $$('.tree-leaf').forEach(leafBtn => {
     const cb = leafCheck(leafBtn);
-    if(!cb) return;
-    leafBtn.addEventListener('click', (e)=>{
-      if(e.target === cb) return;
+    if (!cb) return;
+    leafBtn.addEventListener('click', (e) => {
+      if (e.target === cb) return;
       cb.checked = !cb.checked;
-      cb.dispatchEvent(new Event('change', {bubbles:true}));
+      cb.dispatchEvent(new Event('change', { bubbles: true }));
     });
-    cb.addEventListener('change', ()=>{
+    cb.addEventListener('change', () => {
       setActive(leafBtn, cb.checked);
       const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
-      if(siteBtn) updateSiteFromLeaves(siteBtn);
+      if (siteBtn) updateSiteFromLeaves(siteBtn);
       updateParcFromSites();
     });
   });
 
-  siteBtns.forEach(siteBtn=>{
+  siteBtns.forEach(siteBtn => {
     const cb = siteCheck(siteBtn);
-    if(!cb) return;
-    siteBtn.addEventListener('click', (e)=>{
+    if (!cb) return;
+    siteBtn.addEventListener('click', (e) => {
       const onChevron = !!e.target.closest?.('.chev');
-      if(onChevron){
+      if (onChevron) {
         const expanded = siteBtn.getAttribute('aria-expanded') === 'true';
         siteBtn.setAttribute('aria-expanded', String(!expanded));
         const list = siteBtn.parentElement.querySelector('.tree-children');
-        if(list) list.style.display = expanded ? 'none' : 'flex';
+        if (list) list.style.display = expanded ? 'none' : 'flex';
         return;
       }
-      if(e.target !== cb){
+      if (e.target !== cb) {
         cb.checked = !cb.checked;
         cb.indeterminate = false;
-        cb.dispatchEvent(new Event('change', {bubbles:true}));
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
-    cb.addEventListener('change', ()=>{ checkWholeSite(siteBtn, cb.checked); });
+    cb.addEventListener('change', () => { checkWholeSite(siteBtn, cb.checked); });
   });
 
   const body = document.body;
@@ -297,7 +312,7 @@
 
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
-  document.addEventListener('DOMContentLoaded', ()=> {
+  document.addEventListener('DOMContentLoaded', () => {
     try {
       // Aligner la marge sticky avec le header
       syncStickyTop();

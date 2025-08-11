@@ -8,86 +8,86 @@ let atTopVisible = true;
 let idleTimer = null;
 
 
-if(topSentinel && 'IntersectionObserver' in window){
+if (topSentinel && 'IntersectionObserver' in window) {
   const io = new IntersectionObserver(entries => {
     atTopVisible = entries[0].isIntersecting;
-    if(atTopVisible && sticky){ sticky.classList.remove('is-idle'); }
-  }, {root: null, threshold: 0.01});
+    if (atTopVisible && sticky) { sticky.classList.remove('is-idle'); }
+  }, { root: null, threshold: 0.01 });
   io.observe(topSentinel);
 }
-function handleScroll(){
-  if(!sticky) return;
+function handleScroll() {
+  if (!sticky) return;
   sticky.classList.remove('is-idle');
-  if(idleTimer) clearTimeout(idleTimer);
-  if(atTopVisible) return;
-  idleTimer = setTimeout(()=> sticky.classList.add('is-idle'), 900);
+  if (idleTimer) clearTimeout(idleTimer);
+  if (atTopVisible) return;
+  idleTimer = setTimeout(() => sticky.classList.add('is-idle'), 900);
 }
 
-function updateTrendPadding(){
-  document.querySelectorAll('.kpi-value-wrap').forEach(w=>{
+function updateTrendPadding() {
+  document.querySelectorAll('.kpi-value-wrap').forEach(w => {
     const t = w.querySelector('.kpi-trend');
-    if(!t) return;
+    if (!t) return;
     const wpx = Math.ceil(t.getBoundingClientRect().width);
     w.style.setProperty('--trend-w', wpx + 'px');
   });
 }
 
-function selectTab(tab){
-  tabs.forEach(t=>{t.setAttribute('aria-selected','false'); t.setAttribute('aria-expanded','false');});
-  tab.setAttribute('aria-selected','true');
-  tab.setAttribute('aria-expanded','true');
-  panels.forEach(p=>p.hidden = (p.id !== tab.getAttribute('aria-controls')));
+function selectTab(tab) {
+  tabs.forEach(t => { t.setAttribute('aria-selected', 'false'); t.setAttribute('aria-expanded', 'false'); });
+  tab.setAttribute('aria-selected', 'true');
+  tab.setAttribute('aria-expanded', 'true');
+  panels.forEach(p => p.hidden = (p.id !== tab.getAttribute('aria-controls')));
   const c = getComputedStyle(tab).getPropertyValue('--status').trim();
-  if(c) panelsWrap.style.setProperty('--active-color', c);
+  if (c) panelsWrap.style.setProperty('--active-color', c);
   const activeTop = document.querySelector('.top-item.is-active');
-  if(activeTop && activeTop.dataset.section === 'energie'){
+  if (activeTop && activeTop.dataset.section === 'energie') {
     document.documentElement.style.setProperty('--section-color', '#60a5fa');
   }
   const label = tab.querySelector('.kpi-label');
   const ofEl = document.getElementById('panel-of');
-  if(label && ofEl) ofEl.textContent = label.textContent;
-  if(sticky){
+  if (label && ofEl) ofEl.textContent = label.textContent;
+  if (sticky) {
     const psIcon = sticky.querySelector('.ps-icon');
     const srcIcon = tab.querySelector('.kpi-icon');
-    if(psIcon && srcIcon){ psIcon.innerHTML = srcIcon.innerHTML; }
+    if (psIcon && srcIcon) { psIcon.innerHTML = srcIcon.innerHTML; }
     const psDot = sticky.querySelector('.ps-dot');
-    if(psDot && c){ psDot.style.background = c; }
+    if (psDot && c) { psDot.style.background = c; }
   }
   const nSites = tab.dataset.sites || '';
   const nSre = tab.dataset.sre || '';
   const s1 = document.getElementById('sum-sites-val');
   const s2 = document.getElementById('sum-sre-val');
-  const fmt = v => v? new Intl.NumberFormat('fr-FR').format(Number(v)) : '—';
-  if(s1) s1.textContent = fmt(nSites);
-  if(s2) s2.textContent = fmt(nSre);
+  const fmt = v => v ? new Intl.NumberFormat('fr-FR').format(Number(v)) : '—';
+  if (s1) s1.textContent = fmt(nSites);
+  if (s2) s2.textContent = fmt(nSre);
 
   updateTrendPadding();
   handleScroll();
-  document.querySelectorAll('.kpi .arr').forEach(a=>a.classList.remove('animate-up','animate-down'));
+  document.querySelectorAll('.kpi .arr').forEach(a => a.classList.remove('animate-up', 'animate-down'));
   const tr = tab.querySelector('.kpi-trend');
-  if(tr){
+  if (tr) {
     const a = tr.querySelector('.arr');
-    if(a){ a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up'); }
+    if (a) { a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up'); }
   }
 }
 
 const initial = document.querySelector('.kpi[aria-selected="true"]') || tabs[0];
 
-tabs.forEach(tab=>tab.addEventListener('click', ()=>selectTab(tab)));
+tabs.forEach(tab => tab.addEventListener('click', () => selectTab(tab)));
 window.addEventListener('resize', updateTrendPadding);
-window.addEventListener('scroll', handleScroll, {passive:true});
+window.addEventListener('scroll', handleScroll, { passive: true });
 handleScroll();
 
 const idxOf = el => Array.from(tabs).indexOf(el);
-document.querySelector('.kpi-tabs').addEventListener('keydown', (e)=>{
-  if(!['ArrowRight','ArrowLeft','Home','End'].includes(e.key)) return;
+document.querySelector('.kpi-tabs').addEventListener('keydown', (e) => {
+  if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
   e.preventDefault();
   const current = document.activeElement.closest('[role="tab"]') || initial;
   let idx = idxOf(current);
-  if(e.key==='ArrowRight') idx = (idx+1)%tabs.length;
-  if(e.key==='ArrowLeft') idx = (idx-1+tabs.length)%tabs.length;
-  if(e.key==='Home') idx = 0;
-  if(e.key==='End') idx = tabs.length-1;
+  if (e.key === 'ArrowRight') idx = (idx + 1) % tabs.length;
+  if (e.key === 'ArrowLeft') idx = (idx - 1 + tabs.length) % tabs.length;
+  if (e.key === 'Home') idx = 0;
+  if (e.key === 'End') idx = tabs.length - 1;
   tabs[idx].focus(); selectTab(tabs[idx]);
 });
 
@@ -104,9 +104,9 @@ function syncStickyTop() {
   document.documentElement.style.setProperty('--sticky-top', h + 'px');
 }
 
-  window.addEventListener('load', syncStickyTop);
-  window.addEventListener('resize', syncStickyTop);
-function selectSection(name){
+window.addEventListener('load', syncStickyTop);
+window.addEventListener('resize', syncStickyTop);
+function selectSection(name) {
   // 1) caler l’offset sticky avant de basculer
   syncStickyTop();
 
@@ -118,26 +118,26 @@ function selectSection(name){
 
 
 
-  if(tabsEl) tabsEl.hidden = !isEnergy;
-  if(panelsEl) panelsEl.hidden = !isEnergy;
+  if (tabsEl) tabsEl.hidden = !isEnergy;
+  if (panelsEl) panelsEl.hidden = !isEnergy;
 
-  ['etat','travaux','regs','financier'].forEach(n=>{
-    const el = document.getElementById('section-'+n);
-    if(el) el.hidden = (n !== name);
+  ['etat', 'travaux', 'financier'].forEach(n => {
+    const el = document.getElementById('section-' + n);
+    if (el) el.hidden = (n !== name);
   });
 
-  if(isEnergy){
+  if (isEnergy) {
     root.style.setProperty('--section-color', '#60a5fa');
   } else {
-    const map = { etat:'#10b981', travaux:'#b45309', regs:'#ef4444', financier:'#facc15' };
+    const map = { etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
     root.style.setProperty('--section-color', map[name] || '#94a3b8');
   }
 
-  topItems.forEach(btn=>{
+  topItems.forEach(btn => {
     const active = (btn.dataset.section === name);
     btn.classList.toggle('is-active', active);
-    if(active) btn.setAttribute('aria-current','page'); else btn.removeAttribute('aria-current');
-    if(active) btn.blur(); // 3) évite que le focus force un scroll
+    if (active) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
+    if (active) btn.blur(); // 3) évite que le focus force un scroll
   });
 
   // 2) remonter proprement en haut pour éviter les à-coups
@@ -146,7 +146,7 @@ function selectSection(name){
 }
 
 
-topItems.forEach(btn=> btn.addEventListener('click', ()=> selectSection(btn.dataset.section)));
+topItems.forEach(btn => btn.addEventListener('click', () => selectSection(btn.dataset.section)));
 selectSection('energie');
 
 window.addEventListener('load', () => {
@@ -159,15 +159,15 @@ window.addEventListener('load', () => {
 
 
 /* ===== Tiny tests (console) ===== */
-(function runTests(){
-  try{
+(function runTests() {
+  try {
     console.assert(tabs.length === 6, 'Il doit y avoir 6 onglets');
     const before = document.querySelector('.kpi[aria-selected="true"]');
     const target = document.getElementById('tab-chaleur');
     selectTab(target);
     const after = document.querySelector('.kpi[aria-selected="true"]');
     console.assert(after === target, 'selectTab doit activer l\'onglet cliqué');
-    console.assert(!document.getElementById('panel-energie').hidden && before.id==='tab-energie' ? false : true, 'Le panneau précédent doit se masquer');
+    console.assert(!document.getElementById('panel-energie').hidden && before.id === 'tab-energie' ? false : true, 'Le panneau précédent doit se masquer');
     console.assert(!document.getElementById('panel-chaleur').hidden, 'Le panneau chaleur doit être visible');
     const wrap = target.querySelector('.kpi-value-wrap');
     const tw = getComputedStyle(wrap).getPropertyValue('--trend-w');
@@ -179,18 +179,18 @@ window.addEventListener('load', () => {
     const col = getComputedStyle(document.documentElement).getPropertyValue('--section-color').trim();
     console.assert(col === '#facc15', 'La couleur de Financier doit être jaune (#FACC15).');
     selectTab(initial);
-  }catch(e){ console.warn('Tests UI: ', e); }
+  } catch (e) { console.warn('Tests UI: ', e); }
 })();
 /* ===== Sidebar: cases à cocher + surlignage synchronisés ===== */
 
 // Helpers
-const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
-const $  = (sel, root=document) => root.querySelector(sel);
+const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+const $ = (sel, root = document) => root.querySelector(sel);
 
 // Éléments
-const parcBtn   = $('.tree > .tree-node:not(.toggle)');
+const parcBtn = $('.tree > .tree-node:not(.toggle)');
 const parcCheck = parcBtn?.querySelector('.tree-check');
-const siteBtns  = $$('.tree-group > .tree-node.toggle');
+const siteBtns = $$('.tree-group > .tree-node.toggle');
 const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
 const siteLeaves = (siteBtn) => {
   const list = siteBtn.nextElementSibling;
@@ -199,53 +199,53 @@ const siteLeaves = (siteBtn) => {
 const leafCheck = (leafBtn) => leafBtn.querySelector('.tree-check');
 
 // Visuel actif/partiel
-function setActive(btn, on){
+function setActive(btn, on) {
   btn.classList.toggle('is-active', !!on);
   btn.setAttribute('aria-selected', !!on);
 }
-function clearPartial(btn){ btn.classList.remove('is-partial'); }
+function clearPartial(btn) { btn.classList.remove('is-partial'); }
 
 // Met à jour un site depuis ses bâtiments
-function updateSiteFromLeaves(siteBtn){
+function updateSiteFromLeaves(siteBtn) {
   const leaves = siteLeaves(siteBtn);
   const checks = leaves.map(leafCheck);
   const n = checks.length;
   const sel = checks.filter(c => c.checked).length;
-  const cb  = siteCheck(siteBtn);
-  if(!cb) return;
+  const cb = siteCheck(siteBtn);
+  if (!cb) return;
 
-  cb.indeterminate = sel>0 && sel<n;
-  cb.checked = sel===n && n>0;
+  cb.indeterminate = sel > 0 && sel < n;
+  cb.checked = sel === n && n > 0;
 
   siteBtn.classList.toggle('is-partial', cb.indeterminate);
   setActive(siteBtn, cb.checked);
-  if(cb.checked===false && !cb.indeterminate) clearPartial(siteBtn);
+  if (cb.checked === false && !cb.indeterminate) clearPartial(siteBtn);
 }
 
 // Met à jour le Parc depuis l’état des sites
-function updateParcFromSites(){
-  if(!parcCheck) return;
+function updateParcFromSites() {
+  if (!parcCheck) return;
   const checks = siteBtns.map(siteCheck).filter(Boolean);
   const n = checks.length;
   const allChecked = checks.every(c => c.checked);
   const any = checks.some(c => c.checked || c.indeterminate);
 
   parcCheck.indeterminate = any && !allChecked;
-  parcCheck.checked = allChecked && n>0;
+  parcCheck.checked = allChecked && n > 0;
 
   parcBtn.classList.toggle('is-partial', parcCheck.indeterminate);
   setActive(parcBtn, parcCheck.checked);
-  if(!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
+  if (!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
 }
 
 // Coche/décoche un site entier
-function checkWholeSite(siteBtn, on){
+function checkWholeSite(siteBtn, on) {
   const cb = siteCheck(siteBtn);
-  if(cb){ cb.indeterminate = false; cb.checked = !!on; }
+  if (cb) { cb.indeterminate = false; cb.checked = !!on; }
   setActive(siteBtn, !!on);
-  siteLeaves(siteBtn).forEach(leaf=>{
+  siteLeaves(siteBtn).forEach(leaf => {
     const lcb = leafCheck(leaf);
-    if(lcb) lcb.checked = !!on;
+    if (lcb) lcb.checked = !!on;
     setActive(leaf, !!on);
   });
   updateSiteFromLeaves(siteBtn);
@@ -253,7 +253,7 @@ function checkWholeSite(siteBtn, on){
 }
 
 // Coche/décoche tout le parc
-function checkWholeParc(on){
+function checkWholeParc(on) {
   siteBtns.forEach(site => checkWholeSite(site, on));
   updateParcFromSites();
 }
@@ -261,60 +261,60 @@ function checkWholeParc(on){
 // ——— Listeners ———
 
 // Bâtiments : clic bouton → toggle la case; change → MAJ parents
-$$('.tree-leaf').forEach(leafBtn=>{
+$$('.tree-leaf').forEach(leafBtn => {
   const cb = leafCheck(leafBtn);
-  if(!cb) return;
+  if (!cb) return;
 
-  leafBtn.addEventListener('click', (e)=>{
-    if(e.target === cb) return; // le change fera le reste
+  leafBtn.addEventListener('click', (e) => {
+    if (e.target === cb) return; // le change fera le reste
     cb.checked = !cb.checked;
-    cb.dispatchEvent(new Event('change', {bubbles:true}));
+    cb.dispatchEvent(new Event('change', { bubbles: true }));
   });
 
-  cb.addEventListener('change', ()=>{
+  cb.addEventListener('change', () => {
     setActive(leafBtn, cb.checked);
     const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
-    if(siteBtn) updateSiteFromLeaves(siteBtn);
+    if (siteBtn) updateSiteFromLeaves(siteBtn);
     updateParcFromSites();
   });
 });
 
 // Sites : chevron = plier/déplier; clic bouton = toggle case
-siteBtns.forEach(siteBtn=>{
+siteBtns.forEach(siteBtn => {
   const cb = siteCheck(siteBtn);
-  if(!cb) return;
+  if (!cb) return;
 
-  siteBtn.addEventListener('click', (e)=>{
+  siteBtn.addEventListener('click', (e) => {
     const onChevron = !!e.target.closest('.chev');
-    if(onChevron){
+    if (onChevron) {
       const expanded = siteBtn.getAttribute('aria-expanded') === 'true';
       siteBtn.setAttribute('aria-expanded', String(!expanded));
       const list = siteBtn.parentElement.querySelector('.tree-children');
-      if(list) list.style.display = expanded ? 'none' : 'flex';
+      if (list) list.style.display = expanded ? 'none' : 'flex';
       return;
     }
-    if(e.target !== cb){
+    if (e.target !== cb) {
       cb.checked = !cb.checked;
       cb.indeterminate = false;
-      cb.dispatchEvent(new Event('change', {bubbles:true}));
+      cb.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });
 
-  cb.addEventListener('change', ()=>{
+  cb.addEventListener('change', () => {
     checkWholeSite(siteBtn, cb.checked);
   });
 });
 
 // Parc : clic bouton = toggle case; change = propage à tout
-if(parcBtn && parcCheck){
-  parcBtn.addEventListener('click', (e)=>{
-    if(e.target !== parcCheck){
+if (parcBtn && parcCheck) {
+  parcBtn.addEventListener('click', (e) => {
+    if (e.target !== parcCheck) {
       parcCheck.checked = !parcCheck.checked;
       parcCheck.indeterminate = false;
-      parcCheck.dispatchEvent(new Event('change', {bubbles:true}));
+      parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
     }
   });
-  parcCheck.addEventListener('change', ()=>{
+  parcCheck.addEventListener('change', () => {
     checkWholeParc(parcCheck.checked);
   });
 }

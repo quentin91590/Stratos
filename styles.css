@@ -216,31 +216,3 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @media (max-width: 640px){
   .year-picker{ height: 32px; font-size: .9rem; }
 }
-/* 1) La barre ne wrap pas en desktop */
-.top-nav{
-  display:flex;
-  align-items:center;
-  flex-wrap: nowrap;        /* ← clé pour rester sur une seule ligne */
-}
-
-/* 2) Le bloc année est poussé à droite et reste sur la même ligne */
-.top-right{
-  margin-left: auto;        /* pousse à droite */
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  order: 99;                /* au bout de la ligne */
-  flex: 0 0 auto;           /* ne s'étire pas */
-}
-
-/* 3) En mobile on autorise le retour à la ligne (optionnel) */
-@media (max-width: 700px){
-  .top-nav{ flex-wrap: wrap; }
-  .top-right{
-    order: 0;
-    width: 100%;
-    justify-content: flex-end; /* ou flex-start si tu préfères */
-    margin-left: 0;
-    margin-top: 8px;
-  }
-}

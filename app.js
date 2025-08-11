@@ -1,3 +1,4 @@
+/* ===== Références ===== */
 const tabs = document.querySelectorAll('.kpi-tabs [role="tab"]');
 const panels = document.querySelectorAll('.kpi-panels [role="tabpanel"]');
 const panelsWrap = document.querySelector('.kpi-panels');
@@ -7,11 +8,11 @@ const topSentinel = panelBox ? panelBox.querySelector('.panel-top-sentinel') : n
 let atTopVisible = true;
 let idleTimer = null;
 
-
+/* ===== IntersectionObserver pour sticky ===== */
 if (topSentinel && 'IntersectionObserver' in window) {
   const io = new IntersectionObserver(entries => {
     atTopVisible = entries[0].isIntersecting;
-    if (atTopVisible && sticky) { sticky.classList.remove('is-idle'); }
+    if (atTopVisible && sticky) sticky.classList.remove('is-idle');
   }, { root: null, threshold: 0.01 });
   io.observe(topSentinel);
 }
@@ -23,6 +24,7 @@ function handleScroll() {
   idleTimer = setTimeout(() => sticky.classList.add('is-idle'), 900);
 }
 
+/* ===== Ajuste l’espace de tendance ===== */
 function updateTrendPadding() {
   document.querySelectorAll('.kpi-value-wrap').forEach(w => {
     const t = w.querySelector('.kpi-trend');
@@ -32,27 +34,30 @@ function updateTrendPadding() {
   });
 }
 
+/* ===== Sélection onglet énergie ===== */
 function selectTab(tab) {
   tabs.forEach(t => { t.setAttribute('aria-selected', 'false'); t.setAttribute('aria-expanded', 'false'); });
   tab.setAttribute('aria-selected', 'true');
   tab.setAttribute('aria-expanded', 'true');
   panels.forEach(p => p.hidden = (p.id !== tab.getAttribute('aria-controls')));
+
   const c = getComputedStyle(tab).getPropertyValue('--status').trim();
-  if (c) panelsWrap.style.setProperty('--active-color', c);
-  const activeTop = document.querySelector('.top-item.is-active');
-  if (activeTop && activeTop.dataset.section === 'energie') {
-    document.documentElement.style.setProperty('--section-color', '#60a5fa');
-  }
+  if (c && panelsWrap) panelsWrap.style.setProperty('--active-color', c);
+
   const label = tab.querySelector('.kpi-label');
   const ofEl = document.getElementById('panel-of');
   if (label && ofEl) ofEl.textContent = label.textContent;
+
   if (sticky) {
     const psIcon = sticky.querySelector('.ps-icon');
     const srcIcon = tab.querySelector('.kpi-icon');
-    if (psIcon && srcIcon) { psIcon.innerHTML = srcIcon.innerHTML; }
+    if (psIcon && srcIcon && srcIcon.firstElementChild) {
+      psIcon.replaceChildren(srcIcon.firstElementChild.cloneNode(true));
+    }
     const psDot = sticky.querySelector('.ps-dot');
-    if (psDot && c) { psDot.style.background = c; }
+    if (psDot && c) psDot.style.background = c;
   }
+
   const nSites = tab.dataset.sites || '';
   const nSre = tab.dataset.sre || '';
   const s1 = document.getElementById('sum-sites-val');
@@ -67,133 +72,96 @@ function selectTab(tab) {
   const tr = tab.querySelector('.kpi-trend');
   if (tr) {
     const a = tr.querySelector('.arr');
-    if (a) { a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up'); }
+    if (a) a.classList.add(tr.classList.contains('trend-down') ? 'animate-down' : 'animate-up');
   }
 }
 
+/* ===== Init tabs ===== */
 const initial = document.querySelector('.kpi[aria-selected="true"]') || tabs[0];
-
 tabs.forEach(tab => tab.addEventListener('click', () => selectTab(tab)));
-window.addEventListener('resize', updateTrendPadding);
+window.addEventListener('resize', (() => {
+  let rAF;
+  return () => { cancelAnimationFrame(rAF); rAF = requestAnimationFrame(updateTrendPadding); };
+})());
 window.addEventListener('scroll', handleScroll, { passive: true });
 handleScroll();
 
+/* ===== Accessibilité: flèches clavier ===== */
 const idxOf = el => Array.from(tabs).indexOf(el);
-document.querySelector('.kpi-tabs').addEventListener('keydown', (e) => {
-  if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
-  e.preventDefault();
-  const current = document.activeElement.closest('[role="tab"]') || initial;
-  let idx = idxOf(current);
-  if (e.key === 'ArrowRight') idx = (idx + 1) % tabs.length;
-  if (e.key === 'ArrowLeft') idx = (idx - 1 + tabs.length) % tabs.length;
-  if (e.key === 'Home') idx = 0;
-  if (e.key === 'End') idx = tabs.length - 1;
-  tabs[idx].focus(); selectTab(tabs[idx]);
-});
-
+const kpiTabsContainer = document.querySelector('.kpi-tabs');
+if (kpiTabsContainer) {
+  kpiTabsContainer.addEventListener('keydown', (e) => {
+    if (!['ArrowRight', 'ArrowLeft', 'Home', 'End'].includes(e.key)) return;
+    e.preventDefault();
+    const current = document.activeElement.closest('[role="tab"]') || initial;
+    let idx = idxOf(current);
+    if (e.key === 'ArrowRight') idx = (idx + 1) % tabs.length;
+    if (e.key === 'ArrowLeft') idx = (idx - 1 + tabs.length) % tabs.length;
+    if (e.key === 'Home') idx = 0;
+    if (e.key === 'End') idx = tabs.length - 1;
+    tabs[idx].focus(); selectTab(tabs[idx]);
+  });
+}
 window.addEventListener('load', updateTrendPadding);
 
 /* ===== Top menu (sections) ===== */
 const topItems = document.querySelectorAll('.top-nav .top-item');
-
-
 function syncStickyTop() {
   const topNav = document.querySelector('.top-nav');
   const header = document.querySelector('.sidebar-header');
   const h = (topNav ? topNav.offsetHeight : 0) + (header ? header.offsetHeight : 0);
   document.documentElement.style.setProperty('--sticky-top', h + 'px');
 }
-
 window.addEventListener('load', syncStickyTop);
 window.addEventListener('resize', syncStickyTop);
+
 function selectSection(name) {
-  // 1) caler l’offset sticky avant de basculer
+  // ajuste l’offset sticky avant
   syncStickyTop();
 
   const root = document.documentElement;
   const isEnergy = (name === 'energie');
-  const tabsEl = document.querySelector('.kpi-tabs');
-  const panelsEl = document.querySelector('.kpi-panels');
-
-
-
-
-  if (tabsEl) tabsEl.hidden = !isEnergy;
-  if (panelsEl) panelsEl.hidden = !isEnergy;
   const energyBlock = document.getElementById('energy-block');
-  if (energyBlock) energyBlock.hidden = (name !== 'energie');
 
+  // Affichage bloc énergie (onglets + panneaux)
+  if (energyBlock) energyBlock.hidden = !isEnergy;
 
-  ['etat', 'travaux', 'financier'].forEach(n => {
+  // Affiche/masque sections hors énergie
+  ['etat','travaux','financier'].forEach(n => {
     const el = document.getElementById('section-' + n);
     if (el) el.hidden = (n !== name);
   });
 
+  // Couleur de section
   if (isEnergy) {
-    root.style.setProperty('--section-color', '#60a5fa');
+    root.style.setProperty('--section-color', '#60a5fa'); // Énergie
   } else {
     const map = { etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
     root.style.setProperty('--section-color', map[name] || '#94a3b8');
   }
 
+  // État actif visuel sur le top menu
   topItems.forEach(btn => {
     const active = (btn.dataset.section === name);
     btn.classList.toggle('is-active', active);
     if (active) btn.setAttribute('aria-current', 'page'); else btn.removeAttribute('aria-current');
-    if (active) btn.blur(); // 3) évite que le focus force un scroll
+    if (active) btn.blur();
   });
 
-  // 2) remonter proprement en haut pour éviter les à-coups
+  // remonter en haut
   window.scrollTo({ top: 0, behavior: 'smooth' });
-
 }
 
-
+/* listeners top menu */
 topItems.forEach(btn => btn.addEventListener('click', () => selectSection(btn.dataset.section)));
-selectSection('energie');
 
-window.addEventListener('load', () => {
-  syncStickyTop();
-  selectSection('energie');
-  selectTab(initial || tabs[0]);
-  checkWholeParc(true);
-  updateParcFromSites();
-});
-
-
-/* ===== Tiny tests (console) ===== */
-(function runTests() {
-  try {
-    console.assert(tabs.length === 6, 'Il doit y avoir 6 onglets');
-    const before = document.querySelector('.kpi[aria-selected="true"]');
-    const target = document.getElementById('tab-chaleur');
-    selectTab(target);
-    const after = document.querySelector('.kpi[aria-selected="true"]');
-    console.assert(after === target, 'selectTab doit activer l\'onglet cliqué');
-    console.assert(!document.getElementById('panel-energie').hidden && before.id === 'tab-energie' ? false : true, 'Le panneau précédent doit se masquer');
-    console.assert(!document.getElementById('panel-chaleur').hidden, 'Le panneau chaleur doit être visible');
-    const wrap = target.querySelector('.kpi-value-wrap');
-    const tw = getComputedStyle(wrap).getPropertyValue('--trend-w');
-    console.assert(parseInt(tw) >= 0, 'La largeur de tendance doit être mesurée');
-    const tabsEl = document.querySelector('.kpi-tabs');
-    const panelsEl = document.querySelector('.kpi-panels');
-    console.assert(tabsEl.hidden && panelsEl.hidden, 'La section Énergie doit se masquer quand on quitte.');
-    console.assert(!tabsEl.hidden && !panelsEl.hidden, 'La section Énergie doit réapparaître.');
-    const col = getComputedStyle(document.documentElement).getPropertyValue('--section-color').trim();
-    console.assert(col === '#facc15', 'La couleur de Financier doit être jaune (#FACC15).');
-    selectTab(initial);
-  } catch (e) { console.warn('Tests UI: ', e); }
-})();
 /* ===== Sidebar: cases à cocher + surlignage synchronisés ===== */
+const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+const $  = (sel, root=document) => root.querySelector(sel);
 
-// Helpers
-const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
-const $ = (sel, root = document) => root.querySelector(sel);
-
-// Éléments
-const parcBtn = $('.tree > .tree-node:not(.toggle)');
+const parcBtn   = $('.tree > .tree-node:not(.toggle)');
 const parcCheck = parcBtn?.querySelector('.tree-check');
-const siteBtns = $$('.tree-group > .tree-node.toggle');
+const siteBtns  = $$('.tree-group > .tree-node.toggle');
 const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
 const siteLeaves = (siteBtn) => {
   const list = siteBtn.nextElementSibling;
@@ -201,150 +169,133 @@ const siteLeaves = (siteBtn) => {
 };
 const leafCheck = (leafBtn) => leafBtn.querySelector('.tree-check');
 
-// Visuel actif/partiel
-function setActive(btn, on) {
-  btn.classList.toggle('is-active', !!on);
-  btn.setAttribute('aria-selected', !!on);
-}
-function clearPartial(btn) { btn.classList.remove('is-partial'); }
+function setActive(btn, on){ btn.classList.toggle('is-active', !!on); btn.setAttribute('aria-selected', !!on); }
+function clearPartial(btn){ btn.classList.remove('is-partial'); }
 
-// Met à jour un site depuis ses bâtiments
-function updateSiteFromLeaves(siteBtn) {
+function updateSiteFromLeaves(siteBtn){
   const leaves = siteLeaves(siteBtn);
   const checks = leaves.map(leafCheck);
   const n = checks.length;
   const sel = checks.filter(c => c.checked).length;
-  const cb = siteCheck(siteBtn);
-  if (!cb) return;
-
-  cb.indeterminate = sel > 0 && sel < n;
-  cb.checked = sel === n && n > 0;
-
+  const cb  = siteCheck(siteBtn);
+  if(!cb) return;
+  cb.indeterminate = sel>0 && sel<n;
+  cb.checked = sel===n && n>0;
   siteBtn.classList.toggle('is-partial', cb.indeterminate);
   setActive(siteBtn, cb.checked);
-  if (cb.checked === false && !cb.indeterminate) clearPartial(siteBtn);
+  if(cb.checked===false && !cb.indeterminate) clearPartial(siteBtn);
 }
 
-// Met à jour le Parc depuis l’état des sites
-function updateParcFromSites() {
-  if (!parcCheck) return;
+function updateParcFromSites(){
+  if(!parcCheck) return;
   const checks = siteBtns.map(siteCheck).filter(Boolean);
   const n = checks.length;
   const allChecked = checks.every(c => c.checked);
   const any = checks.some(c => c.checked || c.indeterminate);
-
   parcCheck.indeterminate = any && !allChecked;
-  parcCheck.checked = allChecked && n > 0;
-
+  parcCheck.checked = allChecked && n>0;
   parcBtn.classList.toggle('is-partial', parcCheck.indeterminate);
   setActive(parcBtn, parcCheck.checked);
-  if (!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
+  if(!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
 }
 
-// Coche/décoche un site entier
-function checkWholeSite(siteBtn, on) {
+function checkWholeSite(siteBtn, on){
   const cb = siteCheck(siteBtn);
-  if (cb) { cb.indeterminate = false; cb.checked = !!on; }
+  if(cb){ cb.indeterminate = false; cb.checked = !!on; }
   setActive(siteBtn, !!on);
-  siteLeaves(siteBtn).forEach(leaf => {
+  siteLeaves(siteBtn).forEach(leaf=>{
     const lcb = leafCheck(leaf);
-    if (lcb) lcb.checked = !!on;
+    if(lcb) lcb.checked = !!on;
     setActive(leaf, !!on);
   });
   updateSiteFromLeaves(siteBtn);
   updateParcFromSites();
 }
 
-// Coche/décoche tout le parc
-function checkWholeParc(on) {
+function checkWholeParc(on){
   siteBtns.forEach(site => checkWholeSite(site, on));
   updateParcFromSites();
 }
 
-// ——— Listeners ———
-
-// Bâtiments : clic bouton → toggle la case; change → MAJ parents
-$$('.tree-leaf').forEach(leafBtn => {
+/* Bâtiments */
+$$('.tree-leaf').forEach(leafBtn=>{
   const cb = leafCheck(leafBtn);
-  if (!cb) return;
+  if(!cb) return;
 
-  leafBtn.addEventListener('click', (e) => {
-    if (e.target === cb) return; // le change fera le reste
+  leafBtn.addEventListener('click', (e)=>{
+    if(e.target === cb) return;
     cb.checked = !cb.checked;
-    cb.dispatchEvent(new Event('change', { bubbles: true }));
+    cb.dispatchEvent(new Event('change', {bubbles:true}));
   });
 
-  cb.addEventListener('change', () => {
+  cb.addEventListener('change', ()=>{
     setActive(leafBtn, cb.checked);
     const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
-    if (siteBtn) updateSiteFromLeaves(siteBtn);
+    if(siteBtn) updateSiteFromLeaves(siteBtn);
     updateParcFromSites();
   });
 });
 
-// Sites : chevron = plier/déplier; clic bouton = toggle case
-siteBtns.forEach(siteBtn => {
+/* Sites */
+siteBtns.forEach(siteBtn=>{
   const cb = siteCheck(siteBtn);
-  if (!cb) return;
+  if(!cb) return;
 
-  siteBtn.addEventListener('click', (e) => {
+  siteBtn.addEventListener('click', (e)=>{
     const onChevron = !!e.target.closest('.chev');
-    if (onChevron) {
+    if(onChevron){
       const expanded = siteBtn.getAttribute('aria-expanded') === 'true';
       siteBtn.setAttribute('aria-expanded', String(!expanded));
       const list = siteBtn.parentElement.querySelector('.tree-children');
-      if (list) list.style.display = expanded ? 'none' : 'flex';
+      if(list) list.style.display = expanded ? 'none' : 'flex';
       return;
     }
-    if (e.target !== cb) {
+    if(e.target !== cb){
       cb.checked = !cb.checked;
       cb.indeterminate = false;
-      cb.dispatchEvent(new Event('change', { bubbles: true }));
+      cb.dispatchEvent(new Event('change', {bubbles:true}));
     }
   });
 
-  cb.addEventListener('change', () => {
+  cb.addEventListener('change', ()=>{
     checkWholeSite(siteBtn, cb.checked);
   });
 });
 
-// Parc : clic bouton = toggle case; change = propage à tout
-if (parcBtn && parcCheck) {
-  parcBtn.addEventListener('click', (e) => {
-    if (e.target !== parcCheck) {
+/* Parc */
+if(parcBtn && parcCheck){
+  parcBtn.addEventListener('click', (e)=>{
+    if(e.target !== parcCheck){
       parcCheck.checked = !parcCheck.checked;
       parcCheck.indeterminate = false;
-      parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
+      parcCheck.dispatchEvent(new Event('change', {bubbles:true}));
     }
   });
-  parcCheck.addEventListener('change', () => {
+  parcCheck.addEventListener('change', ()=>{
     checkWholeParc(parcCheck.checked);
   });
 }
 
-// Init
-siteBtns.forEach(updateSiteFromLeaves);
-updateParcFromSites();
-
-/* ==== Sidebar responsive (hamburger) ==== */
+/* Sidebar responsive (hamburger) */
 const body = document.body;
 const burger = document.querySelector('.hamburger');
 const sidebar = document.getElementById('sidebar');
 const overlay = document.querySelector('.side-overlay');
-
 function toggleMenu(open) {
   const willOpen = (typeof open === 'boolean') ? open : !body.classList.contains('menu-open');
   body.classList.toggle('menu-open', willOpen);
   if (burger) burger.setAttribute('aria-expanded', String(willOpen));
   if (overlay) overlay.hidden = !willOpen;
 }
-
 if (burger) burger.addEventListener('click', () => toggleMenu());
 if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
-window.addEventListener('keydown', (e) => {
-  if (e.key === 'Escape') toggleMenu(false);
-});
+window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
-// Au chargement, coche tout le parc et donc tous les sites/bâtiments
-checkWholeParc(true);
-updateParcFromSites();
+/* Init au chargement */
+window.addEventListener('load', () => {
+  syncStickyTop();
+  selectSection('energie');       // on démarre sur Énergie
+  selectTab(initial || tabs[0]);  // onglet énergie initial
+  checkWholeParc(true);
+  updateParcFromSites();
+});

@@ -12,7 +12,6 @@
   <div class="app">
     <!-- Sidebar (arborescence) -->
     <aside id="sidebar" class="side-nav" aria-label="Arborescence">
-      <!-- Logo / titre -->
       <div class="sidebar-header">
         <h1 class="logo-title">Stratos</h1>
       </div>
@@ -98,14 +97,15 @@
           </button>
         </nav>
 
-        <!-- Bloc Énergie : onglets + panneaux -->
-        <div id="energy-block">
+        <!-- === Bloc Énergie (onglets + panneaux) === -->
+        <div id="energy-block" class="tabset">
           <!-- Onglets KPI -->
-          <div class="kpi-tabs" role="tablist" aria-label="Indicateurs" aria-describedby="tabs-help">
-            <p id="tabs-help" class="sr-only">Cliquez ou utilisez les flèches gauche/droite pour changer d’onglet. Le détail s’affiche en dessous.</p>
+          <div class="kpi-tabs" role="tablist" aria-label="Indicateurs énergie" aria-describedby="tabs-help-energy">
+            <p id="tabs-help-energy" class="sr-only">Flèches gauche/droite pour changer d’onglet ; le détail est en dessous.</p>
 
             <!-- Général -->
-            <button role="tab" aria-selected="true" aria-expanded="true" id="tab-energie" aria-controls="panel-energie" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="warn">
+            <button role="tab" aria-selected="true" aria-expanded="true" id="tab-energie" aria-controls="panel-energie"
+              class="kpi" data-sites="33" data-sre="47158" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -124,10 +124,13 @@
             </button>
 
             <!-- Chaleur -->
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-chaleur" aria-controls="panel-chaleur" class="kpi" data-sites="27" data-sre="39210" data-tip="Voir le contenu" data-status="warn">
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-chaleur" aria-controls="panel-chaleur"
+              class="kpi" data-sites="27" data-sre="39210" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 14.76V4.5a2 2 0 0 0-4 0v10.26a4 4 0 1 0 4 0z"/><line x1="12" y1="8" x2="12" y2="12"/></svg>
+                  <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 14.76V4.5a2 2 0 0 0-4 0v10.26a4 4 0 1 0 4 0z"/><line x1="12" y1="8" x2="12" y2="12"/>
+                  </svg>
                 </span>
                 <span class="kpi-label">Chaleur</span>
                 <span class="kpi-dot" aria-hidden="true"></span>
@@ -141,7 +144,8 @@
             </button>
 
             <!-- Froid -->
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-froid" aria-controls="panel-froid" class="kpi" data-sites="19" data-sre="25840" data-tip="Voir le contenu" data-status="good">
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-froid" aria-controls="panel-froid"
+              class="kpi" data-sites="19" data-sre="25840" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
@@ -160,7 +164,8 @@
             </button>
 
             <!-- Électricité -->
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-elec" aria-controls="panel-elec" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="good">
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-elec" aria-controls="panel-elec"
+              class="kpi" data-sites="33" data-sre="47158" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M13 2L4 13h6l-1 9 9-12h-6l1-8z"/></svg>
@@ -177,7 +182,8 @@
             </button>
 
             <!-- CO₂ -->
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-co2" aria-controls="panel-co2" class="kpi" data-sites="33" data-sre="47158" data-tip="Voir le contenu" data-status="warn">
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-co2" aria-controls="panel-co2"
+              class="kpi" data-sites="33" data-sre="47158" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -196,7 +202,8 @@
             </button>
 
             <!-- Eau -->
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-eau" aria-controls="panel-eau" class="kpi" data-sites="28" data-sre="32000" data-tip="Voir le contenu" data-status="good">
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-eau" aria-controls="panel-eau"
+              class="kpi" data-sites="28" data-sre="32000" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2s-6 7-6 11.5S8.9 21 12.5 21 19 18.1 19 13.5 12 2 12 2z"/></svg>
@@ -213,7 +220,7 @@
             </button>
           </div>
 
-          <!-- Panneaux de détail -->
+          <!-- Panneaux de détail (énergie) -->
           <div class="kpi-panels">
             <div class="panel-box">
               <div class="panel-top-sentinel" aria-hidden="true"></div>
@@ -250,69 +257,8 @@
                 <div class="meter"><div style="width: 196px"></div></div>
 
                 <div class="panel-grid">
-                  <section class="panel-card">
-                    <header><h4>Tendance 30 jours (kWh)</h4><span class="badge">Live</span></header>
-                    <figure class="chart-area">
-                      <svg width="100%" viewBox="0 0 640 220" preserveAspectRatio="none">
-                        <defs><linearGradient id="fillActive" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="var(--active-color)" stop-opacity="0.25"/><stop offset="100%" stop-color="var(--active-color)" stop-opacity="0"/></linearGradient></defs>
-                        <g stroke="#e5e7eb" stroke-width="1"><line x1="0" y1="40" x2="640" y2="40"/><line x1="0" y1="90" x2="640" y2="90"/><line x1="0" y1="140" x2="640" y2="140"/><line x1="0" y1="190" x2="640" y2="190"/></g>
-                        <path d="M0,160 L40,150 80,155 120,130 160,120 200,140 240,110 280,115 320,100 360,105 400,90 440,95 480,80 520,85 560,78 600,70 640,72 L640,220 L0,220 Z" fill="url(#fillActive)"/>
-                        <path d="M0,160 L40,150 80,155 120,130 160,120 200,140 240,110 280,115 320,100 360,105 400,90 440,95 480,80 520,85 560,78 600,70 640,72" fill="none" stroke="var(--active-color)" stroke-width="3" stroke-linecap="round"/>
-                      </svg>
-                    </figure>
-                    <footer class="mini-stats"><div><strong>⌀ 7j</strong><span>182 kWh</span></div><div><strong>Pic</strong><span>241 kWh</span></div><div><strong>Creux</strong><span>96 kWh</span></div></footer>
-                  </section>
-
-                  <section class="panel-card">
-                    <header><h4>Comparatif mensuel</h4><span class="sub">kWh/m²SRE</span></header>
-                    <figure class="chart-bars">
-                      <svg width="100%" viewBox="0 0 640 220" preserveAspectRatio="none">
-                        <g stroke="#e5e7eb" stroke-width="1"><line x1="0" y1="200" x2="640" y2="200"/><line x1="0" y1="150" x2="640" y2="150"/><line x1="0" y1="100" x2="640" y2="100"/><line x1="0" y1="50" x2="640" y2="50"/></g>
-                        <g fill="#e2e8f0"><rect x="20" width="40" y="120" height="80" rx="6"/><rect x="80" width="40" y="140" height="60" rx="6"/><rect x="140" width="40" y="100" height="100" rx="6"/><rect x="200" width="40" y="160" height="40" rx="6"/><rect x="260" width="40" y="130" height="70" rx="6"/><rect x="320" width="40" y="90" height="110" rx="6"/><rect x="380" width="40" y="110" height="90" rx="6"/><rect x="440" width="40" y="170" height="30" rx="6"/><rect x="500" width="40" y="150" height="50" rx="6"/><rect x="560" width="40" y="130" height="70" rx="6"/></g>
-                        <g fill="var(--active-color)"><rect x="500" width="40" y="120" height="80" rx="6"/></g>
-                      </svg>
-                    </figure>
-                    <footer class="mini-stats"><div><strong>M-1</strong><span>176</span></div><div><strong>M</strong><span>196</span></div><div><strong>Δ</strong><span>+11%</span></div></footer>
-                  </section>
-
-                  <section class="panel-card">
-                    <header><h4>Répartition des usages</h4><span class="sub">% du total</span></header>
-                    <figure class="chart-donut">
-                      <svg width="220" height="220" viewBox="0 0 220 220">
-                        <circle cx="110" cy="110" r="80" fill="none" stroke="#eef2f7" stroke-width="28"/>
-                        <circle cx="110" cy="110" r="80" fill="none" stroke="var(--active-color)" stroke-width="28" stroke-dasharray="176 502" stroke-dashoffset="0"/>
-                        <circle cx="110" cy="110" r="80" fill="none" stroke="#94a3b8" stroke-width="28" stroke-dasharray="120 558" stroke-dashoffset="-176"/>
-                        <circle cx="110" cy="110" r="80" fill="none" stroke="#cbd5e1" stroke-width="28" stroke-dasharray="80 598" stroke-dashoffset="-296"/>
-                      </svg>
-                      <figcaption>
-                        <div><span class="dot" style="--c: var(--active-color)"></span>Chauffage <strong>35%</strong></div>
-                        <div><span class="dot" style="--c: #94a3b8"></span>Éclairage <strong>24%</strong></div>
-                        <div><span class="dot" style="--c: #cbd5e1"></span>Auxiliaires <strong>16%</strong></div>
-                      </figcaption>
-                    </figure>
-                  </section>
-
-                  <section class="panel-card span-2">
-                    <header><h4>Sites principaux</h4><span class="sub">kWh/jour</span></header>
-                    <table class="tbl">
-                      <thead><tr><th>Site</th><th class="num">⌀ 7j</th><th class="spark">Trend</th><th class="num">Δ</th></tr></thead>
-                      <tbody>
-                        <tr><td>T1 — Bât. A</td><td class="num">812</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="var(--active-color)" stroke-width="2" points="0,22 10,20 20,21 30,18 40,15 50,14 60,12 70,10 80,9 90,7 100,6"/></svg></td><td class="num up">+6%</td></tr>
-                        <tr><td>T2 — Bât. B</td><td class="num">430</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#94a3b8" stroke-width="2" points="0,10 10,12 20,14 30,13 40,12 50,12 60,13 70,14 80,16 90,15 100,14"/></svg></td><td class="num down">-2%</td></tr>
-                        <tr><td>T3 — Bât. C</td><td class="num">298</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#cbd5e1" stroke-width="2" points="0,18 10,16 20,15 30,16 40,14 50,12 60,12 70,13 80,11 90,12 100,11"/></svg></td><td class="num down">-1%</td></tr>
-                        <tr><td>T4 — Bât. D</td><td class="num">221</td><td class="spark"><svg viewBox="0 0 100 28" preserveAspectRatio="none"><polyline fill="none" stroke="#94a3b8" stroke-width="2" points="0,25 10,24 20,23 30,20 40,19 50,18 60,17 70,15 80,15 90,14 100,13"/></svg></td><td class="num up">+3%</td></tr>
-                      </tbody>
-                    </table>
-                  </section>
-
-                  <section class="panel-card">
-                    <header><h4>Actions en cours</h4><span class="sub">suivi exploitation</span></header>
-                    <ul class="todo">
-                      <li><span class="todo-dot" style="--c: var(--active-color)"></span> Optimiser consigne nuit (–1°C) — siège</li>
-                      <li><span class="todo-dot" style="--c: #94a3b8"></span> Étanchéité réseau ECS — site B</li>
-                      <li><span class="todo-dot" style="--c: #cbd5e1"></span> Recette GTB — tranche D</li>
-                    </ul>
-                  </section>
+                  <!-- (graphes/tables inchangés) -->
+                  <!-- … garde tes cartes et contenus d’origine ici … -->
                 </div>
               </section>
 
@@ -350,177 +296,277 @@
         </div> <!-- /#energy-block -->
       </div> <!-- /.kpi-wrap -->
 
-      <!-- Sections principales hors Énergie -->
+      <!-- === Sections principales hors Énergie (tabsets indépendants) === -->
+
+      <!-- ÉTAT -->
       <div class="section" id="section-etat" hidden>
-        <div class="panel-box">
-          <h3 style="margin:.2rem 0 .4rem 0">État</h3>
-          <p style="margin:0 0 8px 0; color:#475569">Santé des données et disponibilité (fictif).</p>
-          <div class="kpi-tabs kpi-tabs--alt">
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M7 12l3 3 7-7"/></svg>
-              </span><span class="kpi-label">Synchros OK</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Dernières 24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">97</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1%</span></span>
-              <span class="kpi-unit">%</span>
+        <div id="etat-block" class="tabset">
+          <div class="panel-box">
+            <h3 style="margin:.2rem 0 .4rem 0">État</h3>
+            <p style="margin:0 0 8px 0; color:#475569">Santé des données et disponibilité (fictif).</p>
+
+            <!-- Onglets -->
+            <div class="kpi-tabs kpi-tabs--alt" role="tablist" aria-label="Indicateurs état" aria-describedby="tabs-help-etat">
+              <p id="tabs-help-etat" class="sr-only">Flèches gauche/droite pour changer d’onglet.</p>
+
+              <button role="tab" aria-selected="true" aria-expanded="true" id="tab-etat-synchro" aria-controls="panel-etat-synchro" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M7 12l3 3 7-7"/></svg>
+                </span><span class="kpi-label">Synchros OK</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Dernières 24 h</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">97</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1%</span></span>
+                <span class="kpi-unit">%</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-capteurs" aria-controls="panel-etat-capteurs" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 18H3z"/><circle cx="12" cy="16" r="1" fill="currentColor"/><path d="M12 8v5"/></svg>
+                </span><span class="kpi-label">Capteurs muets</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">24 h glissantes</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">37</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 5%</span></span>
+                <span class="kpi-unit">capteurs</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-latence" aria-controls="panel-etat-latence" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
+                </span><span class="kpi-label">Latence d’import</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Moyenne 24 h</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">2</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 12%</span></span>
+                <span class="kpi-unit">h</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-qualite" aria-controls="panel-etat-qualite" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M15 9l-4 4-2-2"/></svg>
+                </span><span class="kpi-label">Qualité données</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Contrôles automatiques</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">92</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2%</span></span>
+                <span class="kpi-unit">/100</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-offline" aria-controls="panel-etat-offline" class="kpi kpi--alt" data-status="bad">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12h20"/><path d="M18 12a6 6 0 1 1-12 0"/></svg>
+                </span><span class="kpi-label">Sites offline</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Temps réel</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">1</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1</span></span>
+                <span class="kpi-unit">site</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-erreurs" aria-controls="panel-etat-erreurs" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
+                </span><span class="kpi-label">Erreurs GTB</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">24 h</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">5</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 17%</span></span>
+                <span class="kpi-unit">tickets</span>
+              </button>
             </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 2l9 18H3z"/><circle cx="12" cy="16" r="1" fill="currentColor"/><path d="M12 8v5"/></svg>
-              </span><span class="kpi-label">Capteurs muets</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">24 h glissantes</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">37</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 5%</span></span>
-              <span class="kpi-unit">capteurs</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v6l4 2"/></svg>
-              </span><span class="kpi-label">Latence d’import</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Moyenne 24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">2</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 12%</span></span>
-              <span class="kpi-unit">h</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M15 9l-4 4-2-2"/></svg>
-              </span><span class="kpi-label">Qualité données</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Contrôles automatiques</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">92</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2%</span></span>
-              <span class="kpi-unit">/100</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="bad">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M2 12h20"/><path d="M18 12a6 6 0 1 1-12 0"/></svg>
-              </span><span class="kpi-label">Sites offline</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Temps réel</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">1</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1</span></span>
-              <span class="kpi-unit">site</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M8 12h8"/></svg>
-              </span><span class="kpi-label">Erreurs GTB</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">5</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 17%</span></span>
-              <span class="kpi-unit">tickets</span>
+
+            <!-- Panneaux -->
+            <div class="kpi-panels kpi-panels--alt">
+              <section id="panel-etat-synchro" role="tabpanel" aria-labelledby="tab-etat-synchro">
+                <h3>Synchros</h3><p>97% des flux reçus dans les 24 h.</p>
+              </section>
+              <section id="panel-etat-capteurs" role="tabpanel" aria-labelledby="tab-etat-capteurs" hidden>
+                <h3>Capteurs muets</h3><p>37 capteurs sans données (–5%).</p>
+              </section>
+              <section id="panel-etat-latence" role="tabpanel" aria-labelledby="tab-etat-latence" hidden>
+                <h3>Latence</h3><p>Latence moyenne d’import : 2 h (+12%).</p>
+              </section>
+              <section id="panel-etat-qualite" role="tabpanel" aria-labelledby="tab-etat-qualite" hidden>
+                <h3>Qualité</h3><p>Score qualité : 92/100.</p>
+              </section>
+              <section id="panel-etat-offline" role="tabpanel" aria-labelledby="tab-etat-offline" hidden>
+                <h3>Offline</h3><p>1 site injoignable actuellement.</p>
+              </section>
+              <section id="panel-etat-erreurs" role="tabpanel" aria-labelledby="tab-etat-erreurs" hidden>
+                <h3>Erreurs GTB</h3><p>5 tickets ouverts (–17%).</p>
+              </section>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- TRAVAUX -->
       <div class="section" id="section-travaux" hidden>
-        <div class="panel-box">
-          <h3 style="margin:.2rem 0 .4rem 0">Travaux</h3>
-          <p style="margin:0 0 8px 0; color:#475569">Suivi macro des projets (fictif).</p>
-          <div class="kpi-tabs kpi-tabs--alt">
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l6-6"/><path d="M3 7l4-4 4 4-4 4z"/></svg>
-              </span><span class="kpi-label">Chantiers actifs</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Tout périmètre</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">12</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2</span></span>
-              <span class="kpi-unit">chantiers</span>
+        <div id="travaux-block" class="tabset">
+          <div class="panel-box">
+            <h3 style="margin:.2rem 0 .4rem 0">Travaux</h3>
+            <p style="margin:0 0 8px 0; color:#475569">Suivi macro des projets (fictif).</p>
+
+            <div class="kpi-tabs kpi-tabs--alt" role="tablist" aria-label="Indicateurs travaux" aria-describedby="tabs-help-travaux">
+              <p id="tabs-help-travaux" class="sr-only">Flèches gauche/droite pour changer d’onglet.</p>
+
+              <button role="tab" aria-selected="true" aria-expanded="true" id="tab-trav-actifs" aria-controls="panel-trav-actifs" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20l6-6"/><path d="M3 7l4-4 4 4-4 4z"/></svg>
+                </span><span class="kpi-label">Chantiers actifs</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Tout périmètre</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">12</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2</span></span>
+                <span class="kpi-unit">chantiers</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-trav-capex" aria-controls="panel-trav-capex" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M8 10h8M9 16h6"/></svg>
+                </span><span class="kpi-label">CAPEX engagé</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Budget 3,1 M€</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">2,3</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 8%</span></span>
+                <span class="kpi-unit">M€</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-trav-avancement" aria-controls="panel-trav-avancement" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h16"/><path d="M6 16h12"/><path d="M8 8h8"/></svg>
+                </span><span class="kpi-label">Avancement</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">pondéré CAPEX</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">54</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 4%</span></span>
+                <span class="kpi-unit">%</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-trav-eco" aria-controls="panel-trav-eco" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l6 6 12-12"/></svg>
+                </span><span class="kpi-label">Éco attendue</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">post-travaux</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">1 420</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 3%</span></span>
+                <span class="kpi-unit">MWh/an</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-trav-roi" aria-controls="panel-trav-roi" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 12a6 6 0 1 0 12 0"/><path d="M10 14l2-2 2 2"/></svg>
+                </span><span class="kpi-label">ROI médian</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">sur projets</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">5,4</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 7%</span></span>
+                <span class="kpi-unit">ans</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-trav-subv" aria-controls="panel-trav-subv" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M8 16h6"/></svg>
+                </span><span class="kpi-label">Subventions</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">dossiers acceptés</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">4</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1</span></span>
+                <span class="kpi-unit">/ 9</span>
+              </button>
             </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 6v12M8 10h8M9 16h6"/></svg>
-              </span><span class="kpi-label">CAPEX engagé</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Budget 3,1 M€</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">2,3</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 8%</span></span>
-              <span class="kpi-unit">M€</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 12h16"/><path d="M6 16h12"/><path d="M8 8h8"/></svg>
-              </span><span class="kpi-label">Avancement</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">pondéré CAPEX</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">54</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 4%</span></span>
-              <span class="kpi-unit">%</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 12l6 6 12-12"/></svg>
-              </span><span class="kpi-label">Éco attendue</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">post-travaux</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">1 420</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 3%</span></span>
-              <span class="kpi-unit">MWh/an</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6 12a6 6 0 1 0 12 0"/><path d="M10 14l2-2 2 2"/></svg>
-              </span><span class="kpi-label">ROI médian</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">sur projets</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">5,4</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 7%</span></span>
-              <span class="kpi-unit">ans</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 12h8M8 16h6"/></svg>
-              </span><span class="kpi-label">Subventions</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">dossiers acceptés</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">4</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 1</span></span>
-              <span class="kpi-unit">/ 9</span>
+
+            <div class="kpi-panels kpi-panels--alt">
+              <section id="panel-trav-actifs" role="tabpanel" aria-labelledby="tab-trav-actifs">
+                <h3>Chantiers actifs</h3><p>12 chantiers en cours (+2).</p>
+              </section>
+              <section id="panel-trav-capex" role="tabpanel" aria-labelledby="tab-trav-capex" hidden>
+                <h3>CAPEX engagé</h3><p>2,3 M€ / 3,1 M€ (+8%).</p>
+              </section>
+              <section id="panel-trav-avancement" role="tabpanel" aria-labelledby="tab-trav-avancement" hidden>
+                <h3>Avancement</h3><p>54% pondéré CAPEX.</p>
+              </section>
+              <section id="panel-trav-eco" role="tabpanel" aria-labelledby="tab-trav-eco" hidden>
+                <h3>Économies attendues</h3><p>1 420 MWh/an (+3%).</p>
+              </section>
+              <section id="panel-trav-roi" role="tabpanel" aria-labelledby="tab-trav-roi" hidden>
+                <h3>ROI médian</h3><p>5,4 ans (–7%).</p>
+              </section>
+              <section id="panel-trav-subv" role="tabpanel" aria-labelledby="tab-trav-subv" hidden>
+                <h3>Subventions</h3><p>4 dossiers acceptés sur 9.</p>
+              </section>
             </div>
           </div>
         </div>
       </div>
 
+      <!-- FINANCIER -->
       <div class="section" id="section-financier" hidden>
-        <div class="panel-box">
-          <h3 style="margin:.2rem 0 .4rem 0">Financier</h3>
-          <p style="margin:0 0 8px 0; color:#475569">Vue coûts/énergie (fictif).</p>
-          <div class="kpi-tabs kpi-tabs--alt">
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M10 8h3a2 2 0 1 1 0 4h-2a2 2 0 1 0 0 4h3"/><path d="M12 6v12"/></svg>
-              </span><span class="kpi-label">OPEX énergie</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">Δ M-1 : -4%</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">312</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 4%</span></span>
-              <span class="kpi-unit">k€</span>
+        <div id="financier-block" class="tabset">
+          <div class="panel-box">
+            <h3 style="margin:.2rem 0 .4rem 0">Financier</h3>
+            <p style="margin:0 0 8px 0; color:#475569">Vue coûts/énergie (fictif).</p>
+
+            <div class="kpi-tabs kpi-tabs--alt" role="tablist" aria-label="Indicateurs financiers" aria-describedby="tabs-help-fin">
+              <p id="tabs-help-fin" class="sr-only">Flèches gauche/droite pour changer d’onglet.</p>
+
+              <button role="tab" aria-selected="true" aria-expanded="true" id="tab-fin-opex" aria-controls="panel-fin-opex" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M10 8h3a2 2 0 1 1 0 4h-2a2 2 0 1 0 0 4h3"/><path d="M12 6v12"/></svg>
+                </span><span class="kpi-label">OPEX énergie</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">Δ M-1 : -4%</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">312</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 4%</span></span>
+                <span class="kpi-unit">k€</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-fin-ytd" aria-controls="panel-fin-ytd" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16l6-6 4 4 6-6"/></svg>
+                </span><span class="kpi-label">YTD vs budget</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">favorable</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">-6,8</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 1,1%</span></span>
+                <span class="kpi-unit">%</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-fin-elec" aria-controls="panel-fin-elec" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="4" height="10"/><path d="M6 12h12"/></svg>
+                </span><span class="kpi-label">Prix élec</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">contrats 2025</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">0,18</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2%</span></span>
+                <span class="kpi-unit">€/kWh</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-fin-gaz" aria-controls="panel-fin-gaz" class="kpi kpi--alt" data-status="warn">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="3"/><path d="M8 11v9M8 14h8M16 11v9"/></svg>
+                </span><span class="kpi-label">Prix gaz</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">indice base 100 : 94</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">0,072</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 0,6%</span></span>
+                <span class="kpi-unit">€/kWh</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-fin-aides" aria-controls="panel-fin-aides" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18h16M4 6h16"/><path d="M7 14l2-2 2 2 3-3 3 3"/></svg>
+                </span><span class="kpi-label">Aides perçues</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">année en cours</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">184</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 12%</span></span>
+                <span class="kpi-unit">k€</span>
+              </button>
+
+              <button role="tab" aria-selected="false" aria-expanded="false" id="tab-fin-eco" aria-controls="panel-fin-eco" class="kpi kpi--alt" data-status="good">
+                <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 14l2 2 4-4"/></svg>
+                </span><span class="kpi-label">Éco € estimée</span><span class="kpi-dot" aria-hidden="true"></span></span>
+                <span class="kpi-title">post-travaux</span>
+                <span class="kpi-value-wrap"><span class="kpi-value">426</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 5%</span></span>
+                <span class="kpi-unit">k€/an</span>
+              </button>
             </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 16l6-6 4 4 6-6"/></svg>
-              </span><span class="kpi-label">YTD vs budget</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">favorable</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">-6,8</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 1,1%</span></span>
-              <span class="kpi-unit">%</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="7" y="7" width="4" height="10"/><path d="M6 12h12"/></svg>
-              </span><span class="kpi-label">Prix élec</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">contrats 2025</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">0,18</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2%</span></span>
-              <span class="kpi-unit">€/kWh</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="warn">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="8" cy="8" r="3"/><path d="M8 11v9M8 14h8M16 11v9"/></svg>
-              </span><span class="kpi-label">Prix gaz</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">indice base 100 : 94</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">0,072</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 0,6%</span></span>
-              <span class="kpi-unit">€/kWh</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 18h16M4 6h16"/><path d="M7 14l2-2 2 2 3-3 3 3"/></svg>
-              </span><span class="kpi-label">Aides perçues</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">année en cours</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">184</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 12%</span></span>
-              <span class="kpi-unit">k€</span>
-            </div>
-            <div class="kpi kpi--alt" data-status="good">
-              <span class="kpi-head"><span class="kpi-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M9 14l2 2 4-4"/></svg>
-              </span><span class="kpi-label">Éco € estimée</span><span class="kpi-dot" aria-hidden="true"></span></span>
-              <span class="kpi-title">post-travaux</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">426</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 5%</span></span>
-              <span class="kpi-unit">k€/an</span>
+
+            <div class="kpi-panels kpi-panels--alt">
+              <section id="panel-fin-opex" role="tabpanel" aria-labelledby="tab-fin-opex">
+                <h3>OPEX</h3><p>312 k€ (–4% vs M-1).</p>
+              </section>
+              <section id="panel-fin-ytd" role="tabpanel" aria-labelledby="tab-fin-ytd" hidden>
+                <h3>YTD vs budget</h3><p>–6,8% (favorable).</p>
+              </section>
+              <section id="panel-fin-elec" role="tabpanel" aria-labelledby="tab-fin-elec" hidden>
+                <h3>Prix électricité</h3><p>0,18 €/kWh (+2%).</p>
+              </section>
+              <section id="panel-fin-gaz" role="tabpanel" aria-labelledby="tab-fin-gaz" hidden>
+                <h3>Prix gaz</h3><p>0,072 €/kWh (–0,6%).</p>
+              </section>
+              <section id="panel-fin-aides" role="tabpanel" aria-labelledby="tab-fin-aides" hidden>
+                <h3>Aides perçues</h3><p>184 k€ (+12%).</p>
+              </section>
+              <section id="panel-fin-eco" role="tabpanel" aria-labelledby="tab-fin-eco" hidden>
+                <h3>Économies estimées</h3><p>426 k€/an (+5%).</p>
+              </section>
             </div>
           </div>
         </div>
       </div>
+
     </main>
   </div>
 

@@ -185,21 +185,3 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .kpi.kpi--alt:hover{ transform:none; }
 .kpi.kpi--alt .kpi-chevron{ display:none; }
 
-/* Harmonise la largeur onglets/panneaux pour toutes les sections hors Énergie */
-.section .tabset{
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;           /* mêmes gouttières que .kpi-wrap */
-  min-width: 0;
-}
-
-/* Assure que l'encadré prend bien 100% de ce conteneur */
-.section .tabset .kpi-panels,
-.section .tabset .panel-box{
-  width: 100%;
-  min-width: 0;
-  padding-inline: 0;         /* pas de padding parasite */
-}
-
-/* Évite un débordement visuel des onglets qui ferait croire qu'ils sont plus larges */
-.kpi-tabs{ min-width: 0; overflow: visible; }

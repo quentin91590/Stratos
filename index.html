@@ -369,101 +369,12 @@
       <!-- ÉTAT -->
       <div class="section" id="section-etat" hidden>
         <div id="etat-block" class="tabset">
-          <!-- Onglets (même niveau que Énergie) -->
-          <div class="kpi-tabs" role="tablist" aria-label="Indicateurs état">
-            <button role="tab" aria-selected="true" aria-expanded="true" id="tab-etat-synchro"
-              aria-controls="panel-etat-synchro" class="kpi" data-status="good">
-              <span class="kpi-head">
-                <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M7 12l3 3 7-7" />
-                  </svg>
-                </span>
-                <span class="kpi-label">Synchros OK</span>
-                <span class="kpi-dot" aria-hidden="true"></span>
-              </span>
-              <span class="kpi-title">Dernières 24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">97</span><span class="kpi-trend trend-up"><span
-                    class="arr">▲</span> 1%</span></span>
-              <span class="kpi-unit">%</span>
-            </button>
 
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-capteurs"
-              aria-controls="panel-etat-capteurs" class="kpi" data-status="warn">
-              <span class="kpi-head">
-                <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M12 2l9 18H3z" />
-                    <circle cx="12" cy="16" r="1" fill="currentColor" />
-                    <path d="M12 8v5" />
-                  </svg>
-                </span>
-                <span class="kpi-label">Capteurs muets</span>
-                <span class="kpi-dot" aria-hidden="true"></span>
-              </span>
-              <span class="kpi-title">24 h glissantes</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">37</span><span class="kpi-trend trend-down"><span
-                    class="arr">▼</span> 5%</span></span>
-              <span class="kpi-unit">capteurs</span>
-            </button>
-
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-latence"
-              aria-controls="panel-etat-latence" class="kpi" data-status="warn">
-              <span class="kpi-head">
-                <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <circle cx="12" cy="12" r="9" />
-                    <path d="M12 7v6l4 2" />
-                  </svg>
-                </span>
-                <span class="kpi-label">Latence d’import</span>
-                <span class="kpi-dot" aria-hidden="true"></span>
-              </span>
-              <span class="kpi-title">Moyenne 24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">2</span><span class="kpi-trend trend-up"><span
-                    class="arr">▲</span> 12%</span></span>
-              <span class="kpi-unit">h</span>
-            </button>
-
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-qualite"
-              aria-controls="panel-etat-qualite" class="kpi" data-status="good">
-              <span class="kpi-head">
-                <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <rect x="3" y="4" width="18" height="14" rx="2" />
-                    <path d="M15 9l-4 4-2-2" />
-                  </svg>
-                </span>
-                <span class="kpi-label">Qualité données</span>
-                <span class="kpi-dot" aria-hidden="true"></span>
-              </span>
-              <span class="kpi-title">Contrôles automatiques</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">92</span><span class="kpi-trend trend-up"><span
-                    class="arr">▲</span> 2%</span></span>
-              <span class="kpi-unit">/100</span>
-            </button>
-
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-offline"
-              aria-controls="panel-etat-offline" class="kpi" data-status="bad">
-              <span class="kpi-head">
-                <span class="kpi-icon" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
-                    <path d="M2 12h20" />
-                    <path d="M18 12a6 6 0 1 1-12 0" />
-                  </svg>
-                </span>
-                <span class="kpi-label">Sites offline</span>
-                <span class="kpi-dot" aria-hidden="true"></span>
-              </span>
-              <span class="kpi-title">Temps réel</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">1</span><span class="kpi-trend trend-up"><span
-                    class="arr">▲</span> 1</span></span>
-              <span class="kpi-unit">site</span>
-            </button>
-
-            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-erreurs"
-              aria-controls="panel-etat-erreurs" class="kpi" data-status="warn">
+          <!-- ONGLETs (même niveau que Énergie) -->
+          <div class="kpi-tabs" role="tablist" aria-label="Indicateurs état du patrimoine">
+            <!-- IVG -->
+            <button role="tab" aria-selected="true" aria-expanded="true" id="tab-etat-vetuste"
+              aria-controls="panel-etat-vetuste" class="kpi" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
@@ -471,59 +382,154 @@
                     <path d="M8 12h8" />
                   </svg>
                 </span>
-                <span class="kpi-label">Erreurs GTB</span>
+                <span class="kpi-label">Vétusté globale (IVG)</span>
                 <span class="kpi-dot" aria-hidden="true"></span>
               </span>
-              <span class="kpi-title">24 h</span>
-              <span class="kpi-value-wrap"><span class="kpi-value">5</span><span class="kpi-trend trend-down"><span
-                    class="arr">▼</span> 17%</span></span>
-              <span class="kpi-unit">tickets</span>
+              <span class="kpi-title">score parc</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">38</span><span class="kpi-trend trend-down"><span
+                    class="arr">▼</span> 2%</span></span>
+              <span class="kpi-unit">/100</span>
+            </button>
+
+            <!-- FCI -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-fci"
+              aria-controls="panel-etat-fci" class="kpi" data-status="good">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M4 16l6-6 4 4 6-6" />
+                  </svg>
+                </span>
+                <span class="kpi-label">FCI (maintenance différée)</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">ratio parc</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">7,8</span><span class="kpi-trend trend-down"><span
+                    class="arr">▼</span> 0,6%</span></span>
+              <span class="kpi-unit">%</span>
+            </button>
+
+            <!-- Fin de vie -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-fin-vie"
+              aria-controls="panel-etat-fin-vie" class="kpi" data-status="warn">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 6v12" />
+                    <path d="M6 12h12" />
+                  </svg>
+                </span>
+                <span class="kpi-label">Équipements fin de vie</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">curatif 12 mois</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">42</span><span class="kpi-trend trend-down"><span
+                    class="arr">▼</span> 8%</span></span>
+              <span class="kpi-unit">actifs</span>
+            </button>
+
+            <!-- Non-conformités -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-nonconf"
+              aria-controls="panel-etat-nonconf" class="kpi" data-status="warn">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9" />
+                    <path d="M8 12h8" />
+                  </svg>
+                </span>
+                <span class="kpi-label">Non-conformités ouvertes</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">contrôles périodiques</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">18</span><span class="kpi-trend trend-down"><span
+                    class="arr">▼</span> 12%</span></span>
+              <span class="kpi-unit">items</span>
+            </button>
+
+            <!-- Âge CVC -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-agecvc"
+              aria-controls="panel-etat-agecvc" class="kpi" data-status="bad">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M7 12a5 5 0 1 0 10 0" />
+                    <path d="M12 7v5" />
+                  </svg>
+                </span>
+                <span class="kpi-label">Âge moyen CVC</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">groupes + CTA</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">14</span><span class="kpi-trend trend-up"><span
+                    class="arr">▲</span> 0,3</span></span>
+              <span class="kpi-unit">ans</span>
+            </button>
+
+            <!-- Enveloppe dégradée -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-etat-enveloppe"
+              aria-controls="panel-etat-enveloppe" class="kpi" data-status="warn">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="4" y="6" width="16" height="12" rx="2" />
+                    <path d="M4 10h16" />
+                  </svg>
+                </span>
+                <span class="kpi-label">Enveloppe dégradée</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">SRE concernée</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">22</span><span class="kpi-trend trend-down"><span
+                    class="arr">▼</span> 3%</span></span>
+              <span class="kpi-unit">%</span>
             </button>
           </div>
 
-          <!-- Panneaux (même structure que Énergie) -->
+          <!-- PANNEAUX (même structure que Énergie) -->
           <div class="kpi-panels">
             <div class="panel-box">
               <div class="panel-top-sentinel" aria-hidden="true"></div>
               <div class="panel-sticky" role="status" aria-live="polite">
                 <span class="ps-icon" aria-hidden="true"></span>
-                <span class="ps-label"><span id="panel-of">Synchros OK</span></span>
+                <span class="ps-label"><span id="panel-of">Vétusté globale (IVG)</span></span>
                 <span class="ps-dot" aria-hidden="true"></span>
               </div>
 
-              <section id="panel-etat-synchro" role="tabpanel" aria-labelledby="tab-etat-synchro">
-                <h3>Synchros</h3>
-                <p>97% des flux reçus dans les 24 h.</p>
+              <section id="panel-etat-vetuste" role="tabpanel" aria-labelledby="tab-etat-vetuste">
+                <h3>Vétusté globale (IVG)</h3>
+                <p>Indice moyen pondéré par SRE. 0 = neuf, 100 = très dégradé. Baisse à 38 (–2%).</p>
               </section>
 
-              <section id="panel-etat-capteurs" role="tabpanel" aria-labelledby="tab-etat-capteurs" hidden>
-                <h3>Capteurs muets</h3>
-                <p>37 capteurs sans données (–5%).</p>
+              <section id="panel-etat-fci" role="tabpanel" aria-labelledby="tab-etat-fci" hidden>
+                <h3>Facility Condition Index (FCI)</h3>
+                <p>FCI = coûts de maintenance différée / coût de remplacement. 7,8% (–0,6 pt).</p>
               </section>
 
-              <section id="panel-etat-latence" role="tabpanel" aria-labelledby="tab-etat-latence" hidden>
-                <h3>Latence</h3>
-                <p>Latence moyenne d’import : 2 h (+12%).</p>
+              <section id="panel-etat-fin-vie" role="tabpanel" aria-labelledby="tab-etat-fin-vie" hidden>
+                <h3>Équipements en fin de vie</h3>
+                <p>Actifs critiques à remplacer sous 12 mois : 42 (–8%).</p>
               </section>
 
-              <section id="panel-etat-qualite" role="tabpanel" aria-labelledby="tab-etat-qualite" hidden>
-                <h3>Qualité</h3>
-                <p>Score qualité : 92/100.</p>
+              <section id="panel-etat-nonconf" role="tabpanel" aria-labelledby="tab-etat-nonconf" hidden>
+                <h3>Non-conformités ouvertes</h3>
+                <p>Issues issues des contrôles périodiques (élec, SSI, levage, etc.) : 18 (–12%).</p>
               </section>
 
-              <section id="panel-etat-offline" role="tabpanel" aria-labelledby="tab-etat-offline" hidden>
-                <h3>Offline</h3>
-                <p>1 site injoignable actuellement.</p>
+              <section id="panel-etat-agecvc" role="tabpanel" aria-labelledby="tab-etat-agecvc" hidden>
+                <h3>Âge moyen CVC</h3>
+                <p>Âge moyen des groupes froid, chaudières, CTA : 14 ans (+0,3 an).</p>
               </section>
 
-              <section id="panel-etat-erreurs" role="tabpanel" aria-labelledby="tab-etat-erreurs" hidden>
-                <h3>Erreurs GTB</h3>
-                <p>5 tickets ouverts (–17%).</p>
+              <section id="panel-etat-enveloppe" role="tabpanel" aria-labelledby="tab-etat-enveloppe" hidden>
+                <h3>Enveloppe dégradée</h3>
+                <p>Part de SRE avec pathologies enveloppe (toitures/façades/menuiseries) : 22% (–3%).</p>
               </section>
             </div>
           </div>
         </div>
       </div>
+
 
       <!-- TRAVAUX -->
       <div class="section" id="section-travaux" hidden>

@@ -120,6 +120,9 @@ function selectSection(name) {
 
   if (tabsEl) tabsEl.hidden = !isEnergy;
   if (panelsEl) panelsEl.hidden = !isEnergy;
+  const energyBlock = document.getElementById('energy-block');
+  if (energyBlock) energyBlock.hidden = (name !== 'energie');
+
 
   ['etat', 'travaux', 'financier'].forEach(n => {
     const el = document.getElementById('section-' + n);

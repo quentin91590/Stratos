@@ -217,3 +217,56 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   .year-picker{ height: 32px; font-size: .9rem; }
 }
 
+/* 1) même conteneur large pour tout */
+:root{
+  --container-max: 1320px;   /* élargis si tu veux : 1280, 1320, 1360… */
+  --gutter: 16px;            /* marge interne commune */
+  --bleed: 8px;              /* petit débord visuel pour compenser l’ombre/glow des cartes */
+}
+
+.kpi-wrap,
+.section .tabset{
+  max-width: var(--container-max);
+  margin: 24px auto;
+  padding-inline: var(--gutter);
+}
+
+/* 2) élargit le MENU en haut pour qu'il “saigne” comme la grille d’onglets */
+.top-nav{
+  margin-inline: calc(-1 * var(--bleed));
+  padding-inline: calc(var(--gutter) + var(--bleed));
+  flex-wrap: nowrap;                 /* reste bien sur une ligne */
+}
+
+/* 3) élargit l’ENCADRÉ (panel) comme les onglets */
+.kpi-panels{
+  margin-top: 18px;
+}
+
+.kpi-panels .panel-box{
+  margin-inline: calc(-1 * var(--bleed));
+  padding-inline: calc(16px + var(--bleed));  /* 16px = padding existant du panel */
+  width: auto;                                 /* pas de rétrécissement */
+}
+
+/* 4) pour que tout “tienne” sans rognage à droite */
+.kpi-wrap,
+.section .tabset,
+.kpi-tabs,
+.top-nav,
+.kpi-panels .panel-box{
+  overflow-x: clip;                  /* évite que le glow/scale dépasse */
+}
+
+/* 5) mobile : on remet propre */
+@media (max-width: 700px){
+  .top-nav{ 
+    flex-wrap: wrap; 
+    margin-inline: 0;
+    padding-inline: var(--gutter);
+  }
+  .kpi-panels .panel-box{
+    margin-inline: 0;
+    padding-inline: 16px;            /* padding normal sans bleed */
+  }
+}

@@ -432,7 +432,7 @@
     );
   }
 
-  /* ========== Recherche arborescence (sélection verte, replie le reste) ========== */
+  /* ========== Recherche arborescence (sélection verte, replie le reste, backspace-aware) ========== */
   function setupTreeSearch() {
     const side = $('#sidebar');
     if (!side) return;
@@ -470,11 +470,11 @@
     const selectLeaf = (leafBtn, on) => {
       const lcb = leafCheck(leafBtn);
       if (lcb) lcb.checked = !!on;
-      setActive(leafBtn, !!on); // vert (classe .is-active)
+      setActive(leafBtn, !!on); // vert,
     };
 
     const selectSite = (siteBtn, on) => {
-      checkWholeSite(siteBtn, on); // coche/décoche tout le site + vert via setActive()
+      checkWholeSite(siteBtn, on); // coche/décoche tout + vert,
     };
 
     const deselectAllAndCollapse = () => {
@@ -483,7 +483,7 @@
         if (scb) { scb.checked = false; scb.indeterminate = false; }
         setActive(siteBtn, false);
         siteLeaves(siteBtn).forEach(leaf => selectLeaf(leaf, false));
-        setExpanded(siteBtn, false); // on replie tout, on ouvrira seulement les matchés
+        setExpanded(siteBtn, false); // on replie tout par défaut,
       });
       updateParcFromSites();
     };
@@ -508,13 +508,16 @@
       const q = norm(input.value);
       clearBtn.hidden = !q;
 
+      // Quand le champ est vide (ex: après avoir effacé au clavier) → tout re-sélectionner,
       if (!q) {
-        // pas de requête : on ne modifie pas la sélection courante,
+        siteBtns.forEach(siteBtn => checkWholeSite(siteBtn, true)); // tout cocher,
+        updateParcFromSites();
+        openAllGroups(); // si tu préfères laisser replié, commente cette ligne,
         if (countEl) countEl.textContent = 'Tous les éléments';
         return;
       }
 
-      // 1) identifier les correspondances
+      // 1) identifier les correspondances,
       const matchedSites = new Set();
       const matchedLeavesBySite = new Map();
 
@@ -532,26 +535,26 @@
         }
       });
 
-      // 2) tout désélectionner + replier
+      // 2) tout désélectionner + replier,
       deselectAllAndCollapse();
 
-      // 3) ouvrir uniquement les sites concernés
+      // 3) ouvrir uniquement les sites concernés,
       siteBtns.forEach(siteBtn => {
         const shouldOpen = matchedSites.has(siteBtn) || matchedLeavesBySite.has(siteBtn);
         setExpanded(siteBtn, shouldOpen);
       });
 
-      // 4) sélectionner entièrement les sites qui matchent
+      // 4) sélectionner entièrement les sites matchés,
       matchedSites.forEach(siteBtn => selectSite(siteBtn, true));
 
-      // 5) sélectionner seulement les feuilles matchées dans les autres sites
+      // 5) sélectionner seulement les feuilles matchées dans les autres sites,
       matchedLeavesBySite.forEach((leaves, siteBtn) => {
-        if (matchedSites.has(siteBtn)) return; // déjà tout coché
+        if (matchedSites.has(siteBtn)) return; // déjà tout coché,
         leaves.forEach(leaf => selectLeaf(leaf, true));
-        updateSiteFromLeaves(siteBtn); // met le site en état partiel
+        updateSiteFromLeaves(siteBtn);         // état partiel,
       });
 
-      // 6) synchroniser l’état global et le compteur
+      // 6) sync global + compteur,
       updateParcFromSites();
       updateCount();
     };
@@ -559,50 +562,50 @@
     let t = null;
     const debounced = () => { clearTimeout(t); t = setTimeout(run, 90); };
 
-    // Saisie → recherche
+    // saisie (y compris Backspace/Delete) → recalcul progressif de la sélection,
     input.addEventListener('input', debounced);
 
-    // Entrée → vider le champ MAIS conserver la sélection actuelle
+    // Entrée → vider le champ MAIS conserver la sélection actuelle,
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') {
         e.preventDefault();
         input.value = '';
         clearBtn.hidden = true;
         if (countEl) countEl.textContent = 'Tous les éléments';
-        // on NE relance PAS run(), la sélection reste telle quelle
+        // pas de run() ici → la sélection reste telle quelle,
+        input.blur();
       }
     });
 
-    // Bouton ✕ → effacer + RÉ-SÉLECTIONNER TOUT + tout ouvrir
+    // Bouton ✕ → effacer + re-sélectionner TOUT + tout ouvrir,
     clearBtn?.addEventListener('click', () => {
       input.value = '';
       clearBtn.hidden = true;
 
-      siteBtns.forEach(siteBtn => checkWholeSite(siteBtn, true)); // tout cocher
+      siteBtns.forEach(siteBtn => checkWholeSite(siteBtn, true));
       updateParcFromSites();
-      openAllGroups(); // rouvre tous les groupes
+      openAllGroups();
 
       if (countEl) countEl.textContent = 'Tous les éléments';
       input.focus();
     });
 
-    // Raccourcis: “/” focus, Échap efface (et ne touche pas à la sélection)
+    // Raccourcis: “/” focus, Échap efface sans toucher à la sélection,
     window.addEventListener('keydown', (e) => {
       const tag = document.activeElement?.tagName;
       if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
-        e.preventDefault();
-        input.focus();
+        e.preventDefault(); input.focus();
       }
       if (e.key === 'Escape' && document.activeElement === input) {
         input.value = '';
         clearBtn.hidden = true;
         if (countEl) countEl.textContent = 'Tous les éléments';
-        // pas de run() → on ne change pas la sélection
         input.blur();
+        // pas de run() → on conserve la sélection actuelle,
       }
     });
 
-    // premier rendu
+    // état initial,
     if (countEl) countEl.textContent = 'Tous les éléments';
   }
 

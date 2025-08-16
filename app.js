@@ -52,71 +52,74 @@
   // Initialise le picker custom (clavier + souris + fermeture extérieure)
   function wireYearPicker() {
     const wrap = document.getElementById('year-picker');
-    if (!wrap) return; // si tu gardes seulement le <select>, on sort proprement
+    if (!wrap) return;
 
     const btn = wrap.querySelector('.year-btn');
     const menu = wrap.querySelector('.year-menu');
+    if (!btn || !menu) {
+      console.warn('[year-picker] markup incomplet (year-btn / year-menu manquants)');
+      return;
+    }
+
     const opts = Array.from(menu.querySelectorAll('[role="option"]'));
     let activeIndex = Math.max(0, opts.findIndex(li => li.dataset.value === String(FILTERS.year)));
+    let isOpen = false;
 
-    function setActive(i) {
+    const setActive = (i) => {
       opts.forEach(li => li.classList.remove('is-active'));
       const li = opts[i];
       if (li) { li.classList.add('is-active'); li.scrollIntoView({ block: 'nearest' }); }
-    }
-    function onDocClick(e) { if (!wrap.contains(e.target)) openMenu(false); }
-    function openMenu(open = true) {
-      btn.setAttribute('aria-expanded', String(open));
-      menu.hidden = !open;
-      if (open) {
+    };
+
+    const onDocClick = (e) => {
+      if (!wrap.contains(e.target)) toggle(false);
+    };
+
+    const toggle = (open) => {
+      isOpen = !!open;
+      btn.setAttribute('aria-expanded', String(isOpen));
+      menu.hidden = !isOpen;
+      wrap.classList.toggle('is-open', isOpen);
+      menu.classList.toggle('is-open', isOpen);
+      if (isOpen) {
+        // recalcule l’index actif à l’ouverture
         activeIndex = Math.max(0, opts.findIndex(li => li.dataset.value === String(FILTERS.year)));
         setActive(activeIndex);
         menu.focus({ preventScroll: true });
-        document.addEventListener('click', onDocClick);
+        // capture=true évite certains cas où le handler est ajouté pendant la phase de bubble
+        document.addEventListener('click', onDocClick, { capture: true });
       } else {
-        document.removeEventListener('click', onDocClick);
+        document.removeEventListener('click', onDocClick, { capture: true });
         btn.focus({ preventScroll: true });
       }
-    }
-    function selectIndex(i) {
+    };
+
+    const selectIndex = (i) => {
       const li = opts[i]; if (!li) return;
       setYear(li.dataset.value);
       activeIndex = i;
-      openMenu(false);
-    }
+      toggle(false);
+    };
 
     // Souris
-    btn.addEventListener('click', () => openMenu(btn.getAttribute('aria-expanded') !== 'true'));
-    menu.addEventListener('click', e => {
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation(); // évite la fermeture immédiate par le handler global
+      toggle(btn.getAttribute('aria-expanded') !== 'true');
+    });
+    menu.addEventListener('click', (e) => {
       const li = e.target.closest('[role="option"]');
       if (li) selectIndex(opts.indexOf(li));
     });
 
-    // Clavier
-    menu.addEventListener('keydown', e => {
-      switch (e.key) {
-        case 'ArrowDown': e.preventDefault(); activeIndex = Math.min(opts.length - 1, activeIndex + 1); setActive(activeIndex); break;
-        case 'ArrowUp': e.preventDefault(); activeIndex = Math.max(0, activeIndex - 1); setActive(activeIndex); break;
-        case 'Home': e.preventDefault(); activeIndex = 0; setActive(activeIndex); break;
-        case 'End': e.preventDefault(); activeIndex = opts.length - 1; setActive(activeIndex); break;
-        case 'Enter':
-        case ' ': e.preventDefault(); selectIndex(activeIndex); break;
-        case 'Escape': e.preventDefault(); openMenu(false); break;
+    // Clavier (ouverture depuis le bouton)
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        toggle(true);
       }
     });
 
-    // Init affichage en
-
-
-    // Souris
-    btn.addEventListener('click', () => openMenu(btn.getAttribute('aria-expanded') !== 'true'));
-    menu.addEventListener('click', (e) => {
-      const li = e.target.closest('[role="option"]');
-      if (!li) return;
-      selectIndex(opts.indexOf(li));
-    });
-
-    // Clavier sur le menu
+    // Clavier (navigation dans le menu)
     menu.addEventListener('keydown', (e) => {
       switch (e.key) {
         case 'ArrowDown': e.preventDefault(); activeIndex = Math.min(opts.length - 1, activeIndex + 1); setActive(activeIndex); break;
@@ -125,13 +128,14 @@
         case 'End': e.preventDefault(); activeIndex = opts.length - 1; setActive(activeIndex); break;
         case 'Enter':
         case ' ': e.preventDefault(); selectIndex(activeIndex); break;
-        case 'Escape': e.preventDefault(); openMenu(false); break;
+        case 'Escape': e.preventDefault(); toggle(false); break;
       }
     });
 
     // Init affichage
     setYear(FILTERS.year);
   }
+
 
   /* ========== Sticky (uniquement pour le bloc Énergie) ========== */
   function setupSticky(container) {

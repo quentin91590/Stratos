@@ -85,7 +85,7 @@
 
         <!-- Normalisation -->
         <div class="f-group">
-          <div class="f-label">Normalisation</div>
+          <div class="f-label">Valeurs absolues / relatives</div>
           <div class="segmented" role="group" aria-label="Normalisation">
             <label class="seg-item">
               <input type="radio" name="norm" value="kwhm2" checked>
@@ -98,14 +98,20 @@
           </div>
         </div>
 
-        <!-- Correction climatique (switch unique) -->
+        <!-- Correction climatique (commutateur iOS) -->
         <div class="f-group">
           <div class="f-label">Correction climatique</div>
-          <label class="switch">
-            <input type="checkbox" id="toggle-climate" checked>
-            <span>Activer</span>
+
+          <label class="ios-switch">
+            <input type="checkbox" id="toggle-climate" class="ios-input" checked
+              aria-label="Activer la correction climatique">
+            <span class="ios-track" aria-hidden="true">
+              <span class="ios-knob"></span>
+            </span>
+            <span class="ios-text" data-on="Activée" data-off="Désactivée">Activée</span>
           </label>
-          <div class="f-hint">Applique DJU pour la chaleur et CDD pour le froid,</div>
+
+          <div class="f-hint">Applique DJU pour la chaleur et CDD pour le froid.</div>
         </div>
 
         <!-- Benchmark -->

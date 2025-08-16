@@ -300,3 +300,50 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 /* Cache la croix native des champs search (Chrome/Safari/Edge) */
 .search-input input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
 .search-input input::-ms-clear { display: none; width: 0; height: 0; }
+/* ==== Commutateur iOS (Apple-style) ==== */
+:root{
+  --switch-on:  #34c759;   /* vert iOS */
+  --switch-off: #e5e7eb;   /* gris piste OFF */
+  --switch-knob:#ffffff;   /* bouton */
+}
+
+.ios-switch{
+  display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none;
+  font-weight:700; font-size:.9rem;
+}
+
+.ios-input{
+  position:absolute; opacity:0; width:0; height:0; pointer-events:none;
+}
+
+.ios-track{
+  position:relative; width:48px; height:28px; border-radius:999px;
+  background:var(--switch-off); transition:background .18s ease;
+  box-shadow: inset 0 0 0 1px rgba(0,0,0,.06);
+}
+
+.ios-knob{
+  position:absolute; top:3px; left:3px; width:22px; height:22px;
+  background:var(--switch-knob); border-radius:50%;
+  box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.04);
+  transition: transform .18s ease;
+  will-change: transform;
+}
+
+/* ON */
+.ios-input:checked + .ios-track{ background:var(--switch-on); }
+.ios-input:checked + .ios-track .ios-knob{ transform: translateX(20px); }
+
+/* Focus accessible */
+.ios-input:focus-visible + .ios-track{
+  outline:none; box-shadow:0 0 0 6px var(--ring);
+}
+
+/* Pressed feedback léger */
+.ios-switch:active .ios-knob{ transform: scale(.96); }
+.ios-input:checked + .ios-track .ios-knob:active{ transform: translateX(20px) scale(.96); }
+
+/* Réduire les animations si nécessaire */
+@media (prefers-reduced-motion: reduce){
+  .ios-track, .ios-knob{ transition: none; }
+}

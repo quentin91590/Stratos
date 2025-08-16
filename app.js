@@ -420,17 +420,23 @@
     );
     applyNormalization(FILTERS.norm);
 
-    // — Correction climatique (switch unique),
+    // — Correction climatique (commutateur iOS)
     const clim = $('#toggle-climate', side);
+    const climText = $('.ios-text', side);
+
     if (clim) {
-      // init selon l’état du switch,
+      // init
       FILTERS.climate = !!clim.checked;
+      if (climText) climText.textContent = clim.checked ? climText.dataset.on : climText.dataset.off;
+
       clim.addEventListener('change', (e) => {
         FILTERS.climate = !!e.target.checked;
-        applyClimate();
-        // ici, si tu veux recalculer des séries corrigées, appelle ta logique de refresh,
+        if (climText) climText.textContent = e.target.checked ? climText.dataset.on : climText.dataset.off;
+        applyClimate();                 // met à jour libellés Chaleur/Froid
+        // ici, appelle ta logique de refresh data si besoin
       });
     }
+
     applyClimate();
 
     // — Benchmark

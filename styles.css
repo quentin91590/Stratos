@@ -297,3 +297,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .s-clear:hover{ background:#e2e8f0; }
 .s-meta{ margin-top:6px; font-size:.8rem; color:#64748b; }
+/* Cache la croix native des champs search (Chrome/Safari/Edge) */
+.search-input input::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; display: none; }
+.search-input input::-ms-clear { display: none; width: 0; height: 0; }

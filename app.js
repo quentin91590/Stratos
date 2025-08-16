@@ -432,126 +432,179 @@
     );
   }
 
-/* ========== Recherche arborescence (sélection verte + replie le reste) ========== */
-function setupTreeSearch() {
-  const side = $('#sidebar');
-  if (!side) return;
+  /* ========== Recherche arborescence (sélection verte, replie le reste) ========== */
+  function setupTreeSearch() {
+    const side = $('#sidebar');
+    if (!side) return;
 
-  const input   = $('#tree-search', side);
-  const clearBtn= $('.s-clear', side);
-  const tree    = $('.tree', side);
-  if (!input || !tree) return;
+    const input = $('#tree-search', side);
+    const clearBtn = $('.s-clear', side);
+    const tree = $('.tree', side);
+    const countEl = $('#tree-search-count', side);
+    if (!input || !tree) return;
 
-  const norm = (s) => (s || '')
-    .toString()
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .trim();
+    const norm = (s) => (s || '')
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
 
-  const getHay = (el) => {
-    const t  = el?.textContent || '';
-    const d1 = el?.dataset?.egid  || '';
-    const d2 = el?.dataset?.addr  || '';
-    const d3 = el?.dataset?.tags  || '';
-    return norm([t, d1, d2, d3].join(' '));
-  };
+    const getHay = (el) => {
+      const t = el?.textContent || '';
+      const d1 = el?.dataset?.egid || '';
+      const d2 = el?.dataset?.addr || '';
+      const d3 = el?.dataset?.tags || '';
+      return norm([t, d1, d2, d3].join(' '));
+    };
 
-  const groups  = $$('.tree-group', tree);
+    const groups = $$('.tree-group', tree);
 
-  const setExpanded = (siteBtn, on) => {
-    if (!siteBtn) return;
-    siteBtn.setAttribute('aria-expanded', String(on));
-    const list = siteBtn.parentElement.querySelector('.tree-children');
-    if (list) list.style.display = on ? 'flex' : 'none';
-  };
+    const setExpanded = (siteBtn, on) => {
+      if (!siteBtn) return;
+      siteBtn.setAttribute('aria-expanded', String(on));
+      const list = siteBtn.parentElement.querySelector('.tree-children');
+      if (list) list.style.display = on ? 'flex' : 'none';
+    };
 
-  const selectLeaf = (leafBtn, on) => {
-    const lcb = leafCheck(leafBtn);
-    if (lcb) { lcb.checked = !!on; }
-    setActive(leafBtn, !!on);            // vert,
-  };
+    const selectLeaf = (leafBtn, on) => {
+      const lcb = leafCheck(leafBtn);
+      if (lcb) lcb.checked = !!on;
+      setActive(leafBtn, !!on); // vert (classe .is-active)
+    };
 
-  const selectSite = (siteBtn, on) => {
-    checkWholeSite(siteBtn, on);          // coche tout + vert sur le site et ses feuilles,
-  };
+    const selectSite = (siteBtn, on) => {
+      checkWholeSite(siteBtn, on); // coche/décoche tout le site + vert via setActive()
+    };
 
-  const deselectAll = () => {
-    siteBtns.forEach(siteBtn => {
-      const scb = siteCheck(siteBtn);
-      if (scb) { scb.checked = false; scb.indeterminate = false; }
-      setActive(siteBtn, false);
-      siteLeaves(siteBtn).forEach(leaf => selectLeaf(leaf, false));
-      // on replie tout par défaut, on ouvrira seulement les matchés,
-      setExpanded(siteBtn, false);
-    });
-    updateParcFromSites();
-  };
+    const deselectAllAndCollapse = () => {
+      siteBtns.forEach(siteBtn => {
+        const scb = siteCheck(siteBtn);
+        if (scb) { scb.checked = false; scb.indeterminate = false; }
+        setActive(siteBtn, false);
+        siteLeaves(siteBtn).forEach(leaf => selectLeaf(leaf, false));
+        setExpanded(siteBtn, false); // on replie tout, on ouvrira seulement les matchés
+      });
+      updateParcFromSites();
+    };
 
-  const run = () => {
-    const q = norm(input.value);
-    clearBtn.hidden = !q;
+    const openAllGroups = () => {
+      siteBtns.forEach(siteBtn => setExpanded(siteBtn, true));
+    };
 
-    if (!q) {
-      // rien de spécial quand on efface: on ne touche pas à la sélection en place,
-      // si tu veux rouvrir/replier quelque chose ici, on peut, 
-      return;
-    }
+    const updateCount = () => {
+      const nSelLeaves = $$('.tree-leaf .tree-check', tree).filter(c => c.checked).length;
+      const nFullSites = siteBtns.filter(btn => {
+        const scb = siteCheck(btn);
+        return !!scb && scb.checked === true && scb.indeterminate === false;
+      }).length;
+      if (countEl) {
+        if (nSelLeaves === 0 && nFullSites === 0) countEl.textContent = 'Aucun élément sélectionné';
+        else countEl.textContent = `${nSelLeaves} bâtiment(s) sélectionné(s), ${nFullSites} site(s) entiers,`;
+      }
+    };
 
-    // 1) trouver les correspondances,
-    const matchedSites          = new Set();     // sites qui matchent eux-mêmes,
-    const matchedLeavesBySite   = new Map();     // feuilles matchées par site,
+    const run = () => {
+      const q = norm(input.value);
+      clearBtn.hidden = !q;
 
-    groups.forEach(g => {
-      const siteBtn = g.querySelector('.tree-node.toggle');
-      const leaves  = siteLeaves(siteBtn);
+      if (!q) {
+        // pas de requête : on ne modifie pas la sélection courante,
+        if (countEl) countEl.textContent = 'Tous les éléments';
+        return;
+      }
 
-      const siteHit = getHay(siteBtn).includes(q);
-      if (siteHit) {
-        matchedSites.add(siteBtn);
-      } else {
-        const hits = [];
-        leaves.forEach(leaf => { if (getHay(leaf).includes(q)) hits.push(leaf); });
-        if (hits.length) matchedLeavesBySite.set(siteBtn, hits);
+      // 1) identifier les correspondances
+      const matchedSites = new Set();
+      const matchedLeavesBySite = new Map();
+
+      groups.forEach(g => {
+        const siteBtn = g.querySelector('.tree-node.toggle');
+        const leaves = siteLeaves(siteBtn);
+        const siteHit = getHay(siteBtn).includes(q);
+
+        if (siteHit) {
+          matchedSites.add(siteBtn);
+        } else {
+          const hits = [];
+          leaves.forEach(leaf => { if (getHay(leaf).includes(q)) hits.push(leaf); });
+          if (hits.length) matchedLeavesBySite.set(siteBtn, hits);
+        }
+      });
+
+      // 2) tout désélectionner + replier
+      deselectAllAndCollapse();
+
+      // 3) ouvrir uniquement les sites concernés
+      siteBtns.forEach(siteBtn => {
+        const shouldOpen = matchedSites.has(siteBtn) || matchedLeavesBySite.has(siteBtn);
+        setExpanded(siteBtn, shouldOpen);
+      });
+
+      // 4) sélectionner entièrement les sites qui matchent
+      matchedSites.forEach(siteBtn => selectSite(siteBtn, true));
+
+      // 5) sélectionner seulement les feuilles matchées dans les autres sites
+      matchedLeavesBySite.forEach((leaves, siteBtn) => {
+        if (matchedSites.has(siteBtn)) return; // déjà tout coché
+        leaves.forEach(leaf => selectLeaf(leaf, true));
+        updateSiteFromLeaves(siteBtn); // met le site en état partiel
+      });
+
+      // 6) synchroniser l’état global et le compteur
+      updateParcFromSites();
+      updateCount();
+    };
+
+    let t = null;
+    const debounced = () => { clearTimeout(t); t = setTimeout(run, 90); };
+
+    // Saisie → recherche
+    input.addEventListener('input', debounced);
+
+    // Entrée → vider le champ MAIS conserver la sélection actuelle
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        input.value = '';
+        clearBtn.hidden = true;
+        if (countEl) countEl.textContent = 'Tous les éléments';
+        // on NE relance PAS run(), la sélection reste telle quelle
       }
     });
 
-    // 2) tout déselectionner + replier,
-    deselectAll();
+    // Bouton ✕ → effacer + RÉ-SÉLECTIONNER TOUT + tout ouvrir
+    clearBtn?.addEventListener('click', () => {
+      input.value = '';
+      clearBtn.hidden = true;
 
-    // 3) ouvrir uniquement les groupes concernés,
-    siteBtns.forEach(siteBtn => {
-      const shouldOpen = matchedSites.has(siteBtn) || matchedLeavesBySite.has(siteBtn);
-      setExpanded(siteBtn, shouldOpen);
+      siteBtns.forEach(siteBtn => checkWholeSite(siteBtn, true)); // tout cocher
+      updateParcFromSites();
+      openAllGroups(); // rouvre tous les groupes
+
+      if (countEl) countEl.textContent = 'Tous les éléments';
+      input.focus();
     });
 
-    // 4) sélectionner entièrement les sites matchés,
-    matchedSites.forEach(siteBtn => selectSite(siteBtn, true));
-
-    // 5) sélectionner seulement les feuilles matchées pour les autres sites,
-    matchedLeavesBySite.forEach((leaves, siteBtn) => {
-      if (matchedSites.has(siteBtn)) return;  // déjà tout coché,
-      leaves.forEach(leaf => selectLeaf(leaf, true));
-      updateSiteFromLeaves(siteBtn);          // met le site en partiel,
+    // Raccourcis: “/” focus, Échap efface (et ne touche pas à la sélection)
+    window.addEventListener('keydown', (e) => {
+      const tag = document.activeElement?.tagName;
+      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        input.focus();
+      }
+      if (e.key === 'Escape' && document.activeElement === input) {
+        input.value = '';
+        clearBtn.hidden = true;
+        if (countEl) countEl.textContent = 'Tous les éléments';
+        // pas de run() → on ne change pas la sélection
+        input.blur();
+      }
     });
 
-    // 6) synchroniser l’état global “Parc”,
-    updateParcFromSites();
-  };
-
-  let t = null;
-  const debounced = () => { clearTimeout(t); t = setTimeout(run, 90); };
-
-  input.addEventListener('input', debounced);
-  clearBtn?.addEventListener('click', () => { input.value = ''; run(); input.focus(); });
-
-  // racourcis: “/” focus, Échap efface,
-  window.addEventListener('keydown', (e) => {
-    const tag = document.activeElement?.tagName;
-    if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') { e.preventDefault(); input.focus(); }
-    if (e.key === 'Escape' && document.activeElement === input) { input.value = ''; run(); input.blur(); }
-  });
-}
+    // premier rendu
+    if (countEl) countEl.textContent = 'Tous les éléments';
+  }
 
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */

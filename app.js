@@ -311,23 +311,23 @@
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
   /* ========== Filtres (sidebar) ========== */
+  /* ========== Filtres (sidebar) — v2 sans comparaison ========== */
   const FILTERS = {
-    years: [2024],         // tri décroissant, [N, N-1] si comparaison
+    year: 2024,            // une seule année,
     norm: 'kwhm2',         // 'kwh' | 'kwhm2'
     climate: { dju: true, cdd: false },
     benchmark: { type: 'internal', refYear: 2024 }
   };
 
-  function applyYears() {
-    FILTERS.years.sort((a, b) => b - a);
-    const yp = $('#year-picker');
-    if (yp) yp.value = String(FILTERS.years[0] || '');
-    const cmp = $('#filters-compare');
-    if (cmp) {
-      cmp.textContent = FILTERS.years.length > 1
-        ? `${FILTERS.years[0]} vs ${FILTERS.years.slice(1).join(', ')}`
-        : '—';
-    }
+  // met à jour l’année côté état + synchronise les deux sélecteurs
+  function setYear(y) {
+    const yr = Number(y);
+    FILTERS.year = yr;
+    const top = $('#year-picker');                 // sélecteur du haut à droite
+    const side = $('#year-picker-side');           // sélecteur de la sidebar
+    if (top && top.value !== String(yr)) top.value = String(yr);
+    if (side && side.value !== String(yr)) side.value = String(yr);
+    // ici plus tard tu pourras déclencher un refresh des graphes selon FILTERS.year,
   }
 
   function applyNormalization(val = FILTERS.norm) {
@@ -349,16 +349,14 @@
     };
     relabel('tab-energie', 'Intensité énergétique', 'Consommation énergétique');
     relabel('tab-elec', 'Intensité électrique', 'Conso. électrique');
-    // (Chaleur / Froid restent libellés “Intensité …”,)
   }
 
   function applyClimate() {
-    // Panneaux
     const h3H = $('#panel-chaleur h3');
     const h3F = $('#panel-froid h3');
     if (h3H) h3H.textContent = FILTERS.climate.dju ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
     if (h3F) h3F.textContent = FILTERS.climate.cdd ? 'Froid (corrigée CDD)' : 'Froid (brut)';
-    // Onglets KPI
+
     const tH = $('#tab-chaleur .kpi-title');
     const tF = $('#tab-froid .kpi-title');
     if (tH) tH.textContent = FILTERS.climate.dju ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
@@ -376,25 +374,13 @@
     const side = $('#sidebar');
     if (!side) return;
 
-    // — Années (limite douce à 2 sélections : N et N-1)
-    const yearBoxes = $$('.filters-year input[type="checkbox"]', side);
-    const coerceYears = () => {
-      let selected = yearBoxes.filter(b => b.checked).map(b => Number(b.value));
-      if (selected.length === 0) {
-        // empêche le “0 sélection” : on réactive la dernière box (ici 2024)
-        const fallback = yearBoxes.find(b => b.value === '2024') || yearBoxes[0];
-        if (fallback) fallback.checked = true;
-        selected = [Number(fallback.value)];
-      }
-      // garde au plus 2 ans (dernières cochées, triées décroissant)
-      selected = Array.from(new Set(selected)).sort((a, b) => b - a).slice(0, 2);
-      // synchronise l’UI si on a dû tronquer
-      yearBoxes.forEach(b => b.checked = selected.includes(Number(b.value)));
-      FILTERS.years = selected;
-      applyYears();
-    };
-    yearBoxes.forEach(b => b.addEventListener('change', coerceYears));
-    coerceYears();
+    // — Année (synchronisation bidirectionnelle)
+    const topSel = $('#year-picker');                  // sélecteur du haut à droite,
+    const sideSel = $('#year-picker-side', side);       // sélecteur de la sidebar,
+    if (topSel) topSel.addEventListener('change', e => setYear(e.target.value));
+    if (sideSel) sideSel.addEventListener('change', e => setYear(e.target.value));
+    // initialise avec la valeur affichée en haut si dispo, sinon le défaut,
+    setYear(topSel?.value || FILTERS.year);
 
     // — Normalisation
     $$('.segmented input[name="norm"]', side).forEach(r =>
@@ -417,6 +403,7 @@
     if (ref) ref.addEventListener('change', e => { FILTERS.benchmark.refYear = Number(e.target.value); applyBenchmark(); });
     applyBenchmark();
   }
+
 
 
   /* ========== Boot ==========

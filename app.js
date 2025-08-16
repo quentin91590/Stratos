@@ -432,7 +432,7 @@
     );
   }
 
-  /* ========== Recherche arborescence (EGID / adresse / nom) ========== */
+  /* ========== Recherche arborescence (sélection, pas de masquage) ========== */
   function setupTreeSearch() {
     const side = $('#sidebar');
     if (!side) return;
@@ -458,93 +458,112 @@
     };
 
     const groups = $$('.tree-group', tree);
-    const parcRow = $('.tree > .tree-node:not(.toggle)', tree); // “Parc”
     const countEl = $('#tree-search-count', side);
 
-    const show = (el, on) => { if (el) el.hidden = !on; };
-    const setExpanded = (siteBtn, on) => {
+    const ensureExpanded = (siteBtn) => {
       if (!siteBtn) return;
-      siteBtn.setAttribute('aria-expanded', String(on));
+      siteBtn.setAttribute('aria-expanded', 'true');
       const list = siteBtn.parentElement.querySelector('.tree-children');
-      if (list) list.style.display = on ? 'flex' : 'none';
+      if (list) list.style.display = 'flex';
     };
 
-    const updateCount = () => {
-      const visibleLeaves = $$('.tree-leaf', tree).filter(b => !b.hidden).length;
-      const visibleGroups = groups.filter(g => !g.hidden).length;
-      if (input.value.trim() === '') {
-        countEl && (countEl.textContent = 'Tous les éléments');
-      } else {
-        countEl && (countEl.textContent = `${visibleLeaves} résultat(s) dans ${visibleGroups} site(s)`);
-      }
+    const clearMatchesStyle = () => {
+      $$('.tree-node.toggle', tree).forEach(b => b.classList.remove('is-match'));
+      $$('.tree-leaf', tree).forEach(b => b.classList.remove('is-match'));
     };
 
-    let t = null;
+    const selectLeaf = (leafBtn, on) => {
+      const lcb = leafCheck(leafBtn);
+      if (lcb) lcb.checked = !!on;
+      setActive(leafBtn, !!on); // vert
+    };
+
+    const selectSite = (siteBtn, on) => {
+      checkWholeSite(siteBtn, on); // coche/décoche tout le site + vert via setActive()
+      if (on) ensureExpanded(siteBtn);
+    };
+
+    const deselectAll = () => {
+      siteBtns.forEach(siteBtn => {
+        const scb = siteCheck(siteBtn);
+        if (scb) { scb.checked = false; scb.indeterminate = false; }
+        setActive(siteBtn, false);
+        siteLeaves(siteBtn).forEach(leaf => selectLeaf(leaf, false));
+      });
+      updateParcFromSites();
+    };
+
     const run = () => {
       const q = norm(input.value);
       clearBtn.hidden = !q;
 
-      // reset si vide
+      // pas de masquage: on laisse tout visible, on travaille uniquement sur la sélection,
+      clearMatchesStyle();
+
       if (!q) {
-        groups.forEach(g => {
-          const siteBtn = g.querySelector('.tree-node.toggle');
-          show(g, true);
-          // remet l’état d’ouverture d’origine si besoin, ici on laisse tel quel
-          $$('.tree-leaf', g).forEach(leaf => { leaf.hidden = false; leaf.classList.remove('is-match'); });
-          siteBtn?.classList.remove('is-match');
-        });
-        parcRow && (parcRow.hidden = false);
-        updateCount();
+        // on ne touche pas à la sélection existante quand on efface la recherche,
+        countEl && (countEl.textContent = 'Tous les éléments');
         return;
       }
 
-      let anyVisible = false;
+      // 1) repérer les correspondances
+      const matchedSites = new Set();                    // sites dont le libellé/egid/adresse/tags matchent
+      const matchedLeavesBySite = new Map();             // feuilles qui matchent, rangées par site
 
       groups.forEach(g => {
         const siteBtn = g.querySelector('.tree-node.toggle');
-        const list = g.querySelector('.tree-children');
-        const leaves = $$('.tree-leaf', list);
+        const leaves = $$('.tree-leaf', g);
 
-        const siteMatch = getHay(siteBtn).includes(q);
-        let leafMatches = 0;
-
-        if (siteMatch) {
-          // le site correspond → tout afficher dessous
-          show(g, true);
-          setExpanded(siteBtn, true);
+        const siteHit = getHay(siteBtn).includes(q);
+        if (siteHit) {
+          matchedSites.add(siteBtn);
           siteBtn.classList.add('is-match');
-          leaves.forEach(leaf => { leaf.hidden = false; leaf.classList.remove('is-match'); });
-          anyVisible = true;
         } else {
-          siteBtn.classList.remove('is-match');
-          // on filtre les bâtiments
           leaves.forEach(leaf => {
-            const ok = getHay(leaf).includes(q);
-            leaf.hidden = !ok;
-            leaf.classList.toggle('is-match', ok);
-            if (ok) leafMatches++;
+            if (getHay(leaf).includes(q)) {
+              siteBtn.classList.add('is-match');
+              leaf.classList.add('is-match');
+              if (!matchedLeavesBySite.has(siteBtn)) matchedLeavesBySite.set(siteBtn, []);
+              matchedLeavesBySite.get(siteBtn).push(leaf);
+            }
           });
-          const hasAny = leafMatches > 0;
-          show(g, hasAny);
-          if (hasAny) {
-            setExpanded(siteBtn, true);
-            anyVisible = true;
-          } else {
-            setExpanded(siteBtn, false);
-          }
         }
       });
 
-      // la ligne “Parc” reste affichée si q vide, sinon on la masque si rien n’est visible
-      parcRow && (parcRow.hidden = !anyVisible && !!q);
-      updateCount();
+      // 2) désélectionner tout le parc,
+      deselectAll();
+
+      // 3) sélectionner entièrement les sites qui matchent,
+      matchedSites.forEach(siteBtn => selectSite(siteBtn, true));
+
+      // 4) sélectionner seulement les feuilles qui matchent dans les sites non-matchés,
+      matchedLeavesBySite.forEach((leaves, siteBtn) => {
+        if (matchedSites.has(siteBtn)) return; // déjà tout coché
+        leaves.forEach(leaf => selectLeaf(leaf, true));
+        updateSiteFromLeaves(siteBtn);         // met le site en "indeterminate" (état partiel) automatiquement
+        ensureExpanded(siteBtn);
+      });
+
+      // 5) mettre à jour le “Parc” pour refléter la sélection actuelle,
+      updateParcFromSites();
+
+      // 6) petit récap,
+      const nSelLeaves = $$('.tree-leaf .tree-check', tree).filter(c => c.checked).length;
+      const nFullSites = siteBtns.filter(btn => {
+        const scb = siteCheck(btn);
+        return !!scb && scb.checked === true && scb.indeterminate === false;
+      }).length;
+
+      countEl && (countEl.textContent = `${nSelLeaves} bâtiment(s) sélectionné(s), ${nFullSites} site(s) entiers,`);
     };
 
+    let t = null;
     const debounced = () => { clearTimeout(t); t = setTimeout(run, 90); };
+
     input.addEventListener('input', debounced);
     clearBtn?.addEventListener('click', () => { input.value = ''; run(); input.focus(); });
 
-    // Raccourcis clavier: "/" pour focuser, Échap pour effacer
+    // Raccourcis: "/" focus, Échap efface
     window.addEventListener('keydown', (e) => {
       const tag = document.activeElement?.tagName;
       if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
@@ -560,7 +579,6 @@
 
     run(); // premier rendu
   }
-
 
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */

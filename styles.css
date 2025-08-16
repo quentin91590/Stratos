@@ -297,10 +297,3 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .s-clear:hover{ background:#e2e8f0; }
 .s-meta{ margin-top:6px; font-size:.8rem; color:#64748b; }
-
-/* éléments correspondants (mise en évidence subtile) */
-.tree-node.is-match,
-.tree-leaf.is-match{
-  background:#fff8e1;  /* léger jaune */
-  box-shadow: inset 0 0 0 2px rgba(245, 158, 11, 0.35);
-}

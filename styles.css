@@ -380,3 +380,30 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @media (max-width: 640px){
   .tree .badge{ padding: 3px 7px; font-size: .72rem; }
 }
+/* ==== Filtres inline (onglet Énergie) ==== */
+.filters-inline{
+  margin: 8px 0 12px; padding: 12px;
+  background:#fff; border:1px solid var(--border); border-radius:12px;
+  box-shadow: 0 2px 8px rgba(16,24,40,.05);
+}
+.fi-grid{
+  display:grid; gap:12px;
+  grid-template-columns: repeat(4, minmax(200px, 1fr));
+}
+@media (max-width: 1200px){ .fi-grid{ grid-template-columns: repeat(2, minmax(200px, 1fr)); } }
+@media (max-width: 640px){  .fi-grid{ grid-template-columns: 1fr; } }
+
+.fi-item{ display:flex; flex-direction:column; gap:8px; }
+.fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
+
+/* (réutilise .select, .segmented, .seg-item, .stack, .radio déjà en place) */
+
+/* ==== Commutateur iOS (si pas déjà ajouté) ==== */
+:root{ --switch-on:#34c759; --switch-off:#e5e7eb; --switch-knob:#fff; }
+.ios-switch{ display:flex; align-items:center; gap:10px; cursor:pointer; user-select:none; font-weight:700; font-size:.9rem; }
+.ios-input{ position:absolute; opacity:0; width:0; height:0; pointer-events:none; }
+.ios-track{ position:relative; width:48px; height:28px; border-radius:999px; background:var(--switch-off); transition:background .18s ease; box-shadow: inset 0 0 0 1px rgba(0,0,0,.06); }
+.ios-knob{ position:absolute; top:3px; left:3px; width:22px; height:22px; background:var(--switch-knob); border-radius:50%; box-shadow: 0 1px 2px rgba(0,0,0,.18), 0 0 0 1px rgba(0,0,0,.04); transition: transform .18s ease; }
+.ios-input:checked + .ios-track{ background:var(--switch-on); }
+.ios-input:checked + .ios-track .ios-knob{ transform: translateX(20px); }
+.ios-input:focus-visible + .ios-track{ box-shadow:0 0 0 6px var(--ring); }

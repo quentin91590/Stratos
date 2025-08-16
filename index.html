@@ -371,6 +371,75 @@
                 <span class="ps-dot" aria-hidden="true"></span>
               </div>
 
+              <!-- Filtres (onglet Énergie) -->
+              <section id="energy-filters" class="filters-inline" role="region" aria-label="Filtres énergie">
+                <div class="fi-grid">
+
+                  <!-- Année (sync avec sélecteur du haut) -->
+                  <div class="fi-item">
+                    <label for="year-picker-energy" class="fi-label">Année</label>
+                    <select id="year-picker-energy" class="select" aria-label="Année (énergie)">
+                      <option>2022</option>
+                      <option>2023</option>
+                      <option selected>2024</option>
+                      <option>2025</option>
+                      <option>2026</option>
+                    </select>
+                  </div>
+
+                  <!-- Normalisation -->
+                  <div class="fi-item">
+                    <div class="fi-label">Normalisation</div>
+                    <div class="segmented" role="group" aria-label="Normalisation">
+                      <label class="seg-item">
+                        <input type="radio" name="norm-energy" value="kwhm2" checked>
+                        <span>kWh/m²</span>
+                      </label>
+                      <label class="seg-item">
+                        <input type="radio" name="norm-energy" value="kwh">
+                        <span>kWh</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <!-- Correction climatique (commutateur iOS) -->
+                  <div class="fi-item">
+                    <div class="fi-label">Correction climatique</div>
+                    <label class="ios-switch">
+                      <input type="checkbox" id="toggle-climate" class="ios-input" checked
+                        aria-label="Activer la correction climatique">
+                      <span class="ios-track" aria-hidden="true"><span class="ios-knob"></span></span>
+                      <span class="ios-text" data-on="Activée" data-off="Désactivée">Activée</span>
+                    </label>
+                    <div class="f-hint">Applique DJU (chaleur) et CDD (froid)</div>
+                  </div>
+
+                  <!-- Benchmark -->
+                  <div class="fi-item">
+                    <div class="fi-label">Benchmark</div>
+                    <div class="stack">
+                      <label class="radio">
+                        <input type="radio" name="bench-type-energy" value="internal" checked>
+                        <span>Interne (médiane/Q2)</span>
+                      </label>
+                      <label class="radio">
+                        <input type="radio" name="bench-type-energy" value="external">
+                        <span>Externe (réf. sectorielle)</span>
+                      </label>
+                    </div>
+                    <label for="bench-ref-year" class="sr-only">Année de référence</label>
+                    <select id="bench-ref-year" class="select" aria-label="Année de référence (benchmark)">
+                      <option>2022</option>
+                      <option>2023</option>
+                      <option selected>2024</option>
+                      <option>2025</option>
+                      <option>2026</option>
+                    </select>
+                  </div>
+
+                </div>
+              </section>
+
               <div class="panel-summary" aria-label="Synthèse du périmètre">
                 <div class="pill">
                   <span class="pill-ico" aria-hidden="true">

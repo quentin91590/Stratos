@@ -341,30 +341,19 @@
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
-  /* ========== Filtres (sidebar) ========== */
-  /* ========== Filtres (sidebar) — v2 sans comparaison ========== */
+  /* ========== Filtres (onglet Énergie) ========== */
   const FILTERS = {
     year: 2024,
-    norm: 'kwhm2',
-    climate: true, // switch unique: true = corrigé (DJU+CDD), false = brut,
+    norm: 'kwhm2',        // 'kwh' | 'kwhm2'
+    climate: true,        // true = corrigé (DJU+CDD), false = brut
     benchmark: { type: 'internal', refYear: 2024 }
   };
-  // met à jour l’année côté état + synchronise les deux sélecteurs
-  function setYear(y) {
-    const yr = Number(y);
-    FILTERS.year = yr;
-    const top = $('#year-picker');                 // sélecteur du haut à droite
-    const side = $('#year-picker-side');           // sélecteur de la sidebar
-    if (top && top.value !== String(yr)) top.value = String(yr);
-    if (side && side.value !== String(yr)) side.value = String(yr);
-    // ici plus tard tu pourras déclencher un refresh des graphes selon FILTERS.year,
-  }
 
   function applyNormalization(val = FILTERS.norm) {
     FILTERS.norm = val;
     document.documentElement.dataset.norm = val;
 
-    // Met à jour les libellés d’unités si data-* est présent
+    // Met à jour les libellés d’unités si data-* présent
     $$('.kpi-unit').forEach(u => {
       const k1 = u.getAttribute('data-kwh');
       const k2 = u.getAttribute('data-kwhm2');
@@ -372,7 +361,7 @@
       u.textContent = (val === 'kwhm2') ? k2 : k1;
     });
 
-    // Ajuste les titres de KPI pour refléter l’intensité vs conso
+    // Ajuste quelques titres
     const relabel = (tabId, tIntensity, tConso) => {
       const t = document.querySelector(`#${tabId} .kpi-title`);
       if (t) t.textContent = (val === 'kwhm2') ? tIntensity : tConso;
@@ -383,12 +372,10 @@
 
   function applyClimate() {
     const on = !!FILTERS.climate;
-    // Panneaux,
     const h3H = $('#panel-chaleur h3');
     const h3F = $('#panel-froid h3');
-    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée)' : 'Chaleur (brut)';
-    if (h3F) h3F.textContent = on ? 'Froid (corrigée)' : 'Froid (brut)';
-    // Onglets KPI,
+    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
+    if (h3F) h3F.textContent = on ? 'Froid (corrigée CDD)' : 'Froid (brut)';
     const tH = $('#tab-chaleur .kpi-title');
     const tF = $('#tab-froid .kpi-title');
     if (tH) tH.textContent = on ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
@@ -396,53 +383,62 @@
   }
 
   function applyBenchmark() {
-    const el = $('#sum-bench-val');
+    const el = $('#sum-bench-val'); // pill dans la synthèse
     if (el) el.textContent =
       (FILTERS.benchmark.type === 'internal' ? 'Interne ' : 'Externe ') +
       String(FILTERS.benchmark.refYear || '');
   }
 
-  function setupFilters() {
-    const side = $('#sidebar');
-    if (!side) return;
+  // sync année haut ↔ énergie
+  function setYear(y) {
+    const yr = Number(y);
+    FILTERS.year = yr;
+    const top = $('#year-picker');
+    const energy = $('#year-picker-energy');
+    if (top && top.value !== String(yr)) top.value = String(yr);
+    if (energy && energy.value !== String(yr)) energy.value = String(yr);
+    // TODO: brancher ici un refresh de tes données si besoin
+  }
 
-    // — Année (synchronisation bidirectionnelle)
-    const topSel = $('#year-picker');                  // sélecteur du haut à droite,
-    const sideSel = $('#year-picker-side', side);       // sélecteur de la sidebar,
+  function setupEnergyFilters() {
+    const scope = $('#energy-filters');
+    if (!scope) return;
+
+    // Année (bi-directionnel)
+    const topSel = $('#year-picker');
+    const energySel = $('#year-picker-energy', scope);
     if (topSel) topSel.addEventListener('change', e => setYear(e.target.value));
-    if (sideSel) sideSel.addEventListener('change', e => setYear(e.target.value));
-    // initialise avec la valeur affichée en haut si dispo, sinon le défaut,
-    setYear(topSel?.value || FILTERS.year);
+    if (energySel) energySel.addEventListener('change', e => setYear(e.target.value));
+    setYear(topSel?.value || energySel?.value || FILTERS.year);
 
-    // — Normalisation
-    $$('.segmented input[name="norm"]', side).forEach(r =>
+    // Normalisation
+    $$('.segmented input[name="norm-energy"]', scope).forEach(r =>
       r.addEventListener('change', e => applyNormalization(e.target.value))
     );
     applyNormalization(FILTERS.norm);
 
-    // — Correction climatique (commutateur iOS)
-    const clim = $('#toggle-climate', side);
-    const climText = $('.ios-text', side);
-
+    // Correction climatique (switch iOS)
+    const clim = $('#toggle-climate', scope);
+    const climText = $('.ios-text', scope);
     if (clim) {
-      // init
       FILTERS.climate = !!clim.checked;
       if (climText) climText.textContent = clim.checked ? climText.dataset.on : climText.dataset.off;
-
       clim.addEventListener('change', (e) => {
         FILTERS.climate = !!e.target.checked;
         if (climText) climText.textContent = e.target.checked ? climText.dataset.on : climText.dataset.off;
-        applyClimate();                 // met à jour libellés Chaleur/Froid
-        // ici, appelle ta logique de refresh data si besoin
+        applyClimate();
+        // TODO: refresh data si tu utilises des séries corrigées
       });
     }
-
     applyClimate();
 
-    // — Benchmark
-    $$('.radio input[name="bench-type"]', side).forEach(r =>
+    // Benchmark
+    $$('.radio input[name="bench-type-energy"]', scope).forEach(r =>
       r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; applyBenchmark(); })
     );
+    const ref = $('#bench-ref-year', scope);
+    if (ref) ref.addEventListener('change', e => { FILTERS.benchmark.refYear = Number(e.target.value); applyBenchmark(); });
+    applyBenchmark();
   }
 
   /* ========== Recherche arborescence (sélection verte, replie le reste, backspace-aware) ========== */
@@ -638,11 +634,11 @@
       // Sidebar init (si présente)
       checkWholeParc(true);
       updateParcFromSites();
-      // >>> Filtres
-      setupFilters();
-      setupTreeSearch();     // <<< ajoute ceci
+      etupTreeSearch();     // ta recherche à gauche
+      // Filtres dans Énergie
+      setupEnergyFilters();  // <<< nouveau
     } catch (e) {
-      console.error('[init] Erreur d’init :', e);
+      console.error('[init] Erreur d’initialisation:', e);
     }
   });
 })();

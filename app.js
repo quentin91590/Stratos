@@ -276,9 +276,11 @@
     });
   });
 
+  // === Sites : interactions de ligne (toggle ouverture, (dé)cocher, état partiel) ===
   siteBtns.forEach(siteBtn => {
     const cb = siteCheck(siteBtn);
     if (!cb) return;
+
     siteBtn.addEventListener('click', (e) => {
       const onChevron = !!e.target.closest?.('.chev');
       if (onChevron) {
@@ -294,8 +296,37 @@
         cb.dispatchEvent(new Event('change', { bubbles: true }));
       }
     });
-    cb.addEventListener('change', () => { checkWholeSite(siteBtn, cb.checked); });
+
+    cb.addEventListener('change', () => {
+      checkWholeSite(siteBtn, cb.checked);
+    });
   });
+
+  // === Root "Parc" : (dé)sélectionner tout, bindé une seule fois ===
+  if (parcBtn && parcCheck && !parcBtn.dataset.bound) {
+    parcBtn.dataset.bound = '1';
+
+    // Cliquer n'importe où sur la ligne (sauf directement sur la checkbox)
+    parcBtn.addEventListener('click', (e) => {
+      if (e.target === parcCheck) return;
+      parcCheck.indeterminate = false;
+      parcCheck.checked = !parcCheck.checked;
+      parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
+    });
+
+    // Quand la checkbox change -> (dé)sélectionne tout le parc
+    parcCheck.addEventListener('change', () => {
+      checkWholeParc(parcCheck.checked);
+
+      // // Option : auto-déployer les groupes après (dé)sélection,
+      // siteBtns.forEach(site => {
+      //   const list = site.parentElement.querySelector('.tree-children');
+      //   site.setAttribute('aria-expanded', 'true');
+      //   if (list) list.style.display = 'flex';
+      // });
+    });
+  }
+
 
   const body = document.body;
   const burger = document.querySelector('.hamburger');

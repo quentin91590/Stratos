@@ -647,3 +647,111 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   color: var(--txt-1, #0f172a);
   font-weight:600;
 }
+/* =============================
+   POLISH des filtres inline
+   ============================= */
+
+/* 1) Variables de contrôle */
+:root{
+  --control-h: 36px;              /* hauteur commune */
+  --radius-ctl: 10px;
+  --accent: var(--section-color, #60a5fa);
+}
+
+/* 2) Titres & espacements */
+.fi-item .fi-label{
+  margin-bottom: 6px;
+  letter-spacing:.01em;
+}
+.filters-inline{ padding:14px; }
+
+/* 3) Segmented (kWh/m² • kWh) : +relief & focus */
+.segmented{
+  min-height: var(--control-h);
+  border-radius: var(--radius-ctl);
+  box-shadow: 0 1px 2px rgba(16,24,40,.04);
+}
+.seg-item{
+  height: calc(var(--control-h) - 8px);
+  border-radius: 8px;
+}
+.seg-item input:checked + span{
+  background:#fff;
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(16,24,40,.06), 0 0 0 2px color-mix(in srgb, var(--accent) 28%, transparent) inset;
+}
+.seg-item:hover span{ filter:saturate(1.02); }
+
+/* 4) Switch climat : alignement et texte subtilement grisé */
+.ios-switch{ min-height: var(--control-h); }
+.ios-text{ font-weight:600; color:#475569; }
+
+/* 5) Référentiel — radios « ghost » modernisés
+      (garde ta structure <label class="radio"><input …><span>Texte</span></label>) */
+#energy-filters .stack{ gap:6px; }
+
+/* input masqué accessible */
+#energy-filters .stack .radio input[type="radio"]{
+  position:absolute; opacity:0; width:1px; height:1px; pointer-events:none;
+}
+
+/* zone cliquable + pastille à gauche */
+#energy-filters .stack .radio input[type="radio"] + span{
+  position:relative;
+  display:inline-flex; align-items:center;
+  height: var(--control-h);
+  padding:0 12px 0 28px;                 /* place la pastille */
+  border-radius: var(--radius-ctl);
+  transition: background .15s ease, color .15s ease, box-shadow .15s ease, border-color .15s ease;
+  color:#0f172a; font-weight:600;
+  border:1px solid transparent;
+}
+
+/* pastille (non coché) */
+#energy-filters .stack .radio input[type="radio"] + span::before{
+  content:"";
+  position:absolute; left:10px; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; border-radius:50%;
+  border:2px solid var(--border); background:#fff;
+}
+
+/* pastille pleine (coché) */
+#energy-filters .stack .radio input[type="radio"]:checked + span::after{
+  content:"";
+  position:absolute; left:14px; top:50%; transform:translateY(-50%);
+  width:8px; height:8px; border-radius:50%; background:var(--accent);
+}
+
+/* état sélectionné : petite pilule, léger ring interne */
+#energy-filters .stack .radio input[type="radio"]:checked + span{
+  background:#fff;
+  border-color: color-mix(in srgb, var(--accent) 32%, #e5e7eb);
+  box-shadow: 0 1px 2px rgba(16,24,40,.06), 0 0 0 2px color-mix(in srgb, var(--accent) 18%, transparent) inset;
+}
+
+/* hover/focus */
+#energy-filters .stack .radio:hover span{
+  background: color-mix(in srgb, var(--accent) 8%, #fff);
+  border-color: color-mix(in srgb, var(--accent) 18%, #e5e7eb);
+}
+#energy-filters .stack .radio input[type="radio"]:focus-visible + span{
+  box-shadow: 0 0 0 6px var(--ring);
+}
+
+/* 6) Harmonisation typographique du hint sous le switch */
+.f-hint{ margin-top:6px; color:#6b7280; }
+
+/* 7) Alignements de colonnes : tout en haut */
+.fi-grid{ align-items:flex-start; }
+
+/* 8) Petits séparateurs visuels (optionnels) entre blocs */
+.fi-item:not(:first-child){
+  position:relative;
+}
+@media (min-width: 1024px){
+  .fi-item:not(:first-child)::before{
+    content:""; position:absolute; left:-6px; top:6px; bottom:6px;
+    width:1px; background: color-mix(in srgb, var(--ink) 10%, transparent);
+    border-radius:1px;
+  }
+}

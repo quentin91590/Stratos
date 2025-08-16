@@ -347,3 +347,36 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @media (prefers-reduced-motion: reduce){
   .ios-track, .ios-knob{ transition: none; }
 }
+/* ==== Pastilles (badges) dans l’arborescence ==== */
+.tree .badge{
+  margin-left: auto;                 /* pousse la pastille complètement à droite */
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: .75rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: .02em;
+  white-space: nowrap;
+  background: #f1f5f9;
+  color: #0f172a;
+  border: 1px solid var(--border);
+}
+
+/* Hover : légère mise en avant */
+.tree-node:hover .badge,
+.tree-leaf:hover .badge{
+  background:#eef2f7;
+}
+
+/* Quand la ligne est sélectionnée (vert) */
+.tree-node.is-active .badge{
+  background: #10b981;               /* même vert que la sélection */
+  color: #fff;
+  border-color: rgba(16,185,129,.55);
+  box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset;
+}
+
+/* Évite que la pastille se tasse sur mobile */
+@media (max-width: 640px){
+  .tree .badge{ padding: 3px 7px; font-size: .72rem; }
+}

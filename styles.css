@@ -445,3 +445,136 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* (optionnel) caler visuellement à droite du header */
 .top-right{ display:flex; align-items:center; margin-left:auto; }
+/* =========================
+   Filtres pro (discrets)
+   ========================= */
+#energy-filters,
+#energy-filters fieldset,
+#energy-filters .filter-card {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0;
+  margin: 6px 0 14px;
+}
+
+/* Mise en ligne, compacte */
+#energy-filters {
+  --txt-1: var(--text-color, #0f172a);
+  --txt-2: color-mix(in oklab, var(--txt-1) 65%, transparent);
+  --hairline: color-mix(in oklab, var(--txt-1) 14%, transparent);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px 14px;
+  font-size: 14px;
+}
+
+/* Séparateurs discrets entre groupes (si tes groupes sont des <div> / <fieldset>) */
+#energy-filters > div:not(:first-child),
+#energy-filters > fieldset:not(:first-child) {
+  position: relative;
+  padding-left: 12px;
+}
+#energy-filters > div:not(:first-child)::before,
+#energy-filters > fieldset:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 1px;
+  height: 14px;
+  background: var(--hairline);
+  transform: translateY(-50%);
+}
+
+/* Libellés sobres */
+#energy-filters .f-label {
+  opacity: .65;
+  font-weight: 500;
+  margin-right: 2px;
+}
+
+/* Radios “ghost” (norme / benchmark) – pas de pilule, juste du texte */
+#energy-filters input[name="norm-energy"],
+#energy-filters input[name="bench-type-energy"] {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+#energy-filters input[name="norm-energy"] + label,
+#energy-filters input[name="bench-type-energy"] + label {
+  cursor: pointer;
+  padding: 2px 0;
+  background: none;
+  border: 0;
+  color: var(--txt-2);
+  font-weight: 500;
+  transition: color .15s ease;
+}
+#energy-filters input[name="norm-energy"] + label:hover,
+#energy-filters input[name="bench-type-energy"] + label:hover {
+  color: var(--txt-1);
+}
+#energy-filters input[name="norm-energy"]:focus + label,
+#energy-filters input[name="bench-type-energy"]:focus + label {
+  outline: 2px solid var(--section-color);
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+#energy-filters input[name="norm-energy"]:checked + label,
+#energy-filters input[name="bench-type-energy"]:checked + label {
+  color: var(--txt-1);
+  font-weight: 600;
+}
+#energy-filters input[name="norm-energy"]:checked + label::after,
+#energy-filters input[name="bench-type-energy"]:checked + label::after {
+  content: "";
+  display: block;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--section-color);
+}
+
+/* Toggle climat : compact & sobre (garde ton composant actuel, on le “dé-sature”) */
+#energy-filters .ios-switch { transform: scale(.9); transform-origin: left center; filter: saturate(.8); }
+#energy-filters .ios-text { font-size: .9rem; opacity: .7; }
+#energy-filters #toggle-climate { accent-color: var(--section-color); }
+
+/* Year picker (déjà en place) : bouton texte sans encadré */
+.year-picker .year-btn {
+  background: transparent;
+  border: 0;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.year-picker .year-btn:hover {
+  background: color-mix(in oklab, var(--section-color) 12%, transparent);
+}
+.year-picker .year-btn:focus-visible {
+  outline: 2px solid var(--section-color);
+  outline-offset: 2px;
+}
+.year-picker .chev { opacity: .55; }
+
+/* Menu année : sobre, sans bord épais */
+.year-picker .year-menu {
+  border: 1px solid var(--hairline);
+  background: color-mix(in oklab, white 92%, transparent);
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  border-radius: 10px;
+  padding: 6px;
+}
+.year-picker .year-menu [role="option"] {
+  padding: 6px 8px;
+  border-radius: 6px;
+}
+.year-picker .year-menu [role="option"].is-active,
+.year-picker .year-menu [role="option"]:hover {
+  background: color-mix(in oklab, var(--section-color) 12%, transparent);
+}
+.year-picker .year-menu [role="option"].is-selected {
+  font-weight: 600;
+}

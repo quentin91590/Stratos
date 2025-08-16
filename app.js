@@ -5,7 +5,7 @@
   const $ = (sel, root = document) => root.querySelector(sel);
   // --- Etat global des filtres (si pas déjà défini)
   window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwhm2', climate: true, benchmark: { type: 'internal' } };
-
+  const FILTERS = window.FILTERS;
   // Sélecteurs bornés au bloc énergie
   const $e = (sel) => document.querySelector('#energy-block ' + sel);
   const $$e = (sel) => Array.from(document.querySelectorAll('#energy-block ' + sel));
@@ -237,7 +237,12 @@
   };
   const leafCheck = (leafBtn) => leafBtn?.querySelector('.tree-check');
 
-  function setActive(btn, on) { if (btn) { btn.classList.toggle('is-active', !!on); btn.setAttribute('aria-selected', !!on); } }
+  function setActive(btn, on) {
+    if (!btn) return;
+    btn.classList.toggle('is-active', !!on);
+    btn.setAttribute('aria-selected', String(!!on)); // pas un bool direct
+  }
+
   function clearPartial(btn) { btn?.classList.remove('is-partial'); }
 
   function updateSiteFromLeaves(siteBtn) {
@@ -663,24 +668,24 @@
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   document.addEventListener('DOMContentLoaded', () => {
-    try {
-      // Aligner la marge sticky avec le header
-      syncStickyTop();
+    // Aligner la marge sticky avec le header
+    syncStickyTop();
 
-      // Initialiser tous les tabsets (Énergie + sections alt)
-      $$('.tabset').forEach(initTabset);
+    // Initialiser tous les tabsets (Énergie + autres sections)
+    $$('.tabset').forEach(initTabset);
 
-      // Démarrer sur Énergie
-      selectSection('energie');
+    // Démarrer sur Énergie
+    selectSection('energie');
 
-      // Sidebar init (si présente)
-      checkWholeParc(true);
-      updateParcFromSites();
-      etupTreeSearch();     // ta recherche à gauche
-      // Filtres dans Énergie
-      setupEnergyFilters();  // <<< nouveau
-    } catch (e) {
-      console.error('[init] Erreur d’initialisation:', e);
-    }
+    // Sidebar init (si présente)
+    checkWholeParc(true);
+    updateParcFromSites();
+
+    // ⚠️ très important : brancher les filtres AVANT toute autre erreur potentielle
+    setupEnergyFilters();   // <-- c’est ça qui attache le handler du switch et met à jour les titres
+
+    // Recherche arbo à gauche (nom corrigé)
+    setupTreeSearch();
   });
+
 })();

@@ -530,6 +530,38 @@
     }
   }
 
+
+  function setupEnergyFilters() {
+    const scope = document.getElementById('energy-filters');
+    if (!scope) return;
+
+    // Normalisation
+    scope.querySelectorAll('input[name="norm-energy"]').forEach(r =>
+      r.addEventListener('change', e => applyNormalization(e.target.value))
+    );
+    applyNormalization(FILTERS.norm);
+
+    // Switch iOS Correction climatique
+    const clim = scope.querySelector('#toggle-climate');
+    const climText = scope.querySelector('.ios-text');
+    if (clim) {
+      FILTERS.climate = !!clim.checked;
+      if (climText) climText.textContent = clim.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
+      clim.addEventListener('change', (e) => {
+        FILTERS.climate = !!e.target.checked;
+        if (climText) climText.textContent = e.target.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
+        applyClimate();
+      });
+    }
+    applyClimate();
+
+    // Benchmark
+    scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>
+      r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; })
+    );
+  }
+
+
   /* ========== Recherche arborescence (sélection verte, replie le reste, backspace-aware) ========== */
   function setupTreeSearch() {
     const side = $('#sidebar');

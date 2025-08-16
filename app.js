@@ -401,6 +401,134 @@
     );
   }
 
+  /* ========== Recherche arborescence (EGID / adresse / nom) ========== */
+  function setupTreeSearch() {
+    const side = $('#sidebar');
+    if (!side) return;
+
+    const input = $('#tree-search', side);
+    const clearBtn = $('.s-clear', side);
+    const tree = $('.tree', side);
+    if (!input || !tree) return;
+
+    const norm = (s) => (s || '')
+      .toString()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+
+    const getHay = (el) => {
+      const t = el?.textContent || '';
+      const d1 = el?.dataset?.egid || '';
+      const d2 = el?.dataset?.addr || '';
+      const d3 = el?.dataset?.tags || '';
+      return norm([t, d1, d2, d3].join(' '));
+    };
+
+    const groups = $$('.tree-group', tree);
+    const parcRow = $('.tree > .tree-node:not(.toggle)', tree); // “Parc”
+    const countEl = $('#tree-search-count', side);
+
+    const show = (el, on) => { if (el) el.hidden = !on; };
+    const setExpanded = (siteBtn, on) => {
+      if (!siteBtn) return;
+      siteBtn.setAttribute('aria-expanded', String(on));
+      const list = siteBtn.parentElement.querySelector('.tree-children');
+      if (list) list.style.display = on ? 'flex' : 'none';
+    };
+
+    const updateCount = () => {
+      const visibleLeaves = $$('.tree-leaf', tree).filter(b => !b.hidden).length;
+      const visibleGroups = groups.filter(g => !g.hidden).length;
+      if (input.value.trim() === '') {
+        countEl && (countEl.textContent = 'Tous les éléments');
+      } else {
+        countEl && (countEl.textContent = `${visibleLeaves} résultat(s) dans ${visibleGroups} site(s)`);
+      }
+    };
+
+    let t = null;
+    const run = () => {
+      const q = norm(input.value);
+      clearBtn.hidden = !q;
+
+      // reset si vide
+      if (!q) {
+        groups.forEach(g => {
+          const siteBtn = g.querySelector('.tree-node.toggle');
+          show(g, true);
+          // remet l’état d’ouverture d’origine si besoin, ici on laisse tel quel
+          $$('.tree-leaf', g).forEach(leaf => { leaf.hidden = false; leaf.classList.remove('is-match'); });
+          siteBtn?.classList.remove('is-match');
+        });
+        parcRow && (parcRow.hidden = false);
+        updateCount();
+        return;
+      }
+
+      let anyVisible = false;
+
+      groups.forEach(g => {
+        const siteBtn = g.querySelector('.tree-node.toggle');
+        const list = g.querySelector('.tree-children');
+        const leaves = $$('.tree-leaf', list);
+
+        const siteMatch = getHay(siteBtn).includes(q);
+        let leafMatches = 0;
+
+        if (siteMatch) {
+          // le site correspond → tout afficher dessous
+          show(g, true);
+          setExpanded(siteBtn, true);
+          siteBtn.classList.add('is-match');
+          leaves.forEach(leaf => { leaf.hidden = false; leaf.classList.remove('is-match'); });
+          anyVisible = true;
+        } else {
+          siteBtn.classList.remove('is-match');
+          // on filtre les bâtiments
+          leaves.forEach(leaf => {
+            const ok = getHay(leaf).includes(q);
+            leaf.hidden = !ok;
+            leaf.classList.toggle('is-match', ok);
+            if (ok) leafMatches++;
+          });
+          const hasAny = leafMatches > 0;
+          show(g, hasAny);
+          if (hasAny) {
+            setExpanded(siteBtn, true);
+            anyVisible = true;
+          } else {
+            setExpanded(siteBtn, false);
+          }
+        }
+      });
+
+      // la ligne “Parc” reste affichée si q vide, sinon on la masque si rien n’est visible
+      parcRow && (parcRow.hidden = !anyVisible && !!q);
+      updateCount();
+    };
+
+    const debounced = () => { clearTimeout(t); t = setTimeout(run, 90); };
+    input.addEventListener('input', debounced);
+    clearBtn?.addEventListener('click', () => { input.value = ''; run(); input.focus(); });
+
+    // Raccourcis clavier: "/" pour focuser, Échap pour effacer
+    window.addEventListener('keydown', (e) => {
+      const tag = document.activeElement?.tagName;
+      if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        input.focus();
+      }
+      if (e.key === 'Escape' && document.activeElement === input) {
+        input.value = '';
+        run();
+        input.blur();
+      }
+    });
+
+    run(); // premier rendu
+  }
 
 
   /* ========== Boot ==========
@@ -421,6 +549,7 @@
       updateParcFromSites();
       // >>> Filtres
       setupFilters();
+      setupTreeSearch();     // <<< ajoute ceci
     } catch (e) {
       console.error('[init] Erreur d’init :', e);
     }

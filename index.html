@@ -17,7 +17,25 @@
       <div class="sidebar-header">
         <h1 class="logo-title">Stratos</h1>
       </div>
-
+      <!-- === Recherche (au-dessus de l'arborescence) === -->
+      <div class="side-search" role="search" aria-label="Recherche sites/bâtiments">
+        <label class="sr-only" for="tree-search">Rechercher un site ou un bâtiment</label>
+        <div class="search-input">
+          <span class="s-ico" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7"></circle>
+              <path d="M20 20l-3.5-3.5"></path>
+            </svg>
+          </span>
+          <input id="tree-search" type="search" inputmode="search" autocomplete="off"
+            placeholder="Rechercher par EGID, adresse, nom…">
+          <button type="button" class="s-clear" aria-label="Effacer la recherche" hidden>✕</button>
+        </div>
+        <div class="s-meta">
+          <span id="tree-search-count">Tous les éléments</span>
+        </div>
+      </div>
       <nav class="tree" role="tree">
         <button class="tree-node" role="treeitem" aria-selected="true" aria-level="1">
           <input type="checkbox" class="tree-check" />

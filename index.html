@@ -49,6 +49,74 @@
           </ul>
         </div>
       </nav>
+      <!-- === Filtres (sous l'arborescence) === -->
+      <section class="filters-panel" aria-label="Filtres">
+        <h2 class="filters-title">Filtres</h2>
+
+        <!-- Années (multi-sélection pour comparaison) -->
+        <div class="f-group">
+          <div class="f-label">Année</div>
+          <div class="filters-year" role="group" aria-label="Sélection d'années">
+            <label class="chip"><input type="checkbox" value="2022"> 2022</label>
+            <label class="chip"><input type="checkbox" value="2023"> 2023</label>
+            <label class="chip"><input type="checkbox" value="2024" checked> 2024</label>
+            <label class="chip"><input type="checkbox" value="2025"> 2025</label>
+            <label class="chip"><input type="checkbox" value="2026"> 2026</label>
+          </div>
+          <div class="f-hint">Comparaison : <span id="filters-compare">—</span></div>
+        </div>
+
+        <!-- Normalisation -->
+        <div class="f-group">
+          <div class="f-label">Normalisation</div>
+          <div class="segmented" role="group" aria-label="Normalisation">
+            <label class="seg-item">
+              <input type="radio" name="norm" value="kwhm2" checked>
+              <span>kWh/m² SRE</span>
+            </label>
+            <label class="seg-item">
+              <input type="radio" name="norm" value="kwh">
+              <span>kWh</span>
+            </label>
+          </div>
+        </div>
+
+        <!-- Correction climat -->
+        <div class="f-group">
+          <div class="f-label">Correction climat</div>
+          <label class="switch">
+            <input type="checkbox" id="toggle-dju" checked>
+            <span>DJU (chaleur)</span>
+          </label>
+          <label class="switch">
+            <input type="checkbox" id="toggle-cdd">
+            <span>CDD (froid)</span>
+          </label>
+        </div>
+
+        <!-- Benchmark -->
+        <div class="f-group">
+          <div class="f-label">Benchmark</div>
+          <div class="stack">
+            <label class="radio">
+              <input type="radio" name="bench-type" value="internal" checked>
+              <span>Interne (médiane/Q2 par typologie)</span>
+            </label>
+            <label class="radio">
+              <input type="radio" name="bench-type" value="external">
+              <span>Externe (référence sectorielle)</span>
+            </label>
+          </div>
+          <label for="bench-ref-year" class="sr-only">Année de référence</label>
+          <select id="bench-ref-year" class="select" aria-label="Année de référence">
+            <option>2022</option>
+            <option>2023</option>
+            <option selected>2024</option>
+            <option>2025</option>
+            <option>2026</option>
+          </select>
+        </div>
+      </section>
     </aside>
 
     <!-- Contenu principal -->
@@ -108,17 +176,17 @@
             <span class="ti-label">Financier</span>
           </button>
 
-                  <!-- Poussoir à droite + sélecteur d'année -->
-        <div class="top-right">
-          <label for="year-picker" class="sr-only">Année</label>
-          <select id="year-picker" class="year-picker" aria-label="Année">
-            <option>2022</option>
-            <option>2023</option>
-            <option selected>2024</option>
-            <option>2025</option>
-            <option>2026</option>
-          </select>
-        </div>
+          <!-- Poussoir à droite + sélecteur d'année -->
+          <div class="top-right">
+            <label for="year-picker" class="sr-only">Année</label>
+            <select id="year-picker" class="year-picker" aria-label="Année">
+              <option>2022</option>
+              <option>2023</option>
+              <option selected>2024</option>
+              <option>2025</option>
+              <option>2026</option>
+            </select>
+          </div>
         </nav>
 
 
@@ -147,7 +215,7 @@
               <span class="kpi-title">Intensité énergétique</span>
               <span class="kpi-value-wrap"><span class="kpi-value">196</span><span class="kpi-trend trend-down"><span
                     class="arr">▼</span> 8%</span></span>
-              <span class="kpi-unit">kWh/m²SRE</span>
+              <span class="kpi-unit" data-kwh="kWh" data-kwhm2="kWh/m²SRE">kWh/m²SRE</span>
               <span class="kpi-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -173,7 +241,7 @@
               <span class="kpi-title">Intensité de chaleur corrigée</span>
               <span class="kpi-value-wrap"><span class="kpi-value">118</span><span class="kpi-trend trend-up"><span
                     class="arr">▲</span> 3%</span></span>
-              <span class="kpi-unit">kWh/m²SRE</span>
+              <span class="kpi-unit" data-kwh="kWh" data-kwhm2="kWh/m²SRE">kWh/m²SRE</span>
               <span class="kpi-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -199,7 +267,7 @@
               <span class="kpi-title">Intensité de froid corrigée</span>
               <span class="kpi-value-wrap"><span class="kpi-value">13</span><span class="kpi-trend trend-down"><span
                     class="arr">▼</span> 12%</span></span>
-              <span class="kpi-unit">kWh/m²SRE</span>
+              <span class="kpi-unit" data-kwh="kWh" data-kwhm2="kWh/m²SRE">kWh/m²SRE</span>
               <span class="kpi-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -223,7 +291,7 @@
               <span class="kpi-title">Intensité électrique</span>
               <span class="kpi-value-wrap"><span class="kpi-value">78</span><span class="kpi-trend trend-down"><span
                     class="arr">▼</span> 5%</span></span>
-              <span class="kpi-unit">kWh/m²SRE</span>
+              <span class="kpi-unit" data-kwh="kWh" data-kwhm2="kWh/m²SRE">kWh/m²SRE</span>
               <span class="kpi-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">
@@ -272,7 +340,7 @@
               <span class="kpi-title">Intensité d’eau</span>
               <span class="kpi-value-wrap"><span class="kpi-value">1,45</span><span class="kpi-trend trend-down"><span
                     class="arr">▼</span> 4%</span></span>
-              <span class="kpi-unit">m³/m²SRE</span>
+              <span class="kpi-unit" data-kwh="kWh" data-kwhm2="kWh/m²SRE">m³/m²SRE</span>
               <span class="kpi-chevron" aria-hidden="true">
                 <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
                   stroke-linecap="round" stroke-linejoin="round">

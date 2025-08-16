@@ -310,6 +310,115 @@
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
+  /* ========== Filtres (sidebar) ========== */
+  const FILTERS = {
+    years: [2024],         // tri décroissant, [N, N-1] si comparaison
+    norm: 'kwhm2',         // 'kwh' | 'kwhm2'
+    climate: { dju: true, cdd: false },
+    benchmark: { type: 'internal', refYear: 2024 }
+  };
+
+  function applyYears() {
+    FILTERS.years.sort((a, b) => b - a);
+    const yp = $('#year-picker');
+    if (yp) yp.value = String(FILTERS.years[0] || '');
+    const cmp = $('#filters-compare');
+    if (cmp) {
+      cmp.textContent = FILTERS.years.length > 1
+        ? `${FILTERS.years[0]} vs ${FILTERS.years.slice(1).join(', ')}`
+        : '—';
+    }
+  }
+
+  function applyNormalization(val = FILTERS.norm) {
+    FILTERS.norm = val;
+    document.documentElement.dataset.norm = val;
+
+    // Met à jour les libellés d’unités si data-* est présent
+    $$('.kpi-unit').forEach(u => {
+      const k1 = u.getAttribute('data-kwh');
+      const k2 = u.getAttribute('data-kwhm2');
+      if (!k1 || !k2) return;
+      u.textContent = (val === 'kwhm2') ? k2 : k1;
+    });
+
+    // Ajuste les titres de KPI pour refléter l’intensité vs conso
+    const relabel = (tabId, tIntensity, tConso) => {
+      const t = document.querySelector(`#${tabId} .kpi-title`);
+      if (t) t.textContent = (val === 'kwhm2') ? tIntensity : tConso;
+    };
+    relabel('tab-energie', 'Intensité énergétique', 'Consommation énergétique');
+    relabel('tab-elec', 'Intensité électrique', 'Conso. électrique');
+    // (Chaleur / Froid restent libellés “Intensité …”,)
+  }
+
+  function applyClimate() {
+    // Panneaux
+    const h3H = $('#panel-chaleur h3');
+    const h3F = $('#panel-froid h3');
+    if (h3H) h3H.textContent = FILTERS.climate.dju ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
+    if (h3F) h3F.textContent = FILTERS.climate.cdd ? 'Froid (corrigée CDD)' : 'Froid (brut)';
+    // Onglets KPI
+    const tH = $('#tab-chaleur .kpi-title');
+    const tF = $('#tab-froid .kpi-title');
+    if (tH) tH.textContent = FILTERS.climate.dju ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
+    if (tF) tF.textContent = FILTERS.climate.cdd ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
+  }
+
+  function applyBenchmark() {
+    const el = $('#sum-bench-val');
+    if (el) el.textContent =
+      (FILTERS.benchmark.type === 'internal' ? 'Interne ' : 'Externe ') +
+      String(FILTERS.benchmark.refYear || '');
+  }
+
+  function setupFilters() {
+    const side = $('#sidebar');
+    if (!side) return;
+
+    // — Années (limite douce à 2 sélections : N et N-1)
+    const yearBoxes = $$('.filters-year input[type="checkbox"]', side);
+    const coerceYears = () => {
+      let selected = yearBoxes.filter(b => b.checked).map(b => Number(b.value));
+      if (selected.length === 0) {
+        // empêche le “0 sélection” : on réactive la dernière box (ici 2024)
+        const fallback = yearBoxes.find(b => b.value === '2024') || yearBoxes[0];
+        if (fallback) fallback.checked = true;
+        selected = [Number(fallback.value)];
+      }
+      // garde au plus 2 ans (dernières cochées, triées décroissant)
+      selected = Array.from(new Set(selected)).sort((a, b) => b - a).slice(0, 2);
+      // synchronise l’UI si on a dû tronquer
+      yearBoxes.forEach(b => b.checked = selected.includes(Number(b.value)));
+      FILTERS.years = selected;
+      applyYears();
+    };
+    yearBoxes.forEach(b => b.addEventListener('change', coerceYears));
+    coerceYears();
+
+    // — Normalisation
+    $$('.segmented input[name="norm"]', side).forEach(r =>
+      r.addEventListener('change', e => applyNormalization(e.target.value))
+    );
+    applyNormalization(FILTERS.norm);
+
+    // — Climat
+    const dju = $('#toggle-dju', side);
+    const cdd = $('#toggle-cdd', side);
+    if (dju) dju.addEventListener('change', e => { FILTERS.climate.dju = !!e.target.checked; applyClimate(); });
+    if (cdd) cdd.addEventListener('change', e => { FILTERS.climate.cdd = !!e.target.checked; applyClimate(); });
+    applyClimate();
+
+    // — Benchmark
+    $$('.radio input[name="bench-type"]', side).forEach(r =>
+      r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; applyBenchmark(); })
+    );
+    const ref = $('#bench-ref-year', side);
+    if (ref) ref.addEventListener('change', e => { FILTERS.benchmark.refYear = Number(e.target.value); applyBenchmark(); });
+    applyBenchmark();
+  }
+
+
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   document.addEventListener('DOMContentLoaded', () => {
@@ -326,8 +435,10 @@
       // Sidebar init (si présente)
       checkWholeParc(true);
       updateParcFromSites();
+      // >>> Filtres
+      setupFilters();
     } catch (e) {
-      console.error('[init] Erreur d’initialisation:', e);
+      console.error('[init] Erreur d’init :', e);
     }
   });
 })();

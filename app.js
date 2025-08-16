@@ -342,29 +342,39 @@
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
   /* ========== Filtres (onglet Énergie) ========== */
+  /* === état des filtres === */
   const FILTERS = {
     year: 2024,
-    norm: 'kwhm2',        // 'kwh' | 'kwhm2'
-    climate: true,        // true = corrigé (DJU+CDD), false = brut
-    benchmark: { type: 'internal', refYear: 2024 }
+    norm: 'kwhm2',           // 'kwh' | 'kwhm2'
+    climate: true,           // switch iOS
+    benchmark: { type: 'internal' }
   };
+
+  function setYear(y) {
+    const yr = Number(y);
+    FILTERS.year = yr;
+    const top = $('#year-picker');
+    const energy = $('#year-picker-energy');
+    if (top && top.value !== String(yr)) top.value = String(yr);
+    if (energy && energy.value !== String(yr)) energy.value = String(yr);
+    // TODO: refresh data si nécessaire
+  }
 
   function applyNormalization(val = FILTERS.norm) {
     FILTERS.norm = val;
     document.documentElement.dataset.norm = val;
 
-    // Met à jour les libellés d’unités si data-* présent
+    // met à jour les unités si data-* présent
     $$('.kpi-unit').forEach(u => {
-      const k1 = u.getAttribute('data-kwh');
-      const k2 = u.getAttribute('data-kwhm2');
-      if (!k1 || !k2) return;
-      u.textContent = (val === 'kwhm2') ? k2 : k1;
+      const a = u.getAttribute('data-kwh');
+      const r = u.getAttribute('data-kwhm2');
+      if (a && r) u.textContent = (val === 'kwhm2') ? r : a;
     });
 
-    // Ajuste quelques titres
-    const relabel = (tabId, tIntensity, tConso) => {
+    // quelques libellés
+    const relabel = (tabId, intensity, absolute) => {
       const t = document.querySelector(`#${tabId} .kpi-title`);
-      if (t) t.textContent = (val === 'kwhm2') ? tIntensity : tConso;
+      if (t) t.textContent = (val === 'kwhm2') ? intensity : absolute;
     };
     relabel('tab-energie', 'Intensité énergétique', 'Consommation énergétique');
     relabel('tab-elec', 'Intensité électrique', 'Conso. électrique');
@@ -382,29 +392,12 @@
     if (tF) tF.textContent = on ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
   }
 
-  function applyBenchmark() {
-    const el = $('#sum-bench-val'); // pill dans la synthèse
-    if (el) el.textContent =
-      (FILTERS.benchmark.type === 'internal' ? 'Interne ' : 'Externe ') +
-      String(FILTERS.benchmark.refYear || '');
-  }
-
-  // sync année haut ↔ énergie
-  function setYear(y) {
-    const yr = Number(y);
-    FILTERS.year = yr;
-    const top = $('#year-picker');
-    const energy = $('#year-picker-energy');
-    if (top && top.value !== String(yr)) top.value = String(yr);
-    if (energy && energy.value !== String(yr)) energy.value = String(yr);
-    // TODO: brancher ici un refresh de tes données si besoin
-  }
-
+  /* === branche les filtres de l’onglet Énergie === */
   function setupEnergyFilters() {
     const scope = $('#energy-filters');
     if (!scope) return;
 
-    // Année (bi-directionnel)
+    // Année (bi-directionnel avec le sélecteur du haut)
     const topSel = $('#year-picker');
     const energySel = $('#year-picker-energy', scope);
     if (topSel) topSel.addEventListener('change', e => setYear(e.target.value));
@@ -417,7 +410,7 @@
     );
     applyNormalization(FILTERS.norm);
 
-    // Correction climatique (switch iOS)
+    // Switch iOS Correction climatique
     const clim = $('#toggle-climate', scope);
     const climText = $('.ios-text', scope);
     if (clim) {
@@ -427,18 +420,15 @@
         FILTERS.climate = !!e.target.checked;
         if (climText) climText.textContent = e.target.checked ? climText.dataset.on : climText.dataset.off;
         applyClimate();
-        // TODO: refresh data si tu utilises des séries corrigées
+        // TODO: refresh data si tu appliques réellement DJU/CDD aux séries
       });
     }
     applyClimate();
 
-    // Benchmark
+    // Benchmark (type seulement, selon ton HTML)
     $$('.radio input[name="bench-type-energy"]', scope).forEach(r =>
-      r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; applyBenchmark(); })
+      r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; })
     );
-    const ref = $('#bench-ref-year', scope);
-    if (ref) ref.addEventListener('change', e => { FILTERS.benchmark.refYear = Number(e.target.value); applyBenchmark(); });
-    applyBenchmark();
   }
 
   /* ========== Recherche arborescence (sélection verte, replie le reste, backspace-aware) ========== */

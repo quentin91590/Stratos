@@ -29,6 +29,88 @@
     'panel-eau': { kwhm2: 'Intensité d’eau', kwh: 'Consommation d’eau' },
   };
 
+  // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)
+  function setYear(y) {
+    const yr = Number(y);
+    FILTERS.year = yr;
+
+    // Custom picker (top-right)
+    const wrap = document.getElementById('year-picker');
+    if (wrap) {
+      const label = wrap.querySelector('.year-current');
+      if (label) label.textContent = String(yr);
+      wrap.querySelectorAll('[role="option"]').forEach(li => {
+        li.setAttribute('aria-selected', li.dataset.value === String(yr) ? 'true' : 'false');
+      });
+    }
+
+    // (fallback) ancien select natif si présent avec un ID différent
+    const native = document.getElementById('year-picker-select');
+    if (native && native.value !== String(yr)) native.value = String(yr);
+
+    // TODO: recharge tes données si nécessaire
+  }
+
+  // Initialise le picker custom (clavier + souris + fermeture extérieure)
+  function wireYearPicker() {
+    const wrap = document.getElementById('year-picker');
+    if (!wrap) return;
+
+    const btn = wrap.querySelector('.year-btn');
+    const menu = wrap.querySelector('.year-menu');
+    const opts = Array.from(menu.querySelectorAll('[role="option"]'));
+    let activeIndex = Math.max(0, opts.findIndex(li => li.dataset.value === String(FILTERS.year)));
+
+    function setActive(i) {
+      opts.forEach(li => li.classList.remove('is-active'));
+      const li = opts[i];
+      if (li) { li.classList.add('is-active'); li.scrollIntoView({ block: 'nearest' }); }
+    }
+    function openMenu(open = true) {
+      btn.setAttribute('aria-expanded', String(open));
+      menu.hidden = !open;
+      if (open) {
+        setActive(activeIndex);
+        menu.focus({ preventScroll: true });
+        document.addEventListener('click', onDocClick);
+      } else {
+        document.removeEventListener('click', onDocClick);
+        btn.focus({ preventScroll: true });
+      }
+    }
+    function onDocClick(e) { if (!wrap.contains(e.target)) openMenu(false); }
+    function selectIndex(i) {
+      const li = opts[i]; if (!li) return;
+      const val = li.dataset.value;
+      activeIndex = i;
+      setYear(val);
+      openMenu(false);
+    }
+
+    // Souris
+    btn.addEventListener('click', () => openMenu(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', (e) => {
+      const li = e.target.closest('[role="option"]');
+      if (!li) return;
+      selectIndex(opts.indexOf(li));
+    });
+
+    // Clavier sur le menu
+    menu.addEventListener('keydown', (e) => {
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); activeIndex = Math.min(opts.length - 1, activeIndex + 1); setActive(activeIndex); break;
+        case 'ArrowUp': e.preventDefault(); activeIndex = Math.max(0, activeIndex - 1); setActive(activeIndex); break;
+        case 'Home': e.preventDefault(); activeIndex = 0; setActive(activeIndex); break;
+        case 'End': e.preventDefault(); activeIndex = opts.length - 1; setActive(activeIndex); break;
+        case 'Enter':
+        case ' ': e.preventDefault(); selectIndex(activeIndex); break;
+        case 'Escape': e.preventDefault(); openMenu(false); break;
+      }
+    });
+
+    // Init affichage
+    setYear(FILTERS.year);
+  }
 
   /* ========== Sticky (uniquement pour le bloc Énergie) ========== */
   function setupSticky(container) {
@@ -668,24 +750,18 @@
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   document.addEventListener('DOMContentLoaded', () => {
-    // Aligner la marge sticky avec le header
     syncStickyTop();
-
-    // Initialiser tous les tabsets (Énergie + autres sections)
     $$('.tabset').forEach(initTabset);
-
-    // Démarrer sur Énergie
     selectSection('energie');
 
-    // Sidebar init (si présente)
     checkWholeParc(true);
     updateParcFromSites();
 
-    // ⚠️ très important : brancher les filtres AVANT toute autre erreur potentielle
-    setupEnergyFilters();   // <-- c’est ça qui attache le handler du switch et met à jour les titres
+    wireYearPicker();      // 👈 nouveau : chevron + menu custom
+    setupEnergyFilters();  // reste pareil (on n’attache plus l’année ici)
 
-    // Recherche arbo à gauche (nom corrigé)
-    setupTreeSearch();
+    setupTreeSearch();     // (au cas où un typo traînait avant)
   });
+
 
 })();

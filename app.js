@@ -30,31 +30,35 @@
   };
 
   // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)
+  // --- Year handling (OK) ---------------------------------------
   function setYear(y) {
     const yr = Number(y);
     FILTERS.year = yr;
 
-    // Custom picker (top-right)
+    // Picker custom (en haut à droite)
     const wrap = document.getElementById('year-picker');
     if (wrap) {
       const label = wrap.querySelector('.year-current');
       if (label) label.textContent = String(yr);
+
       wrap.querySelectorAll('[role="option"]').forEach(li => {
-        li.setAttribute('aria-selected', li.dataset.value === String(yr) ? 'true' : 'false');
+        const selected = li.dataset.value === String(yr);
+        li.setAttribute('aria-selected', selected ? 'true' : 'false');
+        li.classList.toggle('is-selected', selected);
       });
     }
 
-    // (fallback) ancien select natif si présent avec un ID différent
+    // Fallback <select id="year-picker-select">
     const native = document.getElementById('year-picker-select');
     if (native && native.value !== String(yr)) native.value = String(yr);
 
-    // TODO: recharge tes données si nécessaire
+    // TODO: recharger tes données si nécessaire
   }
 
   // Initialise le picker custom (clavier + souris + fermeture extérieure)
   function wireYearPicker() {
     const wrap = document.getElementById('year-picker');
-    if (!wrap) return;
+    if (!wrap) return; // si tu gardes seulement le <select>, on sort proprement
 
     const btn = wrap.querySelector('.year-btn');
     const menu = wrap.querySelector('.year-menu');
@@ -66,10 +70,12 @@
       const li = opts[i];
       if (li) { li.classList.add('is-active'); li.scrollIntoView({ block: 'nearest' }); }
     }
+    function onDocClick(e) { if (!wrap.contains(e.target)) openMenu(false); }
     function openMenu(open = true) {
       btn.setAttribute('aria-expanded', String(open));
       menu.hidden = !open;
       if (open) {
+        activeIndex = Math.max(0, opts.findIndex(li => li.dataset.value === String(FILTERS.year)));
         setActive(activeIndex);
         menu.focus({ preventScroll: true });
         document.addEventListener('click', onDocClick);
@@ -78,14 +84,35 @@
         btn.focus({ preventScroll: true });
       }
     }
-    function onDocClick(e) { if (!wrap.contains(e.target)) openMenu(false); }
     function selectIndex(i) {
       const li = opts[i]; if (!li) return;
-      const val = li.dataset.value;
+      setYear(li.dataset.value);
       activeIndex = i;
-      setYear(val);
       openMenu(false);
     }
+
+    // Souris
+    btn.addEventListener('click', () => openMenu(btn.getAttribute('aria-expanded') !== 'true'));
+    menu.addEventListener('click', e => {
+      const li = e.target.closest('[role="option"]');
+      if (li) selectIndex(opts.indexOf(li));
+    });
+
+    // Clavier
+    menu.addEventListener('keydown', e => {
+      switch (e.key) {
+        case 'ArrowDown': e.preventDefault(); activeIndex = Math.min(opts.length - 1, activeIndex + 1); setActive(activeIndex); break;
+        case 'ArrowUp': e.preventDefault(); activeIndex = Math.max(0, activeIndex - 1); setActive(activeIndex); break;
+        case 'Home': e.preventDefault(); activeIndex = 0; setActive(activeIndex); break;
+        case 'End': e.preventDefault(); activeIndex = opts.length - 1; setActive(activeIndex); break;
+        case 'Enter':
+        case ' ': e.preventDefault(); selectIndex(activeIndex); break;
+        case 'Escape': e.preventDefault(); openMenu(false); break;
+      }
+    });
+
+    // Init affichage en
+
 
     // Souris
     btn.addEventListener('click', () => openMenu(btn.getAttribute('aria-expanded') !== 'true'));
@@ -453,16 +480,6 @@
   if (burger) burger.addEventListener('click', () => toggleMenu());
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
-
-  function setYear(y) {
-    const yr = Number(y);
-    FILTERS.year = yr;
-    const top = document.getElementById('year-picker');
-    const energy = document.getElementById('year-picker-energy');
-    if (top && top.value !== String(yr)) top.value = String(yr);
-    if (energy && energy.value !== String(yr)) energy.value = String(yr);
-    // TODO: refresh tes données si besoin
-  }
 
   function applyNormalization(mode) {
     FILTERS.norm = mode;

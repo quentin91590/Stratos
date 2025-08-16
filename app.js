@@ -386,8 +386,8 @@
     // Panneaux,
     const h3H = $('#panel-chaleur h3');
     const h3F = $('#panel-froid h3');
-    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
-    if (h3F) h3F.textContent = on ? 'Froid (corrigée CDD)' : 'Froid (brut)';
+    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée)' : 'Chaleur (brut)';
+    if (h3F) h3F.textContent = on ? 'Froid (corrigée)' : 'Froid (brut)';
     // Onglets KPI,
     const tH = $('#tab-chaleur .kpi-title');
     const tF = $('#tab-froid .kpi-title');

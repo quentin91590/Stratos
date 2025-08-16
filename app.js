@@ -47,12 +47,6 @@
         li.classList.toggle('is-selected', selected);
       });
     }
-
-    // Fallback <select id="year-picker-select">
-    const native = document.getElementById('year-picker-select');
-    if (native && native.value !== String(yr)) native.value = String(yr);
-
-    // TODO: recharger tes données si nécessaire
   }
 
   // Initialise le picker custom (clavier + souris + fermeture extérieure)

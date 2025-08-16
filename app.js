@@ -344,12 +344,11 @@
   /* ========== Filtres (sidebar) ========== */
   /* ========== Filtres (sidebar) — v2 sans comparaison ========== */
   const FILTERS = {
-    year: 2024,            // une seule année,
-    norm: 'kwhm2',         // 'kwh' | 'kwhm2'
-    climate: { dju: true, cdd: false },
+    year: 2024,
+    norm: 'kwhm2',
+    climate: true, // switch unique: true = corrigé (DJU+CDD), false = brut,
     benchmark: { type: 'internal', refYear: 2024 }
   };
-
   // met à jour l’année côté état + synchronise les deux sélecteurs
   function setYear(y) {
     const yr = Number(y);
@@ -383,15 +382,17 @@
   }
 
   function applyClimate() {
+    const on = !!FILTERS.climate;
+    // Panneaux,
     const h3H = $('#panel-chaleur h3');
     const h3F = $('#panel-froid h3');
-    if (h3H) h3H.textContent = FILTERS.climate.dju ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
-    if (h3F) h3F.textContent = FILTERS.climate.cdd ? 'Froid (corrigée CDD)' : 'Froid (brut)';
-
+    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
+    if (h3F) h3F.textContent = on ? 'Froid (corrigée CDD)' : 'Froid (brut)';
+    // Onglets KPI,
     const tH = $('#tab-chaleur .kpi-title');
     const tF = $('#tab-froid .kpi-title');
-    if (tH) tH.textContent = FILTERS.climate.dju ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
-    if (tF) tF.textContent = FILTERS.climate.cdd ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
+    if (tH) tH.textContent = on ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
+    if (tF) tF.textContent = on ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
   }
 
   function applyBenchmark() {
@@ -419,11 +420,17 @@
     );
     applyNormalization(FILTERS.norm);
 
-    // — Climat
-    const dju = $('#toggle-dju', side);
-    const cdd = $('#toggle-cdd', side);
-    if (dju) dju.addEventListener('change', e => { FILTERS.climate.dju = !!e.target.checked; applyClimate(); });
-    if (cdd) cdd.addEventListener('change', e => { FILTERS.climate.cdd = !!e.target.checked; applyClimate(); });
+    // — Correction climatique (switch unique),
+    const clim = $('#toggle-climate', side);
+    if (clim) {
+      // init selon l’état du switch,
+      FILTERS.climate = !!clim.checked;
+      clim.addEventListener('change', (e) => {
+        FILTERS.climate = !!e.target.checked;
+        applyClimate();
+        // ici, si tu veux recalculer des séries corrigées, appelle ta logique de refresh,
+      });
+    }
     applyClimate();
 
     // — Benchmark

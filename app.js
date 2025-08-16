@@ -3,6 +3,32 @@
   /* ========== Helpers ========== */
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const $ = (sel, root = document) => root.querySelector(sel);
+  // --- Etat global des filtres (si pas déjà défini)
+  window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwhm2', climate: true, benchmark: { type: 'internal' } };
+
+  // Sélecteurs bornés au bloc énergie
+  const $e = (sel) => document.querySelector('#energy-block ' + sel);
+  const $$e = (sel) => Array.from(document.querySelectorAll('#energy-block ' + sel));
+
+  // Libellés de base selon normalisation (tuile + panneau)
+  const TITLE_BASE_MAP = {
+    'tab-energie': { kwhm2: 'Intensité énergétique', kwh: 'Consommation énergétique' },
+    'tab-chaleur': { kwhm2: 'Intensité de chaleur', kwh: 'Consommation chaleur' },
+    'tab-froid': { kwhm2: 'Intensité de froid', kwh: 'Consommation froid' },
+    'tab-elec': { kwhm2: 'Intensité électrique', kwh: 'Consommation électrique' },
+    'tab-co2': { kwhm2: 'Intensité CO₂e', kwh: 'Émissions CO₂e' },
+    'tab-eau': { kwhm2: 'Intensité d’eau', kwh: 'Consommation d’eau' },
+  };
+
+  const PANEL_BASE_MAP = {
+    'panel-energie': { kwhm2: 'Intensité énergétique', kwh: 'Consommation énergétique' },
+    'panel-chaleur': { kwhm2: 'Intensité de chaleur', kwh: 'Consommation chaleur' },
+    'panel-froid': { kwhm2: 'Intensité de froid', kwh: 'Consommation froid' },
+    'panel-elec': { kwhm2: 'Intensité électrique', kwh: 'Consommation électrique' },
+    'panel-co2': { kwhm2: 'Intensité CO₂e', kwh: 'Émissions CO₂e' },
+    'panel-eau': { kwhm2: 'Intensité d’eau', kwh: 'Consommation d’eau' },
+  };
+
 
   /* ========== Sticky (uniquement pour le bloc Énergie) ========== */
   function setupSticky(container) {
@@ -341,9 +367,6 @@
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
-  // État global
-  const FILTERS = { year: 2024, norm: 'kwhm2', climate: true, benchmark: { type: 'internal' } };
-
   function setYear(y) {
     const yr = Number(y);
     FILTERS.year = yr;
@@ -354,48 +377,84 @@
     // TODO: refresh tes données si besoin
   }
 
-  function applyNormalization(val = FILTERS.norm) {
-    FILTERS.norm = val;
-    document.documentElement.dataset.norm = val;
+  function applyNormalization(mode) {
+    FILTERS.norm = mode;
 
-    // Met à jour les unités si data-* présent
-    document.querySelectorAll('.kpi-unit').forEach(u => {
-      const abs = u.getAttribute('data-kwh');
-      const rel = u.getAttribute('data-kwhm2');
-      if (abs && rel) u.textContent = (val === 'kwhm2') ? rel : abs;
+    // (1) Unités des tuiles KPI (lit les data-* sur .kpi-unit)
+    $$e('.kpi .kpi-unit').forEach(unitEl => {
+      const txt = (mode === 'kwhm2')
+        ? (unitEl.dataset.kwhm2 || unitEl.textContent)
+        : (unitEl.dataset.kwh || unitEl.textContent);
+      unitEl.textContent = txt;
     });
 
-    // Re-libeller 2-3 cartes (optionnel)
-    const relabel = (tabId, intensity, absolute) => {
-      const t = document.querySelector(`#${tabId} .kpi-title`);
-      if (t) t.textContent = (val === 'kwhm2') ? intensity : absolute;
-    };
-    relabel('tab-energie', 'Intensité énergétique', 'Consommation énergétique');
-    relabel('tab-elec', 'Intensité électrique', 'Conso. électrique');
+    // (2) Titres des tuiles KPI
+    $$e('.kpi[role="tab"]').forEach(btn => {
+      const id = btn.id;
+      const base = (TITLE_BASE_MAP[id] && TITLE_BASE_MAP[id][mode]) || '';
+      const tEl = btn.querySelector('.kpi-title');
+      if (!tEl || !base) return;
+
+      // Ajoute le suffixe climat uniquement pour Chaleur / Froid
+      let finalTitle = base;
+      if (id === 'tab-chaleur' || id === 'tab-froid') {
+        finalTitle = FILTERS.climate ? (base + ' corrigée') : (base + ' (brut)');
+      }
+      tEl.textContent = finalTitle;
+    });
+
+    // (3) Titres des panneaux (h3)
+    Object.entries(PANEL_BASE_MAP).forEach(([panelId, map]) => {
+      const sec = document.getElementById(panelId);
+      const h3 = sec?.querySelector('h3');
+      if (!h3) return;
+
+      let title = map[mode] || h3.textContent;
+
+      if (panelId === 'panel-chaleur') {
+        title += FILTERS.climate ? ' (corrigée DJU)' : ' (brut)';
+      }
+      if (panelId === 'panel-froid') {
+        title += FILTERS.climate ? ' (corrigé CDD)' : ' (brut)';
+      }
+      h3.textContent = title;
+    });
   }
 
   function applyClimate() {
-    const on = !!FILTERS.climate;
-    const h3H = document.querySelector('#panel-chaleur h3');
-    const h3F = document.querySelector('#panel-froid h3');
-    if (h3H) h3H.textContent = on ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
-    if (h3F) h3F.textContent = on ? 'Froid (corrigée CDD)' : 'Froid (brut)';
-    const tH = document.querySelector('#tab-chaleur .kpi-title');
-    const tF = document.querySelector('#tab-froid .kpi-title');
-    if (tH) tH.textContent = on ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
-    if (tF) tF.textContent = on ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
+    // Met à jour uniquement les libellés dépendants du climat
+    ['tab-chaleur', 'tab-froid'].forEach(id => {
+      const btn = document.getElementById(id);
+      const tEl = btn?.querySelector('.kpi-title');
+      if (!btn || !tEl) return;
+      const base = TITLE_BASE_MAP[id][FILTERS.norm];
+      tEl.textContent = FILTERS.climate ? (base + ' corrigée') : (base + ' (brut)');
+    });
+
+    const pc = document.getElementById('panel-chaleur');
+    const pf = document.getElementById('panel-froid');
+    if (pc) {
+      const h = pc.querySelector('h3');
+      if (h) h.textContent = PANEL_BASE_MAP['panel-chaleur'][FILTERS.norm] + (FILTERS.climate ? ' (corrigée DJU)' : ' (brut)');
+    }
+    if (pf) {
+      const h = pf.querySelector('h3');
+      if (h) h.textContent = PANEL_BASE_MAP['panel-froid'][FILTERS.norm] + (FILTERS.climate ? ' (corrigé CDD)' : ' (brut)');
+    }
   }
+
 
   function setupEnergyFilters() {
     const scope = document.getElementById('energy-filters');
     if (!scope) return;
 
-    // Année (synchro bi-directionnelle avec le sélecteur du haut)
+    // Année : uniquement via le sélecteur du haut
     const topSel = document.getElementById('year-picker');
-    const energySel = document.getElementById('year-picker-energy');
-    if (topSel) topSel.addEventListener('change', e => setYear(e.target.value));
-    if (energySel) energySel.addEventListener('change', e => setYear(e.target.value));
-    setYear(topSel?.value || energySel?.value || FILTERS.year);
+    if (topSel) {
+      // initialise l’état puis écoute les changements
+      setYear(topSel.value);
+      topSel.addEventListener('change', e => setYear(e.target.value));
+    }
 
     // Normalisation
     scope.querySelectorAll('input[name="norm-energy"]').forEach(r =>
@@ -417,11 +476,12 @@
     }
     applyClimate();
 
-    // Benchmark (type)
+    // Benchmark
     scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>
       r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; })
     );
   }
+
 
   /* ========== Recherche arborescence (sélection verte, replie le reste, backspace-aware) ========== */
   function setupTreeSearch() {

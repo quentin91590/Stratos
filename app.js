@@ -399,9 +399,6 @@
     $$('.radio input[name="bench-type"]', side).forEach(r =>
       r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; applyBenchmark(); })
     );
-    const ref = $('#bench-ref-year', side);
-    if (ref) ref.addEventListener('change', e => { FILTERS.benchmark.refYear = Number(e.target.value); applyBenchmark(); });
-    applyBenchmark();
   }
 
 

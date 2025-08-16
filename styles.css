@@ -568,3 +568,43 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .year-picker .year-menu [role="option"].is-selected {
   font-weight: 600;
 }
+/* --- Indicateur rond pour radios ghost (norm-energy + bench-type-energy) --- */
+/* base label */
+#energy-filters input[name="bench-type-energy"] + label,
+#energy-filters input[name="norm-energy"] + label{
+  position: relative;
+  padding-left: 24px;      /* place le rond à gauche */
+  line-height: 20px;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* rond vide (état non coché) */
+#energy-filters input[name="bench-type-energy"] + label::before,
+#energy-filters input[name="norm-energy"] + label::before{
+  content:"";
+  position:absolute; left:0; top:50%; transform:translateY(-50%);
+  width:16px; height:16px; border-radius:50%;
+  border:2px solid var(--border); background:#fff;
+  box-sizing:border-box;
+}
+
+/* rond plein (état coché) */
+#energy-filters input[name="bench-type-energy"]:checked + label::after,
+#energy-filters input[name="norm-energy"]:checked + label::after{
+  content:"";
+  position:absolute; left:4px; top:50%; transform:translateY(-50%);
+  width:8px; height:8px; border-radius:50%;
+  background: var(--section-color);
+}
+
+/* hover/focus pour accessibilité */
+#energy-filters input[name="bench-type-energy"] + label:hover::before,
+#energy-filters input[name="norm-energy"] + label:hover::before{
+  border-color: color-mix(in srgb, var(--section-color) 60%, #fff);
+}
+#energy-filters input[name="bench-type-energy"]:focus-visible + label::before,
+#energy-filters input[name="norm-energy"]:focus-visible + label::before{
+  box-shadow: 0 0 0 4px var(--ring);
+  border-color: var(--section-color);
+}

@@ -341,37 +341,31 @@
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
 
-  /* ========== Filtres (onglet Énergie) ========== */
-  /* === état des filtres === */
-  const FILTERS = {
-    year: 2024,
-    norm: 'kwhm2',           // 'kwh' | 'kwhm2'
-    climate: true,           // switch iOS
-    benchmark: { type: 'internal' }
-  };
+  // État global
+  const FILTERS = { year: 2024, norm: 'kwhm2', climate: true, benchmark: { type: 'internal' } };
 
   function setYear(y) {
     const yr = Number(y);
     FILTERS.year = yr;
-    const top = $('#year-picker');
-    const energy = $('#year-picker-energy');
+    const top = document.getElementById('year-picker');
+    const energy = document.getElementById('year-picker-energy');
     if (top && top.value !== String(yr)) top.value = String(yr);
     if (energy && energy.value !== String(yr)) energy.value = String(yr);
-    // TODO: refresh data si nécessaire
+    // TODO: refresh tes données si besoin
   }
 
   function applyNormalization(val = FILTERS.norm) {
     FILTERS.norm = val;
     document.documentElement.dataset.norm = val;
 
-    // met à jour les unités si data-* présent
-    $$('.kpi-unit').forEach(u => {
-      const a = u.getAttribute('data-kwh');
-      const r = u.getAttribute('data-kwhm2');
-      if (a && r) u.textContent = (val === 'kwhm2') ? r : a;
+    // Met à jour les unités si data-* présent
+    document.querySelectorAll('.kpi-unit').forEach(u => {
+      const abs = u.getAttribute('data-kwh');
+      const rel = u.getAttribute('data-kwhm2');
+      if (abs && rel) u.textContent = (val === 'kwhm2') ? rel : abs;
     });
 
-    // quelques libellés
+    // Re-libeller 2-3 cartes (optionnel)
     const relabel = (tabId, intensity, absolute) => {
       const t = document.querySelector(`#${tabId} .kpi-title`);
       if (t) t.textContent = (val === 'kwhm2') ? intensity : absolute;
@@ -382,51 +376,49 @@
 
   function applyClimate() {
     const on = !!FILTERS.climate;
-    const h3H = $('#panel-chaleur h3');
-    const h3F = $('#panel-froid h3');
+    const h3H = document.querySelector('#panel-chaleur h3');
+    const h3F = document.querySelector('#panel-froid h3');
     if (h3H) h3H.textContent = on ? 'Chaleur (corrigée DJU)' : 'Chaleur (brut)';
     if (h3F) h3F.textContent = on ? 'Froid (corrigée CDD)' : 'Froid (brut)';
-    const tH = $('#tab-chaleur .kpi-title');
-    const tF = $('#tab-froid .kpi-title');
+    const tH = document.querySelector('#tab-chaleur .kpi-title');
+    const tF = document.querySelector('#tab-froid .kpi-title');
     if (tH) tH.textContent = on ? 'Intensité de chaleur corrigée' : 'Intensité de chaleur (brut)';
     if (tF) tF.textContent = on ? 'Intensité de froid corrigée' : 'Intensité de froid (brut)';
   }
 
-  /* === branche les filtres de l’onglet Énergie === */
   function setupEnergyFilters() {
-    const scope = $('#energy-filters');
+    const scope = document.getElementById('energy-filters');
     if (!scope) return;
 
-    // Année (bi-directionnel avec le sélecteur du haut)
-    const topSel = $('#year-picker');
-    const energySel = $('#year-picker-energy', scope);
+    // Année (synchro bi-directionnelle avec le sélecteur du haut)
+    const topSel = document.getElementById('year-picker');
+    const energySel = document.getElementById('year-picker-energy');
     if (topSel) topSel.addEventListener('change', e => setYear(e.target.value));
     if (energySel) energySel.addEventListener('change', e => setYear(e.target.value));
     setYear(topSel?.value || energySel?.value || FILTERS.year);
 
     // Normalisation
-    $$('.segmented input[name="norm-energy"]', scope).forEach(r =>
+    scope.querySelectorAll('input[name="norm-energy"]').forEach(r =>
       r.addEventListener('change', e => applyNormalization(e.target.value))
     );
     applyNormalization(FILTERS.norm);
 
     // Switch iOS Correction climatique
-    const clim = $('#toggle-climate', scope);
-    const climText = $('.ios-text', scope);
+    const clim = scope.querySelector('#toggle-climate');
+    const climText = scope.querySelector('.ios-text');
     if (clim) {
       FILTERS.climate = !!clim.checked;
-      if (climText) climText.textContent = clim.checked ? climText.dataset.on : climText.dataset.off;
+      if (climText) climText.textContent = clim.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
       clim.addEventListener('change', (e) => {
         FILTERS.climate = !!e.target.checked;
-        if (climText) climText.textContent = e.target.checked ? climText.dataset.on : climText.dataset.off;
+        if (climText) climText.textContent = e.target.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
         applyClimate();
-        // TODO: refresh data si tu appliques réellement DJU/CDD aux séries
       });
     }
     applyClimate();
 
-    // Benchmark (type seulement, selon ton HTML)
-    $$('.radio input[name="bench-type-energy"]', scope).forEach(r =>
+    // Benchmark (type)
+    scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>
       r.addEventListener('change', e => { FILTERS.benchmark.type = e.target.value; })
     );
   }

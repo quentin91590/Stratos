@@ -159,44 +159,50 @@
               <!-- Normalisation -->
               <div class="fi-item">
                 <div class="fi-label">Valeurs absolues / relatives</div>
-                <div class="segmented" role="group" aria-label="Normalisation">
-                  <label class="seg-item">
-                    <input type="radio" name="norm-energy" value="kwhm2" checked>
-                    <span>kWh/m²</span>
-                  </label>
-                  <label class="seg-item">
-                    <input type="radio" name="norm-energy" value="kwh">
-                    <span>kWh</span>
-                  </label>
+                <div class="seg2" role="radiogroup" aria-label="Normalisation" style="--left:'kWh/m²'; --right:'kWh';">
+                  <input type="radio" id="norm-kwhm2" name="norm-energy" value="kwhm2" checked>
+                  <label for="norm-kwhm2">kWh/m²</label>
+
+                  <input type="radio" id="norm-kwh" name="norm-energy" value="kwh">
+                  <label for="norm-kwh">kWh</label>
+
+                  <span class="pill" aria-hidden="true"></span>
                 </div>
               </div>
+
 
               <!-- Correction climatique (commutateur iOS) -->
               <div class="fi-item">
                 <div class="fi-label">Correction climatique</div>
-                <label class="ios-switch">
-                  <input type="checkbox" id="toggle-climate" class="ios-input" checked
-                    aria-label="Activer la correction climatique">
-                  <span class="ios-track" aria-hidden="true"><span class="ios-knob"></span></span>
-                  <span class="ios-text" data-on="Activée" data-off="Désactivée">Activée</span>
-                </label>
+                <div class="seg2" role="radiogroup" aria-label="Correction climatique"
+                  style="--left:'Avec'; --right:'Sans';">
+                  <input type="radio" id="clim-avec" name="climate" value="with" checked>
+                  <label for="clim-avec">Avec</label>
+
+                  <input type="radio" id="clim-sans" name="climate" value="without">
+                  <label for="clim-sans">Sans</label>
+
+                  <span class="pill" aria-hidden="true"></span>
+                </div>
                 <div class="f-hint">La chaleur et le froid seront corrigés climatiquement.</div>
               </div>
+
 
               <!-- Benchmark -->
               <div class="fi-item">
                 <div class="fi-label">Référentiel</div>
-                <div class="stack">
-                  <label class="radio">
-                    <input type="radio" name="bench-type-energy" value="internal" checked>
-                    <span>SignaTerre</span>
-                  </label>
-                  <label class="radio">
-                    <input type="radio" name="bench-type-energy" value="external">
-                    <span>Réglementaire</span>
-                  </label>
+                <div class="seg2" role="radiogroup" aria-label="Référentiel"
+                  style="--left:'SignaTerre'; --right:'Réglementaire';">
+                  <input type="radio" id="ref-interne" name="bench-type-energy" value="internal" checked>
+                  <label for="ref-interne">SignaTerre</label>
+
+                  <input type="radio" id="ref-regl" name="bench-type-energy" value="external">
+                  <label for="ref-regl">Réglementaire</label>
+
+                  <span class="pill" aria-hidden="true"></span>
                 </div>
               </div>
+
 
             </div>
           </section>

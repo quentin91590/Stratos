@@ -647,3 +647,77 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   color: var(--txt-1, #0f172a);
   font-weight:600;
 }
+/* ===== SegSwitch (pilule qui glisse) ===== */
+.seg2{
+  --h:36px;
+  --r:999px;
+  --bg:#f1f5f9;
+  --bd:#e5e7eb;
+  --pill:#ffffff;
+  --txt:#0f172a;
+  --muted:#6b7280;
+
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  background:var(--bg);
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:4px;
+  min-height:calc(var(--h) + 8px);
+  user-select:none;
+}
+
+/* labels cliquables (gardent une petite hint grise) */
+.seg2 > label{
+  position:relative;
+  z-index:2;
+  display:flex; align-items:center; justify-content:center;
+  height:var(--h);
+  font-weight:700; font-size:.95rem; letter-spacing:.01em;
+  color:var(--muted);
+  cursor:pointer;
+  border-radius:var(--r);
+  padding:0 8px;
+}
+
+/* inputs cachés mais accessibles */
+.seg2 > input{
+  position:absolute; inline-size:1px; block-size:1px; margin:0; padding:0;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* pilule */
+.seg2 .pill{
+  position:absolute; top:4px; bottom:4px; left:4px;
+  width:calc(50% - 4px);
+  background:var(--pill);
+  border-radius:var(--r);
+  box-shadow:0 1px 2px rgba(16,24,40,.06);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; color:var(--txt);
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+
+/* texte dans la pilule */
+.seg2 .pill::after{ content:var(--left, ""); }
+
+/* état à droite */
+.seg2:has(input:last-of-type:checked) .pill{
+  transform:translateX(100%);
+}
+.seg2:has(input:last-of-type:checked) .pill::after{
+  content:var(--right, "");
+}
+
+/* focus clavier sur le groupe */
+.seg2:has(input:focus-visible){
+  box-shadow:0 0 0 6px var(--ring);
+  outline:none;
+}
+
+/* survol léger + label actif un poil plus sombre */
+.seg2:hover .pill{ box-shadow:0 2px 6px rgba(16,24,40,.08); }
+.seg2:has(input:first-of-type:checked) > label:nth-of-type(1){ color:#0f172a; }
+.seg2:has(input:last-of-type:checked)  > label:nth-of-type(2){ color:#0f172a; }

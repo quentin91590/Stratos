@@ -216,47 +216,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   margin-left: auto;
   margin-right: auto;
 }
-/* ==== Filtres (sidebar) ==== */
-.filters-panel{
-  margin:12px 0 8px; padding:12px; border:1px solid var(--border); border-radius:12px; background:#fff;
-  box-shadow: 0 2px 8px rgba(16,24,40,.05);
-}
-.filters-title{
-  margin:0 0 8px; font-size:1rem; font-weight:800; letter-spacing:.01em; color:#0f172a;
-}
-.f-group{
-  display:flex; flex-direction:column; gap:8px; padding:8px 0; border-top:1px dashed rgba(0,0,0,.08);
-}
-.f-group:first-of-type{ border-top:none; padding-top:0; }
-.f-label{ font-size:.85rem; font-weight:700; color:#111827; }
-
-.filters-year{ display:flex; flex-wrap:wrap; gap:6px; }
-.chip{
-  display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border:1px solid var(--border);
-  border-radius:999px; background:#f8fafc; font-weight:700; font-size:.9rem; cursor:pointer;
-}
-.chip input{ accent-color: var(--section-color); width:16px; height:16px; }
-.f-hint{ font-size:.8rem; color:#64748b; }
-
-.segmented{ display:inline-flex; gap:6px; background:#f8fafc; padding:4px; border:1px solid var(--border); border-radius:10px; }
-.seg-item{
-  display:inline-flex; align-items:center; gap:6px; padding:6px 10px; border-radius:8px; cursor:pointer; font-weight:700; font-size:.9rem;
-}
-.seg-item input{ display:none; }
-.seg-item input:checked + span{ background:#fff; border:1px solid var(--border); box-shadow:0 1px 2px rgba(16,24,40,.06); border-radius:8px; padding:4px 8px; }
-
-.switch{ display:flex; align-items:center; gap:8px; font-size:.9rem; cursor:pointer; }
-.switch input{ width:18px; height:18px; accent-color: var(--section-color); }
-
-.stack{ display:flex; flex-direction:column; gap:6px; }
-.radio{ display:flex; align-items:center; gap:8px; cursor:pointer; font-size:.9rem; }
-.radio input{ width:16px; height:16px; accent-color: var(--section-color); }
-
-.select{
-  appearance:none; border:1px solid var(--border); border-radius:10px; background:#fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="%23667085" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8l4 4 4-4"/></svg>') no-repeat right 10px center / 18px 18px;
-  padding:8px 36px 8px 10px; font-weight:700; font-size:.9rem; color:#0f172a; width:100%;
-}
-.select:focus-visible{ outline:none; box-shadow:0 0 0 6px var(--ring); }
 
 /* ==== Barre de recherche (sidebar) ==== */
 .side-search{

@@ -160,10 +160,32 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{
-  position: sticky; top: var(--sticky-top); align-self: start;
-  background: #fff; border-right: 1px solid #ddd; padding: 0;
-  max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
+  position: sticky;
+  top: var(--sticky-top);
+  align-self: start;
+
+  /* styles visuels inchangés */
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 0;
+  max-height: calc(100vh - var(--sticky-top));
+  overflow-y: auto;
+
+  /* ➜ placement dans la grille: colonne gauche,
+     sur toute la hauteur (header + contenu) */
+  grid-column: 1;
+  grid-row: 1 / -1;
 }
+
+/* sur mobile on repasse en flux normal */
+@media (max-width: 960px){
+  .side-nav{
+    grid-column: auto;
+    grid-row: auto;
+    order: -1; /* si tu utilises l’ordre pour remonter la sidebar */
+  }
+}
+
 .tree{ display:flex; flex-direction:column; gap:4px; }
 .tree-group{ margin-top:2px; }
 .tree-children{
@@ -204,6 +226,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   body.menu-open .side-overlay{ display:block; }
   .side-overlay[hidden]{ display:none; }
 }
+
 
 /* ===== Mini KPI (sections hors Énergie) ===== */
 .kpi-tabs--alt { display:grid; grid-template-columns:repeat(3,minmax(170px,1fr)); gap:12px; }

@@ -1,4 +1,6 @@
 :root{
+  --sticky-top: 60px;   /* garde tes autres usages éventuels */
+  --sidebar-top: 0px;   /* spécifique sidebar */
   --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76,132,255,.35);
   --section-color:#94a3b8;
   --sticky-top: 60px;
@@ -139,9 +141,9 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{
-  position: sticky; top: var(--sticky-top); align-self: start;
+  position: sticky; top: var(--sidebar-top); align-self: start;
   background: #fff; border-right: 1px solid #ddd; padding: 0;
-  max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
+  max-height: calc(100vh - var(--sidebar-top)); overflow-y: auto;
 }
 .tree{ display:flex; flex-direction:column; gap:4px; }
 .tree-group{ margin-top:2px; }

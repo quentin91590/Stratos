@@ -6,10 +6,15 @@
   --sec-energie:#60a5fa; --sec-travaux:#b45309; --sec-financier:#facc15; --sec-etat:#10b981;
   /* états KPI */
   --kpi-good:#16a34a; --kpi-warn:#f59e0b; --kpi-bad:#ef4444;
+  /* largeurs (priorité au bas) */
+  --container-max: 1600px;
+  --content-max:   1520px;
 }
+
 *{box-sizing:border-box}
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
+/* ======= KPI cards ======= */
 .kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
 .kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
 
@@ -58,20 +63,20 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .pill-value{font-size:1.05rem; font-weight:800; letter-spacing:-0.01em; font-variant-numeric: tabular-nums}
 .pill-unit{font-size:.8rem; color:#94a3b8; margin-left:2px}
 
-/* Menu du haut */
+/* ======= Top nav ======= */
 .top-nav{
-  background:#fff; position: relative; z-index: 1000; display:flex; gap:20px; margin:0 0 24px; padding:0 0 6px;
+  position: relative; z-index: 1000; display:flex; gap:20px; margin:0 0 24px; padding:0 0 6px;
   border:none; border-radius:0; background:transparent; box-shadow:none; border-bottom:1px solid rgba(0,0,0,.05);
-  align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible
+  align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible;
 }
 .top-item{
   appearance:none; border:none; background:transparent; color:#0f172a;
   padding:8px 6px; border-radius:0; font-weight:700; font-size:.95rem; cursor:pointer;
-  display:flex; align-items:center; gap:8px; position:relative
+  display:flex; align-items:center; gap:8px; position:relative;
 }
 .top-item:focus-visible{outline:none; box-shadow:0 0 0 6px var(--ring)}
 .top-item.is-active::after{
-  content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa)
+  content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa);
 }
 .top-item:hover{opacity:.9}
 .top-item.is-active{color:#0f172a}
@@ -124,14 +129,18 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .ti-label{white-space:nowrap}
 
 /* === Layout global avec sidebar === */
-.app{ display:grid; grid-template-columns: 260px 1fr; gap:16px; max-width:1280px; margin:0 auto; padding:12px 12px 24px; }
+.app{
+  display:grid; grid-template-columns: 260px 1fr; gap:16px;
+  max-width: var(--container-max) !important;
+  margin:0 auto; padding:12px 12px 24px;
+}
 .main{ min-width:0; }
 @media (max-width: 960px){ .app{ grid-template-columns: 1fr; } .side-nav{ order:-1; } }
 
-/* === Sidebar / Tree === */
+/* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{
-  position: sticky; top: var(--sticky-top); align-self: start; background: transparent;
-  border: none; border-right: 1px solid rgba(0,0,0,.05); padding-right: 12px;
+  position: sticky; top: var(--sticky-top); align-self: start;
+  background: #fff; border-right: 1px solid #ddd; padding: 0;
   max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
 }
 .tree{ display:flex; flex-direction:column; gap:4px; }
@@ -160,8 +169,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .chev{ width:14px; display:inline-block; transform-origin:center; opacity:.6; }
 .tree-node[aria-expanded="false"] .chev{ transform:rotate(-90deg); }
 
-/* Alignement avec les onglets */
-.side-nav { position: sticky; top: 60px; background: #fff; border-right: 1px solid #ddd; padding: 0; }
+/* Alignement avec les onglets (fusion, priorité bas mais cohérence vars) */
 .sidebar-header { padding: 1rem; background: #f8f9fa; text-align: center; border-bottom: 1px solid #ddd; }
 .logo-title { font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 1.4rem; color: #0d47a1; letter-spacing: 1px; }
 
@@ -169,7 +177,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .hamburger{ display:none; width:38px; height:34px; border:none; background:transparent; border-radius:8px; align-items:center; justify-content:center; gap:5px; padding:0 6px; cursor:pointer; }
 .hamburger span{ display:block; width:22px; height:2px; background:#0f172a; border-radius:2px; }
 @media (max-width: 960px){
-  .app{ grid-template-columns: 1fr; }
   .hamburger{ display:flex; }
   .side-overlay{ position: fixed; inset:0; background: rgba(16,24,40,.28); backdrop-filter: blur(2px); z-index: 40; }
   body.menu-open #sidebar{ transform: translateX(0); }
@@ -185,9 +192,9 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .kpi.kpi--alt:hover{ transform:none; }
 .kpi.kpi--alt .kpi-chevron{ display:none; }
 
-/* Zone droite dans la barre du haut */
+/* Zone droite dans la barre du haut (fusion) */
 .top-right{
-  margin-left: auto;               /* pousse à droite */
+  margin-left: auto;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -198,21 +205,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   .year-picker{ height: 32px; font-size: .9rem; }
 }
 
-/* === élargir la colonne centrale (contenu) === */
-:root{
-  --container-max: 1600px;  /* largeur totale du <div class="app"> */
-  --content-max:   1520px;  /* largeur du bloc central : onglets + encadré */
-}
-
 /* élargit le conteneur global (sidebar + main) */
-.app{
-  max-width: var(--container-max) !important; /* était 1280px */
-}
-
+.app{ max-width: var(--container-max) !important; }
 /* élargit uniquement la “div du milieu” */
 .kpi-wrap,
 .section .tabset{
-  max-width: var(--content-max) !important;   /* était ~1200px */
+  max-width: var(--content-max) !important;
   margin-left: auto;
   margin-right: auto;
 }
@@ -231,10 +229,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   font-size:.95rem; font-weight:600; color:#0f172a; background:transparent;
 }
 .s-ico{ opacity:.6; display:inline-flex; }
-.s-clear{
-  border:none; background:#f1f5f9; color:#0f172a; border-radius:8px; padding:2px 6px; cursor:pointer;
-  font-weight:700; line-height:1;
-}
+.s-clear{ border:none; background:#0f1f59; color:#0f172a; border-radius:8px; padding:2px 6px; cursor:pointer;
+  font-weight:700; line-height:1; }
 .s-clear:hover{ background:#e2e8f0; }
 .s-meta{ margin-top:6px; font-size:.8rem; color:#64748b; }
 /* Cache la croix native des champs search (Chrome/Safari/Edge) */
@@ -243,7 +239,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* ==== Pastilles (badges) dans l’arborescence ==== */
 .tree .badge{
-  margin-left: auto;                 /* pousse la pastille complètement à droite */
+  margin-left: auto;
   padding: 4px 8px;
   border-radius: 999px;
   font-size: .75rem;
@@ -255,25 +251,17 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   color: #0f172a;
   border: 1px solid var(--border);
 }
-
-/* Hover : légère mise en avant */
 .tree-node:hover .badge,
-.tree-leaf:hover .badge{
-  background:#eef2f7;
-}
-
-/* Quand la ligne est sélectionnée (vert) */
+.tree-leaf:hover .badge{ background:#eef2f7; }
 .tree-node.is-active .badge{
-  background: #10b981;               /* même vert que la sélection */
-  color: #fff;
+  background: #10b981; color: #fff;
   border-color: rgba(16,185,129,.55);
   box-shadow: 0 0 0 1px rgba(255,255,255,.15) inset;
 }
-
-/* Évite que la pastille se tasse sur mobile */
 @media (max-width: 640px){
   .tree .badge{ padding: 3px 7px; font-size: .72rem; }
 }
+
 /* ==== Filtres inline (onglet Énergie) ==== */
 .filters-inline{
   margin: 8px 0 12px; padding: 12px;
@@ -292,7 +280,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* Year picker — version regroupée et scoppée */
 #year-picker{ position:relative; display:inline-flex; }
-
 #year-picker .year-btn{
   display:flex; align-items:center; gap:.5rem;
   padding:2px 6px; border-radius:6px;
@@ -305,18 +292,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 #year-picker .year-btn:focus-visible{
   outline:2px solid var(--section-color); outline-offset:2px;
 }
-
 #year-picker .year-chev{
   width:16px; height:16px; opacity:.55; transition:transform .18s ease;
 }
-#year-picker .year-btn[aria-expanded="true"] .year-chev{
-  transform: rotate(180deg);
-}
-
+#year-picker .year-btn[aria-expanded="true"] .year-chev{ transform: rotate(180deg); }
 #year-picker .year-menu{
   position:absolute; right:0; top:calc(100% + 8px);
   min-width:160px; max-height:260px; overflow:auto;
-  border:1px solid var(--hairline);
+  border:1px solid var(--hairline, #e5e7eb);
   background: color-mix(in oklab, white 92%, transparent);
   border-radius:10px; padding:6px; z-index:1000;
   box-shadow: 0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
@@ -331,13 +314,11 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   background: color-mix(in oklab, var(--section-color) 12%, transparent);
 }
 #year-picker .year-menu [role="option"].is-selected,
-#year-picker .year-menu [role="option"][aria-selected="true"]{
-  font-weight:600;
-}
-
+#year-picker .year-menu [role="option"][aria-selected="true"]{ font-weight:600; }
 
 /* (optionnel) caler visuellement à droite du header */
 .top-right{ display:flex; align-items:center; margin-left:auto; }
+
 /* =========================
    Filtres pro (discrets)
    ========================= */
@@ -350,49 +331,28 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   padding: 0;
   margin: 6px 0 14px;
 }
-
-/* Mise en ligne, compacte */
 #energy-filters {
   --txt-1: var(--text-color, #0f172a);
   --txt-2: color-mix(in oklab, var(--txt-1) 65%, transparent);
   --hairline: color-mix(in oklab, var(--txt-1) 14%, transparent);
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px 14px;
-  font-size: 14px;
+  display: flex; align-items: center; flex-wrap: wrap;
+  gap: 10px 14px; font-size: 14px;
 }
-
-/* Séparateurs discrets entre groupes (si tes groupes sont des <div> / <fieldset>) */
 #energy-filters > div:not(:first-child),
 #energy-filters > fieldset:not(:first-child) {
-  position: relative;
-  padding-left: 12px;
+  position: relative; padding-left: 12px;
 }
 #energy-filters > div:not(:first-child)::before,
 #energy-filters > fieldset:not(:first-child)::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 50%;
-  width: 1px;
-  height: 14px;
-  background: var(--hairline);
-  transform: translateY(-50%);
+  content: ""; position: absolute; left: 0; top: 50%;
+  width: 1px; height: 14px; background: var(--hairline); transform: translateY(-50%);
 }
-
-/* Libellés sobres */
-#energy-filters .f-label {
-  opacity: .65;
-  font-weight: 500;
-  margin-right: 2px;
-}
+#energy-filters .f-label { opacity: .65; font-weight: 500; margin-right: 2px; }
 
 /* === SegSwitch (pilule sous le texte) — version concise === */
 .seg2{
   --h:40px; --r:999px; --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
   --txt:#0f172a; --muted:#6b7280; --pad-x:14px; --minw:260px;
-
   position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center;
   background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
   padding:4px; height:calc(var(--h) + 8px); min-width:var(--minw); overflow:hidden;
@@ -411,15 +371,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   box-shadow:0 1px 2px rgba(16,24,40,.06); z-index:1; pointer-events:none;
   transition:transform .22s ease;
 }
-/* droite quand le 2e radio est coché */
 .seg2:has(input:last-of-type:checked) .pill{ transform:translateX(100%); }
-/* état actif : label plus sombre, sans changer le poids => pas de reflow */
 .seg2:has(input:first-of-type:checked) > label:first-of-type,
 .seg2:has(input:last-of-type:checked)  > label:last-of-type{ color:var(--txt); }
-/* focus discret (gris, pas bleu) */
 .seg2:has(input:focus-visible){ outline:2px solid #cbd5e1; outline-offset:2px; }
 
-/* — Reset générique des anciens styles “ghost” dans les seg2 — */
+/* — reset anciens styles dans les seg2 — */
 #energy-filters .seg2 label{ outline:none!important; box-shadow:none!important; padding:0 var(--pad-x)!important; }
 #energy-filters .seg2 label::before,
 #energy-filters .seg2 label::after{ content:none!important; }

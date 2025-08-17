@@ -570,56 +570,38 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* ===== SegSwitch (pilule qui glisse) ===== */
-.seg2{
-  --h:36px;
-  --r:999px;
-  --bg:#f1f5f9;
-  --bd:#e5e7eb;
-  --pill:#ffffff;
-  --txt:#0f172a;
-  --muted:#6b7280;
-
-  position:relative;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-  background:var(--bg);
-  border:1px solid var(--bd);
-  border-radius:var(--r);
-  padding:4px;
-  min-height:calc(var(--h) + 8px);
-  user-select:none;
-}
-
-/* labels cliquables (gardent une petite hint grise) */
-/* labels cliquables (passent derrière la pilule) */
-/* labels cliquables (passent derrière la pilule) */
-.seg2 > label{
-  position: relative;
-  z-index: 1;             /* <- avant c'était 2 */
-  display: flex; align-items: center; justify-content: center;
-  height: var(--h);
-  font-weight: 700; font-size: .95rem; letter-spacing: .01em;
-  color: var(--muted);
-  cursor: pointer;
-  border-radius: var(--r);
-  padding: 0 8px;
-}
-
-/* pilule (passe au-dessus) */
+/* pilule au-dessus mais non bloquante */
 .seg2 .pill{
-  position: absolute; top: 4px; bottom: 4px; left: 4px;
-  width: calc(50% - 4px);
-  background: var(--pill);
-  border-radius: var(--r);
-  box-shadow: 0 1px 2px rgba(16,24,40,.06);
-  display: flex; align-items: center; justify-content: center;
-  font-weight: 800; color: var(--txt);
-  transition: transform .18s ease, box-shadow .18s ease;
-  z-index: 2;             /* <- au-dessus des labels */
+  position:absolute; top:4px; bottom:4px; left:4px;
+  width:calc(50% - 4px);
+  background:var(--pill);
+  border-radius:var(--r);
+  box-shadow:0 1px 2px rgba(16,24,40,.06);
+  display:flex; align-items:center; justify-content:center;
+  font-weight:800; color:var(--txt);
+  transition:transform .18s ease, box-shadow .18s ease;
+  z-index:2;
+  pointer-events:none;             /* ← important */
 }
 
-/* texte dans la pilule (manquait dans ton paste) */
-.seg2 .pill::after{ content: var(--left, ""); }
-.seg2:has(input:last-of-type:checked) .pill{ transform: translateX(100%); }
-.seg2:has(input:last-of-type:checked) .pill::after{ content: var(--right, ""); }
+/* texte dans la pilule */
+.seg2 .pill::after{ content:var(--left, ""); }
+.seg2:has(input:last-of-type:checked) .pill{ transform:translateX(100%); }
+.seg2:has(input:last-of-type:checked) .pill::after{ content:var(--right, ""); }
+
+/* labels derrière la pilule */
+.seg2 > label{
+  position:relative;
+  z-index:1;                       /* ← derrière */
+  display:flex; align-items:center; justify-content:center;
+  height:var(--h);
+  font-weight:700; font-size:.95rem; letter-spacing:.01em;
+  color:var(--muted);
+  cursor:pointer; border-radius:var(--r); padding:0 8px;
+}
+
+/* (optionnel) masquer le label actif sous la pilule */
+.seg2:has(input:first-of-type:checked) > label:nth-of-type(1),
+.seg2:has(input:last-of-type:checked)  > label:nth-of-type(2){
+  color:transparent;
+}

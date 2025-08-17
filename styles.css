@@ -1,7 +1,7 @@
 :root{
   --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76,132,255,.35);
   --section-color:#94a3b8;
-  --sticky-top: 60px;
+  --sticky-top: 24px;
   /* sections */
   --sec-energie:#60a5fa; --sec-travaux:#b45309; --sec-financier:#facc15; --sec-etat:#10b981;
   /* états KPI */
@@ -15,7 +15,7 @@
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
 /* ======= KPI cards ======= */
-.kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
+.kpi-wrap{ max-width:1200px; margin:0 auto; padding:0 16px }
 .kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
 
 .kpi{
@@ -132,7 +132,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .app{
   display:grid; grid-template-columns: 260px 1fr; gap:16px;
   max-width: var(--container-max) !important;
-  margin:0 auto; padding:12px 12px 24px;
+  margin:0 auto; padding:24px 12px 24px;
 }
 .main{ min-width:0; }
 @media (max-width: 960px){ .app{ grid-template-columns: 1fr; } .side-nav{ order:-1; } }

@@ -403,3 +403,11 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* mobile */
 @media (max-width:640px){ .seg2{ --h:36px; --minw:220px; } .seg2 > label{ font-size:.9rem; } }
+
+.sidebar-header{
+  height:34px;                 /* ≈ hauteur visuelle des onglets */
+  padding:0 12px;
+  display:flex; align-items:center;
+  background:#fff;             /* comme avant si tu veux garder */
+  border-bottom:1px solid #ddd;
+}

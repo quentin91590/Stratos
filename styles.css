@@ -396,6 +396,43 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-item{ display:flex; flex-direction:column; gap:8px; }
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
+
+/* --- Year picker (top-right) --- */
+.year-picker-wrap{ position:relative; display:inline-flex; }
+.year-btn{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.5rem .875rem; border-radius:9999px;
+  border:1px solid var(--line, #e5e7eb);
+  background: var(--surface-2, #f8fafc);
+  font-weight:600; line-height:1; cursor:pointer;
+  box-shadow: 0 1px 2px rgba(0,0,0,.05);
+  transition: border-color .15s ease, box-shadow .15s ease, background .15s ease;
+}
+.year-btn:hover{ background:#fff; border-color:#d1d5db; }
+.year-btn:focus-visible{ outline:2px solid var(--section-color, #60a5fa); outline-offset:2px; }
+
+.year-chev{ width:16px; height:16px; transition: transform .18s ease; }
+.year-btn[aria-expanded="true"] .year-chev{ transform: rotate(180deg); }
+
+.year-menu{
+  position:absolute; right:0; top:calc(100% + 8px);
+  min-width: 160px; max-height: 260px; overflow:auto;
+  background:#fff; border:1px solid #e5e7eb; border-radius:12px;
+  padding:6px; z-index:1000;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12), 0 4px 10px rgba(0,0,0,.06);
+}
+.year-menu li{
+  display:flex; align-items:center; gap:.5rem;
+  padding:.5rem .75rem; border-radius:8px; cursor:pointer;
+  user-select:none; white-space:nowrap;
+}
+.year-menu li:hover, .year-menu li.is-active{
+  background: rgba(96,165,250,.12); /* bleuté doux */
+}
+.year-menu li[aria-selected="true"]{
+  font-weight:700; background: rgba(96,165,250,.18);
+}
+
 /* (optionnel) caler visuellement à droite du header */
 .top-right{ display:flex; align-items:center; margin-left:auto; }
 /* =========================

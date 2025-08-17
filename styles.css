@@ -533,40 +533,33 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 #energy-filters .ios-text { font-size: .9rem; opacity: .7; }
 #energy-filters #toggle-climate { accent-color: var(--section-color); }
 
-/* Year picker (déjà en place) : bouton texte sans encadré */
-.year-picker .year-btn {
-  background: transparent;
-  border: 0;
-  padding: 2px 6px;
-  border-radius: 6px;
+/* Year picker — version unique, scoped */
+#year-picker .year-btn{
+  background:transparent; border:0; padding:2px 6px; border-radius:6px;
 }
-.year-picker .year-btn:hover {
+#year-picker .year-btn:hover{
   background: color-mix(in oklab, var(--section-color) 12%, transparent);
 }
-.year-picker .year-btn:focus-visible {
-  outline: 2px solid var(--section-color);
-  outline-offset: 2px;
+#year-picker .year-btn:focus-visible{
+  outline:2px solid var(--section-color); outline-offset:2px;
 }
-.year-picker .chev { opacity: .55; }
+#year-picker .year-chev{ opacity:.55; }
 
-/* Menu année : sobre, sans bord épais */
-.year-picker .year-menu {
-  border: 1px solid var(--hairline);
+#year-picker .year-menu{
+  border:1px solid var(--hairline);
   background: color-mix(in oklab, white 92%, transparent);
-  box-shadow: 0 8px 24px rgba(0,0,0,.08);
-  border-radius: 10px;
-  padding: 6px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08);
+  border-radius:10px; padding:6px;
 }
-.year-picker .year-menu [role="option"] {
-  padding: 6px 8px;
-  border-radius: 6px;
+#year-picker .year-menu [role="option"]{
+  padding:6px 8px; border-radius:6px;
 }
-.year-picker .year-menu [role="option"].is-active,
-.year-picker .year-menu [role="option"]:hover {
+#year-picker .year-menu [role="option"].is-active,
+#year-picker .year-menu [role="option"]:hover{
   background: color-mix(in oklab, var(--section-color) 12%, transparent);
 }
-.year-picker .year-menu [role="option"].is-selected {
-  font-weight: 600;
+#year-picker .year-menu [role="option"].is-selected{
+  font-weight:600;
 }
 
 /* === SegSwitch (pilule sous le texte) — version concise === */

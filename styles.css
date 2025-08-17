@@ -569,59 +569,45 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   font-weight: 600;
 }
 
-/* ===== SegSwitch (pilule qui glisse) ===== */
+/* SegSwitch (pilule qui glisse) */
 .seg2{
-  --h:36px;
-  --r:999px;
-  --bg:#f1f5f9;
-  --bd:#e5e7eb;
-  --pill:#ffffff;
-  --txt:#0f172a;
-  --muted:#6b7280;
-
-  position:relative;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:0;
-  background:var(--bg);
-  border:1px solid var(--bd);
-  border-radius:var(--r);
-  padding:4px;
-  min-height:calc(var(--h) + 8px);
-  user-select:none;
+  --h:36px; --r:999px;
+  --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff; --txt:#0f172a; --muted:#6b7280;
+  position:relative; display:grid; grid-template-columns:1fr 1fr;
+  background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
+  padding:4px; min-height:calc(var(--h) + 8px); user-select:none;
 }
 
-/* pilule au-dessus mais non bloquante */
+/* labels cliquables (derrière la pilule) */
+.seg2 > label{
+  position:relative; z-index:1;
+  display:flex; align-items:center; justify-content:center;
+  height:var(--h); padding:0 8px; border-radius:var(--r);
+  font-weight:700; font-size:.95rem; letter-spacing:.01em; color:var(--muted);
+  cursor:pointer;
+}
+
+/* radios natifs totalement masqués (plus de « points ») */
+.seg2 > input[type="radio"]{
+  appearance:none; -webkit-appearance:none;
+  position:absolute; width:0; height:0; margin:0; opacity:0; pointer-events:none;
+}
+
+/* pilule au dessus, non bloquante, texte dedans */
 .seg2 .pill{
-  position:absolute; top:4px; bottom:4px; left:4px;
-  width:calc(50% - 4px);
-  background:var(--pill);
-  border-radius:var(--r);
+  position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px);
+  background:var(--pill); border-radius:var(--r);
   box-shadow:0 1px 2px rgba(16,24,40,.06);
   display:flex; align-items:center; justify-content:center;
   font-weight:800; color:var(--txt);
   transition:transform .18s ease, box-shadow .18s ease;
-  z-index:2;
-  pointer-events:none;             /* ← important */
+  z-index:2; pointer-events:none;    /* ← important */
 }
-
-/* texte dans la pilule */
 .seg2 .pill::after{ content:var(--left, ""); }
 .seg2:has(input:last-of-type:checked) .pill{ transform:translateX(100%); }
 .seg2:has(input:last-of-type:checked) .pill::after{ content:var(--right, ""); }
 
-/* labels derrière la pilule */
-.seg2 > label{
-  position:relative;
-  z-index:1;                       /* ← derrière */
-  display:flex; align-items:center; justify-content:center;
-  height:var(--h);
-  font-weight:700; font-size:.95rem; letter-spacing:.01em;
-  color:var(--muted);
-  cursor:pointer; border-radius:var(--r); padding:0 8px;
-}
-
-/* (optionnel) masquer le label actif sous la pilule */
+/* label « actif » (sous la pilule) devient transparent pour éviter toute surimpression */
 .seg2:has(input:first-of-type:checked) > label:nth-of-type(1),
 .seg2:has(input:last-of-type:checked)  > label:nth-of-type(2){
   color:transparent;

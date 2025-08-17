@@ -159,7 +159,7 @@
               <!-- Normalisation -->
               <div class="fi-item">
                 <div class="fi-label">Valeurs absolues / relatives</div>
-                <div class="seg2" role="radiogroup" aria-label="Normalisation" style="--left:'kWh/m²'; --right:'kWh';">
+                <div class="seg2" style="--left:'kWh/m²'; --right:'kWh'">
                   <input type="radio" id="norm-kwhm2" name="norm-energy" value="kwhm2" checked>
                   <label for="norm-kwhm2">kWh/m²</label>
 
@@ -171,38 +171,36 @@
               </div>
 
 
+
               <!-- Correction climatique (commutateur iOS) -->
               <div class="fi-item">
                 <div class="fi-label">Correction climatique</div>
-                <div class="seg2" role="radiogroup" aria-label="Correction climatique"
-                  style="--left:'Avec'; --right:'Sans';">
-                  <input type="radio" id="clim-avec" name="climate" value="with" checked>
+                <div class="seg2" style="--left:'Avec'; --right:'Sans'">
+                  <input type="radio" id="clim-avec" name="climate-correction" value="with" checked>
                   <label for="clim-avec">Avec</label>
 
-                  <input type="radio" id="clim-sans" name="climate" value="without">
+                  <input type="radio" id="clim-sans" name="climate-correction" value="without">
                   <label for="clim-sans">Sans</label>
 
                   <span class="pill" aria-hidden="true"></span>
                 </div>
-                <div class="f-hint">La chaleur et le froid seront corrigés climatiquement.</div>
               </div>
+
 
 
               <!-- Benchmark -->
               <div class="fi-item">
                 <div class="fi-label">Référentiel</div>
-                <div class="seg2" role="radiogroup" aria-label="Référentiel"
-                  style="--left:'SignaTerre'; --right:'Réglementaire';">
+                <div class="seg2" style="--left:'SignaTerre'; --right:'Réglementaire'">
                   <input type="radio" id="ref-interne" name="bench-type-energy" value="internal" checked>
                   <label for="ref-interne">SignaTerre</label>
 
-                  <input type="radio" id="ref-regl" name="bench-type-energy" value="external">
-                  <label for="ref-regl">Réglementaire</label>
+                  <input type="radio" id="ref-externe" name="bench-type-energy" value="external">
+                  <label for="ref-externe">Réglementaire</label>
 
                   <span class="pill" aria-hidden="true"></span>
                 </div>
               </div>
-
 
             </div>
           </section>

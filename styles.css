@@ -15,14 +15,7 @@
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
 /* ======= KPI cards ======= */
-.kpi-wrap{
-  max-width:1200px;
-  margin:24px auto;
-  padding:0 16px;
-  /* place le bloc KPI sous le header, colonne contenu */
-  grid-column: 2;
-  grid-row: 2;
-}
+.kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
 .kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
 
 .kpi{
@@ -63,25 +56,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 @media (max-width: 1100px){ .kpi-tabs{grid-template-columns:repeat(3,1fr)} }
 @media (max-width: 640px){ .kpi-tabs{grid-template-columns:1fr 1fr} .kpi{padding:12px} .kpi-value{font-size:1.6rem} }
 
+.panel-summary{display:flex; flex-wrap:wrap; gap:10px 12px; margin:6px 0 12px}
+.pill{display:flex; align-items:center; gap:8px; padding:8px 12px; border-radius:999px; background:#f8fafc; border:1px solid #e5e7eb; box-shadow:0 1px 2px rgba(16,24,40,.04)}
+.pill-ico svg{display:block}
+.pill-label{font-size:.85rem; color:#64748b}
+.pill-value{font-size:1.05rem; font-weight:800; letter-spacing:-0.01em; font-variant-numeric: tabular-nums}
+.pill-unit{font-size:.8rem; color:#94a3b8; margin-left:2px}
 
 /* ======= Top nav ======= */
 .top-nav{
-  position: relative; z-index: 1000;
-  display:flex; gap:20px; margin:0 0 24px; padding:0 0 6px;
-  border:none; border-radius:0; background:transparent; box-shadow:none;
-  border-bottom:1px solid rgba(0,0,0,.05);
+  position: relative; z-index: 1000; display:flex; gap:20px; margin:0 0 24px; padding:0 0 6px;
+  border:none; border-radius:0; background:transparent; box-shadow:none; border-bottom:1px solid rgba(0,0,0,.05);
   align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible;
-  /* ancrage dans la grille : header = ligne 1, colonne contenu */
-  grid-column: 2;
-  grid-row: 1;
 }
-/* zone de droite dans la barre du haut (unique, évite les doublons ailleurs) */
-.top-nav .top-right{
-  margin-left:auto; display:flex; align-items:center; gap:8px;
-}
-/* place le year-picker à droite des onglets si présent dans .top-right */
-.top-nav .top-right > #year-picker{ order:99; margin-left:8px; }
-
 .top-item{
   appearance:none; border:none; background:transparent; color:#0f172a;
   padding:8px 6px; border-radius:0; font-weight:700; font-size:.95rem; cursor:pointer;
@@ -93,9 +80,10 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .top-item:hover{opacity:.9}
 .top-item.is-active{color:#0f172a}
-@media (max-width:640px){
-  .top-nav{flex-wrap:nowrap; gap:14px; margin-bottom:16px}
-}
+@media (max-width:640px){ .top-nav{flex-wrap:nowrap; gap:14px; margin-bottom:16px} }
+
+.section{margin-top:18px}
+.section[hidden]{display:none}
 
 /* Panels */
 .kpi-panels{margin-top:18px; background:transparent; border:none; border-radius:16px; padding:16px 0 0; box-shadow:none}
@@ -142,50 +130,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* === Layout global avec sidebar === */
 .app{
-  display:grid;
-  grid-template-columns: 260px 1fr;
-  /* header (auto) + contenu (1fr) => stabilise le header */
-  grid-template-rows: auto 1fr;
-  gap:16px;
+  display:grid; grid-template-columns: 260px 1fr; gap:16px;
   max-width: var(--container-max) !important;
-  margin:0 auto;
-  padding:12px 12px 24px;
+  margin:0 auto; padding:12px 12px 24px;
 }
 .main{ min-width:0; }
-@media (max-width: 960px){
-  .app{ grid-template-columns: 1fr; grid-template-rows: auto auto 1fr; }
-  .side-nav{ order:-1; }
-}
-
+@media (max-width: 960px){ .app{ grid-template-columns: 1fr; } .side-nav{ order:-1; } }
 
 /* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{
-  position: sticky;
-  top: var(--sticky-top);
-  align-self: start;
-
-  /* styles visuels inchangés */
-  background: #fff;
-  border-right: 1px solid #ddd;
-  padding: 0;
-  max-height: calc(100vh - var(--sticky-top));
-  overflow-y: auto;
-
-  /* ➜ placement dans la grille: colonne gauche,
-     sur toute la hauteur (header + contenu) */
-  grid-column: 1;
-  grid-row: 1 / -1;
+  position: sticky; top: var(--sticky-top); align-self: start;
+  background: #fff; border-right: 1px solid #ddd; padding: 0;
+  max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
 }
-
-/* sur mobile on repasse en flux normal */
-@media (max-width: 960px){
-  .side-nav{
-    grid-column: auto;
-    grid-row: auto;
-    order: -1; /* si tu utilises l’ordre pour remonter la sidebar */
-  }
-}
-
 .tree{ display:flex; flex-direction:column; gap:4px; }
 .tree-group{ margin-top:2px; }
 .tree-children{
@@ -226,7 +183,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   body.menu-open .side-overlay{ display:block; }
   .side-overlay[hidden]{ display:none; }
 }
-
 
 /* ===== Mini KPI (sections hors Énergie) ===== */
 .kpi-tabs--alt { display:grid; grid-template-columns:repeat(3,minmax(170px,1fr)); gap:12px; }
@@ -323,49 +279,34 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
 /* Year picker — pilule alignée aux onglets */
-#year-picker{ position:relative; display:inline-flex; z-index:1500; }
-.top-nav #year-picker{
-  /* s’aligne dans la barre du haut, à droite */
-  align-self:center;
-  justify-self:end;
-}
+#year-picker{ position:relative; display:inline-flex; }
+
 #year-picker .year-btn{
   appearance:none;
   display:inline-flex; align-items:center; gap:8px;
-  padding:8px 12px; height:34px;
-  border-radius:9999px; background:#fff; border:1px solid var(--border);
+  padding:8px 12px;                        /* même vertical que .top-item */
+  height:34px;                              /* ≈ hauteur visuelle des onglets */
+  border-radius:9999px;                     /* pilule */
+  background:#fff;                          /* pilule blanche */
+  border:1px solid var(--border);
   box-shadow:0 1px 2px rgba(16,24,40,.05);
-  font-weight:700; font-size:.95rem; line-height:1; color:#0f172a; cursor:pointer;
+  font-weight:700; font-size:.95rem; line-height:1;
+  color:#0f172a; cursor:pointer;
 }
-#year-picker .year-btn:hover{ background:#fff; border-color:#d1d5db; }
-#year-picker .year-btn:focus-visible{ outline:none; box-shadow:0 0 0 6px var(--ring); }
-
-#year-picker .year-chev{ width:18px; height:18px; opacity:.7; transition:transform .18s ease; }
-#year-picker .year-btn[aria-expanded="true"] .year-chev{ transform:rotate(180deg); }
-
-#year-picker .year-menu{
-  position:absolute; right:0; top:calc(100% + 10px);
-  min-width:160px; max-height:260px; overflow:auto;
-  border:1px solid var(--hairline, #e5e7eb);
-  background:color-mix(in oklab, white 92%, transparent);
-  border-radius:12px; padding:6px; z-index:1000;
-  box-shadow:0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
+#year-picker .year-btn:hover{
+  background:#fff; border-color:#d1d5db;
 }
-#year-picker .year-menu [role="option"]{
-  display:flex; align-items:center; gap:.5rem; padding:6px 8px; border-radius:6px; cursor:pointer;
-  user-select:none; white-space:nowrap;
-}
-#year-picker .year-menu [role="option"].is-active,
-#year-picker .year-menu [role="option"]:hover{
-  background:color-mix(in oklab, var(--section-color) 12%, transparent);
-}
-#year-picker .year-menu [role="option"].is-selected,
-#year-picker .year-menu [role="option"][aria-selected="true"]{ font-weight:600; }
-
-@media (max-width:640px){
-  #year-picker .year-btn{ height:32px; padding:6px 10px; font-size:.9rem; }
+#year-picker .year-btn:focus-visible{
+  outline:none; box-shadow:0 0 0 6px var(--ring);
 }
 
+#year-picker .year-chev{
+  width:18px; height:18px; opacity:.7;
+  transition:transform .18s ease;
+}
+#year-picker .year-btn[aria-expanded="true"] .year-chev{
+  transform:rotate(180deg);
+}
 
 /* Menu de sélection */
 #year-picker .year-menu{

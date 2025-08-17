@@ -569,94 +569,41 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   font-weight: 600;
 }
 
-/* === SegSwitch : correctifs taille + focus + stabilité === */
+/* === SegSwitch (pilule sous le texte) — version concise === */
 .seg2{
-  --h:40px;                 /* pilule un poil plus haute */
-  --r:999px;
-  --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
-  --txt:#0f172a; --muted:#6b7280;
-  --pad-x:14px;             /* confort latéral du texte */
-  --minw:260px;             /* évite le wrap sur "Réglementaire" */
+  --h:40px; --r:999px; --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
+  --txt:#0f172a; --muted:#6b7280; --pad-x:14px; --minw:260px;
 
-  position:relative;
-  display:grid; grid-template-columns:1fr 1fr; align-items:center;
-  background:var(--bg);
-  border:1px solid var(--bd); border-radius:var(--r);
-  padding:4px;
-  height:calc(var(--h) + 8px);   /* hauteur verrouillée */
-  min-width:var(--minw);         /* largeur mini commune */
-  overflow:hidden;               /* pas de débord visuel */
+  position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center;
+  background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
+  padding:4px; height:calc(var(--h) + 8px); min-width:var(--minw); overflow:hidden;
   -webkit-tap-highlight-color:transparent;
 }
-
-/* radios cachés, plus de puces */
-.seg2 > input[type="radio"]{
-  appearance:none; -webkit-appearance:none;
-  position:absolute; width:0; height:0; margin:0; opacity:0; pointer-events:none;
-}
-
-/* libellés au-dessus de la pilule, jamais à la ligne */
+.seg2 > input[type="radio"]{ appearance:none; position:absolute; width:0; height:0; margin:0; opacity:0; pointer-events:none; }
 .seg2 > label{
-  position:relative; z-index:2;
-  display:flex; align-items:center; justify-content:center;
+  position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
   height:var(--h); padding:0 var(--pad-x); border-radius:var(--r);
-  font-weight:700; font-size:.95rem; letter-spacing:.01em;
+  font:700 .95rem/1 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
   color:var(--muted); cursor:pointer; white-space:nowrap;
 }
-
-/* pilule sous le texte, un peu plus “présente” */
 .seg2 .pill{
-  position:absolute; top:4px; bottom:4px; left:4px; width:calc(50% - 4px);
-  background:var(--pill); border-radius:var(--r);
-  border:1px solid #e5e7eb;              /* renforce visuellement la taille */
-  box-shadow:0 1px 2px rgba(16,24,40,.06);
-  z-index:1; pointer-events:none;
+  position:absolute; inset:4px auto 4px 4px; width:calc(50% - 4px);
+  background:var(--pill); border:1px solid var(--bd); border-radius:var(--r);
+  box-shadow:0 1px 2px rgba(16,24,40,.06); z-index:1; pointer-events:none;
   transition:transform .22s ease;
 }
-
-/* slide droite quand le 2e est coché */
+/* droite quand le 2e radio est coché */
 .seg2:has(input:last-of-type:checked) .pill{ transform:translateX(100%); }
+/* état actif : label plus sombre, sans changer le poids => pas de reflow */
+.seg2:has(input:first-of-type:checked) > label:first-of-type,
+.seg2:has(input:last-of-type:checked)  > label:last-of-type{ color:var(--txt); }
+/* focus discret (gris, pas bleu) */
+.seg2:has(input:focus-visible){ outline:2px solid #cbd5e1; outline-offset:2px; }
 
-/* libellé actif plus sombre (sans changer le poids => pas de reflow) */
-.seg2:has(input:first-of-type:checked) > label:nth-of-type(1){ color:var(--txt); }
-.seg2:has(input:last-of-type:checked)  > label:nth-of-type(2){ color:var(--txt); }
+/* — Reset générique des anciens styles “ghost” dans les seg2 — */
+#energy-filters .seg2 label{ outline:none!important; box-shadow:none!important; padding:0 var(--pad-x)!important; }
+#energy-filters .seg2 label::before,
+#energy-filters .seg2 label::after{ content:none!important; }
 
-/* focus : on remplace le halo bleu par un liseré gris discret */
-.seg2:has(input:focus-visible){
-  outline:2px solid #cbd5e1 !important;
-  outline-offset:2px;
-  box-shadow:none !important;
-}
-
-/* responsive léger */
-@media (max-width:640px){
-  .seg2{ --h:36px; --minw:220px; }
-  .seg2 > label{ font-size:.9rem; }
-}
-/* --- Neutralise les anciens styles "ghost" sur le switch Référentiel --- */
-#energy-filters .seg2 input[name="bench-type-energy"] + label,
-#energy-filters .seg2 input[name="bench-type-energy"]:checked + label,
-#energy-filters .seg2 input[name="bench-type-energy"]:focus + label{
-  outline: none !important;
-  box-shadow: none !important;
-  font-weight: 700 !important;                /* évite le reflow */
-  color: inherit !important;
-  padding-left: var(--pad-x, 14px) !important;/* retire le faux retrait des ghost radios */
-}
-
-/* coupe les pseudo-éléments fantômes (traits/ronds) */
-#energy-filters .seg2 input[name="bench-type-energy"] + label::before,
-#energy-filters .seg2 input[name="bench-type-energy"] + label::after{
-  content: none !important;
-}
-
-/* remplace le halo bleu par rien sur ce switch */
-#energy-filters .seg2:has(input[name="bench-type-energy"]:focus-visible){
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* largeur un peu plus grande pour "Réglementaire" sans bouger l’UI */
-#energy-filters .seg2:has(input[name="bench-type-energy"]){
-  --minw: 300px;   /* ajuste à 300–320px si besoin */
-}
+/* mobile */
+@media (max-width:640px){ .seg2{ --h:36px; --minw:220px; } .seg2 > label{ font-size:.9rem; } }

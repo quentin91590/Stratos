@@ -163,9 +163,46 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   position: sticky; top: var(--sticky-top); align-self: start;
   background: #fff; border-right: 1px solid #ddd; padding: 0;
   max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
-  /* occupe la colonne de gauche sur header + contenu */
-  grid-column: 1;
-  grid-row: 1 / span 2;
+}
+.tree{ display:flex; flex-direction:column; gap:4px; }
+.tree-group{ margin-top:2px; }
+.tree-children{
+  list-style:none; margin:4px 0 6px 14px; padding:0 0 0 10px;
+  border-left: 1px dashed rgba(0,0,0,.12); display:flex; flex-direction:column; gap:2px;
+}
+.tree-children[hidden]{ display:none !important; }
+
+.tree-node, .tree-leaf{
+  appearance:none; border:none; background:transparent; cursor:pointer; width:100%; text-align:left; color:#0f172a;
+  padding:6px 8px 6px 6px; display:flex; align-items:center; gap:8px; border-radius:6px; transition: color .15s ease, background .15s ease;
+}
+.tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
+
+.tree-leaf.is-active,
+.tree-node.is-active{
+  background: #e0f7ec; box-shadow: inset 0 0 0 2px rgba(16, 185, 129, 0.5); font-weight: 700; position: relative;
+}
+.tree-node.is-partial::after{
+  content:""; position:absolute; left:-6px; top:50%; transform:translateY(-50%);
+  width:6px; height:2px; border-radius:2px; background: var(--section-color, #60a5fa); opacity:.7;
+}
+.tree-check { margin-right: 6px; accent-color: #10b981; cursor: pointer; width: 16px; height: 16px; }
+.chev{ width:14px; display:inline-block; transform-origin:center; opacity:.6; }
+.tree-node[aria-expanded="false"] .chev{ transform:rotate(-90deg); }
+
+/* Alignement avec les onglets (fusion, priorité bas mais cohérence vars) */
+.sidebar-header { padding: 1rem; background: #f8f9fa; text-align: center; border-bottom: 1px solid #ddd; }
+.logo-title { font-family: 'Segoe UI', sans-serif; font-weight: 800; font-size: 1.4rem; color: #0d47a1; letter-spacing: 1px; }
+
+/* Hamburger + overlay mobile */
+.hamburger{ display:none; width:38px; height:34px; border:none; background:transparent; border-radius:8px; align-items:center; justify-content:center; gap:5px; padding:0 6px; cursor:pointer; }
+.hamburger span{ display:block; width:22px; height:2px; background:#0f172a; border-radius:2px; }
+@media (max-width: 960px){
+  .hamburger{ display:flex; }
+  .side-overlay{ position: fixed; inset:0; background: rgba(16,24,40,.28); backdrop-filter: blur(2px); z-index: 40; }
+  body.menu-open #sidebar{ transform: translateX(0); }
+  body.menu-open .side-overlay{ display:block; }
+  .side-overlay[hidden]{ display:none; }
 }
 
 /* ===== Mini KPI (sections hors Énergie) ===== */

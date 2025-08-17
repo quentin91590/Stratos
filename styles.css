@@ -622,9 +622,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   transition: transform .18s ease, box-shadow .18s ease;
 }
 
-/* texte dans la pilule */
-.seg2 .pill::after{ content:var(--left, ""); }
-
 /* état à droite */
 .seg2:has(input:last-of-type:checked) .pill{
   transform:translateX(100%);

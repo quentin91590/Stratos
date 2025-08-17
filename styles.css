@@ -1,7 +1,7 @@
 :root{
   --bg:#f6f7f9; --card:#ffffff; --ink:#101828; --muted:#667085; --border:#e5e7eb; --ring: rgba(76,132,255,.35);
   --section-color:#94a3b8;
-  --sticky-top: 60px;
+  --sticky-top: 24px;
   /* sections */
   --sec-energie:#60a5fa; --sec-travaux:#b45309; --sec-financier:#facc15; --sec-etat:#10b981;
   /* états KPI */
@@ -15,7 +15,7 @@
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
 /* ======= KPI cards ======= */
-.kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
+.kpi-wrap{ max-width:1200px; margin:0 auto; padding:0 16px;  grid-column: 2; grid-row: 2; }
 .kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
 
 .kpi{
@@ -67,7 +67,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .top-nav{
   position: relative; z-index: 1000; display:flex; gap:20px; margin:0 0 24px; padding:0 0 6px;
   border:none; border-radius:0; background:transparent; box-shadow:none; border-bottom:1px solid rgba(0,0,0,.05);
-  align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible;
+  align-items:center; flex-wrap:wrap; width:100%; justify-content:flex-start; overflow:visible; grid-column: 2; grid-row: 1;  
 }
 .top-item{
   appearance:none; border:none; background:transparent; color:#0f172a;
@@ -132,16 +132,17 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .app{
   display:grid; grid-template-columns: 260px 1fr; gap:16px;
   max-width: var(--container-max) !important;
-  margin:0 auto; padding:12px 12px 24px;
+  margin:0 auto; padding:24px 12px 24px;
+  grid-template-rows: auto 1fr;     /* NEW */
 }
-.main{ min-width:0; }
+.main{ min-width:0; display: contents; }
 @media (max-width: 960px){ .app{ grid-template-columns: 1fr; } .side-nav{ order:-1; } }
 
 /* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{
   position: sticky; top: var(--sticky-top); align-self: start;
   background: #fff; border-right: 1px solid #ddd; padding: 0;
-  max-height: calc(100vh - var(--sticky-top)); overflow-y: auto;
+  max-height: calc(100vh - var(--sticky-top)); overflow-y: auto; grid-row: 1 / span 2; top: var(--sticky-top);  
 }
 .tree{ display:flex; flex-direction:column; gap:4px; }
 .tree-group{ margin-top:2px; }
@@ -182,6 +183,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   body.menu-open #sidebar{ transform: translateX(0); }
   body.menu-open .side-overlay{ display:block; }
   .side-overlay[hidden]{ display:none; }
+  .main{ display: block; }           /* annule display: contents */
+  .side-nav{ grid-row: auto; } 
 }
 
 /* ===== Mini KPI (sections hors Énergie) ===== */
@@ -229,10 +232,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   font-size:.95rem; font-weight:600; color:#0f172a; background:transparent;
 }
 .s-ico{ opacity:.6; display:inline-flex; }
-.s-clear{
-  border:none; background:#0f1f59; color:#0f172a; border-radius:8px; padding:2px 6px; cursor:pointer;
-  font-weight:700; line-height:1;
-}
+.s-clear{ border:none; background:#0f1f59; color:#0f172a; border-radius:8px; padding:2px 6px; cursor:pointer;
+  font-weight:700; line-height:1; }
 .s-clear:hover{ background:#e2e8f0; }
 .s-meta{ margin-top:6px; font-size:.8rem; color:#64748b; }
 /* Cache la croix native des champs search (Chrome/Safari/Edge) */
@@ -280,31 +281,44 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-item{ display:flex; flex-direction:column; gap:8px; }
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
-/* Year picker — version regroupée et scoppée */
+/* Year picker — pilule alignée aux onglets */
 #year-picker{ position:relative; display:inline-flex; }
+
 #year-picker .year-btn{
-  display:flex; align-items:center; gap:.5rem;
-  padding:2px 6px; border-radius:6px;
-  background:transparent; border:0;
-  font-weight:600; line-height:1; cursor:pointer;
+  appearance:none;
+  display:inline-flex; align-items:center; gap:8px;
+  padding:8px 12px;                        /* même vertical que .top-item */
+  height:34px;                              /* ≈ hauteur visuelle des onglets */
+  border-radius:9999px;                     /* pilule */
+  background:#fff;                          /* pilule blanche */
+  border:1px solid var(--border);
+  box-shadow:0 1px 2px rgba(16,24,40,.05);
+  font-weight:700; font-size:.95rem; line-height:1;
+  color:#0f172a; cursor:pointer;
 }
 #year-picker .year-btn:hover{
-  background: color-mix(in oklab, var(--section-color) 12%, transparent);
+  background:#fff; border-color:#d1d5db;
 }
 #year-picker .year-btn:focus-visible{
-  outline:2px solid var(--section-color); outline-offset:2px;
+  outline:none; box-shadow:0 0 0 6px var(--ring);
 }
+
 #year-picker .year-chev{
-  width:16px; height:16px; opacity:.55; transition:transform .18s ease;
+  width:18px; height:18px; opacity:.7;
+  transition:transform .18s ease;
 }
-#year-picker .year-btn[aria-expanded="true"] .year-chev{ transform: rotate(180deg); }
+#year-picker .year-btn[aria-expanded="true"] .year-chev{
+  transform:rotate(180deg);
+}
+
+/* Menu de sélection */
 #year-picker .year-menu{
-  position:absolute; right:0; top:calc(100% + 8px);
+  position:absolute; right:0; top:calc(100% + 10px);
   min-width:160px; max-height:260px; overflow:auto;
   border:1px solid var(--hairline, #e5e7eb);
-  background: color-mix(in oklab, white 92%, transparent);
-  border-radius:10px; padding:6px; z-index:1000;
-  box-shadow: 0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
+  background:color-mix(in oklab, white 92%, transparent);
+  border-radius:12px; padding:6px; z-index:1000;
+  box-shadow:0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
 }
 #year-picker .year-menu [role="option"]{
   display:flex; align-items:center; gap:.5rem;
@@ -313,10 +327,17 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 #year-picker .year-menu [role="option"].is-active,
 #year-picker .year-menu [role="option"]:hover{
-  background: color-mix(in oklab, var(--section-color) 12%, transparent);
+  background:color-mix(in oklab, var(--section-color) 12%, transparent);
 }
 #year-picker .year-menu [role="option"].is-selected,
-#year-picker .year-menu [role="option"][aria-selected="true"]{ font-weight:600; }
+#year-picker .year-menu [role="option"][aria-selected="true"]{
+  font-weight:600;
+}
+
+/* petit ajustement mobile si besoin */
+@media (max-width:640px){
+  #year-picker .year-btn{ height:32px; padding:6px 10px; font-size:.9rem; }
+}
 
 /* (optionnel) caler visuellement à droite du header */
 .top-right{ display:flex; align-items:center; margin-left:auto; }

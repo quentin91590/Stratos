@@ -193,25 +193,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   gap: 8px;
 }
 
-/* Sélecteur d’année, même hauteur visuelle que les onglets */
-.year-picker{
-  appearance: none;                 /* look propre */
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  background: #fff;
-  padding: 6px 10px;
-  font-weight: 700;
-  font-size: .95rem;
-  color: #0f172a;
-  line-height: 1;
-  height: 34px;                     /* proche de la hauteur des items */
-}
-
-.year-picker:focus-visible{
-  outline: none;
-  box-shadow: 0 0 0 6px var(--ring);
-}
-
 /* Mobile : évite l’écrasement si la barre ne wrap pas */
 @media (max-width: 640px){
   .year-picker{ height: 32px; font-size: .9rem; }

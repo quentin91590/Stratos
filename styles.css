@@ -633,3 +633,30 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   .seg2{ --h:36px; --minw:220px; }
   .seg2 > label{ font-size:.9rem; }
 }
+/* --- Neutralise les anciens styles "ghost" sur le switch Référentiel --- */
+#energy-filters .seg2 input[name="bench-type-energy"] + label,
+#energy-filters .seg2 input[name="bench-type-energy"]:checked + label,
+#energy-filters .seg2 input[name="bench-type-energy"]:focus + label{
+  outline: none !important;
+  box-shadow: none !important;
+  font-weight: 700 !important;                /* évite le reflow */
+  color: inherit !important;
+  padding-left: var(--pad-x, 14px) !important;/* retire le faux retrait des ghost radios */
+}
+
+/* coupe les pseudo-éléments fantômes (traits/ronds) */
+#energy-filters .seg2 input[name="bench-type-energy"] + label::before,
+#energy-filters .seg2 input[name="bench-type-energy"] + label::after{
+  content: none !important;
+}
+
+/* remplace le halo bleu par rien sur ce switch */
+#energy-filters .seg2:has(input[name="bench-type-energy"]:focus-visible){
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* largeur un peu plus grande pour "Réglementaire" sans bouger l’UI */
+#energy-filters .seg2:has(input[name="bench-type-energy"]){
+  --minw: 300px;   /* ajuste à 300–320px si besoin */
+}

@@ -570,6 +570,27 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* ===== SegSwitch (pilule qui glisse) ===== */
+.seg2{
+  --h:36px;
+  --r:999px;
+  --bg:#f1f5f9;
+  --bd:#e5e7eb;
+  --pill:#ffffff;
+  --txt:#0f172a;
+  --muted:#6b7280;
+
+  position:relative;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  background:var(--bg);
+  border:1px solid var(--bd);
+  border-radius:var(--r);
+  padding:4px;
+  min-height:calc(var(--h) + 8px);
+  user-select:none;
+}
+
 /* pilule au-dessus mais non bloquante */
 .seg2 .pill{
   position:absolute; top:4px; bottom:4px; left:4px;

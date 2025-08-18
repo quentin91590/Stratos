@@ -753,6 +753,82 @@
     // état initial,
     if (countEl) countEl.textContent = 'Tous les éléments';
   }
+  // === Multi-select dans la sidebar (Canton / Affectation / Année) ===
+  function setupSidebarMultiSelects() {
+    const side = document.querySelector('#sidebar');
+    if (!side) return;
+
+    const updateDisplay = (ms) => {
+      const checks = ms.querySelectorAll('.ms-menu input:checked');
+      const valueEl = ms.querySelector('.ms-value');
+      const hidden = ms.querySelector('.ms-hidden');
+      const placeholder = ms.dataset.placeholder || 'Sélectionner...';
+
+      if (checks.length === 0) {
+        valueEl.textContent = placeholder;
+        hidden.value = '';
+      } else if (checks.length === 1) {
+        valueEl.textContent = checks[0].parentElement.textContent.trim();
+        hidden.value = checks[0].value;
+      } else {
+        valueEl.textContent = checks.length + ' sélectionnés';
+        hidden.value = Array.from(checks).map(c => c.value).join(',');
+      }
+    };
+
+    const closeAll = (except) => {
+      side.querySelectorAll('.ms[aria-open="true"]').forEach(ms => {
+        if (ms !== except) {
+          ms.setAttribute('aria-open', 'false');
+          ms.querySelector('.ms-btn')?.setAttribute('aria-expanded', 'false');
+        }
+      });
+    };
+
+    // Délégation d'événements limitée à la sidebar
+    side.addEventListener('click', (e) => {
+      // Toggle bouton
+      const btn = e.target.closest('.ms-btn');
+      if (btn && side.contains(btn)) {
+        const ms = btn.closest('.ms');
+        const open = ms.getAttribute('aria-open') === 'true';
+        closeAll(ms);
+        ms.setAttribute('aria-open', String(!open));
+        btn.setAttribute('aria-expanded', String(!open));
+        return;
+      }
+
+      // Option avec checkbox
+      const opt = e.target.closest('.ms-option');
+      if (opt && side.contains(opt)) {
+        const ms = opt.closest('.ms');
+        const cb = opt.querySelector('input[type="checkbox"]');
+        if (cb) {
+          cb.checked = !cb.checked;
+          updateDisplay(ms);
+          e.preventDefault();
+        }
+        return;
+      }
+
+      // Effacer
+      const clear = e.target.closest('.ms-clear');
+      if (clear && side.contains(clear)) {
+        const ms = clear.closest('.ms');
+        ms.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
+        updateDisplay(ms);
+        return;
+      }
+
+      // Clic extérieur (dans la sidebar)
+      if (!e.target.closest('.ms')) {
+        closeAll();
+      }
+    });
+
+    // Init affichage
+    side.querySelectorAll('.ms').forEach(ms => updateDisplay(ms));
+  }
 
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
@@ -764,11 +840,14 @@
     checkWholeParc(true);
     updateParcFromSites();
 
-    wireYearPicker();      // 👈 nouveau : chevron + menu custom
-    setupEnergyFilters();  // reste pareil (on n’attache plus l’année ici)
+    wireYearPicker();
+    setupEnergyFilters();
+    setupTreeSearch();
 
-    setupTreeSearch();     // (au cas où un typo traînait avant)
+    // 👇 ajoute ceci
+    setupSidebarMultiSelects();
   });
+
 
 
 })();

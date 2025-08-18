@@ -385,8 +385,9 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   border: 0 !important;
   box-shadow: none !important;
   padding: 0;
-  margin: 6px 0 14px;
+  margin: 10px 0 28px;   /* ← au lieu de 6px 0 14px */
 }
+
 #energy-filters {
   --txt-1: var(--text-color, #0f172a);
   --txt-2: color-mix(in oklab, var(--txt-1) 65%, transparent);
@@ -404,6 +405,22 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   width: 1px; height: 14px; background: var(--hairline); transform: translateY(-50%);
 }
 #energy-filters .f-label { opacity: .65; font-weight: 500; margin-right: 2px; }
+
+/* Contrôles du bloc #energy-filters : plus compacts */
+#energy-filters select,
+#energy-filters input[type="text"],
+#energy-filters input[type="number"],
+#energy-filters input[type="search"],
+#energy-filters button {
+  height: 34px;
+  padding: 0 10px;
+  font-size: .9rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  line-height: 1.2;
+}
+
 
 /* === SegSwitch (pilule sous le texte) — version concise === */
 .seg2{

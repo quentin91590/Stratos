@@ -80,10 +80,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   cursor:pointer; display:flex; align-items:center; gap: calc(8px * var(--top-scale));
   position:relative;
 }
-.top-nav .top-item:nth-child(2),
-.top-nav .top-item:nth-child(3),
-.top-nav .top-item:nth-child(4),
-.top-nav .top-item:nth-child(5){ --top-scale: 1.5; }
+.top-nav > :is(button,a).top-item:nth-of-type(2),
+.top-nav > :is(button,a).top-item:nth-of-type(3),
+.top-nav > :is(button,a).top-item:nth-of-type(4),
+.top-nav > :is(button,a).top-item:nth-of-type(5){
+  --top-scale: 1.5;
+}
 .top-item:focus-visible{outline:none; box-shadow:0 0 0 6px var(--ring)}
 .top-item.is-active::after{
   content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa);
@@ -289,9 +291,10 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
 /* Year picker — pilule alignée aux onglets */
-#year-picker{ position:relative; display:inline-flex; --year-scale: 1.5; }
+.year-picker{ position:relative; display:inline-flex; --year-scale: 1.5; }
 
-#year-picker .year-btn{
+/* Était: #year-picker .year-btn { ... } -> devient: */
+.year-picker .year-btn{
   appearance:none;
   display:inline-flex; align-items:center; gap: calc(8px * var(--year-scale));
   padding: calc(8px * var(--year-scale)) calc(12px * var(--year-scale));
@@ -309,17 +312,16 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   outline:none; box-shadow:0 0 0 6px var(--ring);
 }
 
-#year-picker .year-chev{
+.year-picker .year-chev{
   width: calc(18px * var(--year-scale)); height: calc(18px * var(--year-scale));
   opacity:.7; transition:transform .18s ease;
 }
 
-#year-picker .year-btn[aria-expanded="true"] .year-chev{
-  transform:rotate(180deg);
-}
+
+.year-picker .year-btn[aria-expanded="true"] .year-chev{ transform:rotate(180deg); }
 
 /* Menu de sélection */
-#year-picker .year-menu{
+.year-picker .year-menu{
   position:absolute; right:0; top:calc(100% + 10px);
   min-width: calc(160px * var(--year-scale));
   max-height:260px; overflow:auto;

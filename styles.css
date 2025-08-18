@@ -434,13 +434,20 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* === SegSwitch (pilule sous le texte) — version concise === */
 .seg2{
-  --h: var(--ctrl-h, 40px);  /* ← lit la taille depuis .filters-inline si dispo */
+  --h: var(--ctrl-h, 40px);       /* garde ta hauteur pilotée */
   --r:999px; --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
-  --txt:#0f172a; --muted:#6b7280; --pad-x: var(--ctrl-px, 14px);
-  --minw:260px;
-  position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center;
+  --txt:#0f172a; --muted:#6b7280; --pad-x: 8px;   /* padding + serré */
+  --minw: 0;                                      /* plus de largeur mini */
+  position:relative;
+  display:inline-grid;                             /* évite l’étirement full ligne */
+  grid-template-columns: 1fr 1fr;                  /* moitiés égales pour la pillule */
+  align-items:center;
   background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
-  padding:4px; height:calc(var(--h) + 8px); min-width:var(--minw); overflow:hidden;
+  padding:4px;
+  height:calc(var(--h) + 8px);
+  min-width: var(--minw);
+  width: fit-content;                              /* largeur au contenu */
+  overflow:hidden;
   -webkit-tap-highlight-color:transparent;
 }
 .seg2 > input[type="radio"]{ appearance:none; position:absolute; width:0; height:0; margin:0; opacity:0; pointer-events:none; }

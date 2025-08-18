@@ -17,6 +17,72 @@
       <div class="sidebar-header">
         <h1 class="logo-title">SignaTerre</h1>
       </div>
+      <div class="side-filters" id="side-filters">
+        <form id="filters-form" class="sf-form" autocomplete="off">
+          <!-- Canton -->
+          <fieldset class="sf-group" id="sf-canton">
+            <legend class="sf-title">Canton</legend>
+            <ul class="sf-list sf-cols-2">
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="GE"> Genève</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="VD"> Vaud</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="VS"> Valais</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="FR"> Fribourg</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="NE"> Neuchâtel</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="canton" value="JU"> Jura</label></li>
+            </ul>
+            <div class="sf-actions">
+              <button type="button" class="sf-clear" data-target="#sf-canton">Tout effacer</button>
+            </div>
+          </fieldset>
+
+          <!-- Affectation -->
+          <fieldset class="sf-group" id="sf-affectation">
+            <legend class="sf-title">Affectation</legend>
+            <ul class="sf-list sf-cols-1">
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="habitat_individuel"> Habitat
+                  individuel</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="habitat_collectif"> Habitat
+                  collectif</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="ecole"> École</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="piscine"> Piscine</label>
+              </li>
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="bureau"> Bureau</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="affectation" value="commerce"> Commerce</label>
+              </li>
+            </ul>
+            <div class="sf-actions">
+              <button type="button" class="sf-clear" data-target="#sf-affectation">Tout effacer</button>
+            </div>
+          </fieldset>
+
+          <!-- Année de construction -->
+          <fieldset class="sf-group" id="sf-annee">
+            <legend class="sf-title">Année de construction</legend>
+            <ul class="sf-list sf-cols-1">
+              <li><label><input class="sf-check" type="checkbox" name="annee" value="<1950"> Avant 1950</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="annee" value="1950-1979"> 1950–1979</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="annee" value="1980-1999"> 1980–1999</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="annee" value="2000-2010"> 2000–2010</label></li>
+              <li><label><input class="sf-check" type="checkbox" name="annee" value=">2010"> Après 2010</label></li>
+            </ul>
+
+            <!-- Min/Max (optionnel en plus des cases) -->
+            <div class="sf-range">
+              <input type="number" inputmode="numeric" placeholder="Min" aria-label="Année min" min="1800" max="2100"
+                step="1">
+              <span class="dash">—</span>
+              <input type="number" inputmode="numeric" placeholder="Max" aria-label="Année max" min="1800" max="2100"
+                step="1">
+              <button type="button" class="sf-apply">Appliquer</button>
+            </div>
+
+            <div class="sf-actions">
+              <button type="button" class="sf-clear" data-target="#sf-annee">Tout effacer</button>
+            </div>
+          </fieldset>
+        </form>
+      </div>
+
       <!-- === Recherche (au-dessus de l'arborescence) === -->
       <div class="side-search" role="search" aria-label="Recherche sites/bâtiments">
         <label class="sr-only" for="tree-search">Rechercher un site ou un bâtiment</label>

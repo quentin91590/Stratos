@@ -297,16 +297,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .filters-inline input[type="text"],
 .filters-inline input[type="number"],
 .filters-inline input[type="search"],
-.filters-inline button{
+.filters-inline button,
+#energy-filters [role="combobox"],
+#energy-filters [aria-haspopup="listbox"]{
   height: var(--ctrl-h) !important;
+  min-height: var(--ctrl-h) !important;
   padding: 0 var(--ctrl-px) !important;
   font-size: var(--ctrl-fs) !important;
-  line-height: calc(var(--ctrl-h) - 2px) !important; /* aide à “vérrouiller” la hauteur */
+  line-height: calc(var(--ctrl-h) - 2px) !important;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: #fff;
-  appearance: none;
-  -webkit-appearance: none;
+  appearance: none; -webkit-appearance: none;
+  box-sizing: border-box;
 }
 
 .fi-grid{
@@ -414,6 +417,9 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   --hairline: color-mix(in oklab, var(--txt-1) 14%, transparent);
   display: flex; align-items: center; flex-wrap: wrap;
   gap: 10px 14px; font-size: 14px;
+  --ctrl-h: 32px;
+  --ctrl-fs: .9rem;
+  --ctrl-px: 10px;
 }
 #energy-filters > div:not(:first-child),
 #energy-filters > fieldset:not(:first-child) {

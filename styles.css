@@ -288,7 +288,27 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   margin: 8px 0 12px; padding: 12px;
   background:#fff; border:1px solid var(--border); border-radius:12px;
   box-shadow: 0 2px 8px rgba(16,24,40,.05);
+  --ctrl-h: 32px;
+  --ctrl-fs: .9rem;
+  --ctrl-px: 10px;
 }
+/* Champs natifs du groupe .filters-inline : plus compacts */
+.filters-inline select,
+.filters-inline input[type="text"],
+.filters-inline input[type="number"],
+.filters-inline input[type="search"],
+.filters-inline button{
+  height: var(--ctrl-h) !important;
+  padding: 0 var(--ctrl-px) !important;
+  font-size: var(--ctrl-fs) !important;
+  line-height: calc(var(--ctrl-h) - 2px) !important; /* aide à “vérrouiller” la hauteur */
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #fff;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
 .fi-grid{
   display:grid; gap:12px;
   grid-template-columns: repeat(4, minmax(200px, 1fr));
@@ -406,26 +426,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 #energy-filters .f-label { opacity: .65; font-weight: 500; margin-right: 2px; }
 
-/* Contrôles du bloc #energy-filters : plus compacts */
-#energy-filters select,
-#energy-filters input[type="text"],
-#energy-filters input[type="number"],
-#energy-filters input[type="search"],
-#energy-filters button {
-  height: 34px;
-  padding: 0 10px;
-  font-size: .9rem;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: #fff;
-  line-height: 1.2;
-}
-
-
 /* === SegSwitch (pilule sous le texte) — version concise === */
 .seg2{
-  --h:40px; --r:999px; --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
-  --txt:#0f172a; --muted:#6b7280; --pad-x:14px; --minw:260px;
+  --h: var(--ctrl-h, 40px);  /* ← lit la taille depuis .filters-inline si dispo */
+  --r:999px; --bg:#f1f5f9; --bd:#e5e7eb; --pill:#fff;
+  --txt:#0f172a; --muted:#6b7280; --pad-x: var(--ctrl-px, 14px);
+  --minw:260px;
   position:relative; display:grid; grid-template-columns:1fr 1fr; align-items:center;
   background:var(--bg); border:1px solid var(--bd); border-radius:var(--r);
   padding:4px; height:calc(var(--h) + 8px); min-width:var(--minw); overflow:hidden;
@@ -435,7 +441,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .seg2 > label{
   position:relative; z-index:2; display:flex; align-items:center; justify-content:center;
   height:var(--h); padding:0 var(--pad-x); border-radius:var(--r);
-  font:700 .95rem/1 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+  font: 700 var(--ctrl-fs, .95rem)/1 Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
   color:var(--muted); cursor:pointer; white-space:nowrap;
 }
 .seg2 .pill{

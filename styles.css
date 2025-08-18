@@ -73,9 +73,17 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .top-item{
   appearance:none; border:none; background:transparent; color:#0f172a;
-  padding:8px 6px; border-radius:0; font-weight:700; font-size:.95rem; cursor:pointer;
-  display:flex; align-items:center; gap:8px; position:relative;
+  /* échelle locale, 1 par défaut */
+  --top-scale: 1;
+  padding: calc(8px * var(--top-scale)) calc(6px * var(--top-scale));
+  border-radius:0; font-weight:700; font-size: calc(.95rem * var(--top-scale));
+  cursor:pointer; display:flex; align-items:center; gap: calc(8px * var(--top-scale));
+  position:relative;
 }
+.top-nav .top-item:nth-child(2),
+.top-nav .top-item:nth-child(3),
+.top-nav .top-item:nth-child(4),
+.top-nav .top-item:nth-child(5){ --top-scale: 1.5; }
 .top-item:focus-visible{outline:none; box-shadow:0 0 0 6px var(--ring)}
 .top-item.is-active::after{
   content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa);
@@ -127,7 +135,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .panel-sticky .ps-dot::after{animation:dot-glow-strong 1.6s ease-in-out infinite; opacity:.5}
 @media (prefers-reduced-motion: reduce){ .ps-dot::after{animation:none; opacity:.6} }
 
-.ti-ico svg{width:18px; height:18px; display:block}
+.ti-ico svg{ width: calc(18px * var(--top-scale)); height: calc(18px * var(--top-scale)); display:block }
 .ti-label{white-space:nowrap}
 
 /* === Layout global avec sidebar === */
@@ -281,20 +289,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
 /* Year picker — pilule alignée aux onglets */
-#year-picker{ position:relative; display:inline-flex; }
+#year-picker{ position:relative; display:inline-flex; --year-scale: 1.5; }
 
 #year-picker .year-btn{
   appearance:none;
-  display:inline-flex; align-items:center; gap:8px;
-  padding:8px 12px;                        /* même vertical que .top-item */
-  height:34px;                              /* ≈ hauteur visuelle des onglets */
-  border-radius:9999px;                     /* pilule */
-  background:#fff;                          /* pilule blanche */
-  border:1px solid var(--border);
+  display:inline-flex; align-items:center; gap: calc(8px * var(--year-scale));
+  padding: calc(8px * var(--year-scale)) calc(12px * var(--year-scale));
+  height: calc(34px * var(--year-scale));
+  border-radius:9999px; background:#fff; border:1px solid var(--border);
   box-shadow:0 1px 2px rgba(16,24,40,.05);
-  font-weight:700; font-size:.95rem; line-height:1;
-  color:#0f172a; cursor:pointer;
+  font-weight:700; font-size: calc(.95rem * var(--year-scale));
+  line-height:1; color:#0f172a; cursor:pointer;
 }
+
 #year-picker .year-btn:hover{
   background:#fff; border-color:#d1d5db;
 }
@@ -303,9 +310,10 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 #year-picker .year-chev{
-  width:18px; height:18px; opacity:.7;
-  transition:transform .18s ease;
+  width: calc(18px * var(--year-scale)); height: calc(18px * var(--year-scale));
+  opacity:.7; transition:transform .18s ease;
 }
+
 #year-picker .year-btn[aria-expanded="true"] .year-chev{
   transform:rotate(180deg);
 }
@@ -313,12 +321,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 /* Menu de sélection */
 #year-picker .year-menu{
   position:absolute; right:0; top:calc(100% + 10px);
-  min-width:160px; max-height:260px; overflow:auto;
+  min-width: calc(160px * var(--year-scale));
+  max-height:260px; overflow:auto;
   border:1px solid var(--hairline, #e5e7eb);
   background:color-mix(in oklab, white 92%, transparent);
   border-radius:12px; padding:6px; z-index:1000;
   box-shadow:0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
 }
+
 #year-picker .year-menu [role="option"]{
   display:flex; align-items:center; gap:.5rem;
   padding:6px 8px; border-radius:6px; cursor:pointer;
@@ -334,9 +344,18 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* petit ajustement mobile si besoin */
-@media (max-width:640px){
-  #year-picker .year-btn{ height:32px; padding:6px 10px; font-size:.9rem; }
+@media (max-width: 640px){
+  #year-picker{ --year-scale: 1.2; }
+  #year-picker .year-btn{
+    height: calc(32px * var(--year-scale));
+    padding: calc(6px * var(--year-scale)) calc(10px * var(--year-scale));
+    font-size: calc(.9rem * var(--year-scale));
+  }
+  #year-picker .year-chev{
+    width: calc(18px * var(--year-scale)); height: calc(18px * var(--year-scale));
+  }
 }
+
 
 /* (optionnel) caler visuellement à droite du header */
 .top-right{ display:flex; align-items:center; margin-left:auto; }

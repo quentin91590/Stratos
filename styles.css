@@ -80,12 +80,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   cursor:pointer; display:flex; align-items:center; gap: calc(8px * var(--top-scale));
   position:relative;
 }
-.top-nav > :is(button,a).top-item:nth-of-type(2),
-.top-nav > :is(button,a).top-item:nth-of-type(3),
-.top-nav > :is(button,a).top-item:nth-of-type(4),
-.top-nav > :is(button,a).top-item:nth-of-type(5){
+/* remplace ENTIEREMENT ton bloc nth-of-type par ceci */
+.top-nav :nth-child(2 of .top-item),
+.top-nav :nth-child(3 of .top-item),
+.top-nav :nth-child(4 of .top-item),
+.top-nav :nth-child(5 of .top-item){
   --top-scale: 1.2;
 }
+
 .top-item:focus-visible{outline:none; box-shadow:0 0 0 6px var(--ring)}
 .top-item.is-active::after{
   content:""; position:absolute; left:0; right:0; bottom:-10px; height:3px; border-radius:2px; background:var(--section-color, #60a5fa);

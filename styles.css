@@ -293,10 +293,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .fi-label{ font-size:.85rem; font-weight:700; color:#111827; }
 
 /* Était: .year-picker { ... }  -> Devient: */
-#year-picker{ position:relative; display:inline-flex; --year-scale: 1.2; }
+#year-picker, .year-picker{ position:relative; display:inline-flex; --year-scale: 1.2; }
+
 
 /* Était: .year-picker .year-btn { ... } -> Devient: */
-#year-picker .year-btn{
+#year-picker .year-btn,
+.year-picker .year-btn{ 
   appearance:none;
   display:inline-flex; align-items:center; gap: calc(8px * var(--year-scale));
   padding: calc(8px * var(--year-scale)) calc(12px * var(--year-scale));
@@ -308,16 +310,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 /* Était: .year-picker .year-chev { ... } -> Devient: */
-#year-picker .year-chev{
+#year-picker .year-chev,
+.year-picker .year-chev{
   width: calc(18px * var(--year-scale)); height: calc(18px * var(--year-scale));
   opacity:.7; transition:transform .18s ease;
 }
 
 /* Était: .year-picker .year-btn[aria-expanded="true"] .year-chev -> Devient: */
-#year-picker .year-btn[aria-expanded="true"] .year-chev{ transform:rotate(180deg); }
+#year-picker .year-btn[aria-expanded="true"] .year-chev,
+.year-picker .year-btn[aria-expanded="true"] .year-chev{ transform:rotate(180deg); }
 
 /* Était: .year-picker .year-menu -> Devient: */
-#year-picker .year-menu{
+#year-picker .year-menu,
+.year-picker .year-menu{
   position:absolute; right:0; top:calc(100% + 10px);
   min-width: calc(160px * var(--year-scale));
   max-height:260px; overflow:auto;
@@ -327,29 +332,34 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   box-shadow:0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
 }
 
-#year-picker .year-menu [role="option"]{
+#year-picker .year-menu [role="option"],
+.year-picker .year-menu [role="option"]{
   display:flex; align-items:center; gap:.5rem;
   padding:6px 8px; border-radius:6px; cursor:pointer;
   user-select:none; white-space:nowrap;
 }
 #year-picker .year-menu [role="option"].is-active,
-#year-picker .year-menu [role="option"]:hover{
+#year-picker .year-menu [role="option"]:hover,
+.year-picker .year-menu [role="option"].is-active,
+.year-picker .year-menu [role="option"]:hover{
   background:color-mix(in oklab, var(--section-color) 12%, transparent);
 }
 #year-picker .year-menu [role="option"].is-selected,
-#year-picker .year-menu [role="option"][aria-selected="true"]{
+#year-picker .year-menu [role="option"][aria-selected="true"],
+.year-picker .year-menu [role="option"].is-selected,
+.year-picker .year-menu [role="option"][aria-selected="true"]{
   font-weight:600;
 }
 
 /* petit ajustement mobile si besoin */
 @media (max-width: 640px){
-  #year-picker{ --year-scale: 1.2; }
-  #year-picker .year-btn{
+  #year-picker, .year-picker{ --year-scale: 1.2; }
+  #year-picker .year-btn, .year-picker .year-btn{
     height: calc(32px * var(--year-scale));
     padding: calc(6px * var(--year-scale)) calc(10px * var(--year-scale));
     font-size: calc(.9rem * var(--year-scale));
   }
-  #year-picker .year-chev{
+  #year-picker .year-chev, .year-picker .year-chev{
     width: calc(18px * var(--year-scale)); height: calc(18px * var(--year-scale));
   }
 }

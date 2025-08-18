@@ -475,76 +475,48 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* mobile */
 @media (max-width:640px){ .seg2{ --h:36px; --minw:220px; } .seg2 > label{ font-size:.9rem; } }
-/* Conteneur filtres sous la barre de recherche */
-.side-nav .side-filters{
-  padding: 10px 12px;
-  background: #fff;
-  border-bottom: 1px solid rgba(0,0,0,.05);
-}
+/* Bloc filtres (même style que ta sidebar) */
+.side-nav .side-filters{ padding:10px 12px; background:#fff; border-bottom:1px solid rgba(0,0,0,.05); }
+.side-nav .ms-group{ margin:8px 0 14px; }
+.side-nav .ms-label{ font-weight:800; font-size:.9rem; color:#0f172a; margin-bottom:6px; }
 
-/* Groupes */
-.side-nav .sf-group{
-  margin: 10px 0 14px;
-  padding: 0;
-  border: 0;
+/* Composant multi-select */
+.ms{ position:relative; }
+.ms-btn{
+  width:100%; height:32px; padding:0 10px;
+  display:flex; align-items:center; justify-content:space-between; gap:8px;
+  border:1px solid var(--border); border-radius:10px; background:#fff;
+  font-weight:700; font-size:.9rem; color:#0f172a; cursor:pointer;
 }
+.ms-btn:focus-visible{ outline:none; box-shadow:0 0 0 6px var(--ring); }
+.ms-chev{ width:16px; height:16px; opacity:.6; flex:0 0 auto; transition:transform .18s ease; }
+.ms[aria-open="true"] .ms-chev{ transform:rotate(180deg); }
 
-.side-nav .sf-title{
-  margin: 0 0 8px;
-  font-weight: 800;
-  font-size: .9rem;
-  color:#0f172a;
+.ms-menu{
+  position:absolute; left:0; right:0; top:calc(100% + 6px);
+  background:#fff; border:1px solid var(--border); border-radius:12px; padding:6px;
+  box-shadow:0 8px 24px rgba(0,0,0,.08), 0 4px 10px rgba(0,0,0,.06);
+  max-height:220px; overflow:auto; z-index:1000; display:none;
 }
+.ms[aria-open="true"] .ms-menu{ display:block; }
 
-/* Liste de cases */
-.side-nav .sf-list{
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  gap: 6px 10px;
-}
-.side-nav .sf-list.sf-cols-2{ grid-template-columns: 1fr 1fr; }
-.side-nav .sf-list.sf-cols-1{ grid-template-columns: 1fr; }
-
-.side-nav .sf-list label{
+.ms-option{
   display:flex; align-items:center; gap:8px;
-  font-size: .92rem; color:#0f172a; cursor:pointer;
-  border-radius: 6px; padding: 4px 6px;
+  padding:6px; border-radius:6px; cursor:pointer; user-select:none;
+  font-size:.9rem; color:#0f172a;
 }
-.side-nav .sf-list label:hover{ background: rgba(0,0,0,.03); }
+.ms-option:hover{ background:rgba(0,0,0,.03); }
+.ms-option input{ width:16px; height:16px; margin:0; accent-color:#10b981; }
 
-.side-nav .sf-check{
-  width: 16px; height: 16px; margin: 0;
-  accent-color: #10b981;   /* même vert que ta sidebar */
+/* Bouton Effacer aligné à droite, discret */
+.ms-clear{
+  margin-top:6px; margin-left:auto; display:inline-block;
+  background:transparent; border:none; color:#0b7f5f; font-weight:700; font-size:.8rem; cursor:pointer; padding:2px 4px; border-radius:6px;
 }
+.ms-clear:hover{ background:rgba(16,185,129,.08); }
 
-/* Range années (optionnel) */
-.side-nav .sf-range{
-  display:flex; align-items:center; gap:8px;
-  margin: 8px 0 0;
-}
-.side-nav .sf-range input{
-  width: 90px; height: 32px;
-  border:1px solid var(--border); border-radius:8px;
-  padding:0 8px; background:#fff; font-weight:600; font-size:.9rem;
-}
-.side-nav .sf-range .dash{ opacity:.5; }
-.side-nav .sf-apply{
-  height: 32px; padding:0 10px; font-weight:700; font-size:.85rem; cursor:pointer;
-  border-radius:8px; border:1px solid var(--border); background:#fff;
-}
-.side-nav .sf-apply:hover{ background:#f8fafc; }
-
-/* Actions (clear) */
-.side-nav .sf-actions{ margin-top:8px; }
-.side-nav .sf-clear{
-  appearance:none; border:none; background:transparent; cursor:pointer;
-  font-size:.82rem; font-weight:700; color:#0b7f5f; padding:2px 4px; border-radius:6px;
-}
-.side-nav .sf-clear:hover{ background:rgba(16,185,129,.08); }
-
-/* Responsive */
-@media (max-width: 960px){
-  .side-nav .sf-list.sf-cols-2{ grid-template-columns: 1fr; }
+/* Compact sur petits écrans si besoin */
+@media (max-width:640px){
+  .ms-btn{ height:30px; font-size:.88rem; }
+  .ms-menu{ max-height:200px; }
 }

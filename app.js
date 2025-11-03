@@ -523,29 +523,6 @@
     });
   }
 
-  function applyClimate() {
-    // Met à jour uniquement les libellés dépendants du climat
-    ['tab-chaleur', 'tab-froid'].forEach(id => {
-      const btn = document.getElementById(id);
-      const tEl = btn?.querySelector('.kpi-title');
-      if (!btn || !tEl) return;
-      const base = TITLE_BASE_MAP[id][FILTERS.norm];
-      tEl.textContent = FILTERS.climate ? (base + ' corrigée') : (base + ' (brut)');
-    });
-
-    const pc = document.getElementById('panel-chaleur');
-    const pf = document.getElementById('panel-froid');
-    if (pc) {
-      const h = pc.querySelector('h3');
-      if (h) h.textContent = PANEL_BASE_MAP['panel-chaleur'][FILTERS.norm] + (FILTERS.climate ? ' (corrigée DJU)' : ' (brut)');
-    }
-    if (pf) {
-      const h = pf.querySelector('h3');
-      if (h) h.textContent = PANEL_BASE_MAP['panel-froid'][FILTERS.norm] + (FILTERS.climate ? ' (corrigé CDD)' : ' (brut)');
-    }
-  }
-
-
   function setupEnergyFilters() {
     const scope = document.getElementById('energy-filters');
     if (!scope) return;
@@ -565,10 +542,10 @@
       clim.addEventListener('change', (e) => {
         FILTERS.climate = !!e.target.checked;
         if (climText) climText.textContent = e.target.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
-        applyClimate();
+        // Rafraîchir toute la normalisation pour que les titres, unités, etc. soient bien alignés
+        applyNormalization(FILTERS.norm);
       });
-    }
-    applyClimate();
+    };
 
     // Benchmark
     scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>

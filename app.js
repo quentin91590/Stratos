@@ -12,12 +12,12 @@
 
   // Libellés de base selon normalisation (tuile + panneau)
   const TITLE_BASE_MAP = {
-    'tab-energie': { kwhm2: 'Intensité énergétique', kwh: 'Consommation énergétique' },
-    'tab-chaleur': { kwhm2: 'Intensité de chaleur', kwh: 'Consommation chaleur' },
-    'tab-froid': { kwhm2: 'Intensité de froid', kwh: 'Consommation froid' },
-    'tab-elec': { kwhm2: 'Intensité électrique', kwh: 'Consommation électrique' },
-    'tab-co2': { kwhm2: 'Intensité CO₂e', kwh: 'Émissions CO₂e' },
-    'tab-eau': { kwhm2: 'Intensité d’eau', kwh: 'Consommation d’eau' },
+    'tab-energie': { kwhm2: 'Consommation énergétique par m²', kwh: 'Consommation énergétique' },
+    'tab-chaleur': { kwhm2: 'Consommation de chaleur par m²', kwh: 'Consommation chaleur' },
+    'tab-froid': { kwhm2: 'Consommation de froid par m²', kwh: 'Consommation froid' },
+    'tab-elec': { kwhm2: 'Consommation électrique par m²', kwh: 'Consommation électrique' },
+    'tab-co2': { kwhm2: 'Emission de CO₂e par m²', kwh: 'Émissions CO₂e' },
+    'tab-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
   const PANEL_BASE_MAP = {
@@ -485,8 +485,8 @@
     // (1) Unités des tuiles KPI (lit les data-* sur .kpi-unit)
     $$e('.kpi .kpi-unit').forEach(unitEl => {
       const txt = (mode === 'kwhm2')
-        ? (unitEl.dataset.kwh || unitEl.textContent)
-        : (unitEl.dataset.kwhm2 || unitEl.textContent);
+        ? (unitEl.dataset.kwhm2 || unitEl.textContent)
+        : (unitEl.dataset.kwh || unitEl.textContent);
       unitEl.textContent = txt;
     });
 

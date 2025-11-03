@@ -17,8 +17,15 @@
       <div class="sidebar-header">
         <h1 class="logo-title">SignaTerre</h1>
       </div>
-      <div class="side-filters" id="side-filters">
-        <form id="filters-form" class="sf-form" autocomplete="off">
+    <!-- Bouton filtre (au-dessus de la recherche) -->
+    <button type="button" id="filters-toggle-btn" class="filters-toggle-btn" aria-expanded="false" aria-controls="filters-panel" title="Afficher les filtres">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="10" cy="10" r="8"/><path d="M6 8h8M8 12h4"/></svg>
+      <span class="sr-only">Afficher les filtres</span>
+    </button>
+
+    <!-- Filtres masqués par défaut -->
+    <div class="side-filters" id="filters-panel" hidden>
+      <form id="filters-form" class="sf-form" autocomplete="off">
           <!-- Canton -->
           <div class="ms-group">
             <div class="ms-label">Canton</div>

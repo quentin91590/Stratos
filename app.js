@@ -812,20 +812,33 @@
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   document.addEventListener('DOMContentLoaded', () => {
-    syncStickyTop();
-    $$('.tabset').forEach(initTabset);
-    selectSection('energie');
+  syncStickyTop();
+  $$('.tabset').forEach(initTabset);
+  selectSection('energie');
 
-    checkWholeParc(true);
-    updateParcFromSites();
+  checkWholeParc(true);
+  updateParcFromSites();
 
-    wireYearPicker();
-    setupEnergyFilters();
-    setupTreeSearch();
+  wireYearPicker();
+  setupEnergyFilters();
+  setupTreeSearch();
 
-    // 👇 ajoute ceci
-    setupSidebarMultiSelects();
-  });
+  // 👇 ajoute ceci
+  setupSidebarMultiSelects();
+
+  // === Toggle bouton filtres (à placer ici) ===
+  const toggleBtn = document.getElementById('filters-toggle-btn');
+  const filtersPanel = document.getElementById('filters-panel');
+  if (toggleBtn && filtersPanel) {
+    toggleBtn.addEventListener('click', () => {
+      const open = filtersPanel.hidden;
+      filtersPanel.hidden = !open;
+      toggleBtn.setAttribute('aria-expanded', String(open));
+      toggleBtn.classList.toggle('is-open', open);
+    });
+  }
+});
+
 
 
 

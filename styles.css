@@ -520,3 +520,24 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   .ms-btn{ height:30px; font-size:.88rem; }
   .ms-menu{ max-height:200px; }
 }
+.filters-toggle-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.3em;
+  margin: 1em 0 0.5em 1em;
+  padding: 0.3em;
+  font-size: 1.1em;
+}
+#filters-panel[hidden] {
+  display: none !important;
+}
+#filters-panel {
+  margin-bottom: 1em;
+  padding: 0.5em 1em 0.5em 1em;
+  background: #f9fafb;
+  border-radius: 12px;
+  box-shadow: 0 1px 5px 0 rgba(60,80,110,0.04);
+}

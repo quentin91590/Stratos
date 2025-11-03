@@ -533,24 +533,21 @@
     );
     applyNormalization(FILTERS.norm);
 
-    // Switch iOS Correction climatique
-    const clim = scope.querySelector('#toggle-climate');
-    const climText = scope.querySelector('.ios-text');
-    if (clim) {
-      // Met le texte dès le chargement
-      const updateClimLabel = () => {
-        if (climText) climText.textContent = clim.checked
-          ? (climText.dataset.on || 'Activée')
-          : (climText.dataset.off || 'Désactivée');
-      };
-      FILTERS.climate = !!clim.checked;
-      updateClimLabel();
-      clim.addEventListener('change', () => {
-        FILTERS.climate = !!clim.checked;
-        updateClimLabel();
-        applyNormalization(FILTERS.norm);
+
+    // Radio Oui/Non pour Correction climatique
+    const climRadios = scope.querySelectorAll('input[name="climate-correction"]');
+    if (climRadios.length === 2) {
+      climRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+          FILTERS.climate = (scope.querySelector('#clim-avec').checked);
+          applyNormalization(FILTERS.norm);
+        });
       });
+      // Init dès le chargement
+      FILTERS.climate = (scope.querySelector('#clim-avec').checked);
+      applyNormalization(FILTERS.norm);
     }
+
 
     // Benchmark
     scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>

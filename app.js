@@ -4,7 +4,7 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const $ = (sel, root = document) => root.querySelector(sel);
   // --- Etat global des filtres (si pas déjà défini)
-  window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwhm2', climate: true, benchmark: { type: 'internal' } };
+  window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwh', climate: true, benchmark: { type: 'internal' } };
   const FILTERS = window.FILTERS;
   // Sélecteurs bornés au bloc énergie
   const $e = (sel) => document.querySelector('#energy-block ' + sel);
@@ -16,7 +16,7 @@
     'tab-chaleur': { kwhm2: 'Consommation de chaleur par m²', kwh: 'Consommation chaleur' },
     'tab-froid': { kwhm2: 'Consommation de froid par m²', kwh: 'Consommation froid' },
     'tab-elec': { kwhm2: 'Consommation électrique par m²', kwh: 'Consommation électrique' },
-    'tab-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂e' },
+    'tab-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂' },
     'tab-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
@@ -25,7 +25,7 @@
     'panel-chaleur': { kwhm2: 'Consommation de chaleur par m²', kwh: 'Consommation chaleur' },
     'panel-froid': { kwhm2: 'Consommation de froid par m²', kwh: 'Consommation froid' },
     'panel-elec': { kwhm2: 'Consommation électrique par m²', kwh: 'Consommation électrique' },
-    'panel-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂e' },
+    'panel-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂' },
     'panel-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 

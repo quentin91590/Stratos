@@ -16,17 +16,17 @@
     'tab-chaleur': { kwhm2: 'Consommation de chaleur par m²', kwh: 'Consommation chaleur' },
     'tab-froid': { kwhm2: 'Consommation de froid par m²', kwh: 'Consommation froid' },
     'tab-elec': { kwhm2: 'Consommation électrique par m²', kwh: 'Consommation électrique' },
-    'tab-co2': { kwhm2: 'Emission de CO₂e par m²', kwh: 'Émissions CO₂e' },
+    'tab-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂e' },
     'tab-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
   const PANEL_BASE_MAP = {
-    'panel-energie': { kwhm2: 'Intensité énergétique', kwh: 'Consommation énergétique' },
-    'panel-chaleur': { kwhm2: 'Intensité de chaleur', kwh: 'Consommation chaleur' },
-    'panel-froid': { kwhm2: 'Intensité de froid', kwh: 'Consommation froid' },
-    'panel-elec': { kwhm2: 'Intensité électrique', kwh: 'Consommation électrique' },
-    'panel-co2': { kwhm2: 'Intensité CO₂e', kwh: 'Émissions CO₂e' },
-    'panel-eau': { kwhm2: 'Intensité d’eau', kwh: 'Consommation d’eau' },
+    'panel-energie': { kwhm2: 'Consommation énergétique par m²', kwh: 'Consommation énergétique' },
+    'panel-chaleur': { kwhm2: 'Consommation de chaleur par m²', kwh: 'Consommation chaleur' },
+    'panel-froid': { kwhm2: 'Consommation de froid par m²', kwh: 'Consommation froid' },
+    'panel-elec': { kwhm2: 'Consommation électrique par m²', kwh: 'Consommation électrique' },
+    'panel-co2': { kwhm2: 'Emission de CO₂ par m²', kwh: 'Émissions CO₂e' },
+    'panel-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
   // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)

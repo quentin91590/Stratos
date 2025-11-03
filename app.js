@@ -537,15 +537,20 @@
     const clim = scope.querySelector('#toggle-climate');
     const climText = scope.querySelector('.ios-text');
     if (clim) {
+      // Met le texte dès le chargement
+      const updateClimLabel = () => {
+        if (climText) climText.textContent = clim.checked
+          ? (climText.dataset.on || 'Activée')
+          : (climText.dataset.off || 'Désactivée');
+      };
       FILTERS.climate = !!clim.checked;
-      if (climText) climText.textContent = clim.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
-      clim.addEventListener('change', (e) => {
-        FILTERS.climate = !!e.target.checked;
-        if (climText) climText.textContent = e.target.checked ? (climText.dataset.on || 'Activée') : (climText.dataset.off || 'Désactivée');
-        // Rafraîchir toute la normalisation pour que les titres, unités, etc. soient bien alignés
+      updateClimLabel();
+      clim.addEventListener('change', () => {
+        FILTERS.climate = !!clim.checked;
+        updateClimLabel();
         applyNormalization(FILTERS.norm);
       });
-    };
+    }
 
     // Benchmark
     scope.querySelectorAll('input[name="bench-type-energy"]').forEach(r =>

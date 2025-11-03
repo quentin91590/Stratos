@@ -485,8 +485,8 @@
     // (1) Unités des tuiles KPI (lit les data-* sur .kpi-unit)
     $$e('.kpi .kpi-unit').forEach(unitEl => {
       const txt = (mode === 'kwhm2')
-        ? (unitEl.dataset.kwhm2 || unitEl.textContent)
-        : (unitEl.dataset.kwh || unitEl.textContent);
+        ? (unitEl.dataset.kwh || unitEl.textContent)
+        : (unitEl.dataset.kwhm2 || unitEl.textContent);
       unitEl.textContent = txt;
     });
 

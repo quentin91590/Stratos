@@ -746,7 +746,7 @@
         clearBtn.hidden = true;
         if (countEl) countEl.textContent = 'Tous les éléments';
         input.blur();
-        // pas de run() → on conserve la sélection actuelle,
+        // pas de run() → ,on conserve la sélection actuelle,
       }
     });
 

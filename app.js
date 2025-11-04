@@ -188,6 +188,7 @@
     const panel = zone.querySelector('#chart-catalog');
     if (!toggles.length || !panel) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
+    const getCardContainer = (card) => card?.closest('li') || null;
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const layoutQuery = window.matchMedia('(max-width: 960px)');
@@ -221,13 +222,33 @@
       card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     };
 
+    const getSlotGroup = (slotEl) => slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
+
+    const updateCardVisibility = (group) => {
+      cards.forEach(card => {
+        const matches = !group || card.dataset.chartGroup === group;
+        const container = getCardContainer(card);
+        if (container) {
+          container.hidden = !matches;
+        }
+      });
+    };
+
     const markActiveCard = (slotEl) => {
       if (!cards.length) return;
       const currentType = slotEl?.dataset.chartType || null;
+      const group = getSlotGroup(slotEl);
       cards.forEach(card => {
-        const isActive = card.dataset.chartType === currentType;
+        const matchesGroup = !group || card.dataset.chartGroup === group;
+        const isActive = matchesGroup && card.dataset.chartType === currentType;
         setCardState(card, isActive);
       });
+    };
+
+    const updateCatalogForSlot = (slotEl) => {
+      const group = getSlotGroup(slotEl);
+      updateCardVisibility(group);
+      markActiveCard(slotEl);
     };
 
     const applyChartToSlot = (chartType) => {
@@ -347,7 +368,7 @@
       setToggleState(activeToggle, true);
       panel.scrollTop = 0;
       positionCatalog(trigger);
-      markActiveCard(activeSlot);
+      updateCatalogForSlot(activeSlot);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
       zone.classList.add('catalog-open');
@@ -429,7 +450,7 @@
         const type = card.dataset.chartType;
         if (!type) return;
         if (applyChartToSlot(type)) {
-          markActiveCard(activeSlot);
+          updateCatalogForSlot(activeSlot);
           closePanel();
         }
       });

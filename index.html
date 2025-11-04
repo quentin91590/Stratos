@@ -494,40 +494,103 @@
                   <div style="width: 196px"></div>
                 </div>
 
-                <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
-                  <div class="chart-title">
-                    <span>Tendance par année</span>
-                    <span class="chart-unit">kWh/m²</span>
+                <div class="energy-chart-zone">
+                  <div class="energy-chart-wrapper">
+                    <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
+                      <div class="chart-title">
+                        <span>Tendance par année</span>
+                        <span class="chart-unit">kWh/m²</span>
+                      </div>
+                      <div class="chart-bars" role="list">
+                        <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
+                          <span class="bar-value">210</span>
+                          <span class="bar-fill" aria-hidden="true"></span>
+                          <span class="bar-year">2021</span>
+                        </div>
+                        <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
+                          <span class="bar-value">198</span>
+                          <span class="bar-fill" aria-hidden="true"></span>
+                          <span class="bar-year">2022</span>
+                        </div>
+                        <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
+                          <span class="bar-value">190</span>
+                          <span class="bar-fill" aria-hidden="true"></span>
+                          <span class="bar-year">2023</span>
+                        </div>
+                        <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
+                          <span class="bar-value">184</span>
+                          <span class="bar-fill" aria-hidden="true"></span>
+                          <span class="bar-year">2024</span>
+                        </div>
+                        <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
+                          <span class="bar-value">176</span>
+                          <span class="bar-fill" aria-hidden="true"></span>
+                          <span class="bar-year">2025</span>
+                        </div>
+                      </div>
+                      <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
+                    </figure>
+                    <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
+                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                        <path d="M12 20v-4" />
+                        <path d="M6 4h9a3 3 0 0 1 3 3v9" />
+                        <path d="M6 8h10" />
+                        <path d="M6 12h6" />
+                        <path d="M6 16h2" />
+                      </svg>
+                    </button>
                   </div>
-                  <div class="chart-bars" role="list">
-                    <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
-                      <span class="bar-value">210</span>
-                      <span class="bar-fill" aria-hidden="true"></span>
-                      <span class="bar-year">2021</span>
-                    </div>
-                    <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
-                      <span class="bar-value">198</span>
-                      <span class="bar-fill" aria-hidden="true"></span>
-                      <span class="bar-year">2022</span>
-                    </div>
-                    <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
-                      <span class="bar-value">190</span>
-                      <span class="bar-fill" aria-hidden="true"></span>
-                      <span class="bar-year">2023</span>
-                    </div>
-                    <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
-                      <span class="bar-value">184</span>
-                      <span class="bar-fill" aria-hidden="true"></span>
-                      <span class="bar-year">2024</span>
-                    </div>
-                    <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
-                      <span class="bar-value">176</span>
-                      <span class="bar-fill" aria-hidden="true"></span>
-                      <span class="bar-year">2025</span>
-                    </div>
-                  </div>
-                  <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
-                </figure>
+                  <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="false" hidden aria-hidden="true" tabindex="-1">
+                    <header class="catalog-header">
+                      <div class="catalog-title">
+                        <span class="catalog-icon" aria-hidden="true">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="3" width="7" height="7" rx="1.5" />
+                            <rect x="14" y="3" width="7" height="7" rx="1.5" />
+                            <rect x="3" y="14" width="7" height="7" rx="1.5" />
+                            <rect x="14" y="14" width="7" height="7" rx="1.5" />
+                          </svg>
+                        </span>
+                        <h4>Catalogue de graphiques</h4>
+                      </div>
+                      <button type="button" class="catalog-close" aria-label="Fermer le catalogue">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M6 6l12 12M18 6L6 18" />
+                        </svg>
+                      </button>
+                    </header>
+                    <p class="catalog-intro">Sélectionnez un visuel pour remplacer la tendance actuelle ou explorer d’autres angles d’analyse.</p>
+                    <ul class="catalog-list" role="list">
+                      <li>
+                        <button type="button" class="catalog-card">
+                          <span class="card-label">Consommation totale</span>
+                          <span class="card-meta">Empilement énergie finale</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card">
+                          <span class="card-label">Pertes thermiques</span>
+                          <span class="card-meta">Comparaison DJU</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card">
+                          <span class="card-label">Intensité CO₂</span>
+                          <span class="card-meta">Emissions par source</span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card">
+                          <span class="card-label">Eau vs habitants</span>
+                          <span class="card-meta">Ratio m³ / occupants</span>
+                        </button>
+                      </li>
+                    </ul>
+                    <footer class="catalog-footer">
+                      <button type="button" class="catalog-action">Voir toute la bibliothèque</button>
+                    </footer>
+                  </aside>
+                </div>
 
                 <div class="panel-grid">
                   <!-- (graphes/tables inchangés) -->

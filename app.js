@@ -179,6 +179,83 @@
     window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
+  /* ========== Catalogue de graphiques (pinceau) ========== */
+  function setupChartCatalog() {
+    const zone = document.querySelector('.energy-chart-zone');
+    if (!zone) return;
+
+    const toggle = zone.querySelector('.chart-edit-toggle');
+    const panel = zone.querySelector('#chart-catalog');
+    if (!toggle || !panel) return;
+
+    const closeBtn = panel.querySelector('.catalog-close');
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    const focusFirstElement = () => {
+      const target = panel.querySelector(focusableSelector) || panel;
+      target.focus({ preventScroll: true });
+    };
+
+    const onDocClick = (event) => {
+      if (zone.contains(event.target)) return;
+      closePanel({ returnFocus: false });
+    };
+
+    const onKeydown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closePanel();
+      }
+    };
+
+    const openPanel = () => {
+      if (zone.classList.contains('catalog-open')) return;
+      panel.hidden = false;
+      panel.setAttribute('aria-hidden', 'false');
+      // Force reflow to allow transition when removing `hidden`
+      void panel.offsetWidth;
+      zone.classList.add('catalog-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      focusFirstElement();
+      document.addEventListener('click', onDocClick, true);
+      document.addEventListener('keydown', onKeydown);
+    };
+
+    const closePanel = ({ returnFocus = true } = {}) => {
+      if (!zone.classList.contains('catalog-open')) return;
+      zone.classList.remove('catalog-open');
+      panel.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onDocClick, true);
+      document.removeEventListener('keydown', onKeydown);
+
+      const hidePanel = () => {
+        panel.hidden = true;
+      };
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        hidePanel();
+      } else {
+        const onTransitionEnd = (event) => {
+          if (event.propertyName === 'opacity') {
+            panel.removeEventListener('transitionend', onTransitionEnd);
+            hidePanel();
+          }
+        };
+        panel.addEventListener('transitionend', onTransitionEnd);
+      }
+      if (returnFocus) toggle.focus({ preventScroll: true });
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', () => closePanel());
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (zone.classList.contains('catalog-open')) closePanel();
+      else openPanel();
+    });
+  }
+
   /* ========== Tabset générique (Énergie + sections alt) ========== */
   function updateTrendPadding(scope = document) {
     scope.querySelectorAll('.kpi-value-wrap').forEach(w => {
@@ -878,6 +955,7 @@
   updateParcFromSites();
 
   wireYearPicker();
+  setupChartCatalog();
   setupEnergyFilters();
   setupTreeSearch();
 

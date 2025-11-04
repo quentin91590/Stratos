@@ -496,46 +496,81 @@
 
                 <div class="energy-chart-zone">
                   <div class="energy-chart-wrapper">
-                    <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
-                      <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
-                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                          <path d="M12 20h9" />
-                          <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                        </svg>
-                      </button>
-                      <div class="chart-title">
-                        <span>Tendance par année</span>
-                        <span class="chart-unit">kWh/m²</span>
-                      </div>
-                      <div class="chart-bars" role="list">
-                        <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
-                          <span class="bar-value">210</span>
-                          <span class="bar-fill" aria-hidden="true"></span>
-                          <span class="bar-year">2021</span>
+                    <div class="energy-chart-stack">
+                      <section class="energy-mix-card" aria-label="Mix énergétique du périmètre">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <span class="mix-title">Mix énergétique</span>
+                          <span class="mix-subtitle">Répartition en kWh</span>
+                        </header>
+                        <div class="energy-mix-content">
+                          <div class="mix-pie" role="img" aria-label="Mix énergétique&nbsp;: 80&nbsp;% chaleur, 15&nbsp;% électricité, 5&nbsp;% froid"></div>
+                          <ul class="mix-legend">
+                            <li>
+                              <span class="mix-bullet chaleur" aria-hidden="true"></span>
+                              <span class="mix-label">Chaleur</span>
+                              <span class="mix-value">80&nbsp;%</span>
+                            </li>
+                            <li>
+                              <span class="mix-bullet electricite" aria-hidden="true"></span>
+                              <span class="mix-label">Électricité</span>
+                              <span class="mix-value">15&nbsp;%</span>
+                            </li>
+                            <li>
+                              <span class="mix-bullet froid" aria-hidden="true"></span>
+                              <span class="mix-label">Froid</span>
+                              <span class="mix-value">5&nbsp;%</span>
+                            </li>
+                          </ul>
                         </div>
-                        <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
-                          <span class="bar-value">198</span>
-                          <span class="bar-fill" aria-hidden="true"></span>
-                          <span class="bar-year">2022</span>
+                      </section>
+
+                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
+                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-title">
+                          <span>Tendance par année</span>
+                          <span class="chart-unit">kWh/m²</span>
                         </div>
-                        <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
-                          <span class="bar-value">190</span>
-                          <span class="bar-fill" aria-hidden="true"></span>
-                          <span class="bar-year">2023</span>
+                        <div class="chart-bars" role="list">
+                          <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
+                            <span class="bar-value">210</span>
+                            <span class="bar-fill" aria-hidden="true"></span>
+                            <span class="bar-year">2021</span>
+                          </div>
+                          <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
+                            <span class="bar-value">198</span>
+                            <span class="bar-fill" aria-hidden="true"></span>
+                            <span class="bar-year">2022</span>
+                          </div>
+                          <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
+                            <span class="bar-value">190</span>
+                            <span class="bar-fill" aria-hidden="true"></span>
+                            <span class="bar-year">2023</span>
+                          </div>
+                          <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
+                            <span class="bar-value">184</span>
+                            <span class="bar-fill" aria-hidden="true"></span>
+                            <span class="bar-year">2024</span>
+                          </div>
+                          <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
+                            <span class="bar-value">176</span>
+                            <span class="bar-fill" aria-hidden="true"></span>
+                            <span class="bar-year">2025</span>
+                          </div>
                         </div>
-                        <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
-                          <span class="bar-value">184</span>
-                          <span class="bar-fill" aria-hidden="true"></span>
-                          <span class="bar-year">2024</span>
-                        </div>
-                        <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
-                          <span class="bar-value">176</span>
-                          <span class="bar-fill" aria-hidden="true"></span>
-                          <span class="bar-year">2025</span>
-                        </div>
-                      </div>
-                      <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
-                    </figure>
+                        <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
+                      </figure>
+                    </div>
                   </div>
                   <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="false" hidden aria-hidden="true" tabindex="-1">
                     <header class="catalog-header">

@@ -497,18 +497,226 @@
                 <div class="energy-chart-zone">
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
-                      <section class="energy-mix-card" aria-label="Mix énergétique du périmètre">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <figure class="energy-mix-card" aria-label="Mix énergétique du périmètre" data-chart-slot="mix-primary" data-chart-type="mix-primary-pie" data-chart-group="mix-primary">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-primary">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
                             <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
-                          <span class="mix-title">Mix énergétique</span>
-                          <span class="mix-subtitle">Répartition en kWh</span>
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Mix énergétique</span>
+                            <span class="mix-subtitle">Répartition en kWh</span>
+                          </div>
                         </header>
-                        <div class="energy-mix-content">
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--pie">
+                            <div class="mix-pie" role="img" aria-label="Mix énergétique&nbsp;: 80&nbsp;% chaleur, 15&nbsp;% électricité, 5&nbsp;% froid"></div>
+                            <ul class="mix-legend">
+                              <li>
+                                <span class="mix-bullet chaleur" aria-hidden="true"></span>
+                                <span class="mix-label">Chaleur</span>
+                                <span class="mix-value">80&nbsp;%</span>
+                              </li>
+                              <li>
+                                <span class="mix-bullet electricite" aria-hidden="true"></span>
+                                <span class="mix-label">Électricité</span>
+                                <span class="mix-value">15&nbsp;%</span>
+                              </li>
+                              <li>
+                                <span class="mix-bullet froid" aria-hidden="true"></span>
+                                <span class="mix-label">Froid</span>
+                                <span class="mix-value">5&nbsp;%</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Répartition actuelle des usages énergétiques.</figcaption>
+                      </figure>
+
+                      <figure class="energy-mix-card energy-mix-card--secondary" aria-label="Mix énergétique climat ajusté" data-chart-slot="mix-secondary" data-chart-type="mix-secondary-pie" data-chart-group="mix-secondary">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-secondary">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Mix énergétique (climat ajusté)</span>
+                            <span class="mix-subtitle">Projection 2025</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--pie">
+                            <div class="mix-pie" role="img" aria-label="Mix énergétique ajusté&nbsp;: 70&nbsp;% chaleur, 20&nbsp;% électricité, 10&nbsp;% froid"></div>
+                            <ul class="mix-legend">
+                              <li>
+                                <span class="mix-bullet chaleur" aria-hidden="true"></span>
+                                <span class="mix-label">Chaleur</span>
+                                <span class="mix-value">70&nbsp;%</span>
+                              </li>
+                              <li>
+                                <span class="mix-bullet electricite" aria-hidden="true"></span>
+                                <span class="mix-label">Électricité</span>
+                                <span class="mix-value">20&nbsp;%</span>
+                              </li>
+                              <li>
+                                <span class="mix-bullet froid" aria-hidden="true"></span>
+                                <span class="mix-label">Froid</span>
+                                <span class="mix-value">10&nbsp;%</span>
+                              </li>
+                            </ul>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Projection climatique ajustée pour l'année cible.</figcaption>
+                      </figure>
+
+                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment" data-chart-slot="energy-trend" data-chart-type="intensity-bars">
+                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-trend">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="chart-variant chart-variant--bars">
+                            <div class="chart-title">
+                              <span>Tendance par année</span>
+                              <span class="chart-unit">kWh/m²</span>
+                            </div>
+                            <div class="chart-bars" role="list">
+                              <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
+                                <span class="bar-value">210</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2021</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
+                                <span class="bar-value">198</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2022</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
+                                <span class="bar-value">190</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2023</span>
+                              </div>
+                              <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
+                                <span class="bar-value">184</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2024</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
+                                <span class="bar-value">176</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2025</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
+                      </figure>
+                      <template id="chart-template-intensity-bars" data-caption="Réduction progressive de l'intensité énergétique depuis 2021.">
+                        <div class="chart-variant chart-variant--bars">
+                          <div class="chart-title">
+                            <span>Tendance par année</span>
+                            <span class="chart-unit">kWh/m²</span>
+                          </div>
+                          <div class="chart-bars" role="list">
+                            <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
+                              <span class="bar-value">210</span>
+                              <span class="bar-fill" aria-hidden="true"></span>
+                              <span class="bar-year">2021</span>
+                            </div>
+                            <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
+                              <span class="bar-value">198</span>
+                              <span class="bar-fill" aria-hidden="true"></span>
+                              <span class="bar-year">2022</span>
+                            </div>
+                            <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
+                              <span class="bar-value">190</span>
+                              <span class="bar-fill" aria-hidden="true"></span>
+                              <span class="bar-year">2023</span>
+                            </div>
+                            <div class="chart-bar" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
+                              <span class="bar-value">184</span>
+                              <span class="bar-fill" aria-hidden="true"></span>
+                              <span class="bar-year">2024</span>
+                            </div>
+                            <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
+                              <span class="bar-value">176</span>
+                              <span class="bar-fill" aria-hidden="true"></span>
+                              <span class="bar-year">2025</span>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-intensity-line" data-caption="Projection de la consommation ajustée et de la cible à atteindre.">
+                        <div class="chart-variant chart-variant--line">
+                          <div class="chart-title">
+                            <span>Courbe climat ajusté</span>
+                            <span class="chart-unit">kWh/m²</span>
+                          </div>
+                          <div class="chart-line">
+                            <svg viewBox="0 0 320 160" role="img" aria-label="Courbe des consommations ajustées" preserveAspectRatio="none">
+                              <defs>
+                                <linearGradient id="lineArea" x1="0" y1="0" x2="0" y2="1">
+                                  <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.28"></stop>
+                                  <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"></stop>
+                                </linearGradient>
+                              </defs>
+                              <path class="line-area" d="M0 132 L40 118 L80 112 L120 108 L160 96 L200 88 L240 80 L280 68 L320 60 L320 160 L0 160 Z"></path>
+                              <polyline class="line-path" points="0,132 40,118 80,112 120,108 160,96 200,88 240,80 280,68 320,60"></polyline>
+                              <line class="line-target" x1="0" y1="96" x2="320" y2="96"></line>
+                            </svg>
+                            <ul class="line-legend">
+                              <li><span class="dot dot--line"></span> Climat ajusté</li>
+                              <li><span class="dot dot--target"></span> Cible 2030</li>
+                            </ul>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-intensity-breakdown" data-caption="Répartition des usages énergétiques pour l'année en cours.">
+                        <div class="chart-variant chart-variant--breakdown">
+                          <div class="chart-title">
+                            <span>Répartition par usage</span>
+                            <span class="chart-unit">kWh</span>
+                          </div>
+                          <div class="chart-breakdown" role="list">
+                            <div class="breakdown-row" role="listitem">
+                              <div class="breakdown-label">Chauffage</div>
+                              <div class="breakdown-bar" aria-hidden="true">
+                                <span style="--value:68"></span>
+                              </div>
+                              <div class="breakdown-value">68&nbsp;%</div>
+                            </div>
+                            <div class="breakdown-row" role="listitem">
+                              <div class="breakdown-label">Ventilation</div>
+                              <div class="breakdown-bar" aria-hidden="true">
+                                <span style="--value:18"></span>
+                              </div>
+                              <div class="breakdown-value">18&nbsp;%</div>
+                            </div>
+                            <div class="breakdown-row" role="listitem">
+                              <div class="breakdown-label">Éclairage</div>
+                              <div class="breakdown-bar" aria-hidden="true">
+                                <span style="--value:9"></span>
+                              </div>
+                              <div class="breakdown-value">9&nbsp;%</div>
+                            </div>
+                            <div class="breakdown-row" role="listitem">
+                              <div class="breakdown-label">Auxiliaires</div>
+                              <div class="breakdown-bar" aria-hidden="true">
+                                <span style="--value:5"></span>
+                              </div>
+                              <div class="breakdown-value">5&nbsp;%</div>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-mix-primary-pie" data-caption="Répartition actuelle des usages énergétiques.">
+                        <div class="energy-mix-content mix-variant mix-variant--pie">
                           <div class="mix-pie" role="img" aria-label="Mix énergétique&nbsp;: 80&nbsp;% chaleur, 15&nbsp;% électricité, 5&nbsp;% froid"></div>
                           <ul class="mix-legend">
                             <li>
@@ -528,20 +736,55 @@
                             </li>
                           </ul>
                         </div>
-                      </section>
-
-                      <section class="energy-mix-card energy-mix-card--secondary" aria-label="Mix énergétique climat ajusté">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                          </svg>
-                        </button>
-                        <header class="energy-mix-header">
-                          <span class="mix-title">Mix énergétique (climat ajusté)</span>
-                          <span class="mix-subtitle">Projection 2025</span>
-                        </header>
-                        <div class="energy-mix-content">
+                      </template>
+                      <template id="chart-template-mix-primary-donut" data-caption="Distribution circulaire avec focus sur la chaleur dominante.">
+                        <div class="energy-mix-content mix-variant mix-variant--donut">
+                          <div class="mix-donut" role="img" style="--mix-chaleur:80; --mix-elec:15; --mix-froid:5" aria-label="Donut énergétique&nbsp;: 80&nbsp;% chaleur, 15&nbsp;% électricité, 5&nbsp;% froid">
+                            <span class="mix-donut__center">80&nbsp;%</span>
+                            <span class="mix-donut__label">Chaleur</span>
+                          </div>
+                          <ul class="mix-legend mix-legend--compact">
+                            <li>
+                              <span class="mix-bullet chaleur" aria-hidden="true"></span>
+                              <span class="mix-label">Chaleur</span>
+                              <span class="mix-value">80&nbsp;%</span>
+                            </li>
+                            <li>
+                              <span class="mix-bullet electricite" aria-hidden="true"></span>
+                              <span class="mix-label">Électricité</span>
+                              <span class="mix-value">15&nbsp;%</span>
+                            </li>
+                            <li>
+                              <span class="mix-bullet froid" aria-hidden="true"></span>
+                              <span class="mix-label">Froid</span>
+                              <span class="mix-value">5&nbsp;%</span>
+                            </li>
+                          </ul>
+                        </div>
+                      </template>
+                      <template id="chart-template-mix-primary-bars" data-caption="Histogramme horizontal par vecteur énergétique.">
+                        <div class="energy-mix-content mix-variant mix-variant--bars">
+                          <div class="mix-bars" role="list">
+                            <div class="mix-bar chaleur" role="listitem" style="--mix-value:80" aria-label="Chaleur&nbsp;: 80&nbsp;%">
+                              <span class="mix-bar__label">Chaleur</span>
+                              <span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span>
+                              <span class="mix-bar__value">80&nbsp;%</span>
+                            </div>
+                            <div class="mix-bar electricite" role="listitem" style="--mix-value:15" aria-label="Électricité&nbsp;: 15&nbsp;%">
+                              <span class="mix-bar__label">Électricité</span>
+                              <span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span>
+                              <span class="mix-bar__value">15&nbsp;%</span>
+                            </div>
+                            <div class="mix-bar froid" role="listitem" style="--mix-value:5" aria-label="Froid&nbsp;: 5&nbsp;%">
+                              <span class="mix-bar__label">Froid</span>
+                              <span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span>
+                              <span class="mix-bar__value">5&nbsp;%</span>
+                            </div>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-mix-secondary-pie" data-caption="Projection climatique ajustée pour l'année cible.">
+                        <div class="energy-mix-content mix-variant mix-variant--pie">
                           <div class="mix-pie" role="img" aria-label="Mix énergétique ajusté&nbsp;: 70&nbsp;% chaleur, 20&nbsp;% électricité, 10&nbsp;% froid"></div>
                           <ul class="mix-legend">
                             <li>
@@ -561,48 +804,45 @@
                             </li>
                           </ul>
                         </div>
-                      </section>
-
-                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                          </svg>
-                        </button>
-                        <div class="chart-title">
-                          <span>Tendance par année</span>
-                          <span class="chart-unit">kWh/m²</span>
-                        </div>
-                        <div class="chart-bars" role="list">
-                          <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 210 kWh par mètre carré" style="--value:210">
-                            <span class="bar-value">210</span>
-                            <span class="bar-fill" aria-hidden="true"></span>
-                            <span class="bar-year">2021</span>
-                          </div>
-                          <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 198 kWh par mètre carré" style="--value:198">
-                            <span class="bar-value">198</span>
-                            <span class="bar-fill" aria-hidden="true"></span>
-                            <span class="bar-year">2022</span>
-                          </div>
-                          <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 190 kWh par mètre carré" style="--value:190">
-                            <span class="bar-value">190</span>
-                            <span class="bar-fill" aria-hidden="true"></span>
-                            <span class="bar-year">2023</span>
-                          </div>
-                          <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 184 kWh par mètre carré" style="--value:184">
-                            <span class="bar-value">184</span>
-                            <span class="bar-fill" aria-hidden="true"></span>
-                            <span class="bar-year">2024</span>
-                          </div>
-                          <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 176 kWh par mètre carré" style="--value:176">
-                            <span class="bar-value">176</span>
-                            <span class="bar-fill" aria-hidden="true"></span>
-                            <span class="bar-year">2025</span>
+                      </template>
+                      <template id="chart-template-mix-secondary-rings" data-caption="Visualisation en anneaux pour comparer les vecteurs projetés.">
+                        <div class="energy-mix-content mix-variant mix-variant--rings">
+                          <div class="mix-rings" role="list">
+                            <div class="mix-ring chaleur" role="listitem" style="--mix-value:70" aria-label="Chaleur projetée&nbsp;: 70&nbsp;%">
+                              <span class="mix-ring__inner">
+                                <span class="mix-ring__value">70&nbsp;%</span>
+                                <span class="mix-ring__label">Chaleur</span>
+                              </span>
+                            </div>
+                            <div class="mix-ring electricite" role="listitem" style="--mix-value:20" aria-label="Électricité projetée&nbsp;: 20&nbsp;%">
+                              <span class="mix-ring__inner">
+                                <span class="mix-ring__value">20&nbsp;%</span>
+                                <span class="mix-ring__label">Électricité</span>
+                              </span>
+                            </div>
+                            <div class="mix-ring froid" role="listitem" style="--mix-value:10" aria-label="Froid projeté&nbsp;: 10&nbsp;%">
+                              <span class="mix-ring__inner">
+                                <span class="mix-ring__value">10&nbsp;%</span>
+                                <span class="mix-ring__label">Froid</span>
+                              </span>
+                            </div>
                           </div>
                         </div>
-                        <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
-                      </figure>
+                      </template>
+                      <template id="chart-template-mix-secondary-columns" data-caption="Colonnes empilées par énergie pour la projection 2025.">
+                        <div class="energy-mix-content mix-variant mix-variant--columns">
+                          <div class="mix-columns" role="img" aria-label="Colonnes projetées&nbsp;: 70&nbsp;% chaleur, 20&nbsp;% électricité, 10&nbsp;% froid">
+                            <span class="mix-column chaleur" aria-hidden="true" style="--mix-value:70"></span>
+                            <span class="mix-column electricite" aria-hidden="true" style="--mix-value:20"></span>
+                            <span class="mix-column froid" aria-hidden="true" style="--mix-value:10"></span>
+                          </div>
+                          <ul class="mix-columns-legend">
+                            <li><span class="mix-label">Chaleur</span><span class="mix-value">70&nbsp;%</span></li>
+                            <li><span class="mix-label">Électricité</span><span class="mix-value">20&nbsp;%</span></li>
+                            <li><span class="mix-label">Froid</span><span class="mix-value">10&nbsp;%</span></li>
+                          </ul>
+                        </div>
+                      </template>
                     </div>
                   </div>
                   <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="false" hidden aria-hidden="true" tabindex="-1">
@@ -621,28 +861,136 @@
                     </header>
                     <p class="catalog-intro">Sélectionnez un visuel pour remplacer la tendance actuelle ou explorer d’autres angles d’analyse.</p>
                     <ul class="catalog-list" role="list">
-                      <li>
-                        <button type="button" class="catalog-card">
-                          <span class="card-label">Consommation totale</span>
-                          <span class="card-meta">Empilement énergie finale</span>
+                      <li data-chart-group="energy-trend">
+                        <button type="button" class="catalog-card" data-chart-type="intensity-bars" data-chart-group="energy-trend" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-bars">
+                              <span style="--h:56"></span>
+                              <span style="--h:64"></span>
+                              <span style="--h:72"></span>
+                              <span style="--h:84" data-active></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Histogramme annuel</span>
+                            <span class="catalog-card__meta">Consommation par exercice</span>
+                          </span>
                         </button>
                       </li>
                       <li>
-                        <button type="button" class="catalog-card">
-                          <span class="card-label">Pertes thermiques</span>
-                          <span class="card-meta">Comparaison DJU</span>
+                        <button type="button" class="catalog-card" data-chart-type="intensity-line" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-line">
+                              <svg viewBox="0 0 90 52" preserveAspectRatio="none">
+                                <defs>
+                                  <linearGradient id="previewLine" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#38bdf8" stop-opacity="0.35"></stop>
+                                    <stop offset="100%" stop-color="#38bdf8" stop-opacity="0"></stop>
+                                  </linearGradient>
+                                </defs>
+                                <path class="preview-line__area" d="M0 40 L18 35 L36 32 L54 27 L72 20 L90 18 L90 52 L0 52 Z"></path>
+                                <polyline class="preview-line__stroke" points="0,40 18,35 36,32 54,27 72,20 90,18"></polyline>
+                                <line class="preview-line__target" x1="0" y1="28" x2="90" y2="28"></line>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Courbe climat</span>
+                            <span class="catalog-card__meta">Tendance ajustée & cible</span>
+                          </span>
                         </button>
                       </li>
                       <li>
-                        <button type="button" class="catalog-card">
-                          <span class="card-label">Intensité CO₂</span>
-                          <span class="card-meta">Emissions par source</span>
+                        <button type="button" class="catalog-card" data-chart-type="intensity-breakdown" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-breakdown">
+                              <span style="--w:78"></span>
+                              <span style="--w:46"></span>
+                              <span style="--w:34"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Usages énergétiques</span>
+                            <span class="catalog-card__meta">Focus sur l'année courante</span>
+                          </span>
                         </button>
                       </li>
-                      <li>
-                        <button type="button" class="catalog-card">
-                          <span class="card-label">Eau vs habitants</span>
-                          <span class="card-meta">Ratio m³ / occupants</span>
+                      <li data-chart-group="mix-primary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-primary-pie" data-chart-group="mix-primary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--pie-primary"></span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Camembert principal</span>
+                            <span class="catalog-card__meta">Répartition des usages</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="mix-primary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-primary-donut" data-chart-group="mix-primary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--donut-primary">
+                              <span>80%</span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Donut chaleur</span>
+                            <span class="catalog-card__meta">Focus sur l'énergie dominante</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="mix-primary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-primary-bars" data-chart-group="mix-primary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--bars-primary">
+                              <span class="preview-mix__bar" style="--w:88"></span>
+                              <span class="preview-mix__bar" style="--w:42"></span>
+                              <span class="preview-mix__bar" style="--w:18"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Barres horizontales</span>
+                            <span class="catalog-card__meta">Comparaison directe des parts</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="mix-secondary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-secondary-pie" data-chart-group="mix-secondary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--pie-secondary"></span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Camembert projeté</span>
+                            <span class="catalog-card__meta">Vision climat ajusté</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="mix-secondary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-secondary-rings" data-chart-group="mix-secondary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--rings">
+                              <span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Anneaux comparatifs</span>
+                            <span class="catalog-card__meta">Chaleur, élec., froid</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="mix-secondary">
+                        <button type="button" class="catalog-card" data-chart-type="mix-secondary-columns" data-chart-group="mix-secondary" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--columns">
+                              <span style="--h:80"></span>
+                              <span style="--h:52"></span>
+                              <span style="--h:28"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Colonnes verticales</span>
+                            <span class="catalog-card__meta">Projection 2025</span>
+                          </span>
                         </button>
                       </li>
                     </ul>

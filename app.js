@@ -187,6 +187,8 @@
     const toggles = Array.from(zone.querySelectorAll('.chart-edit-toggle'));
     const panel = zone.querySelector('#chart-catalog');
     if (!toggles.length || !panel) return;
+    const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
+    const getCardContainer = (card) => card?.closest('li') || null;
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const layoutQuery = window.matchMedia('(max-width: 960px)');
@@ -194,6 +196,7 @@
     let restoreFocusAfterClose = false;
     let activeToggle = null;
     let focusTargetOnClose = null;
+    let activeSlot = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -205,6 +208,64 @@
         el.offsetParent !== null
       )
     );
+
+    const getSlotFromToggle = (trigger) => {
+      if (!trigger) return null;
+      const slotName = trigger.dataset.chartTarget || trigger.closest('[data-chart-slot]')?.dataset.chartSlot;
+      if (!slotName) return null;
+      return zone.querySelector(`[data-chart-slot="${slotName}"]`);
+    };
+
+    const setCardState = (card, isActive) => {
+      if (!card) return;
+      card.classList.toggle('is-active', isActive);
+      card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+    };
+
+    const getSlotGroup = (slotEl) => slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
+
+    const updateCardVisibility = (group) => {
+      cards.forEach(card => {
+        const matches = !group || card.dataset.chartGroup === group;
+        const container = getCardContainer(card);
+        if (container) {
+          container.hidden = !matches;
+        }
+      });
+    };
+
+    const markActiveCard = (slotEl) => {
+      if (!cards.length) return;
+      const currentType = slotEl?.dataset.chartType || null;
+      const group = getSlotGroup(slotEl);
+      cards.forEach(card => {
+        const matchesGroup = !group || card.dataset.chartGroup === group;
+        const isActive = matchesGroup && card.dataset.chartType === currentType;
+        setCardState(card, isActive);
+      });
+    };
+
+    const updateCatalogForSlot = (slotEl) => {
+      const group = getSlotGroup(slotEl);
+      updateCardVisibility(group);
+      markActiveCard(slotEl);
+    };
+
+    const applyChartToSlot = (chartType) => {
+      if (!activeSlot) return false;
+      const template = document.getElementById(`chart-template-${chartType}`);
+      if (!template) return false;
+      const body = activeSlot.querySelector('[data-chart-role="body"]');
+      if (!body) return false;
+      body.replaceChildren(template.content.cloneNode(true));
+      const captionEl = activeSlot.querySelector('[data-chart-role="caption"]');
+      if (captionEl) captionEl.textContent = template.dataset.caption || '';
+      activeSlot.dataset.chartType = chartType;
+      if (chartType === 'intensity-bars') {
+        highlightEnergyTrend(FILTERS.year);
+      }
+      return true;
+    };
 
     const positionCatalog = (trigger) => {
       if (!trigger) return;
@@ -299,6 +360,7 @@
         setToggleState(activeToggle, false);
       }
       activeToggle = trigger;
+      activeSlot = getSlotFromToggle(trigger);
       isOpen = true;
       restoreFocusAfterClose = false;
       panel.hidden = false;
@@ -306,6 +368,7 @@
       setToggleState(activeToggle, true);
       panel.scrollTop = 0;
       positionCatalog(trigger);
+      updateCatalogForSlot(activeSlot);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
       zone.classList.add('catalog-open');
@@ -325,6 +388,7 @@
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
       activeToggle = returnFocus ? activeToggle : null;
+      activeSlot = null;
 
       if (prefersReducedMotion()) {
         zone.classList.remove('catalog-open');
@@ -375,6 +439,19 @@
           event.preventDefault();
           if (isOpen && activeToggle === btn) closePanel();
           else openPanel(btn);
+        }
+      });
+    });
+
+    cards.forEach(card => {
+      card.addEventListener('click', (event) => {
+        event.preventDefault();
+        if (!activeSlot) return;
+        const type = card.dataset.chartType;
+        if (!type) return;
+        if (applyChartToSlot(type)) {
+          updateCatalogForSlot(activeSlot);
+          closePanel();
         }
       });
     });

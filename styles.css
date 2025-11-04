@@ -156,13 +156,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   gap:24px;
   flex-wrap:wrap;
   position:relative;
-  --catalog-open-translate-x: calc(-100% + 112px);
+  --catalog-open-translate-x: calc(-100% + 156px);
   --catalog-open-translate-y: 22px;
   --catalog-open-scale: 1;
   --catalog-closed-scale: .72;
   --catalog-slide-x: 28px;
   --catalog-slide-y: -22px;
-  --catalog-origin-x: calc(100% - 32px);
+  --catalog-origin-x: calc(100% - 24px);
   --catalog-origin-y: 42px;
   --catalog-toggle-clearance: 64px;
 }

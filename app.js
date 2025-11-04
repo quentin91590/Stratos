@@ -240,6 +240,25 @@
       zone.style.setProperty('--catalog-origin-x', `${originX}px`);
       zone.style.setProperty('--catalog-origin-y', `${originY}px`);
 
+      if (zone.classList.contains('catalog-open')) {
+        const panelStyles = getComputedStyle(panel);
+        const padTop = Number.parseFloat(panelStyles.paddingTop) || 0;
+        const padRight = Number.parseFloat(panelStyles.paddingRight) || 0;
+        const insideTopOffset = 12;
+        const insideRightOffset = 12;
+        const desiredTop = panelRect.top + Math.max(insideTopOffset, padTop - 6);
+        const desiredLeft = panelRect.right - padRight - insideRightOffset - toggleRect.width;
+        const shiftX = desiredLeft - toggleRect.left;
+        const shiftY = desiredTop - toggleRect.top;
+        toggle.style.setProperty('--catalog-toggle-shift-x', `${shiftX.toFixed(2)}px`);
+        toggle.style.setProperty('--catalog-toggle-shift-y', `${shiftY.toFixed(2)}px`);
+        toggle.classList.add('is-in-catalog');
+      } else {
+        toggle.style.setProperty('--catalog-toggle-shift-x', '0px');
+        toggle.style.setProperty('--catalog-toggle-shift-y', '0px');
+        toggle.classList.remove('is-in-catalog');
+      }
+
       const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       if (prefersReducedMotion) {
         zone.style.setProperty('--catalog-slide-x', '0px');
@@ -308,6 +327,7 @@
         panel.addEventListener('transitionend', handleTransformEnd);
       }
       zone.classList.add('catalog-open');
+      toggle.classList.add('is-in-catalog');
       toggle.setAttribute('aria-expanded', 'true');
       focusFirstElement();
       requestAnimationFrame(() => {
@@ -328,6 +348,9 @@
       zone.classList.remove('catalog-open');
       panel.setAttribute('aria-hidden', 'true');
       toggle.setAttribute('aria-expanded', 'false');
+      toggle.style.setProperty('--catalog-toggle-shift-x', '0px');
+      toggle.style.setProperty('--catalog-toggle-shift-y', '0px');
+      toggle.classList.remove('is-in-catalog');
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
 

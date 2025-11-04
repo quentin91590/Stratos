@@ -31,6 +31,19 @@
 
   // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)
   // --- Year handling (OK) ---------------------------------------
+  function highlightEnergyTrend(year) {
+    const chart = document.querySelector('.energy-trend-chart');
+    if (!chart) return;
+
+    const yr = Number(year);
+    chart.querySelectorAll('.chart-bar').forEach(bar => {
+      const barYear = Number(bar.dataset.year);
+      const isActive = !Number.isNaN(barYear) && barYear === yr;
+      bar.classList.toggle('is-selected', isActive);
+      bar.toggleAttribute('aria-current', isActive);
+    });
+  }
+
   function setYear(y) {
     const yr = Number(y);
     FILTERS.year = yr;
@@ -47,6 +60,7 @@
         li.classList.toggle('is-selected', selected);
       });
     }
+    highlightEnergyTrend(yr);
   }
 
   // Initialise le picker custom (clavier + souris + fermeture extérieure)

@@ -188,7 +188,6 @@
     const panel = zone.querySelector('#chart-catalog');
     if (!toggle || !panel) return;
 
-    const closeBtn = panel.querySelector('.catalog-close');
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
     let isAnimating = false;
@@ -349,8 +348,6 @@
       }
       if (returnFocus) toggle.focus({ preventScroll: true });
     };
-
-    if (closeBtn) closeBtn.addEventListener('click', () => closePanel());
 
     toggle.addEventListener('click', (event) => {
       event.stopPropagation();

@@ -230,14 +230,16 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   pointer-events:none;
 }
 .energy-chart-zone.catalog-open .chart-edit-toggle{
+  z-index:8;
+}
+.chart-edit-toggle.is-in-catalog{
   color:#1d4ed8;
   border-color:#93c5fd;
   box-shadow:0 20px 36px rgba(59,130,246,0.28);
-}
-.energy-chart-zone.catalog-open .chart-edit-toggle::after{opacity:1}
-.chart-edit-toggle.is-in-catalog{
   background:linear-gradient(135deg, rgba(219,234,254,0.8), rgba(219,234,254,0.2));
 }
+.chart-edit-toggle.is-in-catalog::after{opacity:1}
+.energy-chart-zone.catalog-open .chart-edit-toggle.is-in-catalog{z-index:14}
 
 .chart-catalog{
   position:absolute;
@@ -260,7 +262,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   min-height:280px;
   width:min(320px, calc(100% - 32px));
   max-width:340px;
-  z-index:10;
+  z-index:13;
 }
 .chart-catalog[hidden]{display:none !important}
 .energy-chart-zone.catalog-open .chart-catalog{

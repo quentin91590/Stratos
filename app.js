@@ -3,6 +3,7 @@
   /* ========== Helpers ========== */
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const $ = (sel, root = document) => root.querySelector(sel);
+  const NF = new Intl.NumberFormat('fr-FR');
   // --- Etat global des filtres (si pas déjà défini)
   window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwh', climate: true, benchmark: { type: 'internal' } };
   const FILTERS = window.FILTERS;
@@ -261,7 +262,7 @@
       const nSre = tab.dataset.sre || '';
       const s1 = document.getElementById('sum-sites-val');
       const s2 = document.getElementById('sum-sre-val');
-      const fmt = v => v ? new Intl.NumberFormat('fr-FR').format(Number(v)) : '—';
+      const fmt = (v) => (v !== undefined && v !== null && v !== '' ? NF.format(Number(v)) : '—');
       if (s1) s1.textContent = fmt(nSites);
       if (s2) s2.textContent = fmt(nSre);
 
@@ -358,6 +359,39 @@
   };
   const leafCheck = (leafBtn) => leafBtn?.querySelector('.tree-check');
 
+  function getLeafSre(leafBtn) {
+    if (!leafBtn) return 0;
+    const raw = Number.parseFloat(leafBtn.dataset?.sre);
+    return Number.isFinite(raw) ? raw : 0;
+  }
+
+  function computeSelectedPerimeter() {
+    let buildings = 0;
+    let sre = 0;
+    $$('.tree-leaf').forEach(leaf => {
+      const cb = leafCheck(leaf);
+      if (cb?.checked) {
+        buildings += 1;
+        sre += getLeafSre(leaf);
+      }
+    });
+    return { buildings, sre };
+  }
+
+  function updatePerimeterBadges() {
+    const { buildings, sre } = computeSelectedPerimeter();
+    const safeSre = Number.isFinite(sre) ? Math.round(sre) : 0;
+    document.querySelectorAll('.kpi[role="tab"][data-sites]').forEach(tab => {
+      tab.dataset.sites = String(buildings);
+      tab.dataset.sre = String(safeSre);
+    });
+
+    const sitesEl = document.getElementById('sum-sites-val');
+    const sreEl = document.getElementById('sum-sre-val');
+    if (sitesEl) sitesEl.textContent = buildings ? NF.format(buildings) : '0';
+    if (sreEl) sreEl.textContent = buildings ? NF.format(safeSre) : '0';
+  }
+
   function setActive(btn, on) {
     if (!btn) return;
     btn.classList.toggle('is-active', !!on);
@@ -381,7 +415,10 @@
     if (cb.checked === false && !cb.indeterminate) clearPartial(siteBtn);
   }
   function updateParcFromSites() {
-    if (!parcCheck) return;
+    if (!parcCheck) {
+      updatePerimeterBadges();
+      return;
+    }
     const checks = siteBtns.map(siteCheck).filter(Boolean);
     const n = checks.length;
     const allChecked = checks.every(c => c.checked);
@@ -393,6 +430,7 @@
       setActive(parcBtn, parcCheck.checked);
       if (!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
     }
+    updatePerimeterBadges();
   }
   function checkWholeSite(siteBtn, on) {
     if (!siteBtn) return;
@@ -637,8 +675,14 @@
         return !!scb && scb.checked === true && scb.indeterminate === false;
       }).length;
       if (countEl) {
-        if (nSelLeaves === 0 && nFullSites === 0) countEl.textContent = 'Aucun élément sélectionné';
-        else countEl.textContent = `${nSelLeaves} bâtiment(s) sélectionné(s), ${nFullSites} site(s) entiers,`;
+        if (nSelLeaves === 0 && nFullSites === 0) {
+          countEl.textContent = 'Aucun élément sélectionné';
+        } else {
+          const { sre } = computeSelectedPerimeter();
+          const safe = Number.isFinite(sre) ? Math.round(sre) : 0;
+          const formattedSre = NF.format(safe);
+          countEl.textContent = `${nSelLeaves} bâtiment(s) sélectionné(s), ${nFullSites} site(s) entiers — ${formattedSre} m² SRE`;
+        }
       }
     };
 

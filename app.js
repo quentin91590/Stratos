@@ -189,6 +189,7 @@
     if (!toggles.length || !panel) return;
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+    const layoutQuery = window.matchMedia('(max-width: 960px)');
     let isOpen = false;
     let restoreFocusAfterClose = false;
     let activeToggle = null;
@@ -204,6 +205,32 @@
         el.offsetParent !== null
       )
     );
+
+    const positionCatalog = (trigger) => {
+      if (!trigger) return;
+      if (layoutQuery.matches) {
+        zone.style.removeProperty('--catalog-top');
+        zone.style.removeProperty('--catalog-right');
+        return;
+      }
+
+      const zoneRect = zone.getBoundingClientRect();
+      const buttonRect = trigger.getBoundingClientRect();
+      const rawWidth = panel.offsetWidth || panel.getBoundingClientRect().width || 0;
+      const panelWidth = Math.max(rawWidth, 0);
+      const top = Math.max(buttonRect.top - zoneRect.top, 0);
+      const availableRight = zoneRect.right - buttonRect.right;
+      const maxRight = Math.max(zoneRect.width - panelWidth, 0);
+      const clampedRight = Math.min(Math.max(availableRight, 0), maxRight);
+
+      zone.style.setProperty('--catalog-top', `${top}px`);
+      zone.style.setProperty('--catalog-right', `${clampedRight}px`);
+    };
+
+    const clearCatalogPosition = () => {
+      zone.style.removeProperty('--catalog-top');
+      zone.style.removeProperty('--catalog-right');
+    };
 
     const focusFirstElement = () => {
       const focusables = getFocusableElements();
@@ -252,6 +279,7 @@
       panel.removeEventListener('transitionend', handleTransitionEnd);
       if (isOpen) return;
       panel.hidden = true;
+      clearCatalogPosition();
       if (restoreFocusAfterClose && focusTargetOnClose) {
         focusTargetOnClose.focus({ preventScroll: true });
       }
@@ -277,6 +305,7 @@
       panel.setAttribute('aria-hidden', 'false');
       setToggleState(activeToggle, true);
       panel.scrollTop = 0;
+      positionCatalog(trigger);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
       zone.classList.add('catalog-open');
@@ -300,6 +329,7 @@
       if (prefersReducedMotion()) {
         zone.classList.remove('catalog-open');
         panel.hidden = true;
+        clearCatalogPosition();
         if (focusTargetOnClose) {
           focusTargetOnClose.focus({ preventScroll: true });
         }
@@ -315,6 +345,23 @@
         activeToggle = null;
       }
     };
+
+    const handleResize = () => {
+      if (!isOpen || !activeToggle) return;
+      requestAnimationFrame(() => positionCatalog(activeToggle));
+    };
+
+    const handleLayoutChange = () => {
+      if (!isOpen || !activeToggle) return;
+      positionCatalog(activeToggle);
+    };
+
+    window.addEventListener('resize', handleResize);
+    if (typeof layoutQuery.addEventListener === 'function') {
+      layoutQuery.addEventListener('change', handleLayoutChange);
+    } else if (typeof layoutQuery.addListener === 'function') {
+      layoutQuery.addListener(handleLayoutChange);
+    }
 
     toggles.forEach(btn => {
       btn.addEventListener('click', (event) => {

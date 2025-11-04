@@ -136,9 +136,9 @@
             Site Alpha <span class="badge">3 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
-            <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
-            <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
+            <li><button class="tree-leaf" data-building="bat-a" data-sre="1640"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
+            <li><button class="tree-leaf" data-building="bat-b" data-sre="1420"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
+            <li><button class="tree-leaf" data-building="bat-c" data-sre="1580"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
           </ul>
         </div>
 
@@ -149,8 +149,8 @@
             Site Beta <span class="badge">2 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
-            <li><button class="tree-leaf"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
+            <li><button class="tree-leaf" data-building="bat-d" data-sre="2020"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
+            <li><button class="tree-leaf" data-building="bat-e" data-sre="1980"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
           </ul>
         </div>
       </nav>
@@ -297,7 +297,7 @@
 
             <!-- Général -->
             <button role="tab" aria-selected="true" aria-expanded="true" id="tab-energie" aria-controls="panel-energie"
-              class="kpi" data-sites="33" data-sre="47158" data-status="warn">
+              class="kpi" data-sites="5" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -324,7 +324,7 @@
 
             <!-- Chaleur -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-chaleur"
-              aria-controls="panel-chaleur" class="kpi" data-sites="27" data-sre="39210" data-status="warn">
+              aria-controls="panel-chaleur" class="kpi" data-sites="5" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -350,7 +350,7 @@
 
             <!-- Froid -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-froid" aria-controls="panel-froid"
-              class="kpi" data-sites="19" data-sre="25840" data-status="good">
+              class="kpi" data-sites="5" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -376,7 +376,7 @@
 
             <!-- Électricité -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-elec" aria-controls="panel-elec"
-              class="kpi" data-sites="33" data-sre="47158" data-status="good">
+              class="kpi" data-sites="5" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -400,7 +400,7 @@
 
             <!-- CO₂ -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-co2" aria-controls="panel-co2"
-              class="kpi" data-sites="33" data-sre="47158" data-status="warn">
+              class="kpi" data-sites="5" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -426,7 +426,7 @@
 
             <!-- Eau -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-eau" aria-controls="panel-eau"
-              class="kpi" data-sites="28" data-sre="32000" data-status="good">
+              class="kpi" data-sites="5" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -470,7 +470,7 @@
                     </svg>
                   </span>
                   <span class="pill-label">Nb immeubles</span>
-                  <span class="pill-value" id="sum-sites-val">33</span>
+                  <span class="pill-value" id="sum-sites-val">5</span>
                 </div>
                 <div class="pill">
                   <span class="pill-ico" aria-hidden="true">
@@ -483,7 +483,7 @@
                     </svg>
                   </span>
                   <span class="pill-label">SRE totale</span>
-                  <span class="pill-value" id="sum-sre-val">47 158</span><span class="pill-unit">m²</span>
+                  <span class="pill-value" id="sum-sre-val">8 640</span><span class="pill-unit">m²</span>
                 </div>
               </div>
 

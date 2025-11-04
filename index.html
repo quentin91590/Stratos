@@ -497,6 +497,15 @@
                 <div class="energy-chart-zone">
                   <div class="energy-chart-wrapper">
                     <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment">
+                      <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                          <path d="M12 20v-4" />
+                          <path d="M6 4h9a3 3 0 0 1 3 3v9" />
+                          <path d="M6 8h10" />
+                          <path d="M6 12h6" />
+                          <path d="M6 16h2" />
+                        </svg>
+                      </button>
                       <div class="chart-title">
                         <span>Tendance par année</span>
                         <span class="chart-unit">kWh/m²</span>
@@ -530,15 +539,6 @@
                       </div>
                       <figcaption>Réduction progressive de l'intensité énergétique depuis 2021.</figcaption>
                     </figure>
-                    <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog">
-                      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                        <path d="M12 20v-4" />
-                        <path d="M6 4h9a3 3 0 0 1 3 3v9" />
-                        <path d="M6 8h10" />
-                        <path d="M6 12h6" />
-                        <path d="M6 16h2" />
-                      </svg>
-                    </button>
                   </div>
                   <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="false" hidden aria-hidden="true" tabindex="-1">
                     <header class="catalog-header">

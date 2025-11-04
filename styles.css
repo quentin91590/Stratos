@@ -164,6 +164,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   --catalog-slide-y: -18px;
   --catalog-origin-x: calc(100% - 24px);
   --catalog-origin-y: 26px;
+  --catalog-toggle-clearance: 38px;
 }
 .energy-chart-wrapper{position:relative; flex:1 1 420px; min-width:0}
 .chart-edit-toggle{
@@ -180,7 +181,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   align-items:center;
   justify-content:center;
   cursor:pointer;
-  z-index:2;
+  z-index:12;
   box-shadow:0 12px 28px rgba(15,23,42,0.12);
   transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, color .18s ease;
 }
@@ -211,7 +212,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   display:flex;
   flex-direction:column;
   gap:16px;
-  padding:18px 20px;
+  padding:calc(18px + var(--catalog-toggle-clearance)) 20px 20px;
   border-radius:18px;
   border:1px solid var(--border);
   background:#fff;
@@ -302,11 +303,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
     --catalog-open-translate-y: 0px;
     --catalog-origin-x: 50%;
     --catalog-origin-y: 24px;
+    --catalog-toggle-clearance: 34px;
   }
 }
 @media (max-width: 640px){
   .chart-title{padding-right:56px}
   .chart-edit-toggle{top:12px; right:12px; width:38px; height:38px}
+  .energy-chart-zone{--catalog-toggle-clearance: 28px;}
   .catalog-header{align-items:flex-start}
 }
 

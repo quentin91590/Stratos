@@ -191,7 +191,10 @@
     const closeBtn = panel.querySelector('.catalog-close');
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
-    const syncPanelOrigin = () => {
+    let isAnimating = false;
+    let pendingLiveSync = false;
+
+    const syncPanelOrigin = ({ forceMeasure = false, useLiveBox = false } = {}) => {
       if (panel.hidden) return;
 
       const computed = getComputedStyle(zone);
@@ -200,20 +203,34 @@
       const scaleStr = (computed.getPropertyValue('--catalog-open-scale') || '1').trim();
       const openScale = Number.parseFloat(scaleStr) || 1;
 
-      const prevTransition = panel.style.transition;
-      const prevTransform = panel.style.transform;
+      let panelRect;
+      const measureOpen = () => {
+        const prevTransition = panel.style.transition;
+        const prevTransform = panel.style.transform;
+        panel.style.transition = 'none';
+        panel.style.transform = `translate3d(${translateX}, ${translateY}, 0) scale(${openScale})`;
+        panelRect = panel.getBoundingClientRect();
+        panel.style.transition = prevTransition;
+        panel.style.transform = prevTransform;
+      };
 
-      panel.style.transition = 'none';
-      panel.style.transform = `translate3d(${translateX}, ${translateY}, 0) scale(${openScale})`;
+      if (forceMeasure) {
+        measureOpen();
+      } else if (useLiveBox && zone.classList.contains('catalog-open')) {
+        if (isAnimating) {
+          pendingLiveSync = true;
+          return;
+        }
+        panelRect = panel.getBoundingClientRect();
+      } else if (!zone.classList.contains('catalog-open')) {
+        measureOpen();
+      } else {
+        panelRect = panel.getBoundingClientRect();
+      }
 
-      const panelRect = panel.getBoundingClientRect();
+      if (!panelRect || !panelRect.width || !panelRect.height) return;
+
       const toggleRect = toggle.getBoundingClientRect();
-
-      panel.style.transition = prevTransition;
-      panel.style.transform = prevTransform;
-
-      if (!panelRect.width || !panelRect.height) return;
-
       const toggleCenterX = toggleRect.left + toggleRect.width / 2;
       const toggleCenterY = toggleRect.top + toggleRect.height / 2;
       const panelCenterX = panelRect.left + panelRect.width / 2;
@@ -241,6 +258,26 @@
       zone.style.setProperty('--catalog-slide-y', `${slideY.toFixed(2)}px`);
     };
 
+    const queueLiveSync = () => {
+      if (panel.hidden) return;
+      if (isAnimating) {
+        pendingLiveSync = true;
+        return;
+      }
+      pendingLiveSync = false;
+      syncPanelOrigin({ useLiveBox: true });
+    };
+
+    const handleTransformEnd = (event) => {
+      if (event.target !== panel || event.propertyName !== 'transform') return;
+      panel.removeEventListener('transitionend', handleTransformEnd);
+      isAnimating = false;
+      if (!panel.hidden && pendingLiveSync) {
+        pendingLiveSync = false;
+        queueLiveSync();
+      }
+    };
+
     const focusFirstElement = () => {
       const target = panel.querySelector(focusableSelector) || panel;
       target.focus({ preventScroll: true });
@@ -262,14 +299,20 @@
       if (zone.classList.contains('catalog-open')) return;
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
-      syncPanelOrigin();
+      syncPanelOrigin({ forceMeasure: true });
       // Force reflow to allow transition when removing `hidden`
       void panel.offsetWidth;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        isAnimating = true;
+        pendingLiveSync = false;
+        panel.addEventListener('transitionend', handleTransformEnd);
+      }
       zone.classList.add('catalog-open');
       toggle.setAttribute('aria-expanded', 'true');
       focusFirstElement();
       requestAnimationFrame(() => {
-        if (!panel.hidden) syncPanelOrigin();
+        if (!panel.hidden) queueLiveSync();
       });
       document.addEventListener('click', onDocClick, true);
       document.addEventListener('keydown', onKeydown);
@@ -277,6 +320,12 @@
 
     const closePanel = ({ returnFocus = true } = {}) => {
       if (!zone.classList.contains('catalog-open')) return;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        isAnimating = true;
+        pendingLiveSync = false;
+        panel.addEventListener('transitionend', handleTransformEnd);
+      }
       zone.classList.remove('catalog-open');
       panel.setAttribute('aria-hidden', 'true');
       toggle.setAttribute('aria-expanded', 'false');
@@ -311,7 +360,7 @@
 
     window.addEventListener('resize', () => {
       if (panel.hidden) return;
-      syncPanelOrigin();
+      queueLiveSync();
     });
   }
 

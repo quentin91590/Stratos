@@ -122,6 +122,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   box-shadow:0 6px 16px rgba(15,23,42,0.06);
   position:relative;
 }
+.energy-trend-chart .chart-body{display:flex; flex-direction:column; gap:18px}
+.chart-variant{display:flex; flex-direction:column; gap:16px}
 .chart-title{display:flex; flex-direction:column; align-items:flex-start; gap:6px; font-weight:700; color:#1f2937; padding-right:64px}
 .chart-unit{font-size:.9rem; color:#475569; font-weight:600}
 .chart-bars{
@@ -148,6 +150,24 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .chart-bar.is-selected .bar-value{color:#f97316;}
 .chart-bar .bar-year{font-size:.85rem; color:#475569; letter-spacing:.02em}
+.chart-line{position:relative; width:100%;}
+.chart-line svg{width:100%; height:200px; display:block}
+.chart-line .line-area{fill:url(#lineArea);}
+.chart-line .line-path{fill:none; stroke:#38bdf8; stroke-width:4; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 6px 14px rgba(56,189,248,0.35))}
+.chart-line .line-target{stroke:#f97316; stroke-width:3; stroke-dasharray:10 8; opacity:.8}
+.line-legend{list-style:none; margin:12px 0 0; padding:0; display:flex; gap:18px; font-size:.85rem; color:#475569; font-weight:600}
+.line-legend .dot{display:inline-flex; width:10px; height:10px; border-radius:50%; margin-right:6px; box-shadow:0 0 0 1px rgba(15,23,42,0.12)}
+.dot--line{background:#38bdf8}
+.dot--target{background:#f97316}
+.chart-breakdown{display:flex; flex-direction:column; gap:12px; margin-top:4px}
+.breakdown-row{display:grid; grid-template-columns:auto 1fr auto; gap:12px; align-items:center; font-size:.9rem; color:#334155; font-variant-numeric:tabular-nums}
+.breakdown-label{font-weight:600}
+.breakdown-bar{background:#e2e8f0; border-radius:999px; height:10px; position:relative; overflow:hidden}
+.breakdown-bar span{position:absolute; inset:1px; border-radius:999px; background:linear-gradient(90deg, #6366f1, #a855f7); width:calc(var(--value,0) * 1%)}
+.breakdown-row:nth-child(2) .breakdown-bar span{background:linear-gradient(90deg, #38bdf8, #0ea5e9)}
+.breakdown-row:nth-child(3) .breakdown-bar span{background:linear-gradient(90deg, #34d399, #059669)}
+.breakdown-row:nth-child(4) .breakdown-bar span{background:linear-gradient(90deg, #f97316, #fb923c)}
+.breakdown-value{font-weight:700; color:#0f172a}
 .energy-trend-chart figcaption{margin-top:12px; font-size:.85rem; color:#475569; text-align:center}
 
 @media (max-width: 1024px){
@@ -284,17 +304,45 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   border:1px solid #e0e7ff;
   background:linear-gradient(135deg, rgba(79,70,229,0.08), rgba(79,70,229,0));
   display:flex;
-  flex-direction:column;
-  align-items:flex-start;
-  gap:6px;
+  align-items:center;
+  gap:14px;
   cursor:pointer;
-  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+  transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
   color:#1e293b;
 }
 .catalog-card:hover{transform:translateY(-2px); box-shadow:0 16px 28px rgba(99,102,241,0.22); border-color:#c4b5fd}
 .catalog-card:focus-visible{outline:none; box-shadow:0 0 0 4px var(--ring)}
-.card-label{font-weight:700; font-size:.95rem}
-.card-meta{font-size:.78rem; color:#64748b}
+.catalog-card.is-active,
+.catalog-card[aria-pressed="true"]{
+  border-color:#a5b4fc;
+  background:linear-gradient(135deg, rgba(79,70,229,0.12), rgba(79,70,229,0));
+  box-shadow:0 12px 22px rgba(79,70,229,0.18);
+}
+.catalog-card__preview{
+  flex:0 0 88px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  height:64px;
+  border-radius:12px;
+  background:rgba(99,102,241,0.08);
+  box-shadow:inset 0 0 0 1px rgba(99,102,241,0.15);
+}
+.catalog-card__text{display:flex; flex-direction:column; align-items:flex-start; gap:4px; text-align:left}
+.catalog-card__title{font-weight:700; font-size:.95rem; letter-spacing:-0.01em}
+.catalog-card__meta{font-size:.78rem; color:#64748b}
+.preview-bars{display:flex; align-items:flex-end; gap:6px; width:64px; height:40px}
+.preview-bars span{flex:1; display:block; height:calc(var(--h, 40) * 1px); border-radius:6px 6px 4px 4px; background:linear-gradient(180deg, #6366f1, #8b5cf6); opacity:.7; transition:opacity .15s ease}
+.preview-bars span[data-active]{background:linear-gradient(180deg, #f97316, #fb923c); opacity:1}
+.preview-line{display:block; width:70px; height:42px}
+.preview-line svg{width:100%; height:100%}
+.preview-line__area{fill:url(#previewLine)}
+.preview-line__stroke{fill:none; stroke:#38bdf8; stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
+.preview-line__target{stroke:#f97316; stroke-width:2; stroke-dasharray:4 4; opacity:.8}
+.preview-breakdown{display:flex; flex-direction:column; gap:6px; width:72px}
+.preview-breakdown span{display:block; height:8px; border-radius:999px; background:linear-gradient(90deg, #fb7185, #f472b6); opacity:.75}
+.preview-breakdown span:nth-child(2){width:calc(var(--w, 46) * 1%); background:linear-gradient(90deg, #38bdf8, #0ea5e9)}
+.preview-breakdown span:nth-child(3){width:calc(var(--w, 34) * 1%); background:linear-gradient(90deg, #34d399, #059669)}
 .catalog-footer{margin-top:auto}
 .catalog-action{
   width:100%;

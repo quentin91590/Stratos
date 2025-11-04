@@ -179,6 +179,191 @@
     window.addEventListener('scroll', handleScroll, { passive: true });
   }
 
+  /* ========== Catalogue de graphiques (pinceau) ========== */
+  function setupChartCatalog() {
+    const zone = document.querySelector('.energy-chart-zone');
+    if (!zone) return;
+
+    const toggle = zone.querySelector('.chart-edit-toggle');
+    const panel = zone.querySelector('#chart-catalog');
+    if (!toggle || !panel) return;
+
+    const closeBtn = panel.querySelector('.catalog-close');
+    const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
+
+    let isAnimating = false;
+    let pendingLiveSync = false;
+
+    const syncPanelOrigin = ({ forceMeasure = false, useLiveBox = false } = {}) => {
+      if (panel.hidden) return;
+
+      const computed = getComputedStyle(zone);
+      const translateX = (computed.getPropertyValue('--catalog-open-translate-x') || '0px').trim() || '0px';
+      const translateY = (computed.getPropertyValue('--catalog-open-translate-y') || '0px').trim() || '0px';
+      const scaleStr = (computed.getPropertyValue('--catalog-open-scale') || '1').trim();
+      const openScale = Number.parseFloat(scaleStr) || 1;
+
+      let panelRect;
+      const measureOpen = () => {
+        const prevTransition = panel.style.transition;
+        const prevTransform = panel.style.transform;
+        panel.style.transition = 'none';
+        panel.style.transform = `translate3d(${translateX}, ${translateY}, 0) scale(${openScale})`;
+        panelRect = panel.getBoundingClientRect();
+        panel.style.transition = prevTransition;
+        panel.style.transform = prevTransform;
+      };
+
+      if (forceMeasure) {
+        measureOpen();
+      } else if (useLiveBox && zone.classList.contains('catalog-open')) {
+        if (isAnimating) {
+          pendingLiveSync = true;
+          return;
+        }
+        panelRect = panel.getBoundingClientRect();
+      } else if (!zone.classList.contains('catalog-open')) {
+        measureOpen();
+      } else {
+        panelRect = panel.getBoundingClientRect();
+      }
+
+      if (!panelRect || !panelRect.width || !panelRect.height) return;
+
+      const toggleRect = toggle.getBoundingClientRect();
+      const toggleCenterX = toggleRect.left + toggleRect.width / 2;
+      const toggleCenterY = toggleRect.top + toggleRect.height / 2;
+      const panelCenterX = panelRect.left + panelRect.width / 2;
+      const panelCenterY = panelRect.top + panelRect.height / 2;
+
+      const originX = toggleCenterX - panelRect.left;
+      const originY = toggleCenterY - panelRect.top;
+      zone.style.setProperty('--catalog-origin-x', `${originX}px`);
+      zone.style.setProperty('--catalog-origin-y', `${originY}px`);
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        zone.style.setProperty('--catalog-slide-x', '0px');
+        zone.style.setProperty('--catalog-slide-y', '0px');
+        return;
+      }
+
+      const vecX = panelCenterX - toggleCenterX;
+      const vecY = panelCenterY - toggleCenterY;
+      const vecLen = Math.hypot(vecX, vecY) || 1;
+      const slideDistance = Math.min(48, Math.max(14, vecLen * 0.4));
+      const slideX = (-vecX / vecLen) * slideDistance;
+      const slideY = (-vecY / vecLen) * slideDistance;
+      zone.style.setProperty('--catalog-slide-x', `${slideX.toFixed(2)}px`);
+      zone.style.setProperty('--catalog-slide-y', `${slideY.toFixed(2)}px`);
+    };
+
+    const queueLiveSync = () => {
+      if (panel.hidden) return;
+      if (isAnimating) {
+        pendingLiveSync = true;
+        return;
+      }
+      pendingLiveSync = false;
+      syncPanelOrigin({ useLiveBox: true });
+    };
+
+    const handleTransformEnd = (event) => {
+      if (event.target !== panel || event.propertyName !== 'transform') return;
+      panel.removeEventListener('transitionend', handleTransformEnd);
+      isAnimating = false;
+      if (!panel.hidden && pendingLiveSync) {
+        pendingLiveSync = false;
+        queueLiveSync();
+      }
+    };
+
+    const focusFirstElement = () => {
+      const target = panel.querySelector(focusableSelector) || panel;
+      target.focus({ preventScroll: true });
+    };
+
+    const onDocClick = (event) => {
+      if (zone.contains(event.target)) return;
+      closePanel({ returnFocus: false });
+    };
+
+    const onKeydown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closePanel();
+      }
+    };
+
+    const openPanel = () => {
+      if (zone.classList.contains('catalog-open')) return;
+      panel.hidden = false;
+      panel.setAttribute('aria-hidden', 'false');
+      syncPanelOrigin({ forceMeasure: true });
+      // Force reflow to allow transition when removing `hidden`
+      void panel.offsetWidth;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        isAnimating = true;
+        pendingLiveSync = false;
+        panel.addEventListener('transitionend', handleTransformEnd);
+      }
+      zone.classList.add('catalog-open');
+      toggle.setAttribute('aria-expanded', 'true');
+      focusFirstElement();
+      requestAnimationFrame(() => {
+        if (!panel.hidden) queueLiveSync();
+      });
+      document.addEventListener('click', onDocClick, true);
+      document.addEventListener('keydown', onKeydown);
+    };
+
+    const closePanel = ({ returnFocus = true } = {}) => {
+      if (!zone.classList.contains('catalog-open')) return;
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReducedMotion) {
+        isAnimating = true;
+        pendingLiveSync = false;
+        panel.addEventListener('transitionend', handleTransformEnd);
+      }
+      zone.classList.remove('catalog-open');
+      panel.setAttribute('aria-hidden', 'true');
+      toggle.setAttribute('aria-expanded', 'false');
+      document.removeEventListener('click', onDocClick, true);
+      document.removeEventListener('keydown', onKeydown);
+
+      const hidePanel = () => {
+        panel.hidden = true;
+      };
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        hidePanel();
+      } else {
+        const onTransitionEnd = (event) => {
+          if (event.propertyName === 'opacity') {
+            panel.removeEventListener('transitionend', onTransitionEnd);
+            hidePanel();
+          }
+        };
+        panel.addEventListener('transitionend', onTransitionEnd);
+      }
+      if (returnFocus) toggle.focus({ preventScroll: true });
+    };
+
+    if (closeBtn) closeBtn.addEventListener('click', () => closePanel());
+
+    toggle.addEventListener('click', (event) => {
+      event.stopPropagation();
+      if (zone.classList.contains('catalog-open')) closePanel();
+      else openPanel();
+    });
+
+    window.addEventListener('resize', () => {
+      if (panel.hidden) return;
+      queueLiveSync();
+    });
+  }
+
   /* ========== Tabset générique (Énergie + sections alt) ========== */
   function updateTrendPadding(scope = document) {
     scope.querySelectorAll('.kpi-value-wrap').forEach(w => {
@@ -878,6 +1063,7 @@
   updateParcFromSites();
 
   wireYearPicker();
+  setupChartCatalog();
   setupEnergyFilters();
   setupTreeSearch();
 

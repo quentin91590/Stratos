@@ -191,6 +191,56 @@
     const closeBtn = panel.querySelector('.catalog-close');
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
 
+    const syncPanelOrigin = () => {
+      if (panel.hidden) return;
+
+      const computed = getComputedStyle(zone);
+      const translateX = (computed.getPropertyValue('--catalog-open-translate-x') || '0px').trim() || '0px';
+      const translateY = (computed.getPropertyValue('--catalog-open-translate-y') || '0px').trim() || '0px';
+      const scaleStr = (computed.getPropertyValue('--catalog-open-scale') || '1').trim();
+      const openScale = Number.parseFloat(scaleStr) || 1;
+
+      const prevTransition = panel.style.transition;
+      const prevTransform = panel.style.transform;
+
+      panel.style.transition = 'none';
+      panel.style.transform = `translate3d(${translateX}, ${translateY}, 0) scale(${openScale})`;
+
+      const panelRect = panel.getBoundingClientRect();
+      const toggleRect = toggle.getBoundingClientRect();
+
+      panel.style.transition = prevTransition;
+      panel.style.transform = prevTransform;
+
+      if (!panelRect.width || !panelRect.height) return;
+
+      const toggleCenterX = toggleRect.left + toggleRect.width / 2;
+      const toggleCenterY = toggleRect.top + toggleRect.height / 2;
+      const panelCenterX = panelRect.left + panelRect.width / 2;
+      const panelCenterY = panelRect.top + panelRect.height / 2;
+
+      const originX = toggleCenterX - panelRect.left;
+      const originY = toggleCenterY - panelRect.top;
+      zone.style.setProperty('--catalog-origin-x', `${originX}px`);
+      zone.style.setProperty('--catalog-origin-y', `${originY}px`);
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (prefersReducedMotion) {
+        zone.style.setProperty('--catalog-slide-x', '0px');
+        zone.style.setProperty('--catalog-slide-y', '0px');
+        return;
+      }
+
+      const vecX = panelCenterX - toggleCenterX;
+      const vecY = panelCenterY - toggleCenterY;
+      const vecLen = Math.hypot(vecX, vecY) || 1;
+      const slideDistance = Math.min(48, Math.max(14, vecLen * 0.4));
+      const slideX = (-vecX / vecLen) * slideDistance;
+      const slideY = (-vecY / vecLen) * slideDistance;
+      zone.style.setProperty('--catalog-slide-x', `${slideX.toFixed(2)}px`);
+      zone.style.setProperty('--catalog-slide-y', `${slideY.toFixed(2)}px`);
+    };
+
     const focusFirstElement = () => {
       const target = panel.querySelector(focusableSelector) || panel;
       target.focus({ preventScroll: true });
@@ -212,11 +262,15 @@
       if (zone.classList.contains('catalog-open')) return;
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
+      syncPanelOrigin();
       // Force reflow to allow transition when removing `hidden`
       void panel.offsetWidth;
       zone.classList.add('catalog-open');
       toggle.setAttribute('aria-expanded', 'true');
       focusFirstElement();
+      requestAnimationFrame(() => {
+        if (!panel.hidden) syncPanelOrigin();
+      });
       document.addEventListener('click', onDocClick, true);
       document.addEventListener('keydown', onKeydown);
     };
@@ -253,6 +307,11 @@
       event.stopPropagation();
       if (zone.classList.contains('catalog-open')) closePanel();
       else openPanel();
+    });
+
+    window.addEventListener('resize', () => {
+      if (panel.hidden) return;
+      syncPanelOrigin();
     });
   }
 

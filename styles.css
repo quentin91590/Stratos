@@ -150,7 +150,21 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .chart-bar .bar-year{font-size:.85rem; color:#475569; letter-spacing:.02em}
 .energy-trend-chart figcaption{margin-top:12px; font-size:.85rem; color:#475569; text-align:center}
 
-.energy-chart-zone{display:flex; align-items:flex-start; gap:24px; flex-wrap:wrap; position:relative}
+.energy-chart-zone{
+  display:flex;
+  align-items:flex-start;
+  gap:24px;
+  flex-wrap:wrap;
+  position:relative;
+  --catalog-open-translate-x: 0px;
+  --catalog-open-translate-y: 0px;
+  --catalog-open-scale: 1;
+  --catalog-closed-scale: .38;
+  --catalog-slide-x: 18px;
+  --catalog-slide-y: -18px;
+  --catalog-origin-x: calc(100% - 24px);
+  --catalog-origin-y: 26px;
+}
 .energy-chart-wrapper{position:relative; flex:1 1 420px; min-width:0}
 .chart-edit-toggle{
   position:absolute;
@@ -172,7 +186,23 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .chart-edit-toggle:hover{transform:translateY(-2px); box-shadow:0 16px 32px rgba(59,130,246,0.25); border-color:#c7d2fe; color:#1d4ed8}
 .chart-edit-toggle:focus-visible{outline:none; box-shadow:0 0 0 4px var(--ring)}
-.energy-chart-zone.catalog-open .chart-edit-toggle{color:#1d4ed8; border-color:#93c5fd}
+.chart-edit-toggle::after{
+  content:"";
+  position:absolute;
+  inset:-6px;
+  border-radius:inherit;
+  background:radial-gradient(circle at 50% 50%, rgba(59,130,246,0.24), rgba(59,130,246,0));
+  opacity:0;
+  transition:opacity .24s ease;
+  pointer-events:none;
+}
+.energy-chart-zone.catalog-open .chart-edit-toggle{
+  color:#1d4ed8;
+  border-color:#93c5fd;
+  transform:translateY(-2px) scale(.94);
+  box-shadow:0 20px 36px rgba(59,130,246,0.28);
+}
+.energy-chart-zone.catalog-open .chart-edit-toggle::after{opacity:1}
 
 .chart-catalog{
   position:absolute;
@@ -187,16 +217,22 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   background:#fff;
   box-shadow:0 20px 40px rgba(15,23,42,0.16);
   opacity:0;
-  transform:translateX(18px);
-  transition:opacity .24s ease, transform .24s ease;
+  transform-origin: var(--catalog-origin-x) var(--catalog-origin-y);
+  transform:translate3d(calc(var(--catalog-open-translate-x) + var(--catalog-slide-x)), calc(var(--catalog-open-translate-y) + var(--catalog-slide-y)), 0) scale(var(--catalog-closed-scale));
+  transition:opacity .28s ease, transform .48s cubic-bezier(0.16, 1, 0.3, 1);
   pointer-events:none;
+  will-change:transform, opacity;
   min-height:280px;
   width:min(320px, calc(100% - 32px));
   max-width:340px;
   z-index:5;
 }
 .chart-catalog[hidden]{display:none !important}
-.energy-chart-zone.catalog-open .chart-catalog{opacity:1; transform:translateX(0); pointer-events:auto}
+.energy-chart-zone.catalog-open .chart-catalog{
+  opacity:1;
+  transform:translate3d(var(--catalog-open-translate-x), var(--catalog-open-translate-y), 0) scale(var(--catalog-open-scale));
+  pointer-events:auto;
+}
 
 .catalog-header{display:flex; align-items:center; justify-content:space-between; gap:12px}
 .catalog-title{display:flex; align-items:center; gap:10px; font-weight:700; color:#0f172a}
@@ -260,14 +296,25 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
     right:auto;
     top:12px;
     width:min(480px, calc(100% - 32px));
-    transform:translate(-50%, -12px);
   }
-  .energy-chart-zone.catalog-open .chart-catalog{transform:translate(-50%, 0)}
+  .energy-chart-zone{
+    --catalog-open-translate-x: -50%;
+    --catalog-open-translate-y: 0px;
+    --catalog-origin-x: 50%;
+    --catalog-origin-y: 24px;
+  }
 }
 @media (max-width: 640px){
   .chart-title{padding-right:56px}
   .chart-edit-toggle{top:12px; right:12px; width:38px; height:38px}
   .catalog-header{align-items:flex-start}
+}
+
+@media (prefers-reduced-motion: reduce){
+  .energy-chart-zone{--catalog-closed-scale: 1; --catalog-slide-x: 0px; --catalog-slide-y: 0px;}
+  .chart-catalog{transition:opacity .2s ease; transform:none;}
+  .energy-chart-zone.catalog-open .chart-catalog{transform:none;}
+  .energy-chart-zone.catalog-open .chart-edit-toggle{transform:none;}
 }
 
 

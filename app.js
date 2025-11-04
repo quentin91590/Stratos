@@ -184,13 +184,15 @@
     const zone = document.querySelector('.energy-chart-zone');
     if (!zone) return;
 
-    const toggle = zone.querySelector('.chart-edit-toggle');
+    const toggles = Array.from(zone.querySelectorAll('.chart-edit-toggle'));
     const panel = zone.querySelector('#chart-catalog');
-    if (!toggle || !panel) return;
+    if (!toggles.length || !panel) return;
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     let isOpen = false;
     let restoreFocusAfterClose = false;
+    let activeToggle = null;
+    let focusTargetOnClose = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -234,7 +236,7 @@
     };
 
     const onDocClick = (event) => {
-      if (panel.contains(event.target) || toggle.contains(event.target)) return;
+      if (panel.contains(event.target) || toggles.some(btn => btn.contains(event.target))) return;
       closePanel({ returnFocus: false });
     };
 
@@ -250,20 +252,30 @@
       panel.removeEventListener('transitionend', handleTransitionEnd);
       if (isOpen) return;
       panel.hidden = true;
-      if (restoreFocusAfterClose) {
-        toggle.focus({ preventScroll: true });
-        restoreFocusAfterClose = false;
+      if (restoreFocusAfterClose && focusTargetOnClose) {
+        focusTargetOnClose.focus({ preventScroll: true });
       }
+      focusTargetOnClose = null;
+      restoreFocusAfterClose = false;
     };
 
-    const openPanel = () => {
-      if (isOpen) return;
+    const setToggleState = (btn, expanded) => {
+      if (!btn) return;
+      btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
+      btn.classList.toggle('is-in-catalog', expanded);
+    };
+
+    const openPanel = (trigger) => {
+      if (!trigger) return;
+      if (activeToggle && activeToggle !== trigger) {
+        setToggleState(activeToggle, false);
+      }
+      activeToggle = trigger;
       isOpen = true;
       restoreFocusAfterClose = false;
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
-      toggle.setAttribute('aria-expanded', 'true');
-      toggle.classList.add('is-in-catalog');
+      setToggleState(activeToggle, true);
       panel.scrollTop = 0;
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
@@ -278,18 +290,20 @@
       if (!isOpen) return;
       isOpen = false;
       panel.setAttribute('aria-hidden', 'true');
-      toggle.setAttribute('aria-expanded', 'false');
-      toggle.classList.remove('is-in-catalog');
+      focusTargetOnClose = returnFocus ? activeToggle : null;
+      setToggleState(activeToggle, false);
       panel.removeEventListener('keydown', trapFocus);
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
+      activeToggle = returnFocus ? activeToggle : null;
 
       if (prefersReducedMotion()) {
         zone.classList.remove('catalog-open');
         panel.hidden = true;
-        if (returnFocus) {
-          toggle.focus({ preventScroll: true });
+        if (focusTargetOnClose) {
+          focusTargetOnClose.focus({ preventScroll: true });
         }
+        focusTargetOnClose = null;
         restoreFocusAfterClose = false;
         return;
       }
@@ -297,20 +311,25 @@
       restoreFocusAfterClose = returnFocus;
       panel.addEventListener('transitionend', handleTransitionEnd);
       zone.classList.remove('catalog-open');
+      if (!returnFocus) {
+        activeToggle = null;
+      }
     };
 
-    toggle.addEventListener('click', (event) => {
-      event.stopPropagation();
-      if (isOpen) closePanel();
-      else openPanel();
-    });
+    toggles.forEach(btn => {
+      btn.addEventListener('click', (event) => {
+        event.stopPropagation();
+        if (isOpen && activeToggle === btn) closePanel();
+        else openPanel(btn);
+      });
 
-    toggle.addEventListener('keydown', (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        if (isOpen) closePanel();
-        else openPanel();
-      }
+      btn.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          if (isOpen && activeToggle === btn) closePanel();
+          else openPanel(btn);
+        }
+      });
     });
   }
 

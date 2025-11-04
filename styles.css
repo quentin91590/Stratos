@@ -113,6 +113,43 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .meter{height:10px; background:#eef2f6; border-radius:8px; overflow:hidden; border:1px solid var(--border)}
 .meter > div{height:100%; width:0; background:var(--active-color, #94a3b8)}
 
+.energy-trend-chart{
+  margin-top:20px;
+  padding:18px 20px 16px;
+  border:1px solid var(--border);
+  border-radius:16px;
+  background:linear-gradient(180deg, rgba(99,102,241,0.08), rgba(99,102,241,0));
+  box-shadow:0 6px 16px rgba(15,23,42,0.06);
+}
+.chart-title{display:flex; align-items:baseline; justify-content:space-between; gap:12px; font-weight:700; color:#1f2937}
+.chart-unit{font-size:.9rem; color:#475569; font-weight:600}
+.chart-bars{
+  --bar-scale:0.7px;
+  display:flex;
+  align-items:flex-end;
+  gap:18px;
+  margin-top:16px;
+  padding:8px 0 0;
+  min-height:160px;
+}
+.chart-bar{flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; font-variant-numeric:tabular-nums; color:#0f172a}
+.chart-bar .bar-value{font-weight:700; font-size:1rem}
+.chart-bar .bar-fill{
+  width:100%;
+  height:calc(var(--value) * var(--bar-scale));
+  background:linear-gradient(180deg, #4f46e5, #6366f1);
+  border-radius:10px 10px 6px 6px;
+  box-shadow:0 6px 14px rgba(79,70,229,0.25);
+}
+.chart-bar.is-selected .bar-fill{
+  background:linear-gradient(180deg, #f97316, #fb923c);
+  box-shadow:0 6px 16px rgba(249,115,22,0.3);
+}
+.chart-bar.is-selected .bar-value{color:#f97316;}
+.chart-bar .bar-year{font-size:.85rem; color:#475569; letter-spacing:.02em}
+.energy-trend-chart figcaption{margin-top:12px; font-size:.85rem; color:#475569; text-align:center}
+
+
 .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
 
 /* Chevron hint */

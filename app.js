@@ -662,16 +662,66 @@
   hydrateTreeCheckboxMap();
 
   const parcBtn = $('.tree > .tree-node:not(.toggle)');
-  const parcCheck = treeCheckboxMap.get(parcBtn) || null;
   const siteBtns = $$('.tree-group > .tree-node.toggle');
-  const siteCheck = (siteBtn) => treeCheckboxMap.get(siteBtn) || null;
+  const resolveTreeCheckbox = (btn, fallback) => {
+    if (!btn) return null;
+    const cached = treeCheckboxMap.get(btn);
+    if (cached instanceof HTMLInputElement) return cached;
+    const resolved = typeof fallback === 'function' ? fallback() : null;
+    if (resolved instanceof HTMLInputElement) {
+      treeCheckboxMap.set(btn, resolved);
+      return resolved;
+    }
+    return null;
+  };
+
+  const findSiblingTreeCheck = (parent, exclude) => {
+    if (!parent) return null;
+    const children = Array.from(parent.children || []);
+    for (const child of children) {
+      if (child === exclude) continue;
+      if (child instanceof HTMLInputElement && child.classList.contains('tree-check')) {
+        return child;
+      }
+    }
+    return null;
+  };
+
+  const getParcCheck = () => resolveTreeCheckbox(parcBtn, () => {
+    if (!parcBtn) return null;
+    const inside = parcBtn.querySelector?.('.tree-check');
+    if (inside instanceof HTMLInputElement) return inside;
+    return findSiblingTreeCheck(parcBtn.parentElement, parcBtn);
+  });
+
+  const siteCheck = (siteBtn) => resolveTreeCheckbox(siteBtn, () => {
+    if (!siteBtn) return null;
+    const inside = siteBtn.querySelector?.('.tree-check');
+    if (inside instanceof HTMLInputElement) return inside;
+    return findSiblingTreeCheck(siteBtn.parentElement, siteBtn);
+  });
   const siteLeaves = (siteBtn) => {
     const parent = siteBtn?.parentElement;
     if (!parent) return [];
     const list = Array.from(parent.children).find(child => child.classList?.contains('tree-children'));
     return list ? $$('.tree-leaf', list) : [];
   };
-  const leafCheck = (leafBtn) => treeCheckboxMap.get(leafBtn) || null;
+  const leafCheck = (leafBtn) => resolveTreeCheckbox(leafBtn, () => {
+    if (!leafBtn) return null;
+    const inside = leafBtn.querySelector?.('.tree-check');
+    if (inside instanceof HTMLInputElement) return inside;
+    const li = leafBtn.closest('li');
+    return findSiblingTreeCheck(li, leafBtn);
+  });
+
+  function syncTreeSelectionState() {
+    $$('.tree-leaf').forEach(leafBtn => {
+      const cb = leafCheck(leafBtn);
+      setActive(leafBtn, !!cb?.checked);
+    });
+    siteBtns.forEach(siteBtn => updateSiteFromLeaves(siteBtn));
+    updateParcFromSites();
+  }
 
   function getLeafSre(leafBtn) {
     if (!leafBtn) return 0;
@@ -729,6 +779,7 @@
     if (cb.checked === false && !cb.indeterminate) clearPartial(siteBtn);
   }
   function updateParcFromSites() {
+    const parcCheck = getParcCheck();
     if (!parcCheck) {
       updatePerimeterBadges();
       return;
@@ -807,11 +858,14 @@
   });
 
   // === Root "Parc" : (dé)sélectionner tout, bindé une seule fois ===
-  if (parcBtn && parcCheck && !parcBtn.dataset.bound) {
+  const initialParcCheck = getParcCheck();
+  if (parcBtn && initialParcCheck && !parcBtn.dataset.bound) {
     parcBtn.dataset.bound = '1';
 
     // Cliquer n'importe où sur la ligne (sauf directement sur la checkbox)
     parcBtn.addEventListener('click', (e) => {
+      const parcCheck = getParcCheck();
+      if (!parcCheck) return;
       if (e.target === parcCheck) return;
       parcCheck.indeterminate = false;
       parcCheck.checked = !parcCheck.checked;
@@ -819,8 +873,9 @@
     });
 
     // Quand la checkbox change -> (dé)sélectionne tout le parc
-    parcCheck.addEventListener('change', () => {
-      checkWholeParc(parcCheck.checked);
+    initialParcCheck.addEventListener('change', () => {
+      const parcCheck = getParcCheck();
+      checkWholeParc(parcCheck?.checked);
 
       // // Option : auto-déployer les groupes après (dé)sélection,
       // siteBtns.forEach(site => {
@@ -1189,35 +1244,30 @@
     selectSection('energie');
 
     // Par défaut on coche tout le parc et on affiche immédiatement les totaux.
+    hydrateTreeCheckboxMap();
     checkWholeParc(true);
+    syncTreeSelectionState();
 
-    $$('.tree-leaf').forEach(leafBtn => {
-      const cb = leafCheck(leafBtn);
-      if (cb) setActive(leafBtn, cb.checked);
-    });
-    siteBtns.forEach(siteBtn => updateSiteFromLeaves(siteBtn));
-    updateParcFromSites();
+    wireYearPicker();
+    setupChartCatalog();
+    setupEnergyFilters();
+    setupTreeSearch();
 
-  wireYearPicker();
-  setupChartCatalog();
-  setupEnergyFilters();
-  setupTreeSearch();
+    // 👇 ajoute ceci
+    setupSidebarMultiSelects();
 
-  // 👇 ajoute ceci
-  setupSidebarMultiSelects();
-
-  // === Toggle bouton filtres (à placer ici) ===
-  const toggleBtn = document.getElementById('filters-toggle-btn');
-  const filtersPanel = document.getElementById('filters-panel');
-  if (toggleBtn && filtersPanel) {
-    toggleBtn.addEventListener('click', () => {
-      const open = filtersPanel.hidden;
-      filtersPanel.hidden = !open;
-      toggleBtn.setAttribute('aria-expanded', String(open));
-      toggleBtn.classList.toggle('is-open', open);
-    });
-  }
-});
+    // === Toggle bouton filtres (à placer ici) ===
+    const toggleBtn = document.getElementById('filters-toggle-btn');
+    const filtersPanel = document.getElementById('filters-panel');
+    if (toggleBtn && filtersPanel) {
+      toggleBtn.addEventListener('click', () => {
+        const open = filtersPanel.hidden;
+        filtersPanel.hidden = !open;
+        toggleBtn.setAttribute('aria-expanded', String(open));
+        toggleBtn.classList.toggle('is-open', open);
+      });
+    }
+  });
 
 
 

@@ -627,15 +627,45 @@
   window.addEventListener('resize', syncStickyTop);
 
   /* ========== Sidebar (cases + hamburger) ========== */
+  function findTreeCheck(node) {
+    if (!node) return null;
+
+    const direct = node.querySelector?.('.tree-check');
+    if (direct) return direct;
+
+    const parent = node.parentElement;
+    if (!parent) return null;
+
+    let prev = node.previousElementSibling;
+    while (prev) {
+      if (prev.classList?.contains('tree-check')) return prev;
+      prev = prev.previousElementSibling;
+    }
+
+    let next = node.nextElementSibling;
+    while (next) {
+      if (next.classList?.contains('tree-check')) return next;
+      next = next.nextElementSibling;
+    }
+
+    for (const child of parent.children) {
+      if (child.classList?.contains('tree-check')) return child;
+    }
+
+    return null;
+  }
+
   const parcBtn = $('.tree > .tree-node:not(.toggle)');
-  const parcCheck = parcBtn?.querySelector('.tree-check');
+  const parcCheck = findTreeCheck(parcBtn);
   const siteBtns = $$('.tree-group > .tree-node.toggle');
-  const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
+  const siteCheck = (siteBtn) => findTreeCheck(siteBtn);
   const siteLeaves = (siteBtn) => {
-    const list = siteBtn?.nextElementSibling;
+    const parent = siteBtn?.parentElement;
+    if (!parent) return [];
+    const list = Array.from(parent.children).find(child => child.classList?.contains('tree-children'));
     return list ? $$('.tree-leaf', list) : [];
   };
-  const leafCheck = (leafBtn) => leafBtn?.querySelector('.tree-check');
+  const leafCheck = (leafBtn) => findTreeCheck(leafBtn);
 
   function getLeafSre(leafBtn) {
     if (!leafBtn) return 0;

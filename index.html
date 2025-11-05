@@ -535,7 +535,17 @@
                         <figcaption data-chart-role="caption">Répartition actuelle des usages énergétiques.</figcaption>
                       </figure>
 
-                      <figure class="energy-ranking-card" aria-label="Classement des bâtiments les plus consommateurs">
+                      <figure class="energy-ranking-card" aria-label="Classement des bâtiments les plus consommateurs"
+                        data-chart-slot="mix-secondary" data-chart-type="mix-secondary-ranking" data-chart-group="mix-secondary">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
+                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog"
+                          aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-secondary">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
+                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
                         <header class="energy-ranking-header">
                           <div class="energy-ranking-header__titles">
                             <span class="ranking-title">Top 5 bâtiments</span>

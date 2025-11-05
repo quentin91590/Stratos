@@ -270,8 +270,8 @@
     const positionCatalog = (trigger) => {
       if (!trigger) return;
       if (layoutQuery.matches) {
-        zone.style.removeProperty('--catalog-top');
-        zone.style.removeProperty('--catalog-right');
+        panel.style.removeProperty('--catalog-top');
+        panel.style.removeProperty('--catalog-right');
         return;
       }
 
@@ -282,15 +282,26 @@
       const top = Math.max(buttonRect.top - zoneRect.top, 0);
       const availableRight = zoneRect.right - buttonRect.right;
       const maxRight = Math.max(zoneRect.width - panelWidth, 0);
-      const clampedRight = Math.min(Math.max(availableRight, 0), maxRight);
+      const anchorMode = (panel.dataset.catalogAnchor || 'contain').toLowerCase();
 
-      zone.style.setProperty('--catalog-top', `${top}px`);
-      zone.style.setProperty('--catalog-right', `${clampedRight}px`);
+      let resolvedRight;
+      if (anchorMode === 'trigger') {
+        resolvedRight = availableRight;
+      } else {
+        resolvedRight = Math.min(Math.max(availableRight, 0), maxRight);
+      }
+
+      if (!Number.isFinite(resolvedRight)) {
+        resolvedRight = 0;
+      }
+
+      panel.style.setProperty('--catalog-top', `${top}px`);
+      panel.style.setProperty('--catalog-right', `${resolvedRight}px`);
     };
 
     const clearCatalogPosition = () => {
-      zone.style.removeProperty('--catalog-top');
-      zone.style.removeProperty('--catalog-right');
+      panel.style.removeProperty('--catalog-top');
+      panel.style.removeProperty('--catalog-right');
     };
 
     const focusFirstElement = () => {

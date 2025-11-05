@@ -54,21 +54,154 @@
       primary: { chaleur: 0.8, electricite: 0.15, froid: 0.05 },
       secondary: { chaleur: 0.7, electricite: 0.2, froid: 0.1 },
     },
+    calendar: {
+      keys: ['jan', 'fév', 'mar', 'avr', 'mai', 'jun', 'jul', 'aoû', 'sep', 'oct', 'nov', 'déc'],
+      short: ['Jan', 'Fév', 'Mar', 'Avr', 'Mai', 'Jun', 'Jul', 'Aoû', 'Sep', 'Oct', 'Nov', 'Déc'],
+      full: ['Janvier', 'Février', 'Mars', 'Avril', 'Mai', 'Juin', 'Juillet', 'Août', 'Septembre', 'Octobre', 'Novembre', 'Décembre'],
+    },
+    climateBaseline: [1.25, 1.18, 1.02, 0.9, 0.78, 0.62, 0.55, 0.6, 0.74, 0.94, 1.08, 1.2],
+    typologies: {
+      ecole: { label: 'Écoles' },
+      piscine: { label: 'Piscines' },
+      administration: { label: 'Administrations' },
+      bureau: { label: 'Bureaux' },
+      culture: { label: 'Culture & loisirs' },
+      autre: { label: 'Autres bâtiments' },
+    },
+    benchmark: {
+      intensity: {
+        bins: [
+          { key: '0-80', label: '0-80', min: 0, max: 80 },
+          { key: '80-120', label: '80-120', min: 80, max: 120 },
+          { key: '120-160', label: '120-160', min: 120, max: 160 },
+          { key: '160-200', label: '160-200', min: 160, max: 200 },
+          { key: '200-240', label: '200-240', min: 200, max: 240 },
+          { key: '≥240', label: '≥240', min: 240, max: null },
+        ],
+        curve: [400, 1500, 2300, 2800, 2100, 900],
+        totalBuildings: 10000,
+      },
+      total: {
+        bins: [
+          { key: '0-150', label: '0-150 MWh', min: 0, max: 150000 },
+          { key: '150-250', label: '150-250 MWh', min: 150000, max: 250000 },
+          { key: '250-350', label: '250-350 MWh', min: 250000, max: 350000 },
+          { key: '350-500', label: '350-500 MWh', min: 350000, max: 500000 },
+          { key: '≥500', label: '≥500 MWh', min: 500000, max: null },
+        ],
+        curve: [600, 1800, 3200, 2600, 1800],
+        totalBuildings: 10000,
+      },
+    },
+    mapThresholds: {
+      kwhm2: [120, 180, 230],
+      kwh: [150000, 300000, 500000],
+    },
     buildings: {
       'bat-a': {
+        label: 'Bâtiment A',
+        typology: 'ecole',
+        sre: 1640,
+        position: { x: 14, y: 70 },
         metrics: { general: 182, chaleur: 108, froid: 11, elec: 74, co2: 24, eau: 1.28 },
+        monthly: [
+          { month: 'jan', chaleur: 24797, elec: 10316, froid: 0, climate: 1.25 },
+          { month: 'fév', chaleur: 21254, elec: 10316, froid: 0, climate: 1.18 },
+          { month: 'mar', chaleur: 19483, elec: 10316, froid: 361, climate: 1.02 },
+          { month: 'avr', chaleur: 15941, elec: 9952, froid: 1082, climate: 0.9 },
+          { month: 'mai', chaleur: 12398, elec: 9952, froid: 1804, climate: 0.78 },
+          { month: 'jun', chaleur: 8856, elec: 9952, froid: 2886, climate: 0.62 },
+          { month: 'jul', chaleur: 7085, elec: 10073, froid: 3608, climate: 0.55 },
+          { month: 'aoû', chaleur: 7085, elec: 10073, froid: 3608, climate: 0.6 },
+          { month: 'sep', chaleur: 10627, elec: 10073, froid: 2526, climate: 0.74 },
+          { month: 'oct', chaleur: 14170, elec: 9952, froid: 1443, climate: 0.94 },
+          { month: 'nov', chaleur: 17712, elec: 10194, froid: 541, climate: 1.08 },
+          { month: 'déc', chaleur: 17712, elec: 10073, froid: 180, climate: 1.2 },
+        ],
       },
       'bat-b': {
+        label: 'Bâtiment B',
+        typology: 'piscine',
+        sre: 1420,
+        position: { x: 22, y: 64 },
         metrics: { general: 205, chaleur: 126, froid: 14, elec: 82, co2: 28, eau: 1.52 },
+        monthly: [
+          { month: 'jan', chaleur: 25049, elec: 9897, froid: 0, climate: 1.3 },
+          { month: 'fév', chaleur: 21470, elec: 9897, froid: 0, climate: 1.23 },
+          { month: 'mar', chaleur: 19681, elec: 9897, froid: 398, climate: 1.06 },
+          { month: 'avr', chaleur: 16103, elec: 9548, froid: 1193, climate: 0.94 },
+          { month: 'mai', chaleur: 12524, elec: 9548, froid: 1988, climate: 0.81 },
+          { month: 'jun', chaleur: 8946, elec: 9548, froid: 3181, climate: 0.64 },
+          { month: 'jul', chaleur: 7157, elec: 9665, froid: 3976, climate: 0.57 },
+          { month: 'aoû', chaleur: 7157, elec: 9665, froid: 3976, climate: 0.62 },
+          { month: 'sep', chaleur: 10735, elec: 9665, froid: 2783, climate: 0.77 },
+          { month: 'oct', chaleur: 14314, elec: 9548, froid: 1590, climate: 0.98 },
+          { month: 'nov', chaleur: 17892, elec: 9781, froid: 596, climate: 1.12 },
+          { month: 'déc', chaleur: 17892, elec: 9665, froid: 199, climate: 1.25 },
+        ],
       },
       'bat-c': {
+        label: 'Bâtiment C',
+        typology: 'administration',
+        sre: 1580,
+        position: { x: 38, y: 48 },
         metrics: { general: 191, chaleur: 115, froid: 13, elec: 77, co2: 25, eau: 1.36 },
+        monthly: [
+          { month: 'jan', chaleur: 25438, elec: 10341, froid: 0, climate: 1.21 },
+          { month: 'fév', chaleur: 21804, elec: 10341, froid: 0, climate: 1.14 },
+          { month: 'mar', chaleur: 19987, elec: 10341, froid: 411, climate: 0.99 },
+          { month: 'avr', chaleur: 16353, elec: 9976, froid: 1232, climate: 0.87 },
+          { month: 'mai', chaleur: 12719, elec: 9976, froid: 2054, climate: 0.76 },
+          { month: 'jun', chaleur: 9085, elec: 9976, froid: 3286, climate: 0.6 },
+          { month: 'jul', chaleur: 7268, elec: 10098, froid: 4108, climate: 0.53 },
+          { month: 'aoû', chaleur: 7268, elec: 10098, froid: 4108, climate: 0.58 },
+          { month: 'sep', chaleur: 10902, elec: 10098, froid: 2876, climate: 0.72 },
+          { month: 'oct', chaleur: 14536, elec: 9976, froid: 1643, climate: 0.91 },
+          { month: 'nov', chaleur: 18170, elec: 10219, froid: 616, climate: 1.05 },
+          { month: 'déc', chaleur: 18170, elec: 10098, froid: 205, climate: 1.16 },
+        ],
       },
       'bat-d': {
+        label: 'Bâtiment D',
+        typology: 'bureau',
+        sre: 2020,
+        position: { x: 58, y: 38 },
         metrics: { general: 214, chaleur: 134, froid: 16, elec: 89, co2: 30, eau: 1.62 },
+        monthly: [
+          { month: 'jan', chaleur: 37895, elec: 15281, froid: 0, climate: 1.19 },
+          { month: 'fév', chaleur: 32482, elec: 15281, froid: 0, climate: 1.12 },
+          { month: 'mar', chaleur: 29775, elec: 15281, froid: 646, climate: 0.97 },
+          { month: 'avr', chaleur: 24361, elec: 14742, froid: 1939, climate: 0.85 },
+          { month: 'mai', chaleur: 18948, elec: 14742, froid: 3232, climate: 0.74 },
+          { month: 'jun', chaleur: 13534, elec: 14742, froid: 5171, climate: 0.59 },
+          { month: 'jul', chaleur: 10827, elec: 14922, froid: 6464, climate: 0.52 },
+          { month: 'aoû', chaleur: 10827, elec: 14922, froid: 6464, climate: 0.57 },
+          { month: 'sep', chaleur: 16241, elec: 14922, froid: 4525, climate: 0.7 },
+          { month: 'oct', chaleur: 21654, elec: 14742, froid: 2586, climate: 0.89 },
+          { month: 'nov', chaleur: 27068, elec: 15102, froid: 970, climate: 1.03 },
+          { month: 'déc', chaleur: 27068, elec: 14922, froid: 323, climate: 1.14 },
+        ],
       },
       'bat-e': {
+        label: 'Bâtiment E',
+        typology: 'culture',
+        sre: 1980,
+        position: { x: 72, y: 76 },
         metrics: { general: 174, chaleur: 101, froid: 9, elec: 70, co2: 22, eau: 1.18 },
+        monthly: [
+          { month: 'jan', chaleur: 27997, elec: 11781, froid: 0, climate: 1.35 },
+          { month: 'fév', chaleur: 23998, elec: 11781, froid: 0, climate: 1.27 },
+          { month: 'mar', chaleur: 21998, elec: 11781, froid: 356, climate: 1.1 },
+          { month: 'avr', chaleur: 17998, elec: 11365, froid: 1069, climate: 0.97 },
+          { month: 'mai', chaleur: 13999, elec: 11365, froid: 1782, climate: 0.84 },
+          { month: 'jun', chaleur: 9999, elec: 11365, froid: 2851, climate: 0.67 },
+          { month: 'jul', chaleur: 7999, elec: 11504, froid: 3564, climate: 0.59 },
+          { month: 'aoû', chaleur: 7999, elec: 11504, froid: 3564, climate: 0.65 },
+          { month: 'sep', chaleur: 11999, elec: 11504, froid: 2495, climate: 0.8 },
+          { month: 'oct', chaleur: 15998, elec: 11365, froid: 1426, climate: 1.02 },
+          { month: 'nov', chaleur: 19998, elec: 11642, froid: 535, climate: 1.17 },
+          { month: 'déc', chaleur: 19998, elec: 11504, froid: 178, climate: 1.3 },
+        ],
       },
     },
   };
@@ -123,6 +256,12 @@
       compactDisplay: 'short',
       maximumFractionDigits: 1,
     }).format(value);
+  };
+
+  const formatCount = (value) => {
+    const num = Number.isFinite(value) ? value : Number(value);
+    if (!Number.isFinite(num)) return '0';
+    return NF.format(Math.max(0, Math.round(num)));
   };
 
   const describeMix = (shares, totalPerM2, mode, sre) => {
@@ -863,6 +1002,18 @@
     const totals = {};
     const fallbackIntensity = {};
     const buildingSummaries = {};
+    const monthKeys = ENERGY_BASE_DATA.calendar?.keys || [];
+    const monthCount = monthKeys.length || 12;
+    const monthlyTotals = Array.from({ length: monthCount }, () => ({
+      chaleur: 0,
+      elec: 0,
+      froid: 0,
+      climate: 0,
+      weight: 0,
+    }));
+    const typologyTotals = {};
+    const distributionRecords = [];
+    const mapPoints = [];
 
     const resolveLeafLabel = (leaf) => {
       if (!leaf) return '';
@@ -883,15 +1034,32 @@
         const sre = Number.parseFloat(leaf?.dataset?.sre);
         if (!Number.isFinite(sre) || sre <= 0) return;
         const buildingId = leaf.dataset?.building || '';
-        const buildingMetrics = ENERGY_BASE_DATA.buildings?.[buildingId]?.metrics || {};
-        const summary = buildingSummaries[buildingId] || {
+        const buildingInfo = ENERGY_BASE_DATA.buildings?.[buildingId] || {};
+        const buildingMetrics = buildingInfo.metrics || {};
+        const existingSummary = buildingSummaries[buildingId];
+        const summary = existingSummary || {
           id: buildingId,
-          label: resolveLeafLabel(leaf) || buildingId || 'Bâtiment',
+          label: resolveLeafLabel(leaf) || buildingInfo.label || buildingId || 'Bâtiment',
           sre: 0,
           metrics: {},
+          typologyKey: buildingInfo.typology || 'autre',
+          typologyLabel: ENERGY_BASE_DATA.typologies?.[buildingInfo.typology || 'autre']?.label || buildingInfo.typology || 'Autres',
         };
 
         summary.sre += sre;
+
+        const typologyKey = summary.typologyKey || buildingInfo.typology || 'autre';
+        const typologyDef = ENERGY_BASE_DATA.typologies?.[typologyKey] || {};
+        const typologySummary = typologyTotals[typologyKey] || {
+          key: typologyKey,
+          label: typologyDef.label || typologyKey,
+          energy: 0,
+          sre: 0,
+          count: 0,
+        };
+        if (!existingSummary) {
+          typologySummary.count += 1;
+        }
 
         METRIC_KEYS.forEach((key) => {
           const candidate = Number(buildingMetrics[key]);
@@ -903,8 +1071,31 @@
           metricEntry.energy += intensity * sre;
           metricEntry.sre += sre;
           summary.metrics[key] = metricEntry;
+
+          if (key === 'general') {
+            typologySummary.energy += intensity * sre;
+            typologySummary.sre += sre;
+          }
         });
 
+        if (Array.isArray(buildingInfo.monthly)) {
+          buildingInfo.monthly.forEach((entry, idx) => {
+            const bucket = monthlyTotals[idx];
+            if (!bucket) return;
+            bucket.chaleur += Number(entry?.chaleur) || 0;
+            bucket.elec += Number(entry?.elec) || 0;
+            bucket.froid += Number(entry?.froid) || 0;
+            const climate = Number(entry?.climate);
+            if (Number.isFinite(climate)) {
+              bucket.climate += climate * sre;
+              bucket.weight += sre;
+            }
+          });
+        }
+
+        summary.position = summary.position || buildingInfo.position || null;
+        summary.monthly = summary.monthly || buildingInfo.monthly || null;
+        typologyTotals[typologyKey] = typologySummary;
         buildingSummaries[buildingId] = summary;
       });
     }
@@ -942,9 +1133,81 @@
           sre,
         };
       });
+
+      const info = ENERGY_BASE_DATA.buildings?.[summary.id] || {};
+      const generalData = summary.metrics.general || {};
+      const totalEnergy = Number(generalData.total) || 0;
+      const intensityValue = Number(generalData.intensity) || fallbackIntensity.general || 0;
+      const sre = Number(generalData.sre) || Number(summary.sre) || Number(info.sre) || 0;
+      const typologyKey = summary.typologyKey || info.typology || 'autre';
+      const typologyLabel = summary.typologyLabel || ENERGY_BASE_DATA.typologies?.[typologyKey]?.label || typologyKey;
+      const position = summary.position || info.position || null;
+
+      distributionRecords.push({
+        id: summary.id,
+        label: summary.label,
+        intensity: intensityValue,
+        total: totalEnergy,
+        sre,
+      });
+
+      if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
+        mapPoints.push({
+          id: summary.id,
+          label: summary.label,
+          typology: typologyKey,
+          typologyLabel,
+          intensity: intensityValue,
+          total: totalEnergy,
+          sre,
+          position,
+        });
+      }
     });
 
-    return { metrics: aggregated, buildings: buildingSummaries };
+    const fallbackClimate = ENERGY_BASE_DATA.climateBaseline || [];
+    const monthLabels = ENERGY_BASE_DATA.calendar?.short || [];
+    const monthlyAggregated = monthlyTotals.map((entry, idx) => {
+      const total = entry.chaleur + entry.elec + entry.froid;
+      const weight = entry.weight;
+      const key = monthKeys[idx] || `m${idx + 1}`;
+      const label = monthLabels[idx] || key;
+      const climate = weight > 0
+        ? entry.climate / weight
+        : Number(fallbackClimate[idx]) || 0;
+      return {
+        key,
+        label,
+        chaleur: entry.chaleur,
+        elec: entry.elec,
+        froid: entry.froid,
+        total,
+        climate,
+      };
+    });
+
+    const typologyList = Object.values(typologyTotals).map((item) => {
+      const def = ENERGY_BASE_DATA.typologies?.[item.key] || {};
+      return {
+        key: item.key,
+        label: item.label || def.label || item.key,
+        energy: item.energy,
+        sre: item.sre,
+        count: item.count || 0,
+      };
+    }).sort((a, b) => (b.energy || 0) - (a.energy || 0));
+
+    return {
+      metrics: aggregated,
+      buildings: buildingSummaries,
+      typologies: typologyList,
+      monthly: monthlyAggregated,
+      mapPoints,
+      distribution: {
+        records: distributionRecords,
+        benchmark: ENERGY_BASE_DATA.benchmark,
+      },
+    };
   };
 
   const updateEnergyKpis = (mode, aggregated) => {
@@ -1188,13 +1451,434 @@
     });
   };
 
+  const updateTypologyChart = (mode, typologies = []) => {
+    const card = document.querySelector('[data-chart-slot="typology"]');
+    if (!card) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²/an' : 'kWh/an';
+    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+    const dataset = Array.isArray(typologies)
+      ? typologies.map(item => {
+        const energy = Number(item?.energy) || 0;
+        const sre = Number(item?.sre) || 0;
+        const value = mode === 'kwhm2'
+          ? (sre > 0 ? energy / sre : 0)
+          : energy;
+        return {
+          key: item?.key || item?.label || 'autre',
+          label: item?.label || item?.key || 'Autre',
+          value,
+          energy,
+          sre,
+          buildings: Number(item?.count) || 0,
+        };
+      })
+      : [];
+
+    dataset.sort((a, b) => (b.value || 0) - (a.value || 0));
+    const maxValue = dataset.reduce((max, item) => (item.value > max ? item.value : max), 0);
+    const totalBuildings = dataset.reduce((acc, item) => acc + (item.buildings || 0), 0);
+    const hasData = dataset.length > 0;
+
+    const barsWrap = card.querySelector('[data-typology-bars]');
+    if (barsWrap) {
+      barsWrap.innerHTML = '';
+      if (!hasData) {
+        const empty = document.createElement('p');
+        empty.className = 'chart-empty';
+        empty.textContent = 'Aucune typologie disponible pour la sélection.';
+        barsWrap.append(empty);
+      } else {
+        const scale = maxValue > 0 ? (140 / maxValue) : 0;
+        if (scale > 0) barsWrap.style.setProperty('--typology-scale', `${scale}px`);
+        else barsWrap.style.removeProperty('--typology-scale');
+
+        dataset.forEach((item) => {
+          const bar = document.createElement('div');
+          bar.className = 'typology-bar';
+          bar.dataset.key = item.key;
+          bar.setAttribute('role', 'listitem');
+
+          const fill = document.createElement('span');
+          fill.className = 'typology-bar__fill';
+          fill.style.setProperty('--value', Math.max(item.value, 0));
+          fill.setAttribute('aria-hidden', 'true');
+
+          const label = document.createElement('span');
+          label.className = 'typology-bar__label';
+          label.textContent = item.label;
+
+          const valueEl = document.createElement('span');
+          valueEl.className = 'typology-bar__value';
+          valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+
+          const countEl = document.createElement('span');
+          countEl.className = 'typology-bar__count';
+          countEl.textContent = `${formatCount(item.buildings)} bât.`;
+
+          bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}`);
+          bar.append(fill, valueEl, label, countEl);
+          barsWrap.append(bar);
+        });
+      }
+    }
+
+    const tableBody = card.querySelector('[data-typology-table]');
+    if (tableBody) {
+      tableBody.innerHTML = '';
+      dataset.forEach((item) => {
+        const row = document.createElement('tr');
+        const labelCell = document.createElement('td');
+        labelCell.textContent = item.label;
+        const valueCell = document.createElement('td');
+        valueCell.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+        const countCell = document.createElement('td');
+        countCell.textContent = formatCount(item.buildings);
+        row.append(labelCell, valueCell, countCell);
+        tableBody.append(row);
+      });
+    }
+
+    const summary = card.querySelector('[data-typology-summary]');
+    if (summary) {
+      if (hasData) {
+        summary.textContent = `${formatCount(totalBuildings)} bâtiment(s) répartis sur ${dataset.length} typologie(s).`;
+      } else {
+        summary.textContent = 'Sélectionnez un périmètre pour afficher la répartition par typologie.';
+      }
+    }
+
+    card.classList.toggle('is-empty', !hasData);
+  };
+
+  const updateEnergyMap = (mode, mapPoints = []) => {
+    const card = document.querySelector('[data-chart-slot="energy-map"]');
+    if (!card) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+    const markersWrap = card.querySelector('[data-map-markers]');
+    const legendList = card.querySelector('[data-map-legend]');
+    const emptyState = card.querySelector('[data-map-empty]');
+    if (!markersWrap) return;
+
+    const points = Array.isArray(mapPoints)
+      ? mapPoints.filter(point => point && Number.isFinite(mode === 'kwhm2' ? point.intensity : point.total))
+      : [];
+
+    markersWrap.innerHTML = '';
+    const hasData = points.length > 0;
+    if (emptyState) emptyState.hidden = hasData;
+    card.classList.toggle('is-empty', !hasData);
+    if (!hasData) return;
+
+    const thresholds = ENERGY_BASE_DATA.mapThresholds?.[mode] || [];
+    const classify = (value) => {
+      if (!Number.isFinite(value)) return 'map-marker--medium';
+      const [t1, t2, t3] = thresholds;
+      if (!thresholds.length) return 'map-marker--medium';
+      if (thresholds.length === 1) {
+        return value <= t1 ? 'map-marker--low' : 'map-marker--high';
+      }
+      if (value <= t1) return 'map-marker--low';
+      if (thresholds.length === 2) return value <= t2 ? 'map-marker--medium' : 'map-marker--high';
+      if (value <= t2) return 'map-marker--medium';
+      if (value <= t3) return 'map-marker--high';
+      return 'map-marker--critical';
+    };
+
+    const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
+    points.forEach((point) => {
+      const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
+      const sre = Number(point.sre) || 0;
+      const marker = document.createElement('div');
+      marker.className = `map-marker ${classify(value)}`;
+      const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
+      marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
+      marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
+      marker.style.setProperty('--size', `${size}`);
+      marker.setAttribute('role', 'listitem');
+      marker.setAttribute('aria-label', `${point.label} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}, ${formatCount(sre)} m²`);
+      marker.title = `${point.label} — ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+
+      const dot = document.createElement('span');
+      dot.className = 'map-marker__dot';
+      dot.setAttribute('aria-hidden', 'true');
+
+      const label = document.createElement('span');
+      label.className = 'map-marker__label';
+      label.textContent = point.label;
+
+      marker.append(dot, label);
+      markersWrap.append(marker);
+    });
+
+    if (legendList) {
+      legendList.innerHTML = '';
+      const ranges = [];
+      const formatter = (value) => `${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+      if (thresholds.length >= 3) {
+        const [t1, t2, t3] = thresholds;
+        ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
+        ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
+        ranges.push({ label: `${formatter(t2)} – ${formatter(t3)}`, cls: 'map-legend__dot--high' });
+        ranges.push({ label: `> ${formatter(t3)}`, cls: 'map-legend__dot--critical' });
+      } else if (thresholds.length === 2) {
+        const [t1, t2] = thresholds;
+        ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
+        ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
+        ranges.push({ label: `> ${formatter(t2)}`, cls: 'map-legend__dot--high' });
+      } else if (thresholds.length === 1) {
+        ranges.push({ label: `≤ ${formatter(thresholds[0])}`, cls: 'map-legend__dot--low' });
+        ranges.push({ label: `> ${formatter(thresholds[0])}`, cls: 'map-legend__dot--high' });
+      } else {
+        ranges.push({ label: 'Consommation moyenne', cls: 'map-legend__dot--medium' });
+      }
+      ranges.forEach((range) => {
+        const item = document.createElement('li');
+        const dot = document.createElement('span');
+        dot.className = `map-legend__dot ${range.cls}`;
+        dot.setAttribute('aria-hidden', 'true');
+        const text = document.createElement('span');
+        text.textContent = range.label;
+        item.append(dot, text);
+        legendList.append(item);
+      });
+    }
+  };
+
+  const updateMonthlyChart = (mode, monthly = [], sre = 0) => {
+    const card = document.querySelector('[data-chart-slot="monthly"]');
+    if (!card) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+    const barsWrap = card.querySelector('[data-monthly-bars]');
+    const line = card.querySelector('[data-monthly-line]');
+    const summary = card.querySelector('[data-monthly-summary]');
+    if (!barsWrap) return;
+
+    const divisor = mode === 'kwhm2' && sre > 0 ? sre : 1;
+    const dataset = Array.isArray(monthly)
+      ? monthly.map(item => ({
+        key: item?.key || item?.month,
+        label: item?.label || item?.month || '',
+        chaleur: divisor > 0 ? (Number(item?.chaleur) || 0) / divisor : 0,
+        elec: divisor > 0 ? (Number(item?.elec) || 0) / divisor : 0,
+        froid: divisor > 0 ? (Number(item?.froid) || 0) / divisor : 0,
+        total: divisor > 0 ? (Number(item?.total) || 0) / divisor : 0,
+        climate: Number(item?.climate) || 0,
+      }))
+      : [];
+
+    const maxTotal = dataset.reduce((acc, item) => (item.total > acc ? item.total : acc), 0);
+    const maxClimate = dataset.reduce((acc, item) => (item.climate > acc ? item.climate : acc), 0);
+    const hasData = dataset.length > 0;
+
+    barsWrap.innerHTML = '';
+    if (!hasData) {
+      const empty = document.createElement('p');
+      empty.className = 'chart-empty';
+      empty.textContent = 'Aucune donnée mensuelle disponible pour ce périmètre.';
+      barsWrap.append(empty);
+    } else {
+      const scale = maxTotal > 0 ? (140 / maxTotal) : 0;
+      if (scale > 0) barsWrap.style.setProperty('--monthly-scale', `${scale}px`);
+      else barsWrap.style.removeProperty('--monthly-scale');
+
+      dataset.forEach((item) => {
+        const bar = document.createElement('div');
+        bar.className = 'monthly-bar';
+        bar.dataset.monthKey = item.key || '';
+        bar.setAttribute('role', 'listitem');
+
+        const stack = document.createElement('div');
+        stack.className = 'monthly-stack';
+
+        ['chaleur', 'elec', 'froid'].forEach((type) => {
+          const segment = document.createElement('span');
+          segment.className = `monthly-segment monthly-segment--${type}`;
+          segment.style.setProperty('--value', Math.max(item[type], 0));
+          segment.setAttribute('aria-hidden', 'true');
+          stack.append(segment);
+        });
+
+        const valueEl = document.createElement('span');
+        valueEl.className = 'monthly-bar__value';
+        valueEl.textContent = `${formatEnergyDisplay(item.total, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+
+        const labelEl = document.createElement('span');
+        labelEl.className = 'monthly-bar__label';
+        labelEl.textContent = item.label;
+
+        const details = [`Chaleur : ${formatEnergyDisplay(item.chaleur, mode, mode === 'kwhm2' ? 0 : 0)}`,
+          `Électricité : ${formatEnergyDisplay(item.elec, mode, mode === 'kwhm2' ? 0 : 0)}`,
+          `Froid : ${formatEnergyDisplay(item.froid, mode, mode === 'kwhm2' ? 0 : 0)}`];
+        bar.setAttribute('aria-label', `${item.label} — ${valueEl.textContent}. ${details.join(', ')}`);
+
+        bar.append(stack, valueEl, labelEl);
+        barsWrap.append(bar);
+      });
+    }
+
+    if (line) {
+      const polyline = line.querySelector('polyline');
+      if (polyline) {
+        if (!hasData || maxClimate <= 0) {
+          polyline.setAttribute('points', '');
+        } else {
+          const step = dataset.length > 1 ? 100 / (dataset.length - 1) : 100;
+          const pointsStr = dataset.map((item, idx) => {
+            const x = dataset.length > 1 ? idx * step : 50;
+            const y = 100 - ((item.climate / maxClimate) * 100);
+            return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
+          }).join(' ');
+          polyline.setAttribute('points', pointsStr);
+        }
+      }
+    }
+
+    if (summary) {
+      if (!hasData) {
+        summary.textContent = 'Sélection vide — aucune tendance mensuelle.';
+      } else {
+        const average = dataset.reduce((acc, item) => acc + item.total, 0) / dataset.length;
+        summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+      }
+    }
+  };
+
+  const updateDistributionChart = (mode, distribution = {}, sre = 0) => {
+    const card = document.querySelector('[data-chart-slot="intensity-distribution"]');
+    if (!card) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+    const barsWrap = card.querySelector('[data-distribution-bars]');
+    const line = card.querySelector('[data-distribution-line]');
+    const selectionLegend = card.querySelector('[data-distribution-selection]');
+    const benchmarkLegend = card.querySelector('[data-distribution-benchmark]');
+    if (!barsWrap) return;
+
+    const records = Array.isArray(distribution?.records) ? distribution.records : [];
+    const benchmarkGroup = distribution?.benchmark || {};
+    const benchConfig = mode === 'kwhm2'
+      ? (benchmarkGroup.intensity || {})
+      : (benchmarkGroup.total || {});
+
+    const defaultIntensityBins = [
+      { key: '0-80', label: '0-80', min: 0, max: 80 },
+      { key: '80-120', label: '80-120', min: 80, max: 120 },
+      { key: '120-160', label: '120-160', min: 120, max: 160 },
+      { key: '160-200', label: '160-200', min: 160, max: 200 },
+      { key: '200-260', label: '200-260', min: 200, max: 260 },
+      { key: '≥260', label: '≥260', min: 260, max: null },
+    ];
+    const defaultTotalBins = [
+      { key: '0-200', label: '0-200 MWh', min: 0, max: 200000 },
+      { key: '200-300', label: '200-300 MWh', min: 200000, max: 300000 },
+      { key: '300-400', label: '300-400 MWh', min: 300000, max: 400000 },
+      { key: '400-500', label: '400-500 MWh', min: 400000, max: 500000 },
+      { key: '≥500', label: '≥500 MWh', min: 500000, max: null },
+    ];
+
+    const bins = Array.isArray(benchConfig.bins) && benchConfig.bins.length
+      ? benchConfig.bins
+      : (mode === 'kwhm2' ? defaultIntensityBins : defaultTotalBins);
+    const benchmarkValues = Array.isArray(benchConfig.curve) && benchConfig.curve.length
+      ? benchConfig.curve.slice(0, bins.length)
+      : new Array(bins.length).fill(0);
+    const benchmarkTotal = Number(benchConfig.totalBuildings) || 0;
+
+    const values = records.map(record => (mode === 'kwhm2' ? Number(record.intensity) : Number(record.total))).filter(Number.isFinite);
+    const selectionCounts = bins.map((bin) => {
+      const count = values.reduce((acc, value) => {
+        if (bin.max == null) {
+          return value >= bin.min ? acc + 1 : acc;
+        }
+        return (value >= bin.min && value < bin.max) ? acc + 1 : acc;
+      }, 0);
+      return { ...bin, count };
+    });
+
+    const maxCount = selectionCounts.reduce((acc, bin) => (bin.count > acc ? bin.count : acc), 0);
+    const totalSelection = selectionCounts.reduce((acc, bin) => acc + bin.count, 0);
+    const hasData = totalSelection > 0;
+
+    barsWrap.innerHTML = '';
+    if (maxCount > 0) {
+      const scale = 120 / maxCount;
+      barsWrap.style.setProperty('--distribution-scale', `${scale}px`);
+    } else {
+      barsWrap.style.removeProperty('--distribution-scale');
+    }
+
+    selectionCounts.forEach((bin) => {
+      const bar = document.createElement('div');
+      bar.className = 'distribution-bar';
+      bar.dataset.binKey = bin.key;
+      bar.setAttribute('role', 'listitem');
+
+      const fill = document.createElement('span');
+      fill.className = 'distribution-bar__fill';
+      fill.style.setProperty('--value', Math.max(bin.count, 0));
+      fill.setAttribute('aria-hidden', 'true');
+
+      const label = document.createElement('span');
+      label.className = 'distribution-bar__label';
+      label.textContent = bin.label;
+
+      const valueEl = document.createElement('span');
+      valueEl.className = 'distribution-bar__value';
+      valueEl.textContent = `${formatCount(bin.count)} bât.`;
+
+      bar.setAttribute('aria-label', `${bin.label} : ${formatCount(bin.count)} bâtiment(s)`);
+      bar.append(fill, label, valueEl);
+      barsWrap.append(bar);
+    });
+
+    if (line) {
+      const polyline = line.querySelector('polyline');
+      if (polyline) {
+        const maxBench = benchmarkValues.reduce((acc, value) => (value > acc ? value : acc), 0);
+        if (maxBench <= 0) {
+          polyline.setAttribute('points', '');
+        } else {
+          const step = benchmarkValues.length > 1 ? 100 / (benchmarkValues.length - 1) : 100;
+          const pointsStr = benchmarkValues.map((value, idx) => {
+            const x = benchmarkValues.length > 1 ? idx * step : 50;
+            const y = 100 - ((value / maxBench) * 100);
+            return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
+          }).join(' ');
+          polyline.setAttribute('points', pointsStr);
+        }
+      }
+    }
+
+    if (selectionLegend) {
+      selectionLegend.textContent = `${formatCount(totalSelection)} bât.`;
+    }
+    if (benchmarkLegend) {
+      benchmarkLegend.textContent = benchmarkTotal ? `${formatCount(benchmarkTotal)} bât.` : 'Référence';
+    }
+
+    card.classList.toggle('is-empty', !hasData);
+  };
+
   function updateEnergyVisuals() {
     const mode = FILTERS.norm || 'kwhm2';
     const allLeaves = $$('.tree-leaf');
     const selectedLeaves = allLeaves.filter(leaf => leafCheck(leaf)?.checked);
     const activeLeaves = selectedLeaves.length ? selectedLeaves : allLeaves;
     const fallbackSre = computeFallbackSre(allLeaves);
-    const { metrics: aggregated, buildings } = computeAggregatedMetrics(activeLeaves, fallbackSre);
+    const {
+      metrics: aggregated,
+      buildings,
+      typologies,
+      monthly,
+      mapPoints,
+      distribution,
+    } = computeAggregatedMetrics(activeLeaves, fallbackSre);
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
@@ -1203,6 +1887,10 @@
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
     updateTopConsumersCards(mode, buildings);
+    updateTypologyChart(mode, typologies);
+    updateEnergyMap(mode, mapPoints);
+    updateMonthlyChart(mode, monthly, effectiveSre);
+    updateDistributionChart(mode, distribution, effectiveSre);
     updateTrendPadding();
   }
 

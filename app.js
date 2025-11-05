@@ -862,6 +862,15 @@
     const aggregated = {};
     const totals = {};
     const fallbackIntensity = {};
+    const buildingSummaries = {};
+
+    const resolveLeafLabel = (leaf) => {
+      if (!leaf) return '';
+      const dataLabel = leaf.dataset?.label;
+      if (dataLabel) return dataLabel.trim();
+      const text = leaf.textContent || '';
+      return text.replace(/\s+/g, ' ').trim();
+    };
 
     METRIC_KEYS.forEach((key) => {
       totals[key] = { energy: 0, sre: 0 };
@@ -875,12 +884,28 @@
         if (!Number.isFinite(sre) || sre <= 0) return;
         const buildingId = leaf.dataset?.building || '';
         const buildingMetrics = ENERGY_BASE_DATA.buildings?.[buildingId]?.metrics || {};
+        const summary = buildingSummaries[buildingId] || {
+          id: buildingId,
+          label: resolveLeafLabel(leaf) || buildingId || 'Bâtiment',
+          sre: 0,
+          metrics: {},
+        };
+
+        summary.sre += sre;
+
         METRIC_KEYS.forEach((key) => {
           const candidate = Number(buildingMetrics[key]);
           const intensity = Number.isFinite(candidate) ? candidate : fallbackIntensity[key];
           totals[key].energy += intensity * sre;
           totals[key].sre += sre;
+
+          const metricEntry = summary.metrics[key] || { energy: 0, sre: 0 };
+          metricEntry.energy += intensity * sre;
+          metricEntry.sre += sre;
+          summary.metrics[key] = metricEntry;
         });
+
+        buildingSummaries[buildingId] = summary;
       });
     }
 
@@ -904,7 +929,22 @@
       };
     });
 
-    return aggregated;
+    Object.values(buildingSummaries).forEach((summary) => {
+      METRIC_KEYS.forEach((key) => {
+        const metricData = summary.metrics[key];
+        if (!metricData) return;
+        const energy = Number(metricData.energy) || 0;
+        const sre = Number(metricData.sre) || 0;
+        const intensity = sre > 0 ? energy / sre : fallbackIntensity[key];
+        summary.metrics[key] = {
+          intensity,
+          total: energy,
+          sre,
+        };
+      });
+    });
+
+    return { metrics: aggregated, buildings: buildingSummaries };
   };
 
   const updateEnergyKpis = (mode, aggregated) => {
@@ -1069,13 +1109,92 @@
     });
   };
 
+  const updateTopConsumersCards = (mode, buildingSummaries) => {
+    const rankingCards = document.querySelectorAll('.energy-ranking-card');
+    if (!rankingCards.length) return;
+
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    const generalMetric = ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
+    const decimals = mode === 'kwhm2' ? (generalMetric.decimals || 0) : 0;
+
+    const entries = Object.values(buildingSummaries || {}).map((entry) => {
+      const metrics = entry?.metrics?.general || {};
+      const value = mode === 'kwhm2'
+        ? Number(metrics.intensity)
+        : Number(metrics.total);
+      return {
+        id: entry?.id || '',
+        label: entry?.label || entry?.id || '',
+        value: Number.isFinite(value) ? value : 0,
+      };
+    });
+
+    entries.sort((a, b) => b.value - a.value);
+    const topFive = entries.slice(0, 5);
+    const maxValue = topFive.reduce((acc, item) => (item.value > acc ? item.value : acc), 0);
+
+    rankingCards.forEach((card) => {
+      card.querySelectorAll('[data-ranking-unit]').forEach((el) => {
+        el.textContent = unit;
+      });
+
+      const list = card.querySelector('[data-ranking-list]');
+      if (!list) return;
+      list.innerHTML = '';
+
+      if (!topFive.length) {
+        const emptyItem = document.createElement('li');
+        emptyItem.className = 'ranking-item ranking-item--empty';
+        emptyItem.textContent = 'Aucune donnée disponible';
+        list.append(emptyItem);
+        return;
+      }
+
+      topFive.forEach((entry, index) => {
+        const li = document.createElement('li');
+        li.className = 'ranking-item';
+        if (entry.id) li.dataset.buildingId = entry.id;
+
+        const rank = document.createElement('span');
+        rank.className = 'ranking-rank';
+        rank.textContent = String(index + 1);
+
+        const main = document.createElement('div');
+        main.className = 'ranking-main';
+
+        const name = document.createElement('span');
+        name.className = 'ranking-name';
+        name.textContent = entry.label || `Bâtiment ${index + 1}`;
+
+        const bar = document.createElement('div');
+        bar.className = 'ranking-bar';
+
+        const barFill = document.createElement('div');
+        barFill.className = 'ranking-bar__fill';
+        const rawPercent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
+        const percent = rawPercent > 0 ? Math.max(rawPercent, 6) : 0;
+        barFill.style.width = `${Math.min(percent, 100)}%`;
+        bar.append(barFill);
+
+        main.append(name, bar);
+
+        const valueEl = document.createElement('span');
+        valueEl.className = 'ranking-value';
+        valueEl.textContent = `${formatEnergyDisplay(entry.value, mode, decimals)} ${unit}`;
+
+        li.append(rank, main, valueEl);
+        list.append(li);
+      });
+    });
+  };
+
   function updateEnergyVisuals() {
     const mode = FILTERS.norm || 'kwhm2';
     const allLeaves = $$('.tree-leaf');
     const selectedLeaves = allLeaves.filter(leaf => leafCheck(leaf)?.checked);
     const activeLeaves = selectedLeaves.length ? selectedLeaves : allLeaves;
     const fallbackSre = computeFallbackSre(allLeaves);
-    const aggregated = computeAggregatedMetrics(activeLeaves, fallbackSre);
+    const { metrics: aggregated, buildings } = computeAggregatedMetrics(activeLeaves, fallbackSre);
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
@@ -1083,6 +1202,7 @@
     updateEnergyTrendChart(mode, effectiveSre);
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
+    updateTopConsumersCards(mode, buildings);
     updateTrendPadding();
   }
 

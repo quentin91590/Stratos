@@ -1188,6 +1188,9 @@
     $$('.tabset').forEach(initTabset);
     selectSection('energie');
 
+    // Par défaut on coche tout le parc et on affiche immédiatement les totaux.
+    checkWholeParc(true);
+
     $$('.tree-leaf').forEach(leafBtn => {
       const cb = leafCheck(leafBtn);
       if (cb) setActive(leafBtn, cb.checked);

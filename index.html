@@ -247,7 +247,7 @@
               <div class="fi-item">
                 <div class="fi-label">Conso totale / par m²</div>
                 <div class="seg2" style="--left:'kWh/m²'; --right:'kWh'">
-                  <input type="radio" id="norm-kwh" name="norm-energy" value="kwh">
+                  <input type="radio" id="norm-kwh" name="norm-energy" value="kwh" checked>
                   <label for="norm-kwh">Totale</label>
                   <input type="radio" id="norm-kwhm2" name="norm-energy" value="kwhm2">
                   <label for="norm-kwhm2">Par m²</label>
@@ -489,9 +489,9 @@
 
               <section id="panel-energie" role="tabpanel" aria-labelledby="tab-energie">
                 <h3>Intensité énergétique</h3>
-                <p>Seuil légal: 180 kWh/m² — Cible: 170 kWh/m².</p>
+                <p>Seuil légal: <span data-energy-legal>180</span> <span data-energy-unit="legal">kWh/m²</span> — Cible: <span data-energy-target>170</span> <span data-energy-unit="target">kWh/m²</span>.</p>
                 <div class="meter">
-                  <div style="width: 196px"></div>
+                  <div style="width: 0"></div>
                 </div>
 
                 <div class="energy-chart-zone">
@@ -1010,7 +1010,7 @@
                 <h3>Chaleur (corrigée DJU)</h3>
                 <p>Mix: Gaz 60 % / PAC 25 % / Réseau 15 %</p>
                 <div class="meter">
-                  <div style="width: 118px"></div>
+                  <div style="width: 0"></div>
                 </div>
               </section>
 
@@ -1018,7 +1018,7 @@
                 <h3>Froid</h3>
                 <p>EER moyen: 3.1 — Heures: 820 h</p>
                 <div class="meter">
-                  <div style="width: 13px"></div>
+                  <div style="width: 0"></div>
                 </div>
               </section>
 
@@ -1026,7 +1026,7 @@
                 <h3>Électricité</h3>
                 <p>Auto-prod PV: 11 % — Nuit/WE: 37 %</p>
                 <div class="meter">
-                  <div style="width: 78px"></div>
+                  <div style="width: 0"></div>
                 </div>
               </section>
 
@@ -1034,7 +1034,7 @@
                 <h3>CO₂ (Scope 1+2)</h3>
                 <p>Facteur réseau: 0,10 kgCO₂e/kWh — Gaz: 0,204</p>
                 <div class="meter">
-                  <div style="width: 26px"></div>
+                  <div style="width: 0"></div>
                 </div>
               </section>
 
@@ -1042,7 +1042,7 @@
                 <h3>Eau</h3>
                 <p>Fuites suspectes: non — Sanitaires: 63 %</p>
                 <div class="meter">
-                  <div style="width: 145px"></div>
+                  <div style="width: 0"></div>
                 </div>
               </section>
             </div>

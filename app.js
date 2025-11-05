@@ -627,15 +627,51 @@
   window.addEventListener('resize', syncStickyTop);
 
   /* ========== Sidebar (cases + hamburger) ========== */
+  const treeCheckboxMap = new WeakMap();
+
+  function hydrateTreeCheckboxMap() {
+    $$('.tree-check').forEach(cb => {
+      if (!(cb instanceof HTMLElement)) return;
+
+      const leafItem = cb.closest('li');
+      if (leafItem) {
+        const leafBtn = leafItem.querySelector('.tree-leaf');
+        if (leafBtn) {
+          treeCheckboxMap.set(leafBtn, cb);
+          return;
+        }
+      }
+
+      const siteGroup = cb.closest('.tree-group');
+      if (siteGroup) {
+        const siteBtn = siteGroup.querySelector('.tree-node.toggle');
+        if (siteBtn) {
+          treeCheckboxMap.set(siteBtn, cb);
+          return;
+        }
+      }
+
+      if (!leafItem && !siteGroup) {
+        const treeRoot = cb.closest('.tree');
+        const rootBtn = treeRoot?.querySelector('.tree > .tree-node:not(.toggle)');
+        if (rootBtn) treeCheckboxMap.set(rootBtn, cb);
+      }
+    });
+  }
+
+  hydrateTreeCheckboxMap();
+
   const parcBtn = $('.tree > .tree-node:not(.toggle)');
-  const parcCheck = parcBtn?.querySelector('.tree-check');
+  const parcCheck = treeCheckboxMap.get(parcBtn) || null;
   const siteBtns = $$('.tree-group > .tree-node.toggle');
-  const siteCheck = (siteBtn) => siteBtn.querySelector('.tree-check');
+  const siteCheck = (siteBtn) => treeCheckboxMap.get(siteBtn) || null;
   const siteLeaves = (siteBtn) => {
-    const list = siteBtn?.nextElementSibling;
+    const parent = siteBtn?.parentElement;
+    if (!parent) return [];
+    const list = Array.from(parent.children).find(child => child.classList?.contains('tree-children'));
     return list ? $$('.tree-leaf', list) : [];
   };
-  const leafCheck = (leafBtn) => leafBtn?.querySelector('.tree-check');
+  const leafCheck = (leafBtn) => treeCheckboxMap.get(leafBtn) || null;
 
   function getLeafSre(leafBtn) {
     if (!leafBtn) return 0;
@@ -1148,12 +1184,16 @@
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   document.addEventListener('DOMContentLoaded', () => {
-  syncStickyTop();
-  $$('.tabset').forEach(initTabset);
-  selectSection('energie');
+    syncStickyTop();
+    $$('.tabset').forEach(initTabset);
+    selectSection('energie');
 
-  checkWholeParc(true);
-  updateParcFromSites();
+    $$('.tree-leaf').forEach(leafBtn => {
+      const cb = leafCheck(leafBtn);
+      if (cb) setActive(leafBtn, cb.checked);
+    });
+    siteBtns.forEach(siteBtn => updateSiteFromLeaves(siteBtn));
+    updateParcFromSites();
 
   wireYearPicker();
   setupChartCatalog();

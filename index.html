@@ -832,6 +832,275 @@
                           </ul>
                         </div>
                       </template>
+
+                      <figure class="energy-typology-card" aria-label="Consommation par typologie de bâtiment" data-chart-slot="typology" data-chart-type="typology-columns" data-chart-group="typology">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="typology">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-typology-header">
+                          <div class="energy-typology-header__titles">
+                            <span class="typology-title">Consommation par typologie</span>
+                            <span class="typology-subtitle">Répartition par catégorie</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="typology-chart typology-chart--columns">
+                            <div class="chart-title">
+                              <span>Typologies principales</span>
+                              <span class="chart-unit">kWh/an</span>
+                            </div>
+                            <div class="typology-bars" data-typology-bars role="list">
+                              <p class="chart-empty">Chargement des typologies…</p>
+                            </div>
+                            <p class="typology-summary" data-typology-summary>Chargement…</p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Répartition de la consommation annuelle par typologie pour le périmètre sélectionné.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-typology-columns" data-caption="Répartition de la consommation annuelle par typologie.">
+                        <div class="typology-chart typology-chart--columns">
+                          <div class="chart-title">
+                            <span>Typologies principales</span>
+                            <span class="chart-unit">kWh/an</span>
+                          </div>
+                          <div class="typology-bars" data-typology-bars role="list"></div>
+                          <p class="typology-summary" data-typology-summary></p>
+                        </div>
+                      </template>
+                      <template id="chart-template-typology-rows" data-caption="Répartition par typologie avec tableau de synthèse.">
+                        <div class="typology-chart typology-chart--rows">
+                          <div class="chart-title">
+                            <span>Typologies détaillées</span>
+                            <span class="chart-unit">kWh/an</span>
+                          </div>
+                          <div class="typology-bars" data-typology-bars role="list"></div>
+                          <table class="typology-table">
+                            <thead>
+                              <tr><th>Typologie</th><th>Consommation</th><th>Bâtiments</th></tr>
+                            </thead>
+                            <tbody data-typology-table></tbody>
+                          </table>
+                          <p class="typology-summary" data-typology-summary></p>
+                        </div>
+                      </template>
+
+                      <figure class="energy-map-card" aria-label="Carte énergétique du parc" data-chart-slot="energy-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-map">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-map-header">
+                          <div class="energy-map-header__titles">
+                            <span class="map-title">Carte énergétique du parc</span>
+                            <span class="map-subtitle">Intensité et surface par site</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-map energy-map--bubbles">
+                            <div class="map-canvas">
+                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
+                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                              </svg>
+                              <div class="map-markers" data-map-markers role="list"></div>
+                              <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
+                            </div>
+                            <div class="map-legend-wrapper">
+                              <span class="map-legend-title">Consommation</span>
+                              <ul class="map-legend" data-map-legend></ul>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Localisation des bâtiments avec couleur selon la consommation et taille proportionnelle à la surface.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-map-bubbles" data-caption="Carte des bâtiments avec bulles proportionnelles à la surface.">
+                        <div class="energy-map energy-map--bubbles">
+                          <div class="map-canvas">
+                            <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
+                              <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                            </svg>
+                            <div class="map-markers" data-map-markers role="list"></div>
+                            <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
+                          </div>
+                          <div class="map-legend-wrapper">
+                            <span class="map-legend-title">Consommation</span>
+                            <ul class="map-legend" data-map-legend></ul>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-map-grid" data-caption="Vue simplifiée des bâtiments regroupés par région.">
+                        <div class="energy-map energy-map--grid">
+                          <div class="map-canvas map-canvas--grid">
+                            <div class="map-markers" data-map-markers role="list"></div>
+                            <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
+                          </div>
+                          <div class="map-legend-wrapper">
+                            <span class="map-legend-title">Consommation</span>
+                            <ul class="map-legend" data-map-legend></ul>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-monthly-card" aria-label="Consommation mensuelle énergie" data-chart-slot="monthly" data-chart-type="monthly-stacked" data-chart-group="monthly">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="monthly">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-monthly-header">
+                          <div class="energy-monthly-header__titles">
+                            <span class="monthly-title">Consommation mensuelle</span>
+                            <span class="monthly-subtitle">Chaleur, électricité, froid</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="monthly-chart monthly-chart--stacked">
+                            <div class="chart-title">
+                              <span>Vue cumulée</span>
+                              <span class="chart-unit">kWh</span>
+                            </div>
+                            <div class="monthly-chart__viewport">
+                              <div class="monthly-bars" data-monthly-bars role="list">
+                                <p class="chart-empty">Chargement des consommations…</p>
+                              </div>
+                              <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="monthly-legend">
+                              <span><span class="legend-dot chaleur"></span> Chaleur</span>
+                              <span><span class="legend-dot elec"></span> Électricité</span>
+                              <span><span class="legend-dot froid"></span> Froid</span>
+                              <span class="legend-line-wrap"><span class="legend-line"></span> Rigueur climatique</span>
+                            </div>
+                            <p class="monthly-summary" data-monthly-summary></p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Répartition mensuelle des consommations et tendance climatique associée.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-monthly-stacked" data-caption="Répartition mensuelle des consommations par usage.">
+                        <div class="monthly-chart monthly-chart--stacked">
+                          <div class="chart-title">
+                            <span>Vue cumulée</span>
+                            <span class="chart-unit">kWh</span>
+                          </div>
+                          <div class="monthly-chart__viewport">
+                            <div class="monthly-bars" data-monthly-bars role="list"></div>
+                            <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="monthly-legend">
+                            <span><span class="legend-dot chaleur"></span> Chaleur</span>
+                            <span><span class="legend-dot elec"></span> Électricité</span>
+                            <span><span class="legend-dot froid"></span> Froid</span>
+                            <span class="legend-line-wrap"><span class="legend-line"></span> Rigueur climatique</span>
+                          </div>
+                          <p class="monthly-summary" data-monthly-summary></p>
+                        </div>
+                      </template>
+                      <template id="chart-template-monthly-lines" data-caption="Analyse mensuelle avec accent sur la tendance climatique.">
+                        <div class="monthly-chart monthly-chart--lines">
+                          <div class="chart-title">
+                            <span>Tendance climatique</span>
+                            <span class="chart-unit">kWh</span>
+                          </div>
+                          <div class="monthly-chart__viewport">
+                            <div class="monthly-bars" data-monthly-bars role="list"></div>
+                            <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="monthly-legend monthly-legend--compact">
+                            <span><span class="legend-dot chaleur"></span> Chaleur</span>
+                            <span><span class="legend-dot elec"></span> Électricité</span>
+                            <span><span class="legend-dot froid"></span> Froid</span>
+                            <span class="legend-line-wrap"><span class="legend-line"></span> Rigueur climatique</span>
+                          </div>
+                          <p class="monthly-summary" data-monthly-summary></p>
+                        </div>
+                      </template>
+
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités énergétiques" data-chart-slot="intensity-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="intensity-distribution">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-distribution-header">
+                          <div class="energy-distribution-header__titles">
+                            <span class="distribution-title">Distribution des intensités</span>
+                            <span class="distribution-subtitle">Comparaison au benchmark</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="distribution-chart distribution-chart--columns">
+                            <div class="chart-title">
+                              <span>Répartition de la sélection</span>
+                              <span class="chart-unit">kWh/m²</span>
+                            </div>
+                            <div class="distribution-graph">
+                              <div class="distribution-bars" data-distribution-bars role="list">
+                                <p class="chart-empty">Chargement des données…</p>
+                              </div>
+                              <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="distribution-legend">
+                              <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                              <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>10 000 bât.</span>)</span>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Histogramme des intensités énergétiques avec courbe de référence issue de 10&nbsp;000 bâtiments.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-distribution-columns" data-caption="Histogramme des intensités énergétiques et benchmark.">
+                        <div class="distribution-chart distribution-chart--columns">
+                          <div class="chart-title">
+                            <span>Répartition de la sélection</span>
+                            <span class="chart-unit">kWh/m²</span>
+                          </div>
+                          <div class="distribution-graph">
+                            <div class="distribution-bars" data-distribution-bars role="list"></div>
+                            <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="distribution-legend">
+                            <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                            <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>10 000 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-distribution-line" data-caption="Comparaison lissée des intensités avec le benchmark.">
+                        <div class="distribution-chart distribution-chart--line">
+                          <div class="chart-title">
+                            <span>Comparaison lissée</span>
+                            <span class="chart-unit">kWh/m²</span>
+                          </div>
+                          <div class="distribution-graph">
+                            <div class="distribution-bars" data-distribution-bars role="list"></div>
+                            <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="distribution-legend">
+                            <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                            <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>10 000 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
                   <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="false" hidden aria-hidden="true" tabindex="-1" data-catalog-anchor="trigger">
@@ -979,6 +1248,123 @@
                           <span class="catalog-card__text">
                             <span class="catalog-card__title">Colonnes verticales</span>
                             <span class="catalog-card__meta">Projection 2025</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="typology">
+                        <button type="button" class="catalog-card" data-chart-type="typology-columns" data-chart-group="typology" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-typology preview-typology--bars">
+                              <span style="--h:68"></span>
+                              <span style="--h:52"></span>
+                              <span style="--h:34"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Barres par typologie</span>
+                            <span class="catalog-card__meta">Vision synthétique</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card" data-chart-type="typology-rows" data-chart-group="typology" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-table">
+                              <span></span>
+                              <span></span>
+                              <span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Tableau détaillé</span>
+                            <span class="catalog-card__meta">Détail par typologie</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="energy-map">
+                        <button type="button" class="catalog-card" data-chart-type="map-bubbles" data-chart-group="energy-map" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-map preview-map--bubbles">
+                              <span class="bubble bubble--1"></span>
+                              <span class="bubble bubble--2"></span>
+                              <span class="bubble bubble--3"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Bulles géolocalisées</span>
+                            <span class="catalog-card__meta">Taille selon surface</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card" data-chart-type="map-grid" data-chart-group="energy-map" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-map preview-map--grid">
+                              <span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Regroupement par région</span>
+                            <span class="catalog-card__meta">Lecture simplifiée</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="monthly">
+                        <button type="button" class="catalog-card" data-chart-type="monthly-stacked" data-chart-group="monthly" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-monthly preview-monthly--stacked">
+                              <span></span><span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Barres empilées</span>
+                            <span class="catalog-card__meta">Chaleur / Élec / Froid</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card" data-chart-type="monthly-lines" data-chart-group="monthly" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-monthly preview-monthly--line">
+                              <svg viewBox="0 0 90 32" preserveAspectRatio="none">
+                                <polyline points="0,24 18,20 36,18 54,12 72,10 90,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></polyline>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Tendance climatique</span>
+                            <span class="catalog-card__meta">Courbe rigueur</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="distribution">
+                        <button type="button" class="catalog-card" data-chart-type="distribution-columns" data-chart-group="distribution" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-distribution preview-distribution--bars">
+                              <span style="--h:40"></span>
+                              <span style="--h:56"></span>
+                              <span style="--h:28"></span>
+                              <span style="--h:18"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Histogramme</span>
+                            <span class="catalog-card__meta">Sélection vs benchmark</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li>
+                        <button type="button" class="catalog-card" data-chart-type="distribution-line" data-chart-group="distribution" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-distribution preview-distribution--line">
+                              <svg viewBox="0 0 90 32" preserveAspectRatio="none">
+                                <polyline points="0,26 18,22 36,18 54,14 72,10 90,8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></polyline>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Courbe lissée</span>
+                            <span class="catalog-card__meta">Benchmark 10&nbsp;000 bât.</span>
                           </span>
                         </button>
                       </li>

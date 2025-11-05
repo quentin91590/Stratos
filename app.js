@@ -54,7 +54,26 @@
       primary: { chaleur: 0.8, electricite: 0.15, froid: 0.05 },
       secondary: { chaleur: 0.7, electricite: 0.2, froid: 0.1 },
     },
+    buildings: {
+      'bat-a': {
+        metrics: { general: 182, chaleur: 108, froid: 11, elec: 74, co2: 24, eau: 1.28 },
+      },
+      'bat-b': {
+        metrics: { general: 205, chaleur: 126, froid: 14, elec: 82, co2: 28, eau: 1.52 },
+      },
+      'bat-c': {
+        metrics: { general: 191, chaleur: 115, froid: 13, elec: 77, co2: 25, eau: 1.36 },
+      },
+      'bat-d': {
+        metrics: { general: 214, chaleur: 134, froid: 16, elec: 89, co2: 30, eau: 1.62 },
+      },
+      'bat-e': {
+        metrics: { general: 174, chaleur: 101, froid: 9, elec: 70, co2: 22, eau: 1.18 },
+      },
+    },
   };
+
+  const METRIC_KEYS = Object.keys(ENERGY_BASE_DATA.metrics);
 
   const MIX_LABELS = {
     chaleur: 'Chaleur',
@@ -561,11 +580,24 @@
 
   /* ========== Tabset générique (Énergie + sections alt) ========== */
   function updateTrendPadding(scope = document) {
+    const rootFontSize = Number.parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
     scope.querySelectorAll('.kpi-value-wrap').forEach(w => {
-      const t = w.querySelector('.kpi-trend');
-      if (!t) return;
-      const wpx = Math.ceil(t.getBoundingClientRect().width);
-      w.style.setProperty('--trend-w', wpx + 'px');
+      const valueEl = w.querySelector('.kpi-value');
+      if (!valueEl) return;
+
+      w.style.removeProperty('--value-size');
+      const basePx = Number.parseFloat(getComputedStyle(valueEl).fontSize) || (rootFontSize * 2);
+
+      const rawText = (valueEl.textContent || '').trim();
+      const digitsOnly = rawText.replace(/[^0-9]/g, '');
+      const compactText = digitsOnly.length ? digitsOnly : rawText.replace(/\s+/g, '');
+      const effectiveLength = Math.max(compactText.length, 1);
+      const extra = Math.max(effectiveLength - 4, 0);
+      const shrinkFactor = Math.max(0.55, 1 - (extra * 0.09));
+      const baseRem = basePx / rootFontSize;
+      const finalRem = Math.min(baseRem, Math.max(1.05, baseRem * shrinkFactor));
+
+      w.style.setProperty('--value-size', `${finalRem.toFixed(3)}rem`);
     });
   }
 
@@ -727,6 +759,8 @@
   topItems.forEach(btn => btn.addEventListener('click', () => selectSection(btn.dataset.section)));
 
   window.addEventListener('resize', syncStickyTop);
+  const handleKpiResize = () => updateTrendPadding();
+  window.addEventListener('resize', handleKpiResize);
 
   /* ========== Sidebar (cases + hamburger) ========== */
   const treeCheckboxMap = new WeakMap();
@@ -816,24 +850,64 @@
     return findSiblingTreeCheck(li, leafBtn);
   });
 
-  const computeFallbackSre = () => {
-    let total = 0;
-    document.querySelectorAll('.tree-leaf').forEach((leaf) => {
+  const computeFallbackSre = (leaves) => {
+    const list = Array.isArray(leaves) && leaves.length ? leaves : $$('.tree-leaf');
+    return list.reduce((total, leaf) => {
       const raw = Number.parseFloat(leaf?.dataset?.sre);
-      if (Number.isFinite(raw)) total += raw;
+      return Number.isFinite(raw) ? total + raw : total;
+    }, 0);
+  };
+
+  const computeAggregatedMetrics = (leaves, fallbackSre) => {
+    const aggregated = {};
+    const totals = {};
+    const fallbackIntensity = {};
+
+    METRIC_KEYS.forEach((key) => {
+      totals[key] = { energy: 0, sre: 0 };
+      const baseMetric = ENERGY_BASE_DATA.metrics[key];
+      fallbackIntensity[key] = Number(baseMetric?.intensity) || 0;
     });
-    return total;
+
+    if (Array.isArray(leaves) && leaves.length) {
+      leaves.forEach((leaf) => {
+        const sre = Number.parseFloat(leaf?.dataset?.sre);
+        if (!Number.isFinite(sre) || sre <= 0) return;
+        const buildingId = leaf.dataset?.building || '';
+        const buildingMetrics = ENERGY_BASE_DATA.buildings?.[buildingId]?.metrics || {};
+        METRIC_KEYS.forEach((key) => {
+          const candidate = Number(buildingMetrics[key]);
+          const intensity = Number.isFinite(candidate) ? candidate : fallbackIntensity[key];
+          totals[key].energy += intensity * sre;
+          totals[key].sre += sre;
+        });
+      });
+    }
+
+    const safeFallbackSre = Number.isFinite(fallbackSre) && fallbackSre > 0
+      ? fallbackSre
+      : 0;
+
+    METRIC_KEYS.forEach((key) => {
+      const hasData = totals[key].sre > 0;
+      const totalSre = hasData ? totals[key].sre : safeFallbackSre;
+      const intensity = hasData && totals[key].sre > 0
+        ? totals[key].energy / totals[key].sre
+        : fallbackIntensity[key];
+      const totalEnergy = hasData
+        ? totals[key].energy
+        : intensity * totalSre;
+      aggregated[key] = {
+        intensity,
+        total: totalEnergy,
+        sre: totalSre,
+      };
+    });
+
+    return aggregated;
   };
 
-  const computeEnergyValue = (key, mode, sre) => {
-    const metric = ENERGY_BASE_DATA.metrics[key];
-    if (!metric) return 0;
-    const intensity = Number(metric.intensity) || 0;
-    if (mode === 'kwhm2') return intensity;
-    return intensity * sre;
-  };
-
-  const updateEnergyKpis = (mode, sre) => {
+  const updateEnergyKpis = (mode, aggregated) => {
     const map = {
       general: '#tab-energie .kpi-value',
       chaleur: '#tab-chaleur .kpi-value',
@@ -846,8 +920,9 @@
     Object.entries(map).forEach(([key, selector]) => {
       const el = document.querySelector(selector);
       const metric = ENERGY_BASE_DATA.metrics[key];
-      if (!el || !metric) return;
-      const value = computeEnergyValue(key, mode, sre);
+      const data = aggregated?.[key];
+      if (!el || !metric || !data) return;
+      const value = mode === 'kwhm2' ? data.intensity : data.total;
       const decimals = mode === 'kwhm2' ? (metric.decimals || 0) : 0;
       el.textContent = formatEnergyDisplay(value, mode, decimals);
     });
@@ -874,11 +949,12 @@
     if (targetUnit) targetUnit.textContent = unit;
   };
 
-  const updateEnergyMeters = () => {
-    const maxIntensity = Math.max(
+  const updateEnergyMeters = (aggregated) => {
+    const intensities = [
       ...ENERGY_BASE_DATA.trend.map(item => item.intensity),
-      ...Object.values(ENERGY_BASE_DATA.metrics).map(m => Number(m.intensity) || 0),
-    );
+      ...METRIC_KEYS.map(key => Number(aggregated?.[key]?.intensity) || 0),
+    ].filter(value => Number.isFinite(value) && value >= 0);
+    const maxIntensity = intensities.length ? Math.max(...intensities) : 0;
     const map = {
       general: '#panel-energie .meter > div',
       chaleur: '#panel-chaleur .meter > div',
@@ -891,9 +967,10 @@
     Object.entries(map).forEach(([key, selector]) => {
       const el = document.querySelector(selector);
       const metric = ENERGY_BASE_DATA.metrics[key];
-      if (!el || !metric || !Number.isFinite(maxIntensity) || maxIntensity <= 0) return;
-      const intensity = Number(metric.intensity) || 0;
-      const percent = Math.max(0, Math.min(100, (intensity / maxIntensity) * 100));
+      if (!el || !metric || maxIntensity <= 0) return;
+      const value = Number(aggregated?.[key]?.intensity);
+      const fallback = Number(metric.intensity) || 0;
+      const percent = Math.max(0, Math.min(100, ((Number.isFinite(value) ? value : fallback) / maxIntensity) * 100));
       el.style.width = `${percent}%`;
     });
   };
@@ -926,8 +1003,10 @@
     }
   };
 
-  const updateMixCards = (mode, sre) => {
-    const totalPerM2 = ENERGY_BASE_DATA.metrics.general?.intensity || 0;
+  const updateMixCards = (mode, aggregated) => {
+    const general = aggregated?.general || {};
+    const totalPerM2 = Number(general.intensity) || Number(ENERGY_BASE_DATA.metrics.general?.intensity) || 0;
+    const sre = Number(general.sre) || computeFallbackSre();
     const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
     document.querySelectorAll('.energy-mix-card').forEach((card) => {
       const slot = card.dataset.chartSlot || '';
@@ -992,28 +1071,19 @@
 
   function updateEnergyVisuals() {
     const mode = FILTERS.norm || 'kwhm2';
-    const perimeter = typeof computeSelectedPerimeter === 'function'
-      ? computeSelectedPerimeter()
-      : { buildings: 0, sre: 0 };
-    let sre = Number.isFinite(perimeter?.sre) ? perimeter.sre : 0;
-    if (!Number.isFinite(sre) || sre <= 0) {
-      if (perimeter?.buildings > 0) {
-        const fallback = computeFallbackSre();
-        if (fallback > 0) sre = fallback;
-      } else {
-        const hasCheckboxes = document.querySelectorAll('.tree-leaf .tree-check').length > 0;
-        if (!hasCheckboxes) {
-          const fallback = computeFallbackSre();
-          if (fallback > 0) sre = fallback;
-        }
-      }
-    }
-    if (!Number.isFinite(sre) || sre < 0) sre = 0;
-    updateEnergyKpis(mode, sre);
-    updateEnergyThresholds(mode, sre);
-    updateEnergyTrendChart(mode, sre);
-    updateMixCards(mode, sre);
-    updateEnergyMeters();
+    const allLeaves = $$('.tree-leaf');
+    const selectedLeaves = allLeaves.filter(leaf => leafCheck(leaf)?.checked);
+    const activeLeaves = selectedLeaves.length ? selectedLeaves : allLeaves;
+    const fallbackSre = computeFallbackSre(allLeaves);
+    const aggregated = computeAggregatedMetrics(activeLeaves, fallbackSre);
+    const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
+
+    updateEnergyKpis(mode, aggregated);
+    updateEnergyThresholds(mode, effectiveSre);
+    updateEnergyTrendChart(mode, effectiveSre);
+    updateMixCards(mode, aggregated);
+    updateEnergyMeters(aggregated);
+    updateTrendPadding();
   }
 
   function syncTreeSelectionState() {

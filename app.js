@@ -30,6 +30,96 @@
     'panel-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
+  const ENERGY_BASE_DATA = {
+    metrics: {
+      general: { intensity: 196, decimals: 0 },
+      chaleur: { intensity: 118, decimals: 0 },
+      froid: { intensity: 13, decimals: 0 },
+      elec: { intensity: 78, decimals: 0 },
+      co2: { intensity: 26, decimals: 0 },
+      eau: { intensity: 1.45, decimals: 2 },
+    },
+    thresholds: {
+      legal: 180,
+      target: 170,
+    },
+    trend: [
+      { year: 2021, intensity: 210 },
+      { year: 2022, intensity: 198 },
+      { year: 2023, intensity: 190 },
+      { year: 2024, intensity: 184 },
+      { year: 2025, intensity: 176 },
+    ],
+    mix: {
+      primary: { chaleur: 0.8, electricite: 0.15, froid: 0.05 },
+      secondary: { chaleur: 0.7, electricite: 0.2, froid: 0.1 },
+    },
+  };
+
+  const MIX_LABELS = {
+    chaleur: 'Chaleur',
+    electricite: 'Électricité',
+    froid: 'Froid',
+  };
+
+  const MIX_KEYS = Object.keys(MIX_LABELS);
+
+  const normalizeText = (value) => (value || '')
+    .toString()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
+
+  const resolveMixKey = (label) => {
+    const norm = normalizeText(label);
+    if (!norm) return null;
+    if (norm.includes('chaleur')) return 'chaleur';
+    if (norm.includes('electric')) return 'electricite';
+    if (norm.includes('froid')) return 'froid';
+    return null;
+  };
+
+  const formatNumber = (value, { decimals = 0 } = {}) => {
+    if (!Number.isFinite(value)) return '0';
+    const opts = { maximumFractionDigits: decimals };
+    if (decimals > 0) opts.minimumFractionDigits = decimals;
+    return new Intl.NumberFormat('fr-FR', opts).format(value);
+  };
+
+  const formatEnergyDisplay = (value, mode, decimals = 0) => {
+    if (!Number.isFinite(value) || value <= 0) {
+      return mode === 'kwhm2' ? '0' : '0';
+    }
+    const rounded = mode === 'kwhm2'
+      ? Number(value.toFixed(Math.max(decimals, 0)))
+      : Math.round(value);
+    return formatNumber(rounded, { decimals: mode === 'kwhm2' ? decimals : 0 });
+  };
+
+  const formatCompactEnergy = (value) => {
+    if (!Number.isFinite(value) || value <= 0) return '0';
+    return new Intl.NumberFormat('fr-FR', {
+      notation: 'compact',
+      compactDisplay: 'short',
+      maximumFractionDigits: 1,
+    }).format(value);
+  };
+
+  const describeMix = (shares, totalPerM2, mode, sre) => {
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    const parts = [];
+    MIX_KEYS.forEach((key) => {
+      const share = shares[key] || 0;
+      const perM2Value = totalPerM2 * share;
+      const baseValue = mode === 'kwhm2' ? perM2Value : perM2Value * sre;
+      const formatted = formatEnergyDisplay(baseValue, mode, mode === 'kwhm2' ? 1 : 0);
+      const pct = Math.round(share * 100);
+      parts.push(`${MIX_LABELS[key]} : ${formatted} ${unit} (${pct} %)`);
+    });
+    return parts.join(', ');
+  };
+
   // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)
   // --- Year handling (OK) ---------------------------------------
   function highlightEnergyTrend(year) {
@@ -264,6 +354,7 @@
       if (chartType === 'intensity-bars') {
         highlightEnergyTrend(FILTERS.year);
       }
+      updateEnergyVisuals();
       return true;
     };
 
@@ -725,6 +816,206 @@
     return findSiblingTreeCheck(li, leafBtn);
   });
 
+  const computeFallbackSre = () => {
+    let total = 0;
+    document.querySelectorAll('.tree-leaf').forEach((leaf) => {
+      const raw = Number.parseFloat(leaf?.dataset?.sre);
+      if (Number.isFinite(raw)) total += raw;
+    });
+    return total;
+  };
+
+  const computeEnergyValue = (key, mode, sre) => {
+    const metric = ENERGY_BASE_DATA.metrics[key];
+    if (!metric) return 0;
+    const intensity = Number(metric.intensity) || 0;
+    if (mode === 'kwhm2') return intensity;
+    return intensity * sre;
+  };
+
+  const updateEnergyKpis = (mode, sre) => {
+    const map = {
+      general: '#tab-energie .kpi-value',
+      chaleur: '#tab-chaleur .kpi-value',
+      froid: '#tab-froid .kpi-value',
+      elec: '#tab-elec .kpi-value',
+      co2: '#tab-co2 .kpi-value',
+      eau: '#tab-eau .kpi-value',
+    };
+
+    Object.entries(map).forEach(([key, selector]) => {
+      const el = document.querySelector(selector);
+      const metric = ENERGY_BASE_DATA.metrics[key];
+      if (!el || !metric) return;
+      const value = computeEnergyValue(key, mode, sre);
+      const decimals = mode === 'kwhm2' ? (metric.decimals || 0) : 0;
+      el.textContent = formatEnergyDisplay(value, mode, decimals);
+    });
+  };
+
+  const updateEnergyThresholds = (mode, sre) => {
+    const legalEl = document.querySelector('[data-energy-legal]');
+    const targetEl = document.querySelector('[data-energy-target]');
+    const legalUnit = document.querySelector('[data-energy-unit="legal"]');
+    const targetUnit = document.querySelector('[data-energy-unit="target"]');
+    if (!legalEl || !targetEl) return;
+
+    const legalValue = mode === 'kwhm2'
+      ? ENERGY_BASE_DATA.thresholds.legal
+      : ENERGY_BASE_DATA.thresholds.legal * sre;
+    const targetValue = mode === 'kwhm2'
+      ? ENERGY_BASE_DATA.thresholds.target
+      : ENERGY_BASE_DATA.thresholds.target * sre;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+
+    legalEl.textContent = formatEnergyDisplay(legalValue, mode, 0);
+    targetEl.textContent = formatEnergyDisplay(targetValue, mode, 0);
+    if (legalUnit) legalUnit.textContent = unit;
+    if (targetUnit) targetUnit.textContent = unit;
+  };
+
+  const updateEnergyMeters = () => {
+    const maxIntensity = Math.max(
+      ...ENERGY_BASE_DATA.trend.map(item => item.intensity),
+      ...Object.values(ENERGY_BASE_DATA.metrics).map(m => Number(m.intensity) || 0),
+    );
+    const map = {
+      general: '#panel-energie .meter > div',
+      chaleur: '#panel-chaleur .meter > div',
+      froid: '#panel-froid .meter > div',
+      elec: '#panel-elec .meter > div',
+      co2: '#panel-co2 .meter > div',
+      eau: '#panel-eau .meter > div',
+    };
+
+    Object.entries(map).forEach(([key, selector]) => {
+      const el = document.querySelector(selector);
+      const metric = ENERGY_BASE_DATA.metrics[key];
+      if (!el || !metric || !Number.isFinite(maxIntensity) || maxIntensity <= 0) return;
+      const intensity = Number(metric.intensity) || 0;
+      const percent = Math.max(0, Math.min(100, (intensity / maxIntensity) * 100));
+      el.style.width = `${percent}%`;
+    });
+  };
+
+  const updateEnergyTrendChart = (mode, sre) => {
+    const chart = document.querySelector('.energy-trend-chart');
+    if (!chart) return;
+    const unitLabel = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    chart.querySelectorAll('.chart-unit').forEach(unit => { unit.textContent = unitLabel; });
+
+    const barsWrap = chart.querySelector('.chart-bars');
+    const values = [];
+    ENERGY_BASE_DATA.trend.forEach(({ year, intensity }) => {
+      const bar = chart.querySelector(`.chart-bar[data-year="${year}"]`);
+      if (!bar) return;
+      const displayValue = mode === 'kwhm2' ? intensity : intensity * sre;
+      values.push(displayValue);
+      const valueText = formatEnergyDisplay(displayValue, mode, 0);
+      const barValue = bar.querySelector('.bar-value');
+      if (barValue) barValue.textContent = valueText;
+      bar.setAttribute('aria-label', `${year} : ${valueText} ${unitLabel}`);
+      bar.style.setProperty('--value', Number(displayValue) || 0);
+    });
+
+    if (barsWrap && values.length) {
+      const maxValue = Math.max(...values);
+      const scale = maxValue > 0 ? (150 / maxValue) : 0;
+      if (scale > 0) barsWrap.style.setProperty('--bar-scale', `${scale}px`);
+      else barsWrap.style.removeProperty('--bar-scale');
+    }
+  };
+
+  const updateMixCards = (mode, sre) => {
+    const totalPerM2 = ENERGY_BASE_DATA.metrics.general?.intensity || 0;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    document.querySelectorAll('.energy-mix-card').forEach((card) => {
+      const slot = card.dataset.chartSlot || '';
+      const shares = slot === 'mix-secondary'
+        ? ENERGY_BASE_DATA.mix.secondary
+        : ENERGY_BASE_DATA.mix.primary;
+      if (!shares) return;
+
+      const subtitle = card.querySelector('.mix-subtitle');
+      if (subtitle) subtitle.textContent = `Répartition en ${unit}`;
+
+      const updateLegendItem = (container, valueEl, labelText) => {
+        const key = resolveMixKey(labelText);
+        if (!valueEl || !key) return;
+        const share = shares[key] || 0;
+        const perM2Value = totalPerM2 * share;
+        const baseValue = mode === 'kwhm2' ? perM2Value : perM2Value * sre;
+        const formatted = formatEnergyDisplay(baseValue, mode, mode === 'kwhm2' ? 1 : 0);
+        const pct = Math.round(share * 100);
+        valueEl.textContent = `${formatted} ${unit} (${pct} %)`;
+      };
+
+      card.querySelectorAll('.mix-legend li').forEach((li) => {
+        const label = li.querySelector('.mix-label')?.textContent || '';
+        const valueEl = li.querySelector('.mix-value');
+        updateLegendItem(li, valueEl, label);
+      });
+
+      card.querySelectorAll('.mix-columns-legend li').forEach((li) => {
+        const label = li.querySelector('.mix-label')?.textContent || '';
+        const valueEl = li.querySelector('.mix-value');
+        updateLegendItem(li, valueEl, label);
+      });
+
+      card.querySelectorAll('.mix-bar').forEach((bar) => {
+        const label = bar.querySelector('.mix-bar__label')?.textContent || '';
+        const valueEl = bar.querySelector('.mix-bar__value');
+        updateLegendItem(bar, valueEl, label);
+      });
+
+      card.querySelectorAll('.mix-ring').forEach((ring) => {
+        const label = ring.querySelector('.mix-ring__label')?.textContent || '';
+        const valueEl = ring.querySelector('.mix-ring__value');
+        updateLegendItem(ring, valueEl, label);
+      });
+
+      const donutCenter = card.querySelector('.mix-donut__center');
+      if (donutCenter) {
+        const share = shares.chaleur || 0;
+        const perM2Value = totalPerM2 * share;
+        const baseValue = mode === 'kwhm2' ? perM2Value : perM2Value * sre;
+        donutCenter.textContent = `${formatCompactEnergy(baseValue)} ${unit}`;
+      }
+
+      const roleImg = card.querySelector('[role="img"]');
+      if (roleImg) {
+        const labelBase = card.getAttribute('aria-label') || 'Mix énergétique';
+        roleImg.setAttribute('aria-label', `${labelBase} : ${describeMix(shares, totalPerM2, mode, sre)}.`);
+      }
+    });
+  };
+
+  function updateEnergyVisuals() {
+    const mode = FILTERS.norm || 'kwhm2';
+    const perimeter = typeof computeSelectedPerimeter === 'function'
+      ? computeSelectedPerimeter()
+      : { buildings: 0, sre: 0 };
+    let sre = Number.isFinite(perimeter?.sre) ? perimeter.sre : 0;
+    if (!Number.isFinite(sre) || sre <= 0) {
+      if (perimeter?.buildings > 0) {
+        const fallback = computeFallbackSre();
+        if (fallback > 0) sre = fallback;
+      } else {
+        const hasCheckboxes = document.querySelectorAll('.tree-leaf .tree-check').length > 0;
+        if (!hasCheckboxes) {
+          const fallback = computeFallbackSre();
+          if (fallback > 0) sre = fallback;
+        }
+      }
+    }
+    if (!Number.isFinite(sre) || sre < 0) sre = 0;
+    updateEnergyKpis(mode, sre);
+    updateEnergyThresholds(mode, sre);
+    updateEnergyTrendChart(mode, sre);
+    updateMixCards(mode, sre);
+    updateEnergyMeters();
+  }
+
   function syncTreeSelectionState() {
     $$('.tree-leaf').forEach(leafBtn => {
       const cb = leafCheck(leafBtn);
@@ -765,6 +1056,8 @@
     const sreEl = document.getElementById('sum-sre-val');
     if (sitesEl) sitesEl.textContent = buildings ? NF.format(buildings) : '0';
     if (sreEl) sreEl.textContent = buildings ? NF.format(safeSre) : '0';
+
+    updateEnergyVisuals();
   }
 
   function setActive(btn, on) {
@@ -953,6 +1246,8 @@
       }
       h3.textContent = title;
     });
+
+    updateEnergyVisuals();
   }
 
   function setupEnergyFilters() {
@@ -960,10 +1255,17 @@
     if (!scope) return;
 
     // Normalisation
-    scope.querySelectorAll('input[name="norm-energy"]').forEach(r =>
+    const normInputs = scope.querySelectorAll('input[name="norm-energy"]');
+    normInputs.forEach(r =>
       r.addEventListener('change', e => applyNormalization(e.target.value))
     );
-    applyNormalization(FILTERS.norm);
+    const defaultNormInput = scope.querySelector(`#norm-${FILTERS.norm}`) || normInputs[0];
+    if (defaultNormInput) {
+      defaultNormInput.checked = true;
+      applyNormalization(defaultNormInput.value);
+    } else {
+      applyNormalization(FILTERS.norm);
+    }
 
 
     // Radio Oui/Non pour Correction climatique

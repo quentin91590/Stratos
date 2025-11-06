@@ -370,9 +370,17 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bullet.chaleur{background:#f97316}
 .mix-bullet.electricite{background:#38bdf8}
 .mix-bullet.froid{background:#6366f1}
+.mix-bullet.gaz{background:#f97316}
+.mix-bullet.pac{background:#0ea5e9}
+.mix-bullet.reseau{background:#ef4444}
+.mix-bullet.biomasse{background:#16a34a}
+.mix-bullet.chauffage{background:#fb923c}
+.mix-bullet.ecs{background:#facc15}
+.mix-bullet.ventilation{background:#38bdf8}
 .mix-label{font-weight:600}
 .mix-value{font-weight:700; color:#0f172a}
 .mix-donut{--mix-chaleur:80; --mix-elec:15; --mix-froid:5; position:relative; width:132px; height:132px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#0f172a; font-weight:700; background:conic-gradient(#f97316 0 calc(var(--mix-chaleur) * 1%), #38bdf8 calc(var(--mix-chaleur) * 1%) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%), #6366f1 calc((var(--mix-chaleur) + var(--mix-elec)) * 1%) 100%); box-shadow:0 8px 22px rgba(15,23,42,0.08)}
+.mix-donut.heat{--mix-gaz:52; --mix-pac:20; --mix-reseau:18; --mix-biomasse:10; background:conic-gradient(#f97316 0 calc(var(--mix-gaz) * 1%), #0ea5e9 calc(var(--mix-gaz) * 1%) calc((var(--mix-gaz) + var(--mix-pac)) * 1%), #ef4444 calc((var(--mix-gaz) + var(--mix-pac)) * 1%) calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%), #16a34a calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%) 100%)}
 .mix-donut::after{content:""; position:absolute; inset:24px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
 .mix-donut__center,.mix-donut__label{position:relative; z-index:1}
 .mix-donut__center{font-size:1.35rem; letter-spacing:-0.01em}
@@ -385,6 +393,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bar.chaleur{--mix-color:#f97316}
 .mix-bar.electricite{--mix-color:#38bdf8}
 .mix-bar.froid{--mix-color:#6366f1}
+.mix-bar.gaz{--mix-color:#f97316}
+.mix-bar.pac{--mix-color:#0ea5e9}
+.mix-bar.reseau{--mix-color:#ef4444}
+.mix-bar.biomasse{--mix-color:#16a34a}
+.mix-bar.chauffage{--mix-color:#fb923c}
+.mix-bar.ecs{--mix-color:#facc15}
+.mix-bar.ventilation{--mix-color:#38bdf8}
 .mix-rings{display:flex; gap:18px; flex-wrap:wrap}
 .mix-ring{--mix-color:#f97316; position:relative; width:96px; height:96px; border-radius:50%; background:conic-gradient(var(--mix-color) 0 calc(var(--mix-value) * 1%), rgba(226,232,240,0.7) calc(var(--mix-value) * 1%) 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(15,23,42,0.08)}
 .mix-ring::after{content:""; position:absolute; inset:20px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
@@ -393,6 +408,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-ring__label{font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:#475569}
 .mix-ring.electricite{--mix-color:#38bdf8}
 .mix-ring.froid{--mix-color:#6366f1}
+.mix-ring.pac{--mix-color:#0ea5e9}
+.mix-ring.reseau{--mix-color:#ef4444}
+.mix-ring.biomasse{--mix-color:#16a34a}
+.mix-ring.chauffage{--mix-color:#fb923c}
+.mix-ring.ecs{--mix-color:#facc15}
+.mix-ring.ventilation{--mix-color:#38bdf8}
 .mix-columns{display:flex; gap:18px; align-items:flex-end; justify-content:flex-start; height:128px; padding:0 4px}
 .mix-column{flex:1; min-width:18px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg, rgba(59,130,246,0.25), rgba(59,130,246,0)); position:relative; height:100%}
 .mix-column::before{content:""; position:absolute; left:0; right:0; bottom:0; border-radius:inherit; background:var(--mix-color); opacity:.85; height:calc(var(--mix-value) * 1%)}

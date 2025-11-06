@@ -42,12 +42,12 @@
     'intensity-bars': { width: 'full', height: 'medium' },
     'intensity-line': { width: 'full', height: 'short' },
     'intensity-breakdown': { width: 'full', height: 'tall' },
-    'typology-columns': { width: 'half', height: 'tall' },
-    'typology-rows': { width: 'full', height: 'tall' },
+    'typology-columns': { width: 'full', height: 'xl' },
+    'typology-rows': { width: 'full', height: 'xl' },
     'map-bubbles': { width: 'full', height: 'tall' },
     'map-grid': { width: 'full', height: 'medium' },
-    'monthly-stacked': { width: 'full', height: 'tall' },
-    'monthly-lines': { width: 'full', height: 'medium' },
+    'monthly-stacked': { width: 'full', height: 'xl' },
+    'monthly-lines': { width: 'full', height: 'xl' },
     'distribution-columns': { width: 'full', height: 'tall' },
     'distribution-line': { width: 'full', height: 'medium' },
   };
@@ -56,9 +56,9 @@
     'mix-primary': { width: 'half', height: 'medium' },
     'mix-secondary': { width: 'half', height: 'tall' },
     'energy-trend': { width: 'full', height: 'medium' },
-    'typology': { width: 'half', height: 'tall' },
+    'typology': { width: 'full', height: 'xl' },
     'energy-map': { width: 'full', height: 'tall' },
-    'monthly': { width: 'full', height: 'tall' },
+    'monthly': { width: 'full', height: 'xl' },
     'intensity-distribution': { width: 'full', height: 'medium' },
   };
 

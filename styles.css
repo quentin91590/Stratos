@@ -236,7 +236,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:20px;
   align-items:start;
-  grid-auto-rows:var(--chart-row-size);
+  grid-auto-rows:minmax(var(--chart-row-size), max-content);
 }
 .energy-chart-stack > [data-chart-slot]{
   --tile-row-span:2;
@@ -255,7 +255,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .energy-typology-card,
 .energy-map-card,
 .energy-monthly-card,
-.energy-distribution-card{position:relative; padding:20px 22px; border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 6px 16px rgba(15,23,42,0.06); display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-height:0; min-width:0; justify-self:stretch; width:100%; margin:0; height:100%}
+.energy-distribution-card{position:relative; padding:20px 22px; border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 6px 16px rgba(15,23,42,0.06); display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-height:0; min-width:0; justify-self:stretch; width:100%; margin:0; height:auto}
 .energy-mix-header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; font-weight:700; color:#1f2937; padding-right:56px}
 .energy-mix-header__titles{display:flex; flex-direction:column; gap:4px}
 .mix-title{font-size:1.05rem; letter-spacing:-0.01em}

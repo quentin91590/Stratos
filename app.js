@@ -248,10 +248,20 @@
     'heat-fuels-bars': { width: 'half', height: 'medium' },
     'heat-uses-bars': { width: 'half', height: 'medium' },
     'heat-uses-rings': { width: 'half', height: 'medium' },
+    'cold-production-donut': { width: 'half', height: 'medium' },
+    'cold-production-bars': { width: 'half', height: 'medium' },
+    'cold-uses-bars': { width: 'half', height: 'medium' },
+    'cold-uses-rings': { width: 'half', height: 'medium' },
+    'elec-sources-donut': { width: 'half', height: 'medium' },
+    'elec-sources-bars': { width: 'half', height: 'medium' },
+    'elec-uses-bars': { width: 'half', height: 'medium' },
+    'elec-uses-rings': { width: 'half', height: 'medium' },
     'intensity-bars': { width: 'full', height: 'medium' },
     'intensity-line': { width: 'full', height: 'short' },
     'intensity-breakdown': { width: 'full', height: 'tall' },
     'heat-intensity-bars': { width: 'full', height: 'medium' },
+    'cold-intensity-bars': { width: 'full', height: 'medium' },
+    'elec-intensity-bars': { width: 'full', height: 'medium' },
     'typology-columns': { width: 'full', height: 'xl' },
     'typology-rows': { width: 'full', height: 'xl' },
     'map-bubbles': { width: 'full', height: 'tall' },
@@ -259,8 +269,12 @@
     'monthly-stacked': { width: 'full', height: 'xl' },
     'monthly-lines': { width: 'full', height: 'xl' },
     'heat-monthly': { width: 'full', height: 'xl' },
+    'cold-monthly': { width: 'full', height: 'xl' },
+    'elec-monthly': { width: 'full', height: 'xl' },
     'distribution-columns': { width: 'full', height: 'tall' },
     'distribution-line': { width: 'full', height: 'medium' },
+    'cold-distribution': { width: 'full', height: 'medium' },
+    'elec-distribution': { width: 'full', height: 'medium' },
   };
 
   const TILE_LAYOUT_BY_SLOT = {
@@ -278,6 +292,20 @@
     'heat-map': { width: 'full', height: 'tall' },
     'heat-monthly': { width: 'full', height: 'xl' },
     'heat-distribution': { width: 'full', height: 'medium' },
+    'cold-production': { width: 'half', height: 'medium' },
+    'cold-uses': { width: 'half', height: 'medium' },
+    'cold-ranking': { width: 'half', height: 'tall' },
+    'cold-trend': { width: 'full', height: 'medium' },
+    'cold-map': { width: 'full', height: 'tall' },
+    'cold-monthly': { width: 'full', height: 'xl' },
+    'cold-distribution': { width: 'full', height: 'medium' },
+    'elec-sources': { width: 'half', height: 'medium' },
+    'elec-uses': { width: 'half', height: 'medium' },
+    'elec-ranking': { width: 'half', height: 'tall' },
+    'elec-trend': { width: 'full', height: 'medium' },
+    'elec-map': { width: 'full', height: 'tall' },
+    'elec-monthly': { width: 'full', height: 'xl' },
+    'elec-distribution': { width: 'full', height: 'medium' },
   };
 
   const VALID_TILE_WIDTHS = new Set(['full', 'half']);
@@ -622,6 +650,136 @@
     },
   };
 
+  const COLD_BASE_DATA = {
+    mix: {
+      production: {
+        compression: 0.58,
+        freecooling: 0.22,
+        reseau: 0.12,
+        absorption: 0.08,
+      },
+      uses: {
+        confort: 0.46,
+        process: 0.32,
+        it: 0.22,
+      },
+      labels: {
+        production: {
+          compression: 'Groupes à compression',
+          freecooling: 'Free-cooling',
+          reseau: 'Réseau de froid',
+          absorption: 'Groupes à absorption',
+        },
+        uses: {
+          confort: 'Confort',
+          process: 'Process industriels',
+          it: 'Salles serveurs',
+        },
+      },
+    },
+    trend: [
+      { year: 2021, intensity: 18 },
+      { year: 2022, intensity: 16 },
+      { year: 2023, intensity: 14 },
+      { year: 2024, intensity: 13 },
+      { year: 2025, intensity: 12 },
+    ],
+    benchmark: {
+      intensity: {
+        bins: [
+          { key: '0-6', label: '0-6', min: 0, max: 6 },
+          { key: '6-10', label: '6-10', min: 6, max: 10 },
+          { key: '10-14', label: '10-14', min: 10, max: 14 },
+          { key: '14-18', label: '14-18', min: 14, max: 18 },
+          { key: '≥18', label: '≥18', min: 18, max: null },
+        ],
+        curve: [520, 980, 1340, 760, 320],
+        totalBuildings: 2800,
+      },
+      total: {
+        bins: [
+          { key: '0-40', label: '0-40 MWh', min: 0, max: 40000 },
+          { key: '40-70', label: '40-70 MWh', min: 40000, max: 70000 },
+          { key: '70-110', label: '70-110 MWh', min: 70000, max: 110000 },
+          { key: '110-160', label: '110-160 MWh', min: 110000, max: 160000 },
+          { key: '≥160', label: '≥160 MWh', min: 160000, max: null },
+        ],
+        curve: [360, 840, 920, 540, 240],
+        totalBuildings: 2800,
+      },
+    },
+    mapThresholds: {
+      kwhm2: [8, 12, 18],
+      kwh: [45000, 90000, 150000],
+    },
+  };
+
+  const ELEC_BASE_DATA = {
+    mix: {
+      sources: {
+        reseau: 0.68,
+        autoprod: 0.22,
+        verte: 0.1,
+      },
+      uses: {
+        eclairage: 0.26,
+        hvac: 0.24,
+        it: 0.22,
+        process: 0.18,
+        services: 0.1,
+      },
+      labels: {
+        sources: {
+          reseau: 'Réseau public',
+          autoprod: 'Autoproduction PV',
+          verte: 'Achats verts',
+        },
+        uses: {
+          eclairage: 'Éclairage & auxiliaires',
+          hvac: 'Ventilation / CVC',
+          it: 'Informatique & data',
+          process: 'Process / ateliers',
+          services: 'Services généraux',
+        },
+      },
+    },
+    trend: [
+      { year: 2021, intensity: 86 },
+      { year: 2022, intensity: 82 },
+      { year: 2023, intensity: 80 },
+      { year: 2024, intensity: 78 },
+      { year: 2025, intensity: 74 },
+    ],
+    benchmark: {
+      intensity: {
+        bins: [
+          { key: '0-60', label: '0-60', min: 0, max: 60 },
+          { key: '60-90', label: '60-90', min: 60, max: 90 },
+          { key: '90-120', label: '90-120', min: 90, max: 120 },
+          { key: '120-150', label: '120-150', min: 120, max: 150 },
+          { key: '≥150', label: '≥150', min: 150, max: null },
+        ],
+        curve: [420, 1520, 1980, 1230, 540],
+        totalBuildings: 8200,
+      },
+      total: {
+        bins: [
+          { key: '0-120', label: '0-120 MWh', min: 0, max: 120000 },
+          { key: '120-200', label: '120-200 MWh', min: 120000, max: 200000 },
+          { key: '200-280', label: '200-280 MWh', min: 200000, max: 280000 },
+          { key: '280-380', label: '280-380 MWh', min: 280000, max: 380000 },
+          { key: '≥380', label: '≥380 MWh', min: 380000, max: null },
+        ],
+        curve: [540, 1560, 1880, 1280, 640],
+        totalBuildings: 8200,
+      },
+    },
+    mapThresholds: {
+      kwhm2: [55, 75, 95],
+      kwh: [140000, 260000, 380000],
+    },
+  };
+
   const METRIC_KEYS = Object.keys(ENERGY_BASE_DATA.metrics);
 
   const MIX_LABELS = {
@@ -652,6 +810,17 @@
     if (norm.includes('chauff')) return 'chauffage';
     if (norm.includes('sanit') || norm.includes('ecs')) return 'ecs';
     if (norm.includes('ventil') || norm.includes('cta')) return 'ventilation';
+    if (norm.includes('compression')) return 'compression';
+    if (norm.includes('absorption')) return 'absorption';
+    if (norm.includes('freecool') || norm.includes('free-cool')) return 'freecooling';
+    if (norm.includes('autoprod') || norm.includes('photovolta') || norm.includes('pv')) return 'autoprod';
+    if (norm.includes('vert')) return 'verte';
+    if (norm.includes('eclair')) return 'eclairage';
+    if (norm.includes('hvac') || norm.includes('cvc')) return 'hvac';
+    if (norm.includes('process')) return 'process';
+    if (norm.includes('confort')) return 'confort';
+    if (norm.includes('serveur') || norm.includes('inform') || norm.endsWith('it')) return 'it';
+    if (norm.includes('service')) return 'services';
     return null;
   };
 
@@ -1715,6 +1884,12 @@
       distribution: {
         records: distributionRecords,
         benchmark: ENERGY_BASE_DATA.benchmark,
+        benchmarkByMetric: {
+          general: ENERGY_BASE_DATA.benchmark,
+          chaleur: HEAT_BASE_DATA.benchmark,
+          froid: COLD_BASE_DATA.benchmark,
+          elec: ELEC_BASE_DATA.benchmark,
+        },
       },
     };
   };
@@ -1769,8 +1944,20 @@
     const unitLabel = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
     document.querySelectorAll('.energy-trend-chart').forEach((chart) => {
       const scope = chart.dataset.chartScope || 'general';
-      const metricKey = chart.dataset.chartMetric || (scope === 'chaleur' ? 'chaleur' : 'general');
-      const baseTrend = scope === 'chaleur' ? HEAT_BASE_DATA.trend : ENERGY_BASE_DATA.trend;
+      let metricKey = chart.dataset.chartMetric;
+      if (!metricKey) {
+        if (scope === 'chaleur') metricKey = 'chaleur';
+        else if (scope === 'froid') metricKey = 'froid';
+        else if (scope === 'elec') metricKey = 'elec';
+        else metricKey = 'general';
+      }
+      const baseTrend = scope === 'chaleur'
+        ? HEAT_BASE_DATA.trend
+        : scope === 'froid'
+          ? COLD_BASE_DATA.trend
+          : scope === 'elec'
+            ? ELEC_BASE_DATA.trend
+            : ENERGY_BASE_DATA.trend;
       const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
       const sre = mode === 'kwhm2' ? 1 : (Number(metricData.sre) || Number(aggregatedMetrics.general?.sre) || computeFallbackSre());
 
@@ -1905,6 +2092,99 @@
         return;
       }
 
+      if (scope === 'froid') {
+        const datasetName = card.dataset.coldDataset || 'production';
+        const shares = datasetName === 'uses'
+          ? COLD_BASE_DATA.mix.uses
+          : COLD_BASE_DATA.mix.production;
+        const labels = datasetName === 'uses'
+          ? COLD_BASE_DATA.mix.labels.uses
+          : COLD_BASE_DATA.mix.labels.production;
+        if (!shares || !labels) return;
+
+        const coldMetric = aggregated?.froid || {};
+        const perM2 = Number(coldMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.froid?.intensity) || 0;
+        const sre = Number(coldMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
+        const total = Number(coldMetric.total) || perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+
+        updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount);
+        updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount);
+        updateBars(card.querySelectorAll('.mix-bar'), shares, baseAmount);
+        updateRings(card.querySelectorAll('.mix-ring'), shares, baseAmount);
+
+        const donut = card.querySelector('.mix-donut.cold');
+        if (donut) {
+          donut.style.setProperty('--mix-compression', `${(shares.compression || 0) * 100}`);
+          donut.style.setProperty('--mix-freecooling', `${(shares.freecooling || 0) * 100}`);
+          donut.style.setProperty('--mix-reseau', `${(shares.reseau || 0) * 100}`);
+          donut.style.setProperty('--mix-absorption', `${(shares.absorption || 0) * 100}`);
+          const center = donut.querySelector('.mix-donut__center');
+          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          const labelEl = donut.querySelector('.mix-donut__label');
+          if (labelEl) labelEl.textContent = unit;
+        }
+
+        const roleImg = card.querySelector('[role="img"]');
+        if (roleImg) {
+          const labelBase = card.getAttribute('aria-label') || 'Mix froid';
+          const description = Object.entries(labels).map(([key, text]) => {
+            const share = shares[key] || 0;
+            const value = baseAmount * share;
+            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+          }).join(', ');
+          roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
+        }
+        card.classList.toggle('is-empty', baseAmount <= 0);
+        return;
+      }
+
+      if (scope === 'elec') {
+        const datasetName = card.dataset.elecDataset || 'sources';
+        const shares = datasetName === 'uses'
+          ? ELEC_BASE_DATA.mix.uses
+          : ELEC_BASE_DATA.mix.sources;
+        const labels = datasetName === 'uses'
+          ? ELEC_BASE_DATA.mix.labels.uses
+          : ELEC_BASE_DATA.mix.labels.sources;
+        if (!shares || !labels) return;
+
+        const elecMetric = aggregated?.elec || {};
+        const perM2 = Number(elecMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.elec?.intensity) || 0;
+        const sre = Number(elecMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
+        const total = Number(elecMetric.total) || perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+
+        updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount);
+        updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount);
+        updateBars(card.querySelectorAll('.mix-bar'), shares, baseAmount);
+        updateRings(card.querySelectorAll('.mix-ring'), shares, baseAmount);
+
+        const donut = card.querySelector('.mix-donut.elec');
+        if (donut) {
+          donut.style.setProperty('--mix-reseau', `${(shares.reseau || 0) * 100}`);
+          donut.style.setProperty('--mix-autoprod', `${(shares.autoprod || 0) * 100}`);
+          donut.style.setProperty('--mix-verte', `${(shares.verte || 0) * 100}`);
+          const center = donut.querySelector('.mix-donut__center');
+          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          const labelEl = donut.querySelector('.mix-donut__label');
+          if (labelEl) labelEl.textContent = unit;
+        }
+
+        const roleImg = card.querySelector('[role="img"]');
+        if (roleImg) {
+          const labelBase = card.getAttribute('aria-label') || 'Mix électrique';
+          const description = Object.entries(labels).map(([key, text]) => {
+            const share = shares[key] || 0;
+            const value = baseAmount * share;
+            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+          }).join(', ');
+          roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
+        }
+        card.classList.toggle('is-empty', baseAmount <= 0);
+        return;
+      }
+
       const generalMetric = aggregated?.general || {};
       const totalPerM2 = Number(generalMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.general?.intensity) || 0;
       const sre = Number(generalMetric.sre) || fallbackSre || 1;
@@ -1950,7 +2230,15 @@
     if (!rankingCards.length) return;
 
     rankingCards.forEach((card) => {
-      const metricKey = card.dataset.rankingMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      const scope = card.dataset.chartScope || '';
+      const metricKey = card.dataset.rankingMetric
+        || (scope === 'chaleur'
+          ? 'chaleur'
+          : scope === 'froid'
+            ? 'froid'
+            : scope === 'elec'
+              ? 'elec'
+              : 'general');
       const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
       const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
       const decimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
@@ -2162,9 +2450,21 @@
       card.classList.toggle('is-empty', !hasData);
       if (!hasData) return;
 
-      const thresholdsSource = metricKey === 'chaleur' ? HEAT_BASE_DATA.mapThresholds : ENERGY_BASE_DATA.mapThresholds;
+      const thresholdsSource = metricKey === 'chaleur'
+        ? HEAT_BASE_DATA.mapThresholds
+        : metricKey === 'froid'
+          ? COLD_BASE_DATA.mapThresholds
+          : metricKey === 'elec'
+            ? ELEC_BASE_DATA.mapThresholds
+            : ENERGY_BASE_DATA.mapThresholds;
       const thresholds = thresholdsSource?.[mode] || [];
-      const metricLabel = metricKey === 'chaleur' ? 'chaleur' : 'énergie';
+      const metricLabel = metricKey === 'chaleur'
+        ? 'chaleur'
+        : metricKey === 'froid'
+          ? 'froid'
+          : metricKey === 'elec'
+            ? 'électricité'
+            : 'énergie';
 
       const classify = (value) => {
         if (!Number.isFinite(value)) return 'map-marker--medium';
@@ -2404,7 +2704,15 @@
         return Number.isFinite(value) ? value : NaN;
       }).filter(Number.isFinite);
 
-      const benchmarkSource = metricKey === 'chaleur' ? HEAT_BASE_DATA.benchmark : distribution?.benchmark || {};
+      const benchmarkMap = distribution?.benchmarkByMetric || {};
+      const benchmarkSource = benchmarkMap[metricKey]
+        || (metricKey === 'chaleur'
+          ? HEAT_BASE_DATA.benchmark
+          : metricKey === 'froid'
+            ? COLD_BASE_DATA.benchmark
+            : metricKey === 'elec'
+              ? ELEC_BASE_DATA.benchmark
+              : benchmarkMap.general || distribution?.benchmark || ENERGY_BASE_DATA.benchmark);
       const benchConfig = mode === 'kwhm2'
         ? (benchmarkSource.intensity || {})
         : (benchmarkSource.total || {});

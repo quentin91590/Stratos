@@ -377,10 +377,23 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bullet.chauffage{background:#fb923c}
 .mix-bullet.ecs{background:#facc15}
 .mix-bullet.ventilation{background:#38bdf8}
+.mix-bullet.compression{background:#6366f1}
+.mix-bullet.freecooling{background:#0ea5e9}
+.mix-bullet.absorption{background:#a855f7}
+.mix-bullet.autoprod{background:#fbbf24}
+.mix-bullet.verte{background:#22c55e}
+.mix-bullet.confort{background:#60a5fa}
+.mix-bullet.eclairage{background:#f59e0b}
+.mix-bullet.hvac{background:#38bdf8}
+.mix-bullet.it{background:#6366f1}
+.mix-bullet.process{background:#ef4444}
+.mix-bullet.services{background:#94a3b8}
 .mix-label{font-weight:600}
 .mix-value{font-weight:700; color:#0f172a}
 .mix-donut{--mix-chaleur:80; --mix-elec:15; --mix-froid:5; position:relative; width:132px; height:132px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#0f172a; font-weight:700; background:conic-gradient(#f97316 0 calc(var(--mix-chaleur) * 1%), #38bdf8 calc(var(--mix-chaleur) * 1%) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%), #6366f1 calc((var(--mix-chaleur) + var(--mix-elec)) * 1%) 100%); box-shadow:0 8px 22px rgba(15,23,42,0.08)}
 .mix-donut.heat{--mix-gaz:52; --mix-pac:20; --mix-reseau:18; --mix-biomasse:10; background:conic-gradient(#f97316 0 calc(var(--mix-gaz) * 1%), #0ea5e9 calc(var(--mix-gaz) * 1%) calc((var(--mix-gaz) + var(--mix-pac)) * 1%), #ef4444 calc((var(--mix-gaz) + var(--mix-pac)) * 1%) calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%), #16a34a calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%) 100%)}
+.mix-donut.cold{--mix-compression:58; --mix-freecooling:22; --mix-reseau:12; --mix-absorption:8; background:conic-gradient(#6366f1 0 calc(var(--mix-compression) * 1%), #0ea5e9 calc(var(--mix-compression) * 1%) calc((var(--mix-compression) + var(--mix-freecooling)) * 1%), #ef4444 calc((var(--mix-compression) + var(--mix-freecooling)) * 1%) calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%), #a855f7 calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%) 100%)}
+.mix-donut.elec{--mix-reseau:68; --mix-autoprod:22; --mix-verte:10; background:conic-gradient(#38bdf8 0 calc(var(--mix-reseau) * 1%), #fbbf24 calc(var(--mix-reseau) * 1%) calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%), #22c55e calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%) 100%)}
 .mix-donut::after{content:""; position:absolute; inset:24px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
 .mix-donut__center,.mix-donut__label{position:relative; z-index:1}
 .mix-donut__center{font-size:1.35rem; letter-spacing:-0.01em}
@@ -400,6 +413,15 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bar.chauffage{--mix-color:#fb923c}
 .mix-bar.ecs{--mix-color:#facc15}
 .mix-bar.ventilation{--mix-color:#38bdf8}
+.mix-bar.compression{--mix-color:#6366f1}
+.mix-bar.freecooling{--mix-color:#0ea5e9}
+.mix-bar.absorption{--mix-color:#a855f7}
+.mix-bar.confort{--mix-color:#60a5fa}
+.mix-bar.process{--mix-color:#ef4444}
+.mix-bar.it{--mix-color:#6366f1}
+.mix-bar.autoprod{--mix-color:#fbbf24}
+.mix-bar.verte{--mix-color:#22c55e}
+.mix-bar.services{--mix-color:#94a3b8}
 .mix-rings{display:flex; gap:18px; flex-wrap:wrap}
 .mix-ring{--mix-color:#f97316; position:relative; width:96px; height:96px; border-radius:50%; background:conic-gradient(var(--mix-color) 0 calc(var(--mix-value) * 1%), rgba(226,232,240,0.7) calc(var(--mix-value) * 1%) 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(15,23,42,0.08)}
 .mix-ring::after{content:""; position:absolute; inset:20px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
@@ -414,6 +436,12 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-ring.chauffage{--mix-color:#fb923c}
 .mix-ring.ecs{--mix-color:#facc15}
 .mix-ring.ventilation{--mix-color:#38bdf8}
+.mix-ring.confort{--mix-color:#60a5fa}
+.mix-ring.process{--mix-color:#ef4444}
+.mix-ring.it{--mix-color:#6366f1}
+.mix-ring.eclairage{--mix-color:#f59e0b}
+.mix-ring.hvac{--mix-color:#38bdf8}
+.mix-ring.services{--mix-color:#94a3b8}
 .mix-columns{display:flex; gap:18px; align-items:flex-end; justify-content:flex-start; height:128px; padding:0 4px}
 .mix-column{flex:1; min-width:18px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg, rgba(59,130,246,0.25), rgba(59,130,246,0)); position:relative; height:100%}
 .mix-column::before{content:""; position:absolute; left:0; right:0; bottom:0; border-radius:inherit; background:var(--mix-color); opacity:.85; height:calc(var(--mix-value) * 1%)}
@@ -611,10 +639,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .monthly-legend--compact{gap:10px 14px}
 .legend-dot{display:inline-flex; width:12px; height:12px; border-radius:999px; margin-right:6px; box-shadow:0 0 0 1px rgba(15,23,42,0.12)}
 .legend-dot.chaleur{background:#f97316}
-.legend-dot.elec{background:#38bdf8}
+.legend-dot.elec,.legend-dot.electricite{background:#38bdf8}
 .legend-dot.froid{background:#6366f1}
 .legend-line-wrap{display:inline-flex; align-items:center; gap:6px}
 .legend-line{display:inline-block; width:32px; height:2px; background:linear-gradient(90deg, rgba(15,23,42,0.1), rgba(15,23,42,0.7)); border-radius:999px}
+.monthly-chart--heat .monthly-stack{background:linear-gradient(180deg, rgba(249,115,22,0.18), rgba(249,115,22,0.04))}
+.monthly-chart--heat .monthly-line polyline{stroke:#f97316}
+.monthly-chart--heat .legend-line{background:linear-gradient(90deg, rgba(249,115,22,0.2), rgba(249,115,22,0.85))}
+.monthly-chart--cold .monthly-stack{background:linear-gradient(180deg, rgba(99,102,241,0.18), rgba(99,102,241,0.04))}
+.monthly-chart--cold .monthly-line polyline{stroke:#6366f1}
+.monthly-chart--cold .legend-line{background:linear-gradient(90deg, rgba(99,102,241,0.2), rgba(14,165,233,0.85))}
+.monthly-chart--elec .monthly-stack{background:linear-gradient(180deg, rgba(56,189,248,0.18), rgba(56,189,248,0.04))}
+.monthly-chart--elec .monthly-line polyline{stroke:#38bdf8}
+.monthly-chart--elec .legend-line{background:linear-gradient(90deg, rgba(56,189,248,0.2), rgba(14,165,233,0.85))}
 .monthly-summary{margin:0; font-size:.88rem; color:#475569}
 
 .distribution-chart{display:grid; gap:18px; align-content:start}

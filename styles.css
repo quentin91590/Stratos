@@ -231,25 +231,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .energy-chart-wrapper{position:relative; flex:1 1 420px; min-width:0}
 .energy-chart-stack{
-  --chart-row-size: 180px;
   display:grid;
   grid-template-columns:repeat(2, minmax(0, 1fr));
   gap:20px;
   align-items:start;
-  grid-auto-rows:minmax(var(--chart-row-size), max-content);
+  grid-auto-rows:auto;
 }
 .energy-chart-stack > [data-chart-slot]{
-  --tile-row-span:2;
-  grid-row:span var(--tile-row-span);
   align-self:stretch;
+  min-height:var(--tile-equal-height, auto);
 }
 .energy-chart-stack > [data-chart-slot][data-tile-width="full"]{grid-column:1 / -1}
 .energy-chart-stack > [data-chart-slot][data-tile-width="half"]{grid-column:auto}
-.energy-chart-stack > [data-chart-slot][data-tile-height="short"]{--tile-row-span:1}
-.energy-chart-stack > [data-chart-slot][data-tile-height="medium"]{--tile-row-span:2}
-.energy-chart-stack > [data-chart-slot][data-tile-height="tall"]{--tile-row-span:3}
-.energy-chart-stack > [data-chart-slot][data-tile-height="xl"]{--tile-row-span:4}
-.energy-chart-stack > [data-chart-slot]{min-height:0}
+.energy-chart-stack > [data-chart-slot]{min-height:var(--tile-equal-height, 0); height:auto}
 .energy-mix-card,
 .energy-ranking-card,
 .energy-typology-card,

@@ -244,15 +244,21 @@
     'mix-secondary-pie': { width: 'half', height: 'medium' },
     'mix-secondary-rings': { width: 'half', height: 'medium' },
     'mix-secondary-columns': { width: 'half', height: 'medium' },
+    'heat-fuels-donut': { width: 'half', height: 'medium' },
+    'heat-fuels-bars': { width: 'half', height: 'medium' },
+    'heat-uses-bars': { width: 'half', height: 'medium' },
+    'heat-uses-rings': { width: 'half', height: 'medium' },
     'intensity-bars': { width: 'full', height: 'medium' },
     'intensity-line': { width: 'full', height: 'short' },
     'intensity-breakdown': { width: 'full', height: 'tall' },
+    'heat-intensity-bars': { width: 'full', height: 'medium' },
     'typology-columns': { width: 'full', height: 'xl' },
     'typology-rows': { width: 'full', height: 'xl' },
     'map-bubbles': { width: 'full', height: 'tall' },
     'map-grid': { width: 'full', height: 'medium' },
     'monthly-stacked': { width: 'full', height: 'xl' },
     'monthly-lines': { width: 'full', height: 'xl' },
+    'heat-monthly': { width: 'full', height: 'xl' },
     'distribution-columns': { width: 'full', height: 'tall' },
     'distribution-line': { width: 'full', height: 'medium' },
   };
@@ -265,6 +271,13 @@
     'energy-map': { width: 'full', height: 'tall' },
     'monthly': { width: 'full', height: 'xl' },
     'intensity-distribution': { width: 'full', height: 'medium' },
+    'heat-mix-fuels': { width: 'half', height: 'medium' },
+    'heat-uses': { width: 'half', height: 'medium' },
+    'heat-trend': { width: 'full', height: 'medium' },
+    'heat-typology': { width: 'full', height: 'xl' },
+    'heat-map': { width: 'full', height: 'tall' },
+    'heat-monthly': { width: 'full', height: 'xl' },
+    'heat-distribution': { width: 'full', height: 'medium' },
   };
 
   const VALID_TILE_WIDTHS = new Set(['full', 'half']);
@@ -308,42 +321,45 @@
   };
 
   function equalizeChartTileHeights() {
-    const stack = $e('.energy-chart-stack');
-    if (!stack) return;
-    const slots = $$('[data-chart-slot]', stack);
-    if (!slots.length) return;
+    const stacks = $$e('.energy-chart-stack');
+    if (!stacks.length) return;
 
-    slots.forEach(slot => {
-      slot.style.removeProperty('--tile-equal-height');
-    });
+    stacks.forEach((stack) => {
+      const slots = Array.from(stack.querySelectorAll('[data-chart-slot]'));
+      if (!slots.length) return;
 
-    // Force layout without the equalized height before measuring.
-    stack.getBoundingClientRect();
-
-    const rows = new Map();
-    slots.forEach(slot => {
-      const top = Math.round(slot.offsetTop);
-      const row = rows.get(top) || [];
-      row.push(slot);
-      rows.set(top, row);
-    });
-
-    rows.forEach(group => {
-      let maxHeight = 0;
-      group.forEach(tile => {
-        const rect = tile.getBoundingClientRect();
-        if (rect.height > maxHeight) maxHeight = rect.height;
+      slots.forEach(slot => {
+        slot.style.removeProperty('--tile-equal-height');
       });
-      const safeHeight = Math.ceil(maxHeight);
-      group.forEach(tile => {
-        tile.style.setProperty('--tile-equal-height', `${safeHeight}px`);
+
+      // Force layout without the equalized height before measuring.
+      stack.getBoundingClientRect();
+
+      const rows = new Map();
+      slots.forEach(slot => {
+        const top = Math.round(slot.offsetTop);
+        const row = rows.get(top) || [];
+        row.push(slot);
+        rows.set(top, row);
+      });
+
+      rows.forEach(group => {
+        let maxHeight = 0;
+        group.forEach(tile => {
+          const rect = tile.getBoundingClientRect();
+          if (rect.height > maxHeight) maxHeight = rect.height;
+        });
+        const safeHeight = Math.ceil(maxHeight);
+        group.forEach(tile => {
+          tile.style.setProperty('--tile-equal-height', `${safeHeight}px`);
+        });
       });
     });
   }
 
   function refreshChartTileObserver() {
-    const stack = $e('.energy-chart-stack');
-    if (!stack) return;
+    const stacks = $$e('.energy-chart-stack');
+    if (!stacks.length) return;
 
     if (typeof ResizeObserver === 'undefined') {
       return;
@@ -354,7 +370,9 @@
     }
 
     chartTileResizeObserver.disconnect();
-    $$('[data-chart-slot]', stack).forEach(slot => chartTileResizeObserver.observe(slot));
+    stacks.forEach((stack) => {
+      stack.querySelectorAll('[data-chart-slot]').forEach(slot => chartTileResizeObserver.observe(slot));
+    });
   }
 
   const syncChartTileLayouts = () => {
@@ -540,6 +558,70 @@
     },
   };
 
+  const HEAT_BASE_DATA = {
+    mix: {
+      fuels: {
+        gaz: 0.52,
+        pac: 0.2,
+        reseau: 0.18,
+        biomasse: 0.1,
+      },
+      uses: {
+        chauffage: 0.62,
+        ecs: 0.24,
+        ventilation: 0.14,
+      },
+      labels: {
+        fuels: {
+          gaz: 'Gaz naturel',
+          pac: 'Pompe à chaleur',
+          reseau: 'Réseau de chaleur',
+          biomasse: 'Biomasse',
+        },
+        uses: {
+          chauffage: 'Chauffage des locaux',
+          ecs: 'Eau chaude sanitaire',
+          ventilation: 'Ventilation & CTA',
+        },
+      },
+    },
+    trend: [
+      { year: 2021, intensity: 126 },
+      { year: 2022, intensity: 122 },
+      { year: 2023, intensity: 119 },
+      { year: 2024, intensity: 118 },
+      { year: 2025, intensity: 114 },
+    ],
+    benchmark: {
+      intensity: {
+        bins: [
+          { key: '0-70', label: '0-70', min: 0, max: 70 },
+          { key: '70-110', label: '70-110', min: 70, max: 110 },
+          { key: '110-140', label: '110-140', min: 110, max: 140 },
+          { key: '140-170', label: '140-170', min: 140, max: 170 },
+          { key: '≥170', label: '≥170', min: 170, max: null },
+        ],
+        curve: [320, 1420, 2380, 1840, 720],
+        totalBuildings: 6500,
+      },
+      total: {
+        bins: [
+          { key: '0-180', label: '0-180 MWh', min: 0, max: 180000 },
+          { key: '180-280', label: '180-280 MWh', min: 180000, max: 280000 },
+          { key: '280-380', label: '280-380 MWh', min: 280000, max: 380000 },
+          { key: '380-520', label: '380-520 MWh', min: 380000, max: 520000 },
+          { key: '≥520', label: '≥520 MWh', min: 520000, max: null },
+        ],
+        curve: [480, 1500, 2100, 1650, 680],
+        totalBuildings: 6500,
+      },
+    },
+    mapThresholds: {
+      kwhm2: [90, 130, 180],
+      kwh: [120000, 260000, 420000],
+    },
+  };
+
   const METRIC_KEYS = Object.keys(ENERGY_BASE_DATA.metrics);
 
   const MIX_LABELS = {
@@ -563,6 +645,13 @@
     if (norm.includes('chaleur')) return 'chaleur';
     if (norm.includes('electric')) return 'electricite';
     if (norm.includes('froid')) return 'froid';
+    if (norm.includes('gaz')) return 'gaz';
+    if (norm.includes('pompe') || norm.includes('pac')) return 'pac';
+    if (norm.includes('reseau')) return 'reseau';
+    if (norm.includes('biomass') || norm.includes('granule')) return 'biomasse';
+    if (norm.includes('chauff')) return 'chauffage';
+    if (norm.includes('sanit') || norm.includes('ecs')) return 'ecs';
+    if (norm.includes('ventil') || norm.includes('cta')) return 'ventilation';
     return null;
   };
 
@@ -615,15 +704,14 @@
   // Met à jour l'année partout (custom picker + éventuel select natif s'il existe encore)
   // --- Year handling (OK) ---------------------------------------
   function highlightEnergyTrend(year) {
-    const chart = document.querySelector('.energy-trend-chart');
-    if (!chart) return;
-
     const yr = Number(year);
-    chart.querySelectorAll('.chart-bar').forEach(bar => {
-      const barYear = Number(bar.dataset.year);
-      const isActive = !Number.isNaN(barYear) && barYear === yr;
-      bar.classList.toggle('is-selected', isActive);
-      bar.toggleAttribute('aria-current', isActive);
+    document.querySelectorAll('.energy-trend-chart').forEach((chart) => {
+      chart.querySelectorAll('.chart-bar').forEach(bar => {
+        const barYear = Number(bar.dataset.year);
+        const isActive = !Number.isNaN(barYear) && barYear === yr;
+        bar.classList.toggle('is-selected', isActive);
+        bar.toggleAttribute('aria-current', isActive);
+      });
     });
   }
 
@@ -763,12 +851,11 @@
 
   /* ========== Catalogue de graphiques (pinceau) ========== */
   function setupChartCatalog() {
-    const zone = document.querySelector('.energy-chart-zone');
-    if (!zone) return;
+    const panel = document.getElementById('chart-catalog');
+    if (!panel) return;
 
-    const toggles = Array.from(zone.querySelectorAll('.chart-edit-toggle'));
-    const panel = zone.querySelector('#chart-catalog');
-    if (!toggles.length || !panel) return;
+    const toggles = Array.from(document.querySelectorAll('.chart-edit-toggle'));
+    if (!toggles.length) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
     const getCardContainer = (card) => card?.closest('li') || null;
 
@@ -779,6 +866,7 @@
     let activeToggle = null;
     let focusTargetOnClose = null;
     let activeSlot = null;
+    let activeZone = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -795,7 +883,7 @@
       if (!trigger) return null;
       const slotName = trigger.dataset.chartTarget || trigger.closest('[data-chart-slot]')?.dataset.chartSlot;
       if (!slotName) return null;
-      return zone.querySelector(`[data-chart-slot="${slotName}"]`);
+      return document.querySelector(`[data-chart-slot="${slotName}"]`);
     };
 
     const setCardState = (card, isActive) => {
@@ -833,6 +921,22 @@
       markActiveCard(slotEl);
     };
 
+    const getActiveZone = () => {
+      if (activeZone) return activeZone;
+      const fallbackZone = panel.closest('.energy-chart-zone');
+      return fallbackZone || null;
+    };
+
+    const ensurePanelWithinZone = (zoneEl) => {
+      if (!zoneEl) return;
+      if (!zoneEl.contains(panel)) zoneEl.append(panel);
+    };
+
+    const clearZoneState = () => {
+      const zoneEl = getActiveZone();
+      if (zoneEl) zoneEl.classList.remove('catalog-open');
+    };
+
     const applyChartToSlot = (chartType) => {
       if (!activeSlot) return false;
       const template = document.getElementById(`chart-template-${chartType}`);
@@ -852,13 +956,19 @@
 
     const positionCatalog = (trigger) => {
       if (!trigger) return;
+      const zoneEl = getActiveZone();
+      if (!zoneEl) {
+        panel.style.removeProperty('--catalog-top');
+        panel.style.removeProperty('--catalog-right');
+        return;
+      }
       if (layoutQuery.matches) {
         panel.style.removeProperty('--catalog-top');
         panel.style.removeProperty('--catalog-right');
         return;
       }
 
-      const zoneRect = zone.getBoundingClientRect();
+      const zoneRect = zoneEl.getBoundingClientRect();
       const buttonRect = trigger.getBoundingClientRect();
       const rawWidth = panel.offsetWidth || panel.getBoundingClientRect().width || 0;
       const panelWidth = Math.max(rawWidth, 0);
@@ -955,6 +1065,16 @@
       }
       activeToggle = trigger;
       activeSlot = getSlotFromToggle(trigger);
+      const zoneEl = trigger.closest('.energy-chart-zone') || null;
+      const previousZone = getActiveZone();
+      if (previousZone && previousZone !== zoneEl) {
+        previousZone.classList.remove('catalog-open');
+      }
+      activeZone = zoneEl;
+      if (activeZone) {
+        ensurePanelWithinZone(activeZone);
+        activeZone.classList.add('catalog-open');
+      }
       isOpen = true;
       restoreFocusAfterClose = false;
       panel.hidden = false;
@@ -965,7 +1085,6 @@
       updateCatalogForSlot(activeSlot);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
-      zone.classList.add('catalog-open');
       panel.addEventListener('keydown', trapFocus);
       document.addEventListener('click', onDocClick, true);
       document.addEventListener('keydown', onKeydown);
@@ -981,11 +1100,13 @@
       panel.removeEventListener('keydown', trapFocus);
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
-      activeToggle = returnFocus ? activeToggle : null;
+      if (!returnFocus) {
+        activeToggle = null;
+      }
       activeSlot = null;
 
       if (prefersReducedMotion()) {
-        zone.classList.remove('catalog-open');
+        clearZoneState();
         panel.hidden = true;
         clearCatalogPosition();
         if (focusTargetOnClose) {
@@ -993,15 +1114,14 @@
         }
         focusTargetOnClose = null;
         restoreFocusAfterClose = false;
+        activeZone = null;
         return;
       }
 
       restoreFocusAfterClose = returnFocus;
       panel.addEventListener('transitionend', handleTransitionEnd);
-      zone.classList.remove('catalog-open');
-      if (!returnFocus) {
-        activeToggle = null;
-      }
+      clearZoneState();
+      activeZone = null;
     };
 
     const handleResize = () => {
@@ -1417,6 +1537,7 @@
           key: typologyKey,
           label: typologyDef.label || typologyKey,
           energy: 0,
+          energyByMetric: {},
           sre: 0,
           count: 0,
         };
@@ -1427,16 +1548,21 @@
         METRIC_KEYS.forEach((key) => {
           const candidate = Number(buildingMetrics[key]);
           const intensity = Number.isFinite(candidate) ? candidate : fallbackIntensity[key];
-          totals[key].energy += intensity * sre;
+          const energyValue = intensity * sre;
+          totals[key].energy += energyValue;
           totals[key].sre += sre;
 
           const metricEntry = summary.metrics[key] || { energy: 0, sre: 0 };
-          metricEntry.energy += intensity * sre;
+          metricEntry.energy += energyValue;
           metricEntry.sre += sre;
           summary.metrics[key] = metricEntry;
 
+          const typologyEnergyMap = typologySummary.energyByMetric || {};
+          typologyEnergyMap[key] = (typologyEnergyMap[key] || 0) + energyValue;
+          typologySummary.energyByMetric = typologyEnergyMap;
+
           if (key === 'general') {
-            typologySummary.energy += intensity * sre;
+            typologySummary.energy += energyValue;
             typologySummary.sre += sre;
           }
         });
@@ -1498,10 +1624,25 @@
       });
 
       const info = ENERGY_BASE_DATA.buildings?.[summary.id] || {};
-      const generalData = summary.metrics.general || {};
-      const totalEnergy = Number(generalData.total) || 0;
+      const metricsMap = {};
+      METRIC_KEYS.forEach((metricKey) => {
+        const metricData = summary.metrics[metricKey] || {};
+        const metricSre = Number(metricData.sre) || 0;
+        const metricIntensity = Number(metricData.intensity);
+        const resolvedIntensity = Number.isFinite(metricIntensity) ? metricIntensity : fallbackIntensity[metricKey];
+        const totalEnergy = Number(metricData.total);
+        const resolvedTotal = Number.isFinite(totalEnergy) ? totalEnergy : resolvedIntensity * metricSre;
+        metricsMap[metricKey] = {
+          intensity: resolvedIntensity,
+          total: resolvedTotal,
+          sre: metricSre,
+        };
+      });
+
+      const generalData = metricsMap.general || {};
       const intensityValue = Number(generalData.intensity) || fallbackIntensity.general || 0;
-      const sre = Number(generalData.sre) || Number(summary.sre) || Number(info.sre) || 0;
+      const totalEnergy = Number(generalData.total) || 0;
+      const sre = Number(generalData.sre) || Number(summary.sre) || Number(info?.sre) || 0;
       const typologyKey = summary.typologyKey || info.typology || 'autre';
       const typologyLabel = summary.typologyLabel || ENERGY_BASE_DATA.typologies?.[typologyKey]?.label || typologyKey;
       const position = summary.position || info.position || null;
@@ -1512,6 +1653,7 @@
         intensity: intensityValue,
         total: totalEnergy,
         sre,
+        metrics: metricsMap,
       });
 
       if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
@@ -1524,6 +1666,7 @@
           total: totalEnergy,
           sre,
           position,
+          metrics: metricsMap,
         });
       }
     });
@@ -1551,10 +1694,13 @@
 
     const typologyList = Object.values(typologyTotals).map((item) => {
       const def = ENERGY_BASE_DATA.typologies?.[item.key] || {};
+      const energyByMetric = item.energyByMetric || {};
+      const energyGeneral = Number(energyByMetric.general) || Number(item.energy) || 0;
       return {
         key: item.key,
         label: item.label || def.label || item.key,
-        energy: item.energy,
+        energy: energyGeneral,
+        energyByMetric,
         sre: item.sre,
         count: item.count || 0,
       };
@@ -1619,90 +1765,175 @@
     });
   };
 
-  const updateEnergyTrendChart = (mode, sre) => {
-    const chart = document.querySelector('.energy-trend-chart');
-    if (!chart) return;
+  const updateEnergyTrendCharts = (mode, aggregatedMetrics = {}) => {
     const unitLabel = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-    chart.querySelectorAll('.chart-unit').forEach(unit => { unit.textContent = unitLabel; });
+    document.querySelectorAll('.energy-trend-chart').forEach((chart) => {
+      const scope = chart.dataset.chartScope || 'general';
+      const metricKey = chart.dataset.chartMetric || (scope === 'chaleur' ? 'chaleur' : 'general');
+      const baseTrend = scope === 'chaleur' ? HEAT_BASE_DATA.trend : ENERGY_BASE_DATA.trend;
+      const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
+      const sre = mode === 'kwhm2' ? 1 : (Number(metricData.sre) || Number(aggregatedMetrics.general?.sre) || computeFallbackSre());
 
-    const barsWrap = chart.querySelector('.chart-bars');
-    const values = [];
-    ENERGY_BASE_DATA.trend.forEach(({ year, intensity }) => {
-      const bar = chart.querySelector(`.chart-bar[data-year="${year}"]`);
-      if (!bar) return;
-      const displayValue = mode === 'kwhm2' ? intensity : intensity * sre;
-      values.push(displayValue);
-      const valueText = formatEnergyDisplay(displayValue, mode, 0);
-      const barValue = bar.querySelector('.bar-value');
-      if (barValue) barValue.textContent = valueText;
-      bar.setAttribute('aria-label', `${year} : ${valueText} ${unitLabel}`);
-      bar.style.setProperty('--value', Number(displayValue) || 0);
+      chart.querySelectorAll('.chart-unit').forEach(unit => { unit.textContent = unitLabel; });
+
+      const barsWrap = chart.querySelector('.chart-bars');
+      const values = [];
+      baseTrend.forEach(({ year, intensity }) => {
+        const bar = chart.querySelector(`.chart-bar[data-year="${year}"]`);
+        if (!bar) return;
+        const resolvedIntensity = Number(intensity) || 0;
+        const displayValue = mode === 'kwhm2' ? resolvedIntensity : resolvedIntensity * sre;
+        values.push(displayValue);
+        const valueText = formatEnergyDisplay(displayValue, mode, 0);
+        const barValue = bar.querySelector('.bar-value');
+        if (barValue) barValue.textContent = valueText;
+        bar.setAttribute('aria-label', `${year} : ${valueText} ${unitLabel}`);
+        bar.style.setProperty('--value', Number(displayValue) || 0);
+      });
+
+      if (barsWrap) {
+        if (values.length) {
+          const maxValue = Math.max(...values);
+          const scale = maxValue > 0 ? (150 / maxValue) : 0;
+          if (scale > 0) barsWrap.style.setProperty('--bar-scale', `${scale}px`);
+          else barsWrap.style.removeProperty('--bar-scale');
+        } else {
+          barsWrap.style.removeProperty('--bar-scale');
+        }
+      }
     });
-
-    if (barsWrap && values.length) {
-      const maxValue = Math.max(...values);
-      const scale = maxValue > 0 ? (150 / maxValue) : 0;
-      if (scale > 0) barsWrap.style.setProperty('--bar-scale', `${scale}px`);
-      else barsWrap.style.removeProperty('--bar-scale');
-    }
   };
 
   const updateMixCards = (mode, aggregated) => {
-    const general = aggregated?.general || {};
-    const totalPerM2 = Number(general.intensity) || Number(ENERGY_BASE_DATA.metrics.general?.intensity) || 0;
-    const sre = Number(general.sre) || computeFallbackSre();
     const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+    const fallbackSre = computeFallbackSre();
+
+    const updateLegendValues = (containerList, shares, baseAmount) => {
+      containerList.forEach((el) => {
+        const label = el.querySelector('.mix-label')?.textContent || '';
+        const valueEl = el.querySelector('.mix-value');
+        const key = resolveMixKey(label);
+        if (!valueEl || !key || !(key in shares)) return;
+        const share = shares[key] || 0;
+        const value = baseAmount * share;
+        const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
+        const pct = Math.round(share * 100);
+        valueEl.textContent = `${formatted} ${unit} (${pct} %)`;
+      });
+    };
+
+    const updateBars = (bars, shares, baseAmount) => {
+      bars.forEach((bar) => {
+        const label = bar.querySelector('.mix-bar__label')?.textContent || '';
+        const valueEl = bar.querySelector('.mix-bar__value');
+        const key = resolveMixKey(label);
+        if (!valueEl || !key || !(key in shares)) return;
+        const share = shares[key] || 0;
+        const value = baseAmount * share;
+        const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
+        const pct = Math.round(share * 100);
+        valueEl.textContent = `${formatted} ${unit} (${pct} %)`;
+        bar.style.setProperty('--mix-value', `${Math.round(share * 100)}`);
+      });
+    };
+
+    const updateRings = (rings, shares, baseAmount) => {
+      rings.forEach((ring) => {
+        const label = ring.querySelector('.mix-ring__label')?.textContent || '';
+        const valueEl = ring.querySelector('.mix-ring__value');
+        const key = resolveMixKey(label);
+        if (!valueEl || !key || !(key in shares)) return;
+        const share = shares[key] || 0;
+        const value = baseAmount * share;
+        const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
+        const pct = Math.round(share * 100);
+        valueEl.textContent = `${pct} %`;
+        ring.style.setProperty('--mix-value', `${Math.round(share * 100)}`);
+        ring.setAttribute('aria-label', `${label} : ${formatted} ${unit} (${pct} %)`);
+      });
+    };
+
     document.querySelectorAll('.energy-mix-card').forEach((card) => {
+      const scope = card.dataset.chartScope || 'general';
+      const subtitle = card.querySelector('.mix-subtitle');
+      if (subtitle) subtitle.textContent = `Répartition en ${unit}`;
+
+      if (scope === 'chaleur') {
+        const datasetName = card.dataset.heatDataset || 'fuels';
+        const shares = datasetName === 'uses'
+          ? HEAT_BASE_DATA.mix.uses
+          : HEAT_BASE_DATA.mix.fuels;
+        const labels = datasetName === 'uses'
+          ? HEAT_BASE_DATA.mix.labels.uses
+          : HEAT_BASE_DATA.mix.labels.fuels;
+        if (!shares || !labels) return;
+
+        const heatMetric = aggregated?.chaleur || {};
+        const perM2 = Number(heatMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.chaleur?.intensity) || 0;
+        const sre = Number(heatMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
+        const total = Number(heatMetric.total) || perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+
+        updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount);
+        updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount);
+        updateBars(card.querySelectorAll('.mix-bar'), shares, baseAmount);
+        updateRings(card.querySelectorAll('.mix-ring'), shares, baseAmount);
+
+        const donut = card.querySelector('.mix-donut.heat');
+        if (donut) {
+          donut.style.setProperty('--mix-gaz', `${(shares.gaz || 0) * 100}`);
+          donut.style.setProperty('--mix-pac', `${(shares.pac || 0) * 100}`);
+          donut.style.setProperty('--mix-reseau', `${(shares.reseau || 0) * 100}`);
+          donut.style.setProperty('--mix-biomasse', `${(shares.biomasse || 0) * 100}`);
+          const center = donut.querySelector('.mix-donut__center');
+          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          const labelEl = donut.querySelector('.mix-donut__label');
+          if (labelEl) labelEl.textContent = unit;
+        }
+
+        const roleImg = card.querySelector('[role="img"]');
+        if (roleImg) {
+          const labelBase = card.getAttribute('aria-label') || 'Mix chaleur';
+          const description = Object.entries(labels).map(([key, text]) => {
+            const share = shares[key] || 0;
+            const value = baseAmount * share;
+            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+          }).join(', ');
+          roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
+        }
+        card.classList.toggle('is-empty', baseAmount <= 0);
+        return;
+      }
+
+      const generalMetric = aggregated?.general || {};
+      const totalPerM2 = Number(generalMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.general?.intensity) || 0;
+      const sre = Number(generalMetric.sre) || fallbackSre || 1;
+      const baseTotal = Number(generalMetric.total) || totalPerM2 * sre;
+      const baseAmount = mode === 'kwhm2' ? totalPerM2 : baseTotal;
+
       const slot = card.dataset.chartSlot || '';
       const shares = slot === 'mix-secondary'
         ? ENERGY_BASE_DATA.mix.secondary
         : ENERGY_BASE_DATA.mix.primary;
       if (!shares) return;
 
-      const subtitle = card.querySelector('.mix-subtitle');
-      if (subtitle) subtitle.textContent = `Répartition en ${unit}`;
-
-      const updateLegendItem = (container, valueEl, labelText) => {
-        const key = resolveMixKey(labelText);
-        if (!valueEl || !key) return;
-        const share = shares[key] || 0;
-        const perM2Value = totalPerM2 * share;
-        const baseValue = mode === 'kwhm2' ? perM2Value : perM2Value * sre;
-        const formatted = formatEnergyDisplay(baseValue, mode, mode === 'kwhm2' ? 1 : 0);
-        const pct = Math.round(share * 100);
-        valueEl.textContent = `${formatted} ${unit} (${pct} %)`;
-      };
-
-      card.querySelectorAll('.mix-legend li').forEach((li) => {
-        const label = li.querySelector('.mix-label')?.textContent || '';
-        const valueEl = li.querySelector('.mix-value');
-        updateLegendItem(li, valueEl, label);
-      });
-
-      card.querySelectorAll('.mix-columns-legend li').forEach((li) => {
-        const label = li.querySelector('.mix-label')?.textContent || '';
-        const valueEl = li.querySelector('.mix-value');
-        updateLegendItem(li, valueEl, label);
-      });
-
-      card.querySelectorAll('.mix-bar').forEach((bar) => {
-        const label = bar.querySelector('.mix-bar__label')?.textContent || '';
-        const valueEl = bar.querySelector('.mix-bar__value');
-        updateLegendItem(bar, valueEl, label);
-      });
-
-      card.querySelectorAll('.mix-ring').forEach((ring) => {
-        const label = ring.querySelector('.mix-ring__label')?.textContent || '';
-        const valueEl = ring.querySelector('.mix-ring__value');
-        updateLegendItem(ring, valueEl, label);
-      });
+      updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount);
+      updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount);
+      updateBars(card.querySelectorAll('.mix-bar'), shares, baseAmount);
+      updateRings(card.querySelectorAll('.mix-ring'), shares, baseAmount);
 
       const donutCenter = card.querySelector('.mix-donut__center');
       if (donutCenter) {
         const share = shares.chaleur || 0;
-        const perM2Value = totalPerM2 * share;
-        const baseValue = mode === 'kwhm2' ? perM2Value : perM2Value * sre;
-        donutCenter.textContent = `${formatCompactEnergy(baseValue)} ${unit}`;
+        const value = baseAmount * share;
+        donutCenter.textContent = `${formatCompactEnergy(value)} ${unit}`;
+      }
+
+      const donut = card.querySelector('.mix-donut');
+      if (donut && !donut.classList.contains('heat')) {
+        donut.style.setProperty('--mix-chaleur', `${(shares.chaleur || 0) * 100}%`);
+        donut.style.setProperty('--mix-elec', `${(shares.electricite || 0) * 100}%`);
+        donut.style.setProperty('--mix-froid', `${(shares.froid || 0) * 100}%`);
       }
 
       const roleImg = card.querySelector('[role="img"]');
@@ -1710,6 +1941,7 @@
         const labelBase = card.getAttribute('aria-label') || 'Mix énergétique';
         roleImg.setAttribute('aria-label', `${labelBase} : ${describeMix(shares, totalPerM2, mode, sre)}.`);
       }
+      card.classList.toggle('is-empty', baseAmount <= 0);
     });
   };
 
@@ -1717,27 +1949,28 @@
     const rankingCards = document.querySelectorAll('.energy-ranking-card');
     if (!rankingCards.length) return;
 
-    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-    const generalMetric = ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
-    const decimals = mode === 'kwhm2' ? (generalMetric.decimals || 0) : 0;
-
-    const entries = Object.values(buildingSummaries || {}).map((entry) => {
-      const metrics = entry?.metrics?.general || {};
-      const value = mode === 'kwhm2'
-        ? Number(metrics.intensity)
-        : Number(metrics.total);
-      return {
-        id: entry?.id || '',
-        label: entry?.label || entry?.id || '',
-        value: Number.isFinite(value) ? value : 0,
-      };
-    });
-
-    entries.sort((a, b) => b.value - a.value);
-    const topFive = entries.slice(0, 5);
-    const maxValue = topFive.reduce((acc, item) => (item.value > acc ? item.value : acc), 0);
-
     rankingCards.forEach((card) => {
+      const metricKey = card.dataset.rankingMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
+      const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+      const decimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
+
+      const entries = Object.values(buildingSummaries || {}).map((entry) => {
+        const metrics = entry?.metrics?.[metricKey] || {};
+        const value = mode === 'kwhm2'
+          ? Number(metrics.intensity)
+          : Number(metrics.total);
+        return {
+          id: entry?.id || '',
+          label: entry?.label || entry?.id || '',
+          value: Number.isFinite(value) ? value : 0,
+        };
+      }).filter(item => item.value > 0);
+
+      entries.sort((a, b) => b.value - a.value);
+      const topFive = entries.slice(0, 5);
+      const maxValue = topFive.reduce((acc, item) => (item.value > acc ? item.value : acc), 0);
+
       card.querySelectorAll('[data-ranking-unit]').forEach((el) => {
         el.textContent = unit;
       });
@@ -1793,319 +2026,349 @@
   };
 
   const updateTypologyChart = (mode, typologies = []) => {
-    const card = document.querySelector('[data-chart-slot="typology"]');
-    if (!card) return;
-    const unit = mode === 'kwhm2' ? 'kWh/m²/an' : 'kWh/an';
-    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+    const cards = document.querySelectorAll('.energy-typology-card');
+    if (!cards.length) return;
 
-    const dataset = Array.isArray(typologies)
-      ? typologies.map(item => {
-        const energy = Number(item?.energy) || 0;
-        const sre = Number(item?.sre) || 0;
-        const value = mode === 'kwhm2'
-          ? (sre > 0 ? energy / sre : 0)
-          : energy;
-        return {
-          key: item?.key || item?.label || 'autre',
-          label: item?.label || item?.key || 'Autre',
-          value,
-          energy,
-          sre,
-          buildings: Number(item?.count) || 0,
-        };
-      })
-      : [];
+    cards.forEach((card) => {
+      const metricKey = card.dataset.chartMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      const unit = mode === 'kwhm2' ? 'kWh/m²/an' : 'kWh/an';
+      card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
 
-    dataset.sort((a, b) => (b.value || 0) - (a.value || 0));
-    const maxValue = dataset.reduce((max, item) => (item.value > max ? item.value : max), 0);
-    const totalBuildings = dataset.reduce((acc, item) => acc + (item.buildings || 0), 0);
-    const hasData = dataset.length > 0;
+      const dataset = Array.isArray(typologies)
+        ? typologies.map(item => {
+          const energyByMetric = item?.energyByMetric || {};
+          const energy = Number(energyByMetric[metricKey]) || (metricKey === 'general' ? Number(item?.energy) || 0 : 0);
+          const sre = Number(item?.sre) || 0;
+          const value = mode === 'kwhm2'
+            ? (sre > 0 ? energy / sre : 0)
+            : energy;
+          return {
+            key: item?.key || item?.label || 'autre',
+            label: item?.label || item?.key || 'Autre',
+            value,
+            energy,
+            sre,
+            buildings: Number(item?.count) || 0,
+          };
+        }).filter(entry => entry.energy > 0)
+        : [];
 
-    const barsWrap = card.querySelector('[data-typology-bars]');
-    if (barsWrap) {
+      dataset.sort((a, b) => (b.value || 0) - (a.value || 0));
+      const maxValue = dataset.reduce((max, item) => (item.value > max ? item.value : max), 0);
+      const totalBuildings = dataset.reduce((acc, item) => acc + (item.buildings || 0), 0);
+      const hasData = dataset.length > 0;
+
+      const barsWrap = card.querySelector('[data-typology-bars]');
+      if (barsWrap) {
+        barsWrap.innerHTML = '';
+        if (!hasData) {
+          const empty = document.createElement('p');
+          empty.className = 'chart-empty';
+          empty.textContent = 'Aucune typologie disponible pour la sélection.';
+          barsWrap.append(empty);
+        } else {
+          const scale = maxValue > 0 ? (140 / maxValue) : 0;
+          if (scale > 0) barsWrap.style.setProperty('--typology-scale', `${scale}px`);
+          else barsWrap.style.removeProperty('--typology-scale');
+
+          dataset.forEach((item) => {
+            const bar = document.createElement('div');
+            bar.className = 'typology-bar';
+            bar.dataset.key = item.key;
+            bar.setAttribute('role', 'listitem');
+
+            const fill = document.createElement('span');
+            fill.className = 'typology-bar__fill';
+            fill.style.setProperty('--value', Math.max(item.value, 0));
+            fill.setAttribute('aria-hidden', 'true');
+
+            const label = document.createElement('span');
+            label.className = 'typology-bar__label';
+            label.textContent = item.label;
+
+            const valueEl = document.createElement('span');
+            valueEl.className = 'typology-bar__value';
+            valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+
+            const countEl = document.createElement('span');
+            countEl.className = 'typology-bar__count';
+            countEl.textContent = `${formatCount(item.buildings)} bât.`;
+
+            bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}`);
+            bar.append(fill, valueEl, label, countEl);
+            barsWrap.append(bar);
+          });
+        }
+      }
+
+      const tableBody = card.querySelector('[data-typology-table]');
+      if (tableBody) {
+        tableBody.innerHTML = '';
+        dataset.forEach((item) => {
+          const row = document.createElement('tr');
+          const labelCell = document.createElement('td');
+          labelCell.textContent = item.label;
+          const valueCell = document.createElement('td');
+          valueCell.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+          const countCell = document.createElement('td');
+          countCell.textContent = formatCount(item.buildings);
+          row.append(labelCell, valueCell, countCell);
+          tableBody.append(row);
+        });
+      }
+
+      const summary = card.querySelector('[data-typology-summary]');
+      if (summary) {
+        if (hasData) {
+          summary.textContent = `${formatCount(totalBuildings)} bâtiment(s) répartis sur ${dataset.length} typologie(s).`;
+        } else {
+          summary.textContent = 'Sélectionnez un périmètre pour afficher la répartition par typologie.';
+        }
+      }
+
+      card.classList.toggle('is-empty', !hasData);
+    });
+  };
+
+  const updateEnergyMap = (mode, mapPoints = [], aggregatedMetrics = {}) => {
+    const cards = document.querySelectorAll('.energy-map-card');
+    if (!cards.length) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+
+    cards.forEach((card) => {
+      const metricKey = card.dataset.chartMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+      const markersWrap = card.querySelector('[data-map-markers]');
+      const legendList = card.querySelector('[data-map-legend]');
+      const emptyState = card.querySelector('[data-map-empty]');
+      if (!markersWrap) return;
+
+      const points = Array.isArray(mapPoints)
+        ? mapPoints.map(point => {
+          const metrics = point?.metrics?.[metricKey] || {};
+          return {
+            ...point,
+            intensity: Number(metrics.intensity),
+            total: Number(metrics.total),
+            sre: Number(metrics.sre) || Number(point.sre) || 0,
+          };
+        }).filter(point => Number.isFinite(mode === 'kwhm2' ? point.intensity : point.total))
+        : [];
+
+      markersWrap.innerHTML = '';
+      const hasData = points.length > 0;
+      if (emptyState) emptyState.hidden = hasData;
+      card.classList.toggle('is-empty', !hasData);
+      if (!hasData) return;
+
+      const thresholdsSource = metricKey === 'chaleur' ? HEAT_BASE_DATA.mapThresholds : ENERGY_BASE_DATA.mapThresholds;
+      const thresholds = thresholdsSource?.[mode] || [];
+      const metricLabel = metricKey === 'chaleur' ? 'chaleur' : 'énergie';
+
+      const classify = (value) => {
+        if (!Number.isFinite(value)) return 'map-marker--medium';
+        const [t1, t2, t3] = thresholds;
+        if (!thresholds.length) return 'map-marker--medium';
+        if (thresholds.length === 1) {
+          return value <= t1 ? 'map-marker--low' : 'map-marker--high';
+        }
+        if (value <= t1) return 'map-marker--low';
+        if (thresholds.length === 2) return value <= t2 ? 'map-marker--medium' : 'map-marker--high';
+        if (value <= t2) return 'map-marker--medium';
+        if (value <= t3) return 'map-marker--high';
+        return 'map-marker--critical';
+      };
+
+      const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
+      points.forEach((point) => {
+        const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
+        const sre = Number(point.sre) || 0;
+        const marker = document.createElement('div');
+        marker.className = `map-marker ${classify(value)}`;
+        const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
+        marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
+        marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
+        marker.style.setProperty('--size', `${size}`);
+        marker.setAttribute('role', 'listitem');
+        const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
+        marker.setAttribute('aria-label', `${point.label} : ${formattedValue} ${unit} (${metricLabel}), ${formatCount(sre)} m²`);
+        marker.title = `${point.label} — ${formattedValue} ${unit}`;
+
+        const dot = document.createElement('span');
+        dot.className = 'map-marker__dot';
+        dot.setAttribute('aria-hidden', 'true');
+
+        const label = document.createElement('span');
+        label.className = 'map-marker__label';
+        label.textContent = point.label;
+
+        marker.append(dot, label);
+        markersWrap.append(marker);
+      });
+
+      if (legendList) {
+        legendList.innerHTML = '';
+        const ranges = [];
+        const formatter = (value) => `${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+        if (thresholds.length >= 3) {
+          const [t1, t2, t3] = thresholds;
+          ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
+          ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
+          ranges.push({ label: `${formatter(t2)} – ${formatter(t3)}`, cls: 'map-legend__dot--high' });
+          ranges.push({ label: `> ${formatter(t3)}`, cls: 'map-legend__dot--critical' });
+        } else if (thresholds.length === 2) {
+          const [t1, t2] = thresholds;
+          ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
+          ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
+          ranges.push({ label: `> ${formatter(t2)}`, cls: 'map-legend__dot--high' });
+        } else if (thresholds.length === 1) {
+          ranges.push({ label: `≤ ${formatter(thresholds[0])}`, cls: 'map-legend__dot--low' });
+          ranges.push({ label: `> ${formatter(thresholds[0])}`, cls: 'map-legend__dot--high' });
+        } else {
+          ranges.push({ label: 'Consommation moyenne', cls: 'map-legend__dot--medium' });
+        }
+        ranges.forEach((range) => {
+          const item = document.createElement('li');
+          const dot = document.createElement('span');
+          dot.className = `map-legend__dot ${range.cls}`;
+          dot.setAttribute('aria-hidden', 'true');
+          const text = document.createElement('span');
+          text.textContent = range.label;
+          item.append(dot, text);
+          legendList.append(item);
+        });
+      }
+    });
+  };
+
+  const updateMonthlyChart = (mode, monthly = [], aggregatedMetrics = {}) => {
+    const cards = document.querySelectorAll('.energy-monthly-card');
+    if (!cards.length) return;
+    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
+
+    const cssClassForSeries = (seriesKey) => {
+      if (seriesKey === 'elec') return 'electricite';
+      return seriesKey;
+    };
+
+    cards.forEach((card) => {
+      const metricKey = card.dataset.chartMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
+
+      const barsWrap = card.querySelector('[data-monthly-bars]');
+      const line = card.querySelector('[data-monthly-line]');
+      const summary = card.querySelector('[data-monthly-summary]');
+      if (!barsWrap) return;
+
+      const seriesAttr = card.dataset.monthlySeries || 'chaleur,elec,froid';
+      const series = seriesAttr.split(',').map(s => s.trim()).filter(Boolean);
+      const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
+      const sre = Number(metricData.sre) || 0;
+      const divisor = mode === 'kwhm2' && sre > 0 ? sre : 1;
+
+      const dataset = Array.isArray(monthly)
+        ? monthly.map(item => {
+          const key = item?.key || item?.month;
+          const label = item?.label || item?.month || '';
+          const climate = Number(item?.climate) || 0;
+          const values = {};
+          series.forEach((seriesKey) => {
+            const rawValue = Number(item?.[seriesKey]) || 0;
+            values[seriesKey] = divisor > 0 ? rawValue / divisor : 0;
+          });
+          const total = series.reduce((acc, seriesKey) => acc + (values[seriesKey] || 0), 0);
+          return { key, label, values, total, climate };
+        })
+        : [];
+
+      const maxTotal = dataset.reduce((acc, item) => (item.total > acc ? item.total : acc), 0);
+      const maxClimate = dataset.reduce((acc, item) => (item.climate > acc ? item.climate : acc), 0);
+      const hasData = dataset.length > 0;
+
       barsWrap.innerHTML = '';
       if (!hasData) {
         const empty = document.createElement('p');
         empty.className = 'chart-empty';
-        empty.textContent = 'Aucune typologie disponible pour la sélection.';
+        empty.textContent = 'Aucune donnée mensuelle disponible pour ce périmètre.';
         barsWrap.append(empty);
       } else {
-        const scale = maxValue > 0 ? (140 / maxValue) : 0;
-        if (scale > 0) barsWrap.style.setProperty('--typology-scale', `${scale}px`);
-        else barsWrap.style.removeProperty('--typology-scale');
+        const scale = maxTotal > 0 ? (140 / maxTotal) : 0;
+        if (scale > 0) barsWrap.style.setProperty('--monthly-scale', `${scale}px`);
+        else barsWrap.style.removeProperty('--monthly-scale');
 
         dataset.forEach((item) => {
           const bar = document.createElement('div');
-          bar.className = 'typology-bar';
-          bar.dataset.key = item.key;
+          bar.className = 'monthly-bar';
+          bar.dataset.monthKey = item.key || '';
           bar.setAttribute('role', 'listitem');
 
-          const fill = document.createElement('span');
-          fill.className = 'typology-bar__fill';
-          fill.style.setProperty('--value', Math.max(item.value, 0));
-          fill.setAttribute('aria-hidden', 'true');
+          const stack = document.createElement('div');
+          stack.className = 'monthly-stack';
 
-          const label = document.createElement('span');
-          label.className = 'typology-bar__label';
-          label.textContent = item.label;
+          const segmentsDescription = [];
+          series.forEach((seriesKey) => {
+            const cssKey = cssClassForSeries(seriesKey);
+            const value = item.values[seriesKey] || 0;
+            const segment = document.createElement('span');
+            segment.className = `monthly-segment monthly-segment--${cssKey}`;
+            segment.style.setProperty('--value', Math.max(value, 0));
+            segment.setAttribute('aria-hidden', 'true');
+            stack.append(segment);
+            segmentsDescription.push(`${seriesKey} ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`);
+          });
+
+          const totalValue = formatEnergyDisplay(item.total, mode, mode === 'kwhm2' ? 0 : 0);
+          bar.setAttribute('aria-label', `${item.label} : ${totalValue} ${unit} — ${segmentsDescription.join(', ')}`);
 
           const valueEl = document.createElement('span');
-          valueEl.className = 'typology-bar__value';
-          valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+          valueEl.className = 'monthly-total';
+          valueEl.textContent = totalValue;
+          valueEl.setAttribute('aria-hidden', 'true');
 
-          const countEl = document.createElement('span');
-          countEl.className = 'typology-bar__count';
-          countEl.textContent = `${formatCount(item.buildings)} bât.`;
+          const labelEl = document.createElement('span');
+          labelEl.className = 'monthly-label';
+          labelEl.textContent = item.label;
 
-          bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}`);
-          bar.append(fill, valueEl, label, countEl);
+          bar.append(stack, valueEl, labelEl);
           barsWrap.append(bar);
         });
       }
-    }
 
-    const tableBody = card.querySelector('[data-typology-table]');
-    if (tableBody) {
-      tableBody.innerHTML = '';
-      dataset.forEach((item) => {
-        const row = document.createElement('tr');
-        const labelCell = document.createElement('td');
-        labelCell.textContent = item.label;
-        const valueCell = document.createElement('td');
-        valueCell.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
-        const countCell = document.createElement('td');
-        countCell.textContent = formatCount(item.buildings);
-        row.append(labelCell, valueCell, countCell);
-        tableBody.append(row);
-      });
-    }
-
-    const summary = card.querySelector('[data-typology-summary]');
-    if (summary) {
-      if (hasData) {
-        summary.textContent = `${formatCount(totalBuildings)} bâtiment(s) répartis sur ${dataset.length} typologie(s).`;
-      } else {
-        summary.textContent = 'Sélectionnez un périmètre pour afficher la répartition par typologie.';
-      }
-    }
-
-    card.classList.toggle('is-empty', !hasData);
-  };
-
-  const updateEnergyMap = (mode, mapPoints = []) => {
-    const card = document.querySelector('[data-chart-slot="energy-map"]');
-    if (!card) return;
-    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
-
-    const markersWrap = card.querySelector('[data-map-markers]');
-    const legendList = card.querySelector('[data-map-legend]');
-    const emptyState = card.querySelector('[data-map-empty]');
-    if (!markersWrap) return;
-
-    const points = Array.isArray(mapPoints)
-      ? mapPoints.filter(point => point && Number.isFinite(mode === 'kwhm2' ? point.intensity : point.total))
-      : [];
-
-    markersWrap.innerHTML = '';
-    const hasData = points.length > 0;
-    if (emptyState) emptyState.hidden = hasData;
-    card.classList.toggle('is-empty', !hasData);
-    if (!hasData) return;
-
-    const thresholds = ENERGY_BASE_DATA.mapThresholds?.[mode] || [];
-    const classify = (value) => {
-      if (!Number.isFinite(value)) return 'map-marker--medium';
-      const [t1, t2, t3] = thresholds;
-      if (!thresholds.length) return 'map-marker--medium';
-      if (thresholds.length === 1) {
-        return value <= t1 ? 'map-marker--low' : 'map-marker--high';
-      }
-      if (value <= t1) return 'map-marker--low';
-      if (thresholds.length === 2) return value <= t2 ? 'map-marker--medium' : 'map-marker--high';
-      if (value <= t2) return 'map-marker--medium';
-      if (value <= t3) return 'map-marker--high';
-      return 'map-marker--critical';
-    };
-
-    const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
-    points.forEach((point) => {
-      const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
-      const sre = Number(point.sre) || 0;
-      const marker = document.createElement('div');
-      marker.className = `map-marker ${classify(value)}`;
-      const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
-      marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
-      marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
-      marker.style.setProperty('--size', `${size}`);
-      marker.setAttribute('role', 'listitem');
-      marker.setAttribute('aria-label', `${point.label} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}, ${formatCount(sre)} m²`);
-      marker.title = `${point.label} — ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
-
-      const dot = document.createElement('span');
-      dot.className = 'map-marker__dot';
-      dot.setAttribute('aria-hidden', 'true');
-
-      const label = document.createElement('span');
-      label.className = 'map-marker__label';
-      label.textContent = point.label;
-
-      marker.append(dot, label);
-      markersWrap.append(marker);
-    });
-
-    if (legendList) {
-      legendList.innerHTML = '';
-      const ranges = [];
-      const formatter = (value) => `${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
-      if (thresholds.length >= 3) {
-        const [t1, t2, t3] = thresholds;
-        ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
-        ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
-        ranges.push({ label: `${formatter(t2)} – ${formatter(t3)}`, cls: 'map-legend__dot--high' });
-        ranges.push({ label: `> ${formatter(t3)}`, cls: 'map-legend__dot--critical' });
-      } else if (thresholds.length === 2) {
-        const [t1, t2] = thresholds;
-        ranges.push({ label: `≤ ${formatter(t1)}`, cls: 'map-legend__dot--low' });
-        ranges.push({ label: `${formatter(t1)} – ${formatter(t2)}`, cls: 'map-legend__dot--medium' });
-        ranges.push({ label: `> ${formatter(t2)}`, cls: 'map-legend__dot--high' });
-      } else if (thresholds.length === 1) {
-        ranges.push({ label: `≤ ${formatter(thresholds[0])}`, cls: 'map-legend__dot--low' });
-        ranges.push({ label: `> ${formatter(thresholds[0])}`, cls: 'map-legend__dot--high' });
-      } else {
-        ranges.push({ label: 'Consommation moyenne', cls: 'map-legend__dot--medium' });
-      }
-      ranges.forEach((range) => {
-        const item = document.createElement('li');
-        const dot = document.createElement('span');
-        dot.className = `map-legend__dot ${range.cls}`;
-        dot.setAttribute('aria-hidden', 'true');
-        const text = document.createElement('span');
-        text.textContent = range.label;
-        item.append(dot, text);
-        legendList.append(item);
-      });
-    }
-  };
-
-  const updateMonthlyChart = (mode, monthly = [], sre = 0) => {
-    const card = document.querySelector('[data-chart-slot="monthly"]');
-    if (!card) return;
-    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
-
-    const barsWrap = card.querySelector('[data-monthly-bars]');
-    const line = card.querySelector('[data-monthly-line]');
-    const summary = card.querySelector('[data-monthly-summary]');
-    if (!barsWrap) return;
-
-    const divisor = mode === 'kwhm2' && sre > 0 ? sre : 1;
-    const dataset = Array.isArray(monthly)
-      ? monthly.map(item => ({
-        key: item?.key || item?.month,
-        label: item?.label || item?.month || '',
-        chaleur: divisor > 0 ? (Number(item?.chaleur) || 0) / divisor : 0,
-        elec: divisor > 0 ? (Number(item?.elec) || 0) / divisor : 0,
-        froid: divisor > 0 ? (Number(item?.froid) || 0) / divisor : 0,
-        total: divisor > 0 ? (Number(item?.total) || 0) / divisor : 0,
-        climate: Number(item?.climate) || 0,
-      }))
-      : [];
-
-    const maxTotal = dataset.reduce((acc, item) => (item.total > acc ? item.total : acc), 0);
-    const maxClimate = dataset.reduce((acc, item) => (item.climate > acc ? item.climate : acc), 0);
-    const hasData = dataset.length > 0;
-
-    barsWrap.innerHTML = '';
-    if (!hasData) {
-      const empty = document.createElement('p');
-      empty.className = 'chart-empty';
-      empty.textContent = 'Aucune donnée mensuelle disponible pour ce périmètre.';
-      barsWrap.append(empty);
-    } else {
-      const scale = maxTotal > 0 ? (140 / maxTotal) : 0;
-      if (scale > 0) barsWrap.style.setProperty('--monthly-scale', `${scale}px`);
-      else barsWrap.style.removeProperty('--monthly-scale');
-
-      dataset.forEach((item) => {
-        const bar = document.createElement('div');
-        bar.className = 'monthly-bar';
-        bar.dataset.monthKey = item.key || '';
-        bar.setAttribute('role', 'listitem');
-
-        const stack = document.createElement('div');
-        stack.className = 'monthly-stack';
-
-        ['chaleur', 'elec', 'froid'].forEach((type) => {
-          const segment = document.createElement('span');
-          segment.className = `monthly-segment monthly-segment--${type}`;
-          segment.style.setProperty('--value', Math.max(item[type], 0));
-          segment.setAttribute('aria-hidden', 'true');
-          stack.append(segment);
-        });
-
-        const valueEl = document.createElement('span');
-        valueEl.className = 'monthly-bar__value';
-        valueEl.textContent = `${formatEnergyDisplay(item.total, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
-
-        const labelEl = document.createElement('span');
-        labelEl.className = 'monthly-bar__label';
-        labelEl.textContent = item.label;
-
-        const details = [`Chaleur : ${formatEnergyDisplay(item.chaleur, mode, mode === 'kwhm2' ? 0 : 0)}`,
-          `Électricité : ${formatEnergyDisplay(item.elec, mode, mode === 'kwhm2' ? 0 : 0)}`,
-          `Froid : ${formatEnergyDisplay(item.froid, mode, mode === 'kwhm2' ? 0 : 0)}`];
-        bar.setAttribute('aria-label', `${item.label} — ${valueEl.textContent}. ${details.join(', ')}`);
-
-        bar.append(stack, valueEl, labelEl);
-        barsWrap.append(bar);
-      });
-    }
-
-    if (line) {
-      const polyline = line.querySelector('polyline');
-      if (polyline) {
-        if (!hasData || maxClimate <= 0) {
-          polyline.setAttribute('points', '');
-        } else {
-          const step = dataset.length > 1 ? 100 / (dataset.length - 1) : 100;
-          const pointsStr = dataset.map((item, idx) => {
-            const x = dataset.length > 1 ? idx * step : 50;
-            const y = 100 - ((item.climate / maxClimate) * 100);
-            return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
-          }).join(' ');
-          polyline.setAttribute('points', pointsStr);
+      if (line) {
+        const polyline = line.querySelector('polyline');
+        if (polyline) {
+          if (!hasData || maxClimate <= 0) {
+            polyline.setAttribute('points', '');
+          } else {
+            const step = dataset.length > 1 ? 100 / (dataset.length - 1) : 100;
+            const pointsStr = dataset.map((item, idx) => {
+              const x = dataset.length > 1 ? idx * step : 50;
+              const y = 100 - ((item.climate / maxClimate) * 100);
+              return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
+            }).join(' ');
+            polyline.setAttribute('points', pointsStr);
+          }
         }
       }
-    }
 
-    if (summary) {
-      if (!hasData) {
-        summary.textContent = 'Sélection vide — aucune tendance mensuelle.';
-      } else {
-        const average = dataset.reduce((acc, item) => acc + item.total, 0) / dataset.length;
-        summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+      if (summary) {
+        if (!hasData) {
+          summary.textContent = 'Sélection vide — aucune tendance mensuelle.';
+        } else {
+          const average = dataset.reduce((acc, item) => acc + item.total, 0) / dataset.length;
+          summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+        }
       }
-    }
+
+      card.classList.toggle('is-empty', !hasData);
+    });
   };
 
-  const updateDistributionChart = (mode, distribution = {}, sre = 0) => {
-    const card = document.querySelector('[data-chart-slot="intensity-distribution"]');
-    if (!card) return;
+  const updateDistributionChart = (mode, distribution = {}, aggregatedMetrics = {}) => {
+    const cards = document.querySelectorAll('.energy-distribution-card');
+    if (!cards.length) return;
     const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-    card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
-
-    const barsWrap = card.querySelector('[data-distribution-bars]');
-    const line = card.querySelector('[data-distribution-line]');
-    const selectionLegend = card.querySelector('[data-distribution-selection]');
-    const benchmarkLegend = card.querySelector('[data-distribution-benchmark]');
-    if (!barsWrap) return;
-
-    const records = Array.isArray(distribution?.records) ? distribution.records : [];
-    const benchmarkGroup = distribution?.benchmark || {};
-    const benchConfig = mode === 'kwhm2'
-      ? (benchmarkGroup.intensity || {})
-      : (benchmarkGroup.total || {});
 
     const defaultIntensityBins = [
       { key: '0-80', label: '0-80', min: 0, max: 80 },
@@ -2123,87 +2386,110 @@
       { key: '≥500', label: '≥500 MWh', min: 500000, max: null },
     ];
 
-    const bins = Array.isArray(benchConfig.bins) && benchConfig.bins.length
-      ? benchConfig.bins
-      : (mode === 'kwhm2' ? defaultIntensityBins : defaultTotalBins);
-    const benchmarkValues = Array.isArray(benchConfig.curve) && benchConfig.curve.length
-      ? benchConfig.curve.slice(0, bins.length)
-      : new Array(bins.length).fill(0);
-    const benchmarkTotal = Number(benchConfig.totalBuildings) || 0;
+    cards.forEach((card) => {
+      const metricKey = card.dataset.chartMetric || (card.dataset.chartScope === 'chaleur' ? 'chaleur' : 'general');
+      card.querySelectorAll('.chart-unit').forEach(el => { el.textContent = unit; });
 
-    const values = records.map(record => (mode === 'kwhm2' ? Number(record.intensity) : Number(record.total))).filter(Number.isFinite);
-    const selectionCounts = bins.map((bin) => {
-      const count = values.reduce((acc, value) => {
-        if (bin.max == null) {
-          return value >= bin.min ? acc + 1 : acc;
-        }
-        return (value >= bin.min && value < bin.max) ? acc + 1 : acc;
-      }, 0);
-      return { ...bin, count };
-    });
+      const barsWrap = card.querySelector('[data-distribution-bars]');
+      const line = card.querySelector('[data-distribution-line]');
+      const selectionLegend = card.querySelector('[data-distribution-selection]');
+      const benchmarkLegend = card.querySelector('[data-distribution-benchmark]');
+      if (!barsWrap) return;
 
-    const maxCount = selectionCounts.reduce((acc, bin) => (bin.count > acc ? bin.count : acc), 0);
-    const totalSelection = selectionCounts.reduce((acc, bin) => acc + bin.count, 0);
-    const hasData = totalSelection > 0;
+      const records = Array.isArray(distribution?.records) ? distribution.records : [];
+      const values = records.map((record) => {
+        const metrics = record?.metrics?.[metricKey];
+        if (!metrics) return NaN;
+        const value = mode === 'kwhm2' ? Number(metrics.intensity) : Number(metrics.total);
+        return Number.isFinite(value) ? value : NaN;
+      }).filter(Number.isFinite);
 
-    barsWrap.innerHTML = '';
-    if (maxCount > 0) {
-      const scale = 120 / maxCount;
-      barsWrap.style.setProperty('--distribution-scale', `${scale}px`);
-    } else {
-      barsWrap.style.removeProperty('--distribution-scale');
-    }
+      const benchmarkSource = metricKey === 'chaleur' ? HEAT_BASE_DATA.benchmark : distribution?.benchmark || {};
+      const benchConfig = mode === 'kwhm2'
+        ? (benchmarkSource.intensity || {})
+        : (benchmarkSource.total || {});
 
-    selectionCounts.forEach((bin) => {
-      const bar = document.createElement('div');
-      bar.className = 'distribution-bar';
-      bar.dataset.binKey = bin.key;
-      bar.setAttribute('role', 'listitem');
+      const bins = Array.isArray(benchConfig.bins) && benchConfig.bins.length
+        ? benchConfig.bins
+        : (mode === 'kwhm2' ? defaultIntensityBins : defaultTotalBins);
+      const benchmarkValues = Array.isArray(benchConfig.curve) && benchConfig.curve.length
+        ? benchConfig.curve.slice(0, bins.length)
+        : new Array(bins.length).fill(0);
+      const benchmarkTotal = Number(benchConfig.totalBuildings) || 0;
 
-      const fill = document.createElement('span');
-      fill.className = 'distribution-bar__fill';
-      fill.style.setProperty('--value', Math.max(bin.count, 0));
-      fill.setAttribute('aria-hidden', 'true');
+      const selectionCounts = bins.map((bin) => {
+        const count = values.reduce((acc, value) => {
+          if (bin.max == null) {
+            return value >= bin.min ? acc + 1 : acc;
+          }
+          return (value >= bin.min && value < bin.max) ? acc + 1 : acc;
+        }, 0);
+        return { ...bin, count };
+      });
 
-      const label = document.createElement('span');
-      label.className = 'distribution-bar__label';
-      label.textContent = bin.label;
+      const maxCount = selectionCounts.reduce((acc, bin) => (bin.count > acc ? bin.count : acc), 0);
+      const totalSelection = selectionCounts.reduce((acc, bin) => acc + bin.count, 0);
+      const hasData = totalSelection > 0;
 
-      const valueEl = document.createElement('span');
-      valueEl.className = 'distribution-bar__value';
-      valueEl.textContent = `${formatCount(bin.count)} bât.`;
+      barsWrap.innerHTML = '';
+      if (maxCount > 0) {
+        const scale = 120 / maxCount;
+        barsWrap.style.setProperty('--distribution-scale', `${scale}px`);
+      } else {
+        barsWrap.style.removeProperty('--distribution-scale');
+      }
 
-      bar.setAttribute('aria-label', `${bin.label} : ${formatCount(bin.count)} bâtiment(s)`);
-      bar.append(fill, label, valueEl);
-      barsWrap.append(bar);
-    });
+      selectionCounts.forEach((bin) => {
+        const bar = document.createElement('div');
+        bar.className = 'distribution-bar';
+        bar.dataset.binKey = bin.key;
+        bar.setAttribute('role', 'listitem');
 
-    if (line) {
-      const polyline = line.querySelector('polyline');
-      if (polyline) {
-        const maxBench = benchmarkValues.reduce((acc, value) => (value > acc ? value : acc), 0);
-        if (maxBench <= 0) {
-          polyline.setAttribute('points', '');
-        } else {
-          const step = benchmarkValues.length > 1 ? 100 / (benchmarkValues.length - 1) : 100;
-          const pointsStr = benchmarkValues.map((value, idx) => {
-            const x = benchmarkValues.length > 1 ? idx * step : 50;
-            const y = 100 - ((value / maxBench) * 100);
-            return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
-          }).join(' ');
-          polyline.setAttribute('points', pointsStr);
+        const fill = document.createElement('span');
+        fill.className = 'distribution-bar__fill';
+        fill.style.setProperty('--value', Math.max(bin.count, 0));
+        fill.setAttribute('aria-hidden', 'true');
+
+        const label = document.createElement('span');
+        label.className = 'distribution-bar__label';
+        label.textContent = bin.label;
+
+        const valueEl = document.createElement('span');
+        valueEl.className = 'distribution-bar__value';
+        valueEl.textContent = `${formatCount(bin.count)} bât.`;
+
+        bar.setAttribute('aria-label', `${bin.label} : ${formatCount(bin.count)} bâtiment(s)`);
+        bar.append(fill, label, valueEl);
+        barsWrap.append(bar);
+      });
+
+      if (line) {
+        const polyline = line.querySelector('polyline');
+        if (polyline) {
+          const maxBench = benchmarkValues.reduce((acc, value) => (value > acc ? value : acc), 0);
+          if (maxBench <= 0) {
+            polyline.setAttribute('points', '');
+          } else {
+            const step = benchmarkValues.length > 1 ? 100 / (benchmarkValues.length - 1) : 100;
+            const pointsStr = benchmarkValues.map((value, idx) => {
+              const x = benchmarkValues.length > 1 ? idx * step : 50;
+              const y = 100 - ((value / maxBench) * 100);
+              return `${x.toFixed(2)},${Math.max(0, Math.min(100, y)).toFixed(2)}`;
+            }).join(' ');
+            polyline.setAttribute('points', pointsStr);
+          }
         }
       }
-    }
 
-    if (selectionLegend) {
-      selectionLegend.textContent = `${formatCount(totalSelection)} bât.`;
-    }
-    if (benchmarkLegend) {
-      benchmarkLegend.textContent = benchmarkTotal ? `${formatCount(benchmarkTotal)} bât.` : 'Référence';
-    }
+      if (selectionLegend) {
+        selectionLegend.textContent = `${formatCount(totalSelection)} bât.`;
+      }
+      if (benchmarkLegend) {
+        benchmarkLegend.textContent = benchmarkTotal ? `${formatCount(benchmarkTotal)} bât.` : 'Référence';
+      }
 
-    card.classList.toggle('is-empty', !hasData);
+      card.classList.toggle('is-empty', !hasData);
+    });
   };
 
   function updateEnergyVisuals() {
@@ -2223,14 +2509,14 @@
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
-    updateEnergyTrendChart(mode, effectiveSre);
+    updateEnergyTrendCharts(mode, aggregated);
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
     updateTopConsumersCards(mode, buildings);
     updateTypologyChart(mode, typologies);
-    updateEnergyMap(mode, mapPoints);
-    updateMonthlyChart(mode, monthly, effectiveSre);
-    updateDistributionChart(mode, distribution, effectiveSre);
+    updateEnergyMap(mode, mapPoints, aggregated);
+    updateMonthlyChart(mode, monthly, aggregated);
+    updateDistributionChart(mode, distribution, aggregated);
     syncChartTileLayouts();
     updateTrendPadding();
   }

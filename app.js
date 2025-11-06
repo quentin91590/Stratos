@@ -4,6 +4,124 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const $ = (sel, root = document) => root.querySelector(sel);
   const NF = new Intl.NumberFormat('fr-FR');
+  const isReducedMotionPreferred = () => {
+    try {
+      return !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const energySubnav = document.getElementById('energy-subnav');
+  let energySubnavEnabled = false;
+  let energySubnavSentinelVisible = true;
+  let energySubnavInitialized = false;
+  let energySubnavHideTimer = null;
+  let energySubnavSyncRaf = null;
+  let energySubnavActiveId = null;
+
+  function requestSyncStickyTop() {
+    if (typeof requestAnimationFrame === 'function') {
+      if (energySubnavSyncRaf) cancelAnimationFrame(energySubnavSyncRaf);
+      energySubnavSyncRaf = requestAnimationFrame(() => {
+        energySubnavSyncRaf = null;
+        syncStickyTop();
+      });
+    } else {
+      syncStickyTop();
+    }
+  }
+
+  function updateEnergySubnavVisibility() {
+    if (!energySubnav) return;
+    const shouldShow = energySubnavEnabled && !energySubnavSentinelVisible;
+    energySubnav.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
+
+    if (shouldShow) {
+      if (energySubnavHideTimer) {
+        clearTimeout(energySubnavHideTimer);
+        energySubnavHideTimer = null;
+      }
+      if (energySubnav.hidden) {
+        energySubnav.hidden = false;
+        energySubnav.classList.remove('is-visible');
+        if (typeof requestAnimationFrame === 'function') {
+          requestAnimationFrame(() => energySubnav.classList.add('is-visible'));
+        } else {
+          energySubnav.classList.add('is-visible');
+        }
+      } else {
+        energySubnav.classList.add('is-visible');
+      }
+    } else {
+      energySubnav.classList.remove('is-visible');
+      if (!energySubnav.hidden) {
+        if (energySubnavHideTimer) clearTimeout(energySubnavHideTimer);
+        if (isReducedMotionPreferred()) {
+          energySubnav.hidden = true;
+        } else {
+          energySubnavHideTimer = window.setTimeout(() => {
+            energySubnav.hidden = true;
+            energySubnavHideTimer = null;
+          }, 220);
+        }
+      }
+    }
+
+    requestSyncStickyTop();
+  }
+
+  function setEnergySubnavActive(tabId) {
+    energySubnavActiveId = tabId || null;
+    if (!energySubnav || !energySubnavInitialized) return;
+    $$('[data-target-tab]', energySubnav).forEach(btn => {
+      const active = btn.dataset.targetTab === energySubnavActiveId;
+      btn.classList.toggle('is-active', active);
+      btn.setAttribute('aria-pressed', active ? 'true' : 'false');
+    });
+  }
+
+  function ensureEnergySubnav(tabs, selectTabFn) {
+    if (!energySubnav || energySubnavInitialized) return;
+    if (!tabs.length) return;
+
+    const frag = document.createDocumentFragment();
+    tabs.forEach(tab => {
+      if (!(tab instanceof HTMLElement)) return;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'top-subnav-item';
+      btn.dataset.targetTab = tab.id || '';
+      btn.setAttribute('aria-pressed', 'false');
+
+      const iconSrc = tab.querySelector('.kpi-icon svg');
+      if (iconSrc) {
+        const iconWrap = document.createElement('span');
+        iconWrap.className = 'top-subnav-icon';
+        iconWrap.appendChild(iconSrc.cloneNode(true));
+        btn.appendChild(iconWrap);
+      }
+
+      const label = tab.querySelector('.kpi-label');
+      const text = document.createElement('span');
+      text.className = 'top-subnav-text';
+      text.textContent = label?.textContent?.trim() || tab.textContent.trim();
+      btn.appendChild(text);
+
+      btn.addEventListener('click', () => {
+        selectTabFn(tab);
+      });
+
+      frag.appendChild(btn);
+    });
+
+    energySubnav.appendChild(frag);
+    energySubnavInitialized = true;
+    if (energySubnavActiveId) {
+      setEnergySubnavActive(energySubnavActiveId);
+    }
+    updateEnergySubnavVisibility();
+  }
   // --- Etat global des filtres (si pas déjà défini)
   window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwh', climate: true, benchmark: { type: 'internal' } };
   const FILTERS = window.FILTERS;
@@ -905,6 +1023,22 @@
       }
     });
 
+    if (container.id === 'energy-block') {
+      ensureEnergySubnav(Array.from(tabs), selectTab);
+      const sentinel = container.querySelector('.kpi-subnav-sentinel');
+      if (sentinel && 'IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(entries => {
+          const entry = entries[0];
+          energySubnavSentinelVisible = entry?.isIntersecting !== false;
+          updateEnergySubnavVisibility();
+        }, { threshold: 0, rootMargin: '-90px 0px 0px 0px' });
+        observer.observe(sentinel);
+      } else {
+        energySubnavSentinelVisible = true;
+        updateEnergySubnavVisibility();
+      }
+    }
+
     function selectTab(tab) {
       if (!tab) return;
 
@@ -916,6 +1050,10 @@
       // Panneaux
       const target = tab.getAttribute('aria-controls');
       panels.forEach(p => p.hidden = (p.id !== target));
+
+      if (container.id === 'energy-block') {
+        setEnergySubnavActive(tab.id);
+      }
 
       // Couleur active
       try {
@@ -988,14 +1126,17 @@
   /* ========== Top menu (sections) ========== */
   const topItems = document.querySelectorAll('.top-nav .top-item');
   function syncStickyTop() {
-    const topNav = document.querySelector('.top-nav');
+    const topNavWrap = document.querySelector('.top-nav-wrap');
     const header = document.querySelector('.sidebar-header');
-    const h = (topNav ? topNav.offsetHeight : 0) + (header ? header.offsetHeight : 0);
+    const h = (topNavWrap ? topNavWrap.offsetHeight : 0) + (header ? header.offsetHeight : 0);
     document.documentElement.style.setProperty('--sticky-top', h + 'px');
   }
   function selectSection(name) {
     syncStickyTop();
     const root = document.documentElement;
+
+    energySubnavEnabled = (name === 'energie');
+    updateEnergySubnavVisibility();
 
     // Affiche uniquement le tabset de la section active
     const energyBlock = document.getElementById('energy-block');

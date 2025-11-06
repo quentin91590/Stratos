@@ -244,15 +244,21 @@
     'mix-secondary-pie': { width: 'half', height: 'medium' },
     'mix-secondary-rings': { width: 'half', height: 'medium' },
     'mix-secondary-columns': { width: 'half', height: 'medium' },
+    'heat-fuels-donut': { width: 'half', height: 'medium' },
+    'heat-fuels-bars': { width: 'half', height: 'medium' },
+    'heat-uses-bars': { width: 'half', height: 'medium' },
+    'heat-uses-rings': { width: 'half', height: 'medium' },
     'intensity-bars': { width: 'full', height: 'medium' },
     'intensity-line': { width: 'full', height: 'short' },
     'intensity-breakdown': { width: 'full', height: 'tall' },
+    'heat-intensity-bars': { width: 'full', height: 'medium' },
     'typology-columns': { width: 'full', height: 'xl' },
     'typology-rows': { width: 'full', height: 'xl' },
     'map-bubbles': { width: 'full', height: 'tall' },
     'map-grid': { width: 'full', height: 'medium' },
     'monthly-stacked': { width: 'full', height: 'xl' },
     'monthly-lines': { width: 'full', height: 'xl' },
+    'heat-monthly': { width: 'full', height: 'xl' },
     'distribution-columns': { width: 'full', height: 'tall' },
     'distribution-line': { width: 'full', height: 'medium' },
   };
@@ -265,6 +271,13 @@
     'energy-map': { width: 'full', height: 'tall' },
     'monthly': { width: 'full', height: 'xl' },
     'intensity-distribution': { width: 'full', height: 'medium' },
+    'heat-mix-fuels': { width: 'half', height: 'medium' },
+    'heat-uses': { width: 'half', height: 'medium' },
+    'heat-trend': { width: 'full', height: 'medium' },
+    'heat-typology': { width: 'full', height: 'xl' },
+    'heat-map': { width: 'full', height: 'tall' },
+    'heat-monthly': { width: 'full', height: 'xl' },
+    'heat-distribution': { width: 'full', height: 'medium' },
   };
 
   const VALID_TILE_WIDTHS = new Set(['full', 'half']);
@@ -308,42 +321,45 @@
   };
 
   function equalizeChartTileHeights() {
-    const stack = $e('.energy-chart-stack');
-    if (!stack) return;
-    const slots = $$('[data-chart-slot]', stack);
-    if (!slots.length) return;
+    const stacks = $$e('.energy-chart-stack');
+    if (!stacks.length) return;
 
-    slots.forEach(slot => {
-      slot.style.removeProperty('--tile-equal-height');
-    });
+    stacks.forEach((stack) => {
+      const slots = Array.from(stack.querySelectorAll('[data-chart-slot]'));
+      if (!slots.length) return;
 
-    // Force layout without the equalized height before measuring.
-    stack.getBoundingClientRect();
-
-    const rows = new Map();
-    slots.forEach(slot => {
-      const top = Math.round(slot.offsetTop);
-      const row = rows.get(top) || [];
-      row.push(slot);
-      rows.set(top, row);
-    });
-
-    rows.forEach(group => {
-      let maxHeight = 0;
-      group.forEach(tile => {
-        const rect = tile.getBoundingClientRect();
-        if (rect.height > maxHeight) maxHeight = rect.height;
+      slots.forEach(slot => {
+        slot.style.removeProperty('--tile-equal-height');
       });
-      const safeHeight = Math.ceil(maxHeight);
-      group.forEach(tile => {
-        tile.style.setProperty('--tile-equal-height', `${safeHeight}px`);
+
+      // Force layout without the equalized height before measuring.
+      stack.getBoundingClientRect();
+
+      const rows = new Map();
+      slots.forEach(slot => {
+        const top = Math.round(slot.offsetTop);
+        const row = rows.get(top) || [];
+        row.push(slot);
+        rows.set(top, row);
+      });
+
+      rows.forEach(group => {
+        let maxHeight = 0;
+        group.forEach(tile => {
+          const rect = tile.getBoundingClientRect();
+          if (rect.height > maxHeight) maxHeight = rect.height;
+        });
+        const safeHeight = Math.ceil(maxHeight);
+        group.forEach(tile => {
+          tile.style.setProperty('--tile-equal-height', `${safeHeight}px`);
+        });
       });
     });
   }
 
   function refreshChartTileObserver() {
-    const stack = $e('.energy-chart-stack');
-    if (!stack) return;
+    const stacks = $$e('.energy-chart-stack');
+    if (!stacks.length) return;
 
     if (typeof ResizeObserver === 'undefined') {
       return;
@@ -354,7 +370,9 @@
     }
 
     chartTileResizeObserver.disconnect();
-    $$('[data-chart-slot]', stack).forEach(slot => chartTileResizeObserver.observe(slot));
+    stacks.forEach((stack) => {
+      stack.querySelectorAll('[data-chart-slot]').forEach(slot => chartTileResizeObserver.observe(slot));
+    });
   }
 
   const syncChartTileLayouts = () => {
@@ -833,12 +851,11 @@
 
   /* ========== Catalogue de graphiques (pinceau) ========== */
   function setupChartCatalog() {
-    const zone = document.querySelector('.energy-chart-zone');
-    if (!zone) return;
+    const panel = document.getElementById('chart-catalog');
+    if (!panel) return;
 
-    const toggles = Array.from(zone.querySelectorAll('.chart-edit-toggle'));
-    const panel = zone.querySelector('#chart-catalog');
-    if (!toggles.length || !panel) return;
+    const toggles = Array.from(document.querySelectorAll('.chart-edit-toggle'));
+    if (!toggles.length) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
     const getCardContainer = (card) => card?.closest('li') || null;
 
@@ -849,6 +866,7 @@
     let activeToggle = null;
     let focusTargetOnClose = null;
     let activeSlot = null;
+    let activeZone = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -865,7 +883,7 @@
       if (!trigger) return null;
       const slotName = trigger.dataset.chartTarget || trigger.closest('[data-chart-slot]')?.dataset.chartSlot;
       if (!slotName) return null;
-      return zone.querySelector(`[data-chart-slot="${slotName}"]`);
+      return document.querySelector(`[data-chart-slot="${slotName}"]`);
     };
 
     const setCardState = (card, isActive) => {
@@ -903,6 +921,22 @@
       markActiveCard(slotEl);
     };
 
+    const getActiveZone = () => {
+      if (activeZone) return activeZone;
+      const fallbackZone = panel.closest('.energy-chart-zone');
+      return fallbackZone || null;
+    };
+
+    const ensurePanelWithinZone = (zoneEl) => {
+      if (!zoneEl) return;
+      if (!zoneEl.contains(panel)) zoneEl.append(panel);
+    };
+
+    const clearZoneState = () => {
+      const zoneEl = getActiveZone();
+      if (zoneEl) zoneEl.classList.remove('catalog-open');
+    };
+
     const applyChartToSlot = (chartType) => {
       if (!activeSlot) return false;
       const template = document.getElementById(`chart-template-${chartType}`);
@@ -922,13 +956,19 @@
 
     const positionCatalog = (trigger) => {
       if (!trigger) return;
+      const zoneEl = getActiveZone();
+      if (!zoneEl) {
+        panel.style.removeProperty('--catalog-top');
+        panel.style.removeProperty('--catalog-right');
+        return;
+      }
       if (layoutQuery.matches) {
         panel.style.removeProperty('--catalog-top');
         panel.style.removeProperty('--catalog-right');
         return;
       }
 
-      const zoneRect = zone.getBoundingClientRect();
+      const zoneRect = zoneEl.getBoundingClientRect();
       const buttonRect = trigger.getBoundingClientRect();
       const rawWidth = panel.offsetWidth || panel.getBoundingClientRect().width || 0;
       const panelWidth = Math.max(rawWidth, 0);
@@ -1025,6 +1065,16 @@
       }
       activeToggle = trigger;
       activeSlot = getSlotFromToggle(trigger);
+      const zoneEl = trigger.closest('.energy-chart-zone') || null;
+      const previousZone = getActiveZone();
+      if (previousZone && previousZone !== zoneEl) {
+        previousZone.classList.remove('catalog-open');
+      }
+      activeZone = zoneEl;
+      if (activeZone) {
+        ensurePanelWithinZone(activeZone);
+        activeZone.classList.add('catalog-open');
+      }
       isOpen = true;
       restoreFocusAfterClose = false;
       panel.hidden = false;
@@ -1035,7 +1085,6 @@
       updateCatalogForSlot(activeSlot);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
-      zone.classList.add('catalog-open');
       panel.addEventListener('keydown', trapFocus);
       document.addEventListener('click', onDocClick, true);
       document.addEventListener('keydown', onKeydown);
@@ -1051,11 +1100,13 @@
       panel.removeEventListener('keydown', trapFocus);
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
-      activeToggle = returnFocus ? activeToggle : null;
+      if (!returnFocus) {
+        activeToggle = null;
+      }
       activeSlot = null;
 
       if (prefersReducedMotion()) {
-        zone.classList.remove('catalog-open');
+        clearZoneState();
         panel.hidden = true;
         clearCatalogPosition();
         if (focusTargetOnClose) {
@@ -1063,15 +1114,14 @@
         }
         focusTargetOnClose = null;
         restoreFocusAfterClose = false;
+        activeZone = null;
         return;
       }
 
       restoreFocusAfterClose = returnFocus;
       panel.addEventListener('transitionend', handleTransitionEnd);
-      zone.classList.remove('catalog-open');
-      if (!returnFocus) {
-        activeToggle = null;
-      }
+      clearZoneState();
+      activeZone = null;
     };
 
     const handleResize = () => {
@@ -1976,7 +2026,7 @@
   };
 
   const updateTypologyChart = (mode, typologies = []) => {
-    const cards = document.querySelectorAll('[data-chart-slot="typology"]');
+    const cards = document.querySelectorAll('.energy-typology-card');
     if (!cards.length) return;
 
     cards.forEach((card) => {

@@ -1360,27 +1360,6 @@
     });
   };
 
-  const updateEnergyThresholds = (mode, sre) => {
-    const legalEl = document.querySelector('[data-energy-legal]');
-    const targetEl = document.querySelector('[data-energy-target]');
-    const legalUnit = document.querySelector('[data-energy-unit="legal"]');
-    const targetUnit = document.querySelector('[data-energy-unit="target"]');
-    if (!legalEl || !targetEl) return;
-
-    const legalValue = mode === 'kwhm2'
-      ? ENERGY_BASE_DATA.thresholds.legal
-      : ENERGY_BASE_DATA.thresholds.legal * sre;
-    const targetValue = mode === 'kwhm2'
-      ? ENERGY_BASE_DATA.thresholds.target
-      : ENERGY_BASE_DATA.thresholds.target * sre;
-    const unit = mode === 'kwhm2' ? 'kWh/m²' : 'kWh';
-
-    legalEl.textContent = formatEnergyDisplay(legalValue, mode, 0);
-    targetEl.textContent = formatEnergyDisplay(targetValue, mode, 0);
-    if (legalUnit) legalUnit.textContent = unit;
-    if (targetUnit) targetUnit.textContent = unit;
-  };
-
   const updateEnergyMeters = (aggregated) => {
     const intensities = [
       ...ENERGY_BASE_DATA.trend.map(item => item.intensity),
@@ -1388,7 +1367,6 @@
     ].filter(value => Number.isFinite(value) && value >= 0);
     const maxIntensity = intensities.length ? Math.max(...intensities) : 0;
     const map = {
-      general: '#panel-energie .meter > div',
       chaleur: '#panel-chaleur .meter > div',
       froid: '#panel-froid .meter > div',
       elec: '#panel-elec .meter > div',
@@ -2011,7 +1989,6 @@
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
-    updateEnergyThresholds(mode, effectiveSre);
     updateEnergyTrendChart(mode, effectiveSre);
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);

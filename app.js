@@ -30,6 +30,71 @@
     'panel-eau': { kwhm2: 'Consommation d’eau par m²', kwh: 'Consommation d’eau' },
   };
 
+  const DEFAULT_TILE_LAYOUT = { width: 'half', height: 'medium' };
+  const TILE_LAYOUT_BY_TYPE = {
+    'mix-primary-pie': { width: 'half', height: 'medium' },
+    'mix-primary-donut': { width: 'half', height: 'medium' },
+    'mix-primary-bars': { width: 'half', height: 'medium' },
+    'mix-secondary-ranking': { width: 'half', height: 'tall' },
+    'mix-secondary-pie': { width: 'half', height: 'medium' },
+    'mix-secondary-rings': { width: 'half', height: 'medium' },
+    'mix-secondary-columns': { width: 'half', height: 'medium' },
+    'intensity-bars': { width: 'full', height: 'medium' },
+    'intensity-line': { width: 'full', height: 'short' },
+    'intensity-breakdown': { width: 'full', height: 'tall' },
+    'typology-columns': { width: 'full', height: 'xl' },
+    'typology-rows': { width: 'full', height: 'xl' },
+    'map-bubbles': { width: 'full', height: 'tall' },
+    'map-grid': { width: 'full', height: 'medium' },
+    'monthly-stacked': { width: 'full', height: 'xl' },
+    'monthly-lines': { width: 'full', height: 'xl' },
+    'distribution-columns': { width: 'full', height: 'tall' },
+    'distribution-line': { width: 'full', height: 'medium' },
+  };
+
+  const TILE_LAYOUT_BY_SLOT = {
+    'mix-primary': { width: 'half', height: 'medium' },
+    'mix-secondary': { width: 'half', height: 'tall' },
+    'energy-trend': { width: 'full', height: 'medium' },
+    'typology': { width: 'full', height: 'xl' },
+    'energy-map': { width: 'full', height: 'tall' },
+    'monthly': { width: 'full', height: 'xl' },
+    'intensity-distribution': { width: 'full', height: 'medium' },
+  };
+
+  const VALID_TILE_WIDTHS = new Set(['full', 'half']);
+  const VALID_TILE_HEIGHTS = new Set(['short', 'medium', 'tall', 'xl']);
+
+  const pickLayoutValue = (value, allowed, fallback) => {
+    const normalized = (value || '').toString().toLowerCase();
+    return allowed.has(normalized) ? normalized : fallback;
+  };
+
+  const resolveTileLayout = (slotEl) => {
+    if (!slotEl) return { ...DEFAULT_TILE_LAYOUT };
+    const type = slotEl.dataset.chartType || '';
+    const slot = slotEl.dataset.chartSlot || '';
+    const layoutFromType = type ? TILE_LAYOUT_BY_TYPE[type] : null;
+    const layoutFromSlot = slot ? TILE_LAYOUT_BY_SLOT[slot] : null;
+    return {
+      width: layoutFromType?.width || layoutFromSlot?.width || DEFAULT_TILE_LAYOUT.width,
+      height: layoutFromType?.height || layoutFromSlot?.height || DEFAULT_TILE_LAYOUT.height,
+    };
+  };
+
+  const applyTileLayout = (slotEl) => {
+    if (!slotEl) return;
+    const layout = resolveTileLayout(slotEl);
+    const width = pickLayoutValue(layout.width, VALID_TILE_WIDTHS, DEFAULT_TILE_LAYOUT.width);
+    const height = pickLayoutValue(layout.height, VALID_TILE_HEIGHTS, DEFAULT_TILE_LAYOUT.height);
+    slotEl.dataset.tileWidth = width;
+    slotEl.dataset.tileHeight = height;
+  };
+
+  const syncChartTileLayouts = () => {
+    $$e('[data-chart-slot]').forEach(slot => applyTileLayout(slot));
+  };
+
   const ENERGY_BASE_DATA = {
     metrics: {
       general: { intensity: 196, decimals: 0 },
@@ -1891,6 +1956,7 @@
     updateEnergyMap(mode, mapPoints);
     updateMonthlyChart(mode, monthly, effectiveSre);
     updateDistributionChart(mode, distribution, effectiveSre);
+    syncChartTileLayouts();
     updateTrendPadding();
   }
 

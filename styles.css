@@ -210,7 +210,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 
 @media (max-width: 860px){
-  .energy-chart-stack{grid-template-columns:1fr}
+  .energy-chart-stack{grid-template-columns:1fr; grid-auto-rows:auto}
+  .energy-chart-stack > [data-chart-slot]{grid-row:auto}
 }
 
 @media (max-width: 720px){
@@ -229,13 +230,32 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   --catalog-closed-offset-y: 12px;
 }
 .energy-chart-wrapper{position:relative; flex:1 1 420px; min-width:0}
-.energy-chart-stack{display:grid; grid-template-columns:repeat(2, minmax(0, 1fr)); gap:20px; align-items:stretch}
+.energy-chart-stack{
+  --chart-row-size: 180px;
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:20px;
+  align-items:start;
+  grid-auto-rows:minmax(var(--chart-row-size), max-content);
+}
+.energy-chart-stack > [data-chart-slot]{
+  --tile-row-span:2;
+  grid-row:span var(--tile-row-span);
+  align-self:stretch;
+}
+.energy-chart-stack > [data-chart-slot][data-tile-width="full"]{grid-column:1 / -1}
+.energy-chart-stack > [data-chart-slot][data-tile-width="half"]{grid-column:auto}
+.energy-chart-stack > [data-chart-slot][data-tile-height="short"]{--tile-row-span:1}
+.energy-chart-stack > [data-chart-slot][data-tile-height="medium"]{--tile-row-span:2}
+.energy-chart-stack > [data-chart-slot][data-tile-height="tall"]{--tile-row-span:3}
+.energy-chart-stack > [data-chart-slot][data-tile-height="xl"]{--tile-row-span:4}
+.energy-chart-stack > [data-chart-slot]{min-height:0}
 .energy-mix-card,
 .energy-ranking-card,
 .energy-typology-card,
 .energy-map-card,
 .energy-monthly-card,
-.energy-distribution-card{position:relative; padding:20px 22px; border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 6px 16px rgba(15,23,42,0.06); display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-height:0; min-width:0; justify-self:stretch; width:100%; margin:0; height:100%}
+.energy-distribution-card{position:relative; padding:20px 22px; border:1px solid var(--border); border-radius:16px; background:var(--card); box-shadow:0 6px 16px rgba(15,23,42,0.06); display:grid; grid-template-rows:auto 1fr auto; gap:16px; min-height:0; min-width:0; justify-self:stretch; width:100%; margin:0; height:auto}
 .energy-mix-header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; font-weight:700; color:#1f2937; padding-right:56px}
 .energy-mix-header__titles{display:flex; flex-direction:column; gap:4px}
 .mix-title{font-size:1.05rem; letter-spacing:-0.01em}

@@ -91,8 +91,72 @@
     slotEl.dataset.tileHeight = height;
   };
 
+  let chartTileResizeObserver;
+  let chartTileEqualizeRaf;
+
+  const scheduleChartTileEqualize = () => {
+    if (chartTileEqualizeRaf) cancelAnimationFrame(chartTileEqualizeRaf);
+    chartTileEqualizeRaf = requestAnimationFrame(() => {
+      chartTileEqualizeRaf = null;
+      equalizeChartTileHeights();
+    });
+  };
+
+  function equalizeChartTileHeights() {
+    const stack = $e('.energy-chart-stack');
+    if (!stack) return;
+    const slots = $$('[data-chart-slot]', stack);
+    if (!slots.length) return;
+
+    slots.forEach(slot => {
+      slot.style.removeProperty('--tile-equal-height');
+    });
+
+    // Force layout without the equalized height before measuring.
+    stack.getBoundingClientRect();
+
+    const rows = new Map();
+    slots.forEach(slot => {
+      const top = Math.round(slot.offsetTop);
+      const row = rows.get(top) || [];
+      row.push(slot);
+      rows.set(top, row);
+    });
+
+    rows.forEach(group => {
+      let maxHeight = 0;
+      group.forEach(tile => {
+        const rect = tile.getBoundingClientRect();
+        if (rect.height > maxHeight) maxHeight = rect.height;
+      });
+      const safeHeight = Math.ceil(maxHeight);
+      group.forEach(tile => {
+        tile.style.setProperty('--tile-equal-height', `${safeHeight}px`);
+      });
+    });
+  }
+
+  function refreshChartTileObserver() {
+    const stack = $e('.energy-chart-stack');
+    if (!stack) return;
+
+    if (typeof ResizeObserver === 'undefined') {
+      return;
+    }
+
+    if (!chartTileResizeObserver) {
+      chartTileResizeObserver = new ResizeObserver(() => scheduleChartTileEqualize());
+    }
+
+    chartTileResizeObserver.disconnect();
+    $$('[data-chart-slot]', stack).forEach(slot => chartTileResizeObserver.observe(slot));
+  }
+
   const syncChartTileLayouts = () => {
-    $$e('[data-chart-slot]').forEach(slot => applyTileLayout(slot));
+    const slots = $$e('[data-chart-slot]');
+    slots.forEach(slot => applyTileLayout(slot));
+    refreshChartTileObserver();
+    scheduleChartTileEqualize();
   };
 
   const ENERGY_BASE_DATA = {
@@ -2512,6 +2576,8 @@
 
     // 👇 ajoute ceci
     setupSidebarMultiSelects();
+
+    window.addEventListener('resize', scheduleChartTileEqualize);
 
     // === Toggle bouton filtres (à placer ici) ===
     const toggleBtn = document.getElementById('filters-toggle-btn');

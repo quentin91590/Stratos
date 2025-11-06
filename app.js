@@ -13,12 +13,49 @@
   };
 
   const energySubnav = document.getElementById('energy-subnav');
+  const topNavMenu = document.querySelector('.top-nav');
   let energySubnavEnabled = false;
   let energySubnavSentinelVisible = true;
   let energySubnavInitialized = false;
   let energySubnavHideTimer = null;
   let energySubnavSyncRaf = null;
   let energySubnavActiveId = null;
+  let energySubnavMeasureRaf = null;
+  let energySubnavGeometryEnabled = false;
+  let energySubnavTabsGrid = null;
+
+  const toRgbComponents = (input) => {
+    if (!input) return null;
+    const value = input.trim();
+    const rgbMatch = value.match(/^rgba?\((\d{1,3})\s*,\s*(\d{1,3})\s*,\s*(\d{1,3})/i);
+    if (rgbMatch) {
+      return {
+        r: Math.min(255, parseInt(rgbMatch[1], 10) || 0),
+        g: Math.min(255, parseInt(rgbMatch[2], 10) || 0),
+        b: Math.min(255, parseInt(rgbMatch[3], 10) || 0),
+      };
+    }
+
+    const hexMatch = value.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+    if (hexMatch) {
+      let hex = hexMatch[1];
+      if (hex.length === 3) {
+        hex = hex.split('').map(ch => ch + ch).join('');
+      }
+      const num = parseInt(hex, 16);
+      if (!Number.isFinite(num)) return null;
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255,
+      };
+    }
+
+    return null;
+  };
+
+  const rgbString = (rgb) => (rgb ? `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})` : '');
+  const rgbaString = (rgb, alpha) => (rgb ? `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${alpha})` : '');
 
   function requestSyncStickyTop() {
     if (typeof requestAnimationFrame === 'function') {
@@ -81,7 +118,43 @@
     });
   }
 
-  function ensureEnergySubnav(tabs, selectTabFn) {
+  function scheduleEnergySubnavMeasure(forceNow = false) {
+    if (!energySubnavGeometryEnabled) return;
+    if (forceNow) {
+      energySubnavMeasureRaf && cancelAnimationFrame(energySubnavMeasureRaf);
+      energySubnavMeasureRaf = null;
+      return measureEnergySubnavGeometry();
+    }
+    if (energySubnavMeasureRaf) return;
+    energySubnavMeasureRaf = requestAnimationFrame(() => {
+      energySubnavMeasureRaf = null;
+      measureEnergySubnavGeometry();
+    });
+  }
+
+  function measureEnergySubnavGeometry() {
+    if (!energySubnavGeometryEnabled || !energySubnavTabsGrid || !topNavMenu) return;
+    const navRect = topNavMenu.getBoundingClientRect();
+    const tabsRect = energySubnavTabsGrid.getBoundingClientRect();
+    if (!navRect || !tabsRect) return;
+    const revealOffset = 6;
+    const shouldHide = (tabsRect.bottom - navRect.bottom) > revealOffset;
+    energySubnavSentinelVisible = shouldHide;
+    updateEnergySubnavVisibility();
+  }
+
+  function setupEnergySubnavGeometry(tabsContainer) {
+    if (!tabsContainer || !topNavMenu || energySubnavGeometryEnabled) return;
+    energySubnavTabsGrid = tabsContainer;
+    energySubnavGeometryEnabled = true;
+    const passiveOpts = { passive: true };
+    window.addEventListener('scroll', () => scheduleEnergySubnavMeasure(false), passiveOpts);
+    window.addEventListener('resize', () => scheduleEnergySubnavMeasure(false));
+    window.addEventListener('orientationchange', () => scheduleEnergySubnavMeasure(true));
+    scheduleEnergySubnavMeasure(true);
+  }
+
+  function ensureEnergySubnav(tabs, selectTabFn, tabsContainer) {
     if (!energySubnav || energySubnavInitialized) return;
     if (!tabs.length) return;
 
@@ -108,6 +181,19 @@
       text.textContent = label?.textContent?.trim() || tab.textContent.trim();
       btn.appendChild(text);
 
+      try {
+        const computed = getComputedStyle(tab);
+        const colorValue = computed.getPropertyValue('--status').trim();
+        const rgb = toRgbComponents(colorValue);
+        if (rgb) {
+          btn.style.setProperty('--accent', rgbString(rgb));
+          btn.style.setProperty('--accent-soft', rgbaString(rgb, 0.16));
+          btn.style.setProperty('--accent-strong', rgbaString(rgb, 0.32));
+        }
+      } catch (err) {
+        console.warn('[energy-subnav] couleur indisponible', err);
+      }
+
       btn.addEventListener('click', () => {
         selectTabFn(tab);
       });
@@ -121,6 +207,7 @@
       setEnergySubnavActive(energySubnavActiveId);
     }
     updateEnergySubnavVisibility();
+    setupEnergySubnavGeometry(tabsContainer || null);
   }
   // --- Etat global des filtres (si pas déjà défini)
   window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwh', climate: true, benchmark: { type: 'internal' } };
@@ -1024,9 +1111,11 @@
     });
 
     if (container.id === 'energy-block') {
-      ensureEnergySubnav(Array.from(tabs), selectTab);
+      const tabsArray = Array.from(tabs);
+      const tabsGrid = container.querySelector('.kpi-tabs');
+      ensureEnergySubnav(tabsArray, selectTab, tabsGrid);
       const sentinel = container.querySelector('.kpi-subnav-sentinel');
-      if (sentinel && 'IntersectionObserver' in window) {
+      if (!energySubnavGeometryEnabled && sentinel && 'IntersectionObserver' in window) {
         const observer = new IntersectionObserver(entries => {
           const entry = entries[0];
           energySubnavSentinelVisible = entry?.isIntersecting !== false;
@@ -1053,6 +1142,7 @@
 
       if (container.id === 'energy-block') {
         setEnergySubnavActive(tab.id);
+        scheduleEnergySubnavMeasure(true);
       }
 
       // Couleur active
@@ -1136,6 +1226,9 @@
     const root = document.documentElement;
 
     energySubnavEnabled = (name === 'energie');
+    if (energySubnavGeometryEnabled) {
+      scheduleEnergySubnavMeasure(true);
+    }
     updateEnergySubnavVisibility();
 
     // Affiche uniquement le tabset de la section active

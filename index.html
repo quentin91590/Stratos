@@ -497,7 +497,7 @@
                 <div class="energy-chart-zone">
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
-                      <figure class="energy-mix-card" aria-label="Mix énergétique du périmètre" data-chart-slot="mix-primary" data-chart-type="mix-primary-pie" data-chart-group="mix-primary">
+                      <figure class="energy-mix-card" aria-label="Mix énergétique du périmètre" data-chart-scope="general" data-chart-slot="mix-primary" data-chart-type="mix-primary-pie" data-chart-group="mix-primary">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-primary">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -536,6 +536,7 @@
                       </figure>
 
                       <figure class="energy-ranking-card" aria-label="Classement des bâtiments les plus consommateurs"
+                        data-chart-scope="general" data-ranking-metric="general"
                         data-chart-slot="mix-secondary" data-chart-type="mix-secondary-ranking" data-chart-group="mix-secondary">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
                           aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog"
@@ -562,7 +563,7 @@
                         <figcaption>Bâtiments les plus consommateurs du périmètre sélectionné.</figcaption>
                       </figure>
 
-                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment" data-chart-slot="energy-trend" data-chart-type="intensity-bars">
+                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-trend" data-chart-type="intensity-bars">
                         <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-trend">
                           <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -833,7 +834,7 @@
                         </div>
                       </template>
 
-                      <figure class="energy-typology-card" aria-label="Consommation par typologie de bâtiment" data-chart-slot="typology" data-chart-type="typology-columns" data-chart-group="typology">
+                      <figure class="energy-typology-card" aria-label="Consommation par typologie de bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="typology" data-chart-type="typology-columns" data-chart-group="typology">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="typology">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -888,7 +889,7 @@
                         </div>
                       </template>
 
-                      <figure class="energy-map-card" aria-label="Carte énergétique du parc" data-chart-slot="energy-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
+                      <figure class="energy-map-card" aria-label="Carte énergétique du parc" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-map">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -947,7 +948,7 @@
                         </div>
                       </template>
 
-                      <figure class="energy-monthly-card" aria-label="Consommation mensuelle énergie" data-chart-slot="monthly" data-chart-type="monthly-stacked" data-chart-group="monthly">
+                      <figure class="energy-monthly-card" aria-label="Consommation mensuelle énergie" data-chart-scope="general" data-chart-metric="general" data-chart-slot="monthly" data-chart-type="monthly-stacked" data-chart-group="monthly">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="monthly">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -1029,7 +1030,7 @@
                         </div>
                       </template>
 
-                      <figure class="energy-distribution-card" aria-label="Distribution des intensités énergétiques" data-chart-slot="intensity-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités énergétiques" data-chart-scope="general" data-chart-metric="general" data-chart-slot="intensity-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
                         <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="intensity-distribution">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                             <path d="M12 20h9" />
@@ -1251,6 +1252,63 @@
                           </span>
                         </button>
                       </li>
+                      <li data-chart-group="heat-mix-fuels">
+                        <button type="button" class="catalog-card" data-chart-type="heat-fuels-donut" data-chart-group="heat-mix-fuels" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--donut-primary">
+                              <span>CH</span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Combustibles chaleur</span>
+                            <span class="catalog-card__meta">Gaz, PAC, réseau, biomasse</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="heat-mix-fuels">
+                        <button type="button" class="catalog-card" data-chart-type="heat-fuels-bars" data-chart-group="heat-mix-fuels" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--bars-primary">
+                              <span class="preview-mix__bar" style="--w:76"></span>
+                              <span class="preview-mix__bar" style="--w:34"></span>
+                              <span class="preview-mix__bar" style="--w:22"></span>
+                              <span class="preview-mix__bar" style="--w:18"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Histogramme combustibles</span>
+                            <span class="catalog-card__meta">Lecture détaillée des parts</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="heat-mix-uses">
+                        <button type="button" class="catalog-card" data-chart-type="heat-uses-bars" data-chart-group="heat-mix-uses" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--bars-primary">
+                              <span class="preview-mix__bar" style="--w:72"></span>
+                              <span class="preview-mix__bar" style="--w:46"></span>
+                              <span class="preview-mix__bar" style="--w:28"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Usages chaleur</span>
+                            <span class="catalog-card__meta">Chauffage, ECS, ventilation</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="heat-mix-uses">
+                        <button type="button" class="catalog-card" data-chart-type="heat-uses-rings" data-chart-group="heat-mix-uses" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--rings">
+                              <span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Anneaux par poste</span>
+                            <span class="catalog-card__meta">Lecture rapide des usages</span>
+                          </span>
+                        </button>
+                      </li>
                       <li data-chart-group="typology">
                         <button type="button" class="catalog-card" data-chart-type="typology-columns" data-chart-group="typology" aria-pressed="true">
                           <span class="catalog-card__preview" aria-hidden="true">
@@ -1337,6 +1395,34 @@
                           </span>
                         </button>
                       </li>
+                      <li data-chart-group="heat-monthly">
+                        <button type="button" class="catalog-card" data-chart-type="heat-monthly" data-chart-group="heat-monthly" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-monthly preview-monthly--stacked">
+                              <span></span><span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Profil chaleur</span>
+                            <span class="catalog-card__meta">Barres mensuelles corrigées</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="heat-monthly">
+                        <button type="button" class="catalog-card" data-chart-type="monthly-lines" data-chart-group="heat-monthly" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-monthly preview-monthly--line">
+                              <svg viewBox="0 0 90 32" preserveAspectRatio="none">
+                                <polyline points="0,24 18,20 36,18 54,12 72,10 90,6" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"></polyline>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Courbe climat chaleur</span>
+                            <span class="catalog-card__meta">DJU vs consommation</span>
+                          </span>
+                        </button>
+                      </li>
                       <li data-chart-group="distribution">
                         <button type="button" class="catalog-card" data-chart-type="distribution-columns" data-chart-group="distribution" aria-pressed="true">
                           <span class="catalog-card__preview" aria-hidden="true">
@@ -1368,6 +1454,37 @@
                           </span>
                         </button>
                       </li>
+                      <li data-chart-group="heat-trend">
+                        <button type="button" class="catalog-card" data-chart-type="heat-intensity-bars" data-chart-group="heat-trend" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-bars">
+                              <span style="--h:48"></span>
+                              <span style="--h:56"></span>
+                              <span style="--h:64"></span>
+                              <span style="--h:70" data-active></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Tendance chaleur</span>
+                            <span class="catalog-card__meta">Intensité par exercice</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="heat-trend">
+                        <button type="button" class="catalog-card" data-chart-type="intensity-line" data-chart-group="heat-trend" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-line">
+                              <svg viewBox="0 0 90 52" preserveAspectRatio="none">
+                                <path class="preview-line__stroke" d="M0 38 L18 34 L36 30 L54 26 L72 20 L90 16"></path>
+                              </svg>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Courbe climat DJU</span>
+                            <span class="catalog-card__meta">Variations ajustées</span>
+                          </span>
+                        </button>
+                      </li>
                     </ul>
                     <footer class="catalog-footer">
                       <button type="button" class="catalog-action">Voir toute la bibliothèque</button>
@@ -1382,9 +1499,324 @@
               </section>
 
               <section id="panel-chaleur" role="tabpanel" aria-labelledby="tab-chaleur" hidden>
-                <h3>Chaleur (corrigée DJU)</h3>
-                <p>Mix: Gaz 60 % / PAC 25 % / Réseau 15 %</p>
-                <div class="meter">
+                <div class="panel-intro">
+                  <h3>Chaleur</h3>
+                  <p>Consommations de chaleur climat corrigées (DJU) et ventilation des combustibles sur l'ensemble du parc sélectionné.</p>
+                </div>
+
+                <div class="energy-chart-zone heat-chart-zone">
+                  <div class="energy-chart-wrapper">
+                    <div class="energy-chart-stack">
+                      <figure class="energy-mix-card" aria-label="Mix combustibles chaleur" data-chart-scope="chaleur" data-heat-dataset="fuels" data-chart-slot="heat-mix-fuels" data-chart-type="heat-fuels-donut" data-chart-group="heat-mix-fuels">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-mix-fuels">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Mix combustibles chaleur</span>
+                            <span class="mix-subtitle">Répartition en kWh</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--donut">
+                            <div class="mix-donut heat" role="img" aria-label="Mix combustibles chaleur&nbsp;: 52&nbsp;% gaz naturel, 20&nbsp;% pompe à chaleur, 18&nbsp;% réseau de chaleur, 10&nbsp;% biomasse">
+                              <span class="mix-donut__center">0</span>
+                              <span class="mix-donut__label">Chaleur</span>
+                            </div>
+                            <ul class="mix-legend mix-legend--compact">
+                              <li><span class="mix-bullet gaz"></span><span class="mix-label">Gaz naturel</span><span class="mix-value">52&nbsp;%</span></li>
+                              <li><span class="mix-bullet pac"></span><span class="mix-label">Pompe à chaleur</span><span class="mix-value">20&nbsp;%</span></li>
+                              <li><span class="mix-bullet reseau"></span><span class="mix-label">Réseau de chaleur</span><span class="mix-value">18&nbsp;%</span></li>
+                              <li><span class="mix-bullet biomasse"></span><span class="mix-label">Biomasse</span><span class="mix-value">10&nbsp;%</span></li>
+                            </ul>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Part des combustibles alimentant la production de chaleur du périmètre.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-heat-fuels-donut" data-caption="Répartition des combustibles pour la production de chaleur.">
+                        <div class="energy-mix-content mix-variant mix-variant--donut">
+                          <div class="mix-donut heat" role="img">
+                            <span class="mix-donut__center">0</span>
+                            <span class="mix-donut__label">Chaleur</span>
+                          </div>
+                          <ul class="mix-legend mix-legend--compact">
+                            <li><span class="mix-bullet gaz"></span><span class="mix-label">Gaz naturel</span><span class="mix-value">—</span></li>
+                            <li><span class="mix-bullet pac"></span><span class="mix-label">Pompe à chaleur</span><span class="mix-value">—</span></li>
+                            <li><span class="mix-bullet reseau"></span><span class="mix-label">Réseau de chaleur</span><span class="mix-value">—</span></li>
+                            <li><span class="mix-bullet biomasse"></span><span class="mix-label">Biomasse</span><span class="mix-value">—</span></li>
+                          </ul>
+                        </div>
+                      </template>
+
+                      <template id="chart-template-heat-fuels-bars" data-caption="Histogramme horizontal des combustibles chaleur.">
+                        <div class="energy-mix-content mix-variant mix-variant--bars">
+                          <div class="mix-bars" role="list">
+                            <div class="mix-bar gaz" role="listitem"><span class="mix-bar__label">Gaz naturel</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar pac" role="listitem"><span class="mix-bar__label">Pompe à chaleur</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar reseau" role="listitem"><span class="mix-bar__label">Réseau de chaleur</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar biomasse" role="listitem"><span class="mix-bar__label">Biomasse</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-mix-card" aria-label="Répartition des usages chaleur" data-chart-scope="chaleur" data-heat-dataset="uses" data-chart-slot="heat-uses" data-chart-type="heat-uses-bars" data-chart-group="heat-mix-uses">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-uses">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Usages de chaleur</span>
+                            <span class="mix-subtitle">Répartition par poste</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--bars">
+                            <div class="mix-bars" role="list">
+                              <div class="mix-bar chauffage" role="listitem"><span class="mix-bar__label">Chauffage des locaux</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                              <div class="mix-bar ecs" role="listitem"><span class="mix-bar__label">Eau chaude sanitaire</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                              <div class="mix-bar ventilation" role="listitem"><span class="mix-bar__label">Ventilation & CTA</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Ventilation des usages de chaleur en fonction des postes principaux.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-heat-uses-bars" data-caption="Répartition par poste de consommation de chaleur.">
+                        <div class="energy-mix-content mix-variant mix-variant--bars">
+                          <div class="mix-bars" role="list">
+                            <div class="mix-bar chauffage" role="listitem"><span class="mix-bar__label">Chauffage des locaux</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar ecs" role="listitem"><span class="mix-bar__label">Eau chaude sanitaire</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar ventilation" role="listitem"><span class="mix-bar__label">Ventilation & CTA</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template id="chart-template-heat-uses-rings" data-caption="Anneaux par poste de chaleur.">
+                        <div class="energy-mix-content mix-variant mix-variant--rings">
+                          <div class="mix-rings" role="list">
+                            <div class="mix-ring chauffage" role="listitem"><span class="mix-ring__inner"><span class="mix-ring__value">—</span><span class="mix-ring__label">Chauffage</span></span></div>
+                            <div class="mix-ring ecs" role="listitem"><span class="mix-ring__inner"><span class="mix-ring__value">—</span><span class="mix-ring__label">ECS</span></span></div>
+                            <div class="mix-ring ventilation" role="listitem"><span class="mix-ring__inner"><span class="mix-ring__value">—</span><span class="mix-ring__label">Ventilation</span></span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs de chaleur" data-chart-scope="chaleur" data-ranking-metric="chaleur">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-ranking">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-ranking-header">
+                          <div class="energy-ranking-header__titles">
+                            <span class="ranking-title">Top 5 chaleur</span>
+                            <span class="ranking-subtitle">Intensité <span data-ranking-unit>kWh/m²</span></span>
+                          </div>
+                        </header>
+                        <div class="chart-body">
+                          <div class="energy-ranking" role="presentation">
+                            <ol class="ranking-list" data-ranking-list aria-live="polite" aria-label="Bâtiments les plus consommateurs de chaleur">
+                              <li class="ranking-item ranking-item--empty" data-ranking-placeholder>Chargement des données…</li>
+                            </ol>
+                          </div>
+                        </div>
+                        <figcaption>Bâtiments triés par intensité de chaleur sur le périmètre sélectionné.</figcaption>
+                      </figure>
+
+                      <figure class="energy-trend-chart" aria-label="Tendance d'intensité chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-trend" data-chart-type="heat-intensity-bars">
+                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-trend">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="chart-variant chart-variant--bars">
+                            <div class="chart-title">
+                              <span>Tendance par année</span>
+                              <span class="chart-unit">kWh/m²</span>
+                            </div>
+                            <div class="chart-bars" role="list">
+                              <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2021</span></div>
+                              <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2022</span></div>
+                              <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2023</span></div>
+                              <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2024</span></div>
+                              <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2025</span></div>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Historique d'intensité de chaleur corrigée DJU.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-heat-intensity-bars" data-caption="Historique des intensités de chaleur corrigées.">
+                        <div class="chart-variant chart-variant--bars">
+                          <div class="chart-title">
+                            <span>Tendance par année</span>
+                            <span class="chart-unit">kWh/m²</span>
+                          </div>
+                          <div class="chart-bars" role="list">
+                            <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2021</span></div>
+                            <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2022</span></div>
+                            <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2023</span></div>
+                            <div class="chart-bar" role="listitem" data-year="2024" aria-label="2024 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2024</span></div>
+                            <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 0 kWh/m²" style="--value:0"><span class="bar-value">0</span><span class="bar-fill" aria-hidden="true"></span><span class="bar-year">2025</span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-typology-card" aria-label="Chaleur par typologie de bâtiment" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-typology" data-chart-type="typology-columns" data-chart-group="typology">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-typology">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-typology-header">
+                          <div class="energy-typology-header__titles">
+                            <span class="typology-title">Typologies les plus chaudes</span>
+                            <span class="typology-subtitle">Consommation chaleur</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="typology-chart typology-chart--columns">
+                            <div class="chart-title">
+                              <span>Répartition par typologie</span>
+                              <span class="chart-unit">kWh/an</span>
+                            </div>
+                            <div class="typology-bars" data-typology-bars role="list">
+                              <p class="chart-empty">Chargement des typologies…</p>
+                            </div>
+                            <p class="typology-summary" data-typology-summary>Chargement…</p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Classement des typologies selon leur consommation de chaleur.</figcaption>
+                      </figure>
+
+                      <figure class="energy-map-card" aria-label="Carte chaleur du parc" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-map">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-map-header">
+                          <div class="energy-map-header__titles">
+                            <span class="map-title">Carte chaleur</span>
+                            <span class="map-subtitle">Intensité corrigée</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="map-canvas" role="img" aria-label="Carte chaleur du périmètre">
+                            <div class="map-base"></div>
+                            <div class="map-markers" data-map-markers></div>
+                            <p class="map-empty" data-map-empty>Aucune sélection pour afficher la carte.</p>
+                          </div>
+                          <ul class="map-legend" data-map-legend aria-label="Légende des intensités chaleur"></ul>
+                        </div>
+                        <figcaption data-chart-role="caption">Visualisation spatiale de l'intensité de chaleur des bâtiments sélectionnés.</figcaption>
+                      </figure>
+
+                      <figure class="energy-monthly-card" aria-label="Profil mensuel de chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-monthly" data-chart-type="heat-monthly" data-monthly-series="chaleur" data-chart-group="heat-monthly">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-monthly">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-monthly-header">
+                          <div class="energy-monthly-header__titles">
+                            <span class="monthly-title">Profil saisonnier</span>
+                            <span class="monthly-subtitle">Chaleur corrigée DJU</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="monthly-chart monthly-chart--heat">
+                            <div class="chart-title">
+                              <span>Consommation mensuelle</span>
+                              <span class="chart-unit">kWh</span>
+                            </div>
+                            <div class="monthly-chart__viewport">
+                              <div class="monthly-bars" data-monthly-bars role="list"></div>
+                              <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="monthly-legend">
+                              <span><span class="legend-dot chaleur"></span> Chaleur</span>
+                              <span class="legend-line-wrap"><span class="legend-line"></span> Rigueur climatique</span>
+                            </div>
+                            <p class="monthly-summary" data-monthly-summary></p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Profil mensuel de consommation de chaleur et rigueur climatique associée.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-heat-monthly" data-caption="Profil mensuel de chaleur avec correction climatique.">
+                        <div class="monthly-chart monthly-chart--heat">
+                          <div class="chart-title">
+                            <span>Consommation mensuelle</span>
+                            <span class="chart-unit">kWh</span>
+                          </div>
+                          <div class="monthly-chart__viewport">
+                            <div class="monthly-bars" data-monthly-bars role="list"></div>
+                            <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="monthly-legend">
+                            <span><span class="legend-dot chaleur"></span> Chaleur</span>
+                            <span class="legend-line-wrap"><span class="legend-line"></span> Rigueur climatique</span>
+                          </div>
+                          <p class="monthly-summary" data-monthly-summary></p>
+                        </div>
+                      </template>
+
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-distribution">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-distribution-header">
+                          <div class="energy-distribution-header__titles">
+                            <span class="distribution-title">Distribution intensités chaleur</span>
+                            <span class="distribution-subtitle">Benchmark régional</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="distribution-chart distribution-chart--columns">
+                            <div class="chart-title">
+                              <span>Répartition sélection</span>
+                              <span class="chart-unit">kWh/m²</span>
+                            </div>
+                            <div class="distribution-graph">
+                              <div class="distribution-bars" data-distribution-bars role="list"></div>
+                              <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="distribution-legend">
+                              <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                              <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>10 000 bât.</span>)</span>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Histogramme des intensités de chaleur comparées au référentiel externe.</figcaption>
+                      </figure>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="meter" aria-hidden="true">
                   <div style="width: 0"></div>
                 </div>
               </section>

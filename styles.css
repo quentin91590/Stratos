@@ -17,8 +17,45 @@
 body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif; overflow-x:hidden;}
 
 /* ======= KPI cards ======= */
-.kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
-.kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
+.kpi-wrap{
+  --kpi-side-pad:16px;
+  max-width:1200px;
+  margin:24px auto;
+  padding:0 var(--kpi-side-pad);
+  position:relative;
+}
+/* Liaison visuelle avec la barre latérale pour les menus KPI */
+.kpi-tabs{
+  position:relative;
+  display:grid;
+  grid-template-columns:repeat(6,minmax(170px,1fr));
+  gap:12px;
+  align-items:stretch;
+}
+.kpi-tabs::before{
+  content:"";
+  position:absolute;
+  top:-16px;
+  bottom:-16px;
+  left:calc(-1 * (var(--app-gap) + var(--kpi-side-pad)));
+  width:calc(var(--app-gap) + var(--kpi-side-pad));
+  background:linear-gradient(90deg, rgba(148,163,184,.16) 0%, rgba(148,163,184,0) 85%);
+  border-top-left-radius:20px;
+  border-bottom-left-radius:20px;
+  pointer-events:none;
+  z-index:-1;
+}
+.kpi-tabs::after{
+  content:"";
+  position:absolute;
+  top:-16px;
+  bottom:-16px;
+  left:calc(-1 * (var(--app-gap) + var(--kpi-side-pad)));
+  width:1px;
+  background:rgba(148,163,184,.35);
+  pointer-events:none;
+  z-index:-1;
+}
 
 .kpi{
   --status:#8a8a8a; --tint:rgba(0,0,0,.04);
@@ -111,6 +148,31 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   border-bottom:1px solid rgba(15,23,42,.08);
   box-shadow:0 10px 35px rgba(15,23,42,.08);
   backdrop-filter:blur(10px);
+}
+/* Prolonge le bandeau vers la barre latérale */
+.top-nav-wrap::before{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:-14px;
+  left:calc(-1 * (var(--app-gap) + var(--kpi-side-pad)));
+  width:calc(var(--app-gap) + var(--kpi-side-pad));
+  background:linear-gradient(90deg, rgba(148,163,184,.16) 0%, rgba(148,163,184,0) 92%);
+  border-bottom:1px solid rgba(15,23,42,.08);
+  border-top-left-radius:18px;
+  pointer-events:none;
+  z-index:-1;
+}
+.top-nav-wrap::after{
+  content:"";
+  position:absolute;
+  top:0;
+  bottom:-14px;
+  left:calc(-1 * (var(--app-gap) + var(--kpi-side-pad)));
+  width:1px;
+  background:rgba(148,163,184,.45);
+  pointer-events:none;
+  z-index:-1;
 }
 .top-nav{
   display:flex;
@@ -842,12 +904,19 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* === Layout global avec sidebar === */
 .app{
-  display:grid; grid-template-columns: 260px 1fr; gap:16px;
+  --app-gap:16px;
+  display:grid; grid-template-columns: 260px 1fr; gap:var(--app-gap);
   max-width: var(--container-max) !important;
   margin:0 auto; padding:12px 12px 24px;
 }
 .main{ min-width:0; }
 @media (max-width: 960px){ .app{ grid-template-columns: 1fr; } .side-nav{ order:-1; } }
+@media (max-width: 960px){
+  .top-nav-wrap::before,
+  .top-nav-wrap::after,
+  .kpi-tabs::before,
+  .kpi-tabs::after{display:none;}
+}
 
 /* === Sidebar / Tree (fusion, priorité bas) === */
 .side-nav{

@@ -210,7 +210,13 @@
     setupEnergySubnavGeometry(tabsContainer || null);
   }
   // --- Etat global des filtres (si pas déjà défini)
-  window.FILTERS = window.FILTERS || { year: '2024', norm: 'kwh', climate: true, benchmark: { type: 'internal' } };
+  window.FILTERS = window.FILTERS || {
+    year: '2024',
+    norm: 'kwh',
+    climate: true,
+    benchmark: { type: 'internal' },
+    surface: 'real',
+  };
   const FILTERS = window.FILTERS;
   // Sélecteurs bornés au bloc énergie
   const $e = (sel) => document.querySelector('#energy-block ' + sel);
@@ -1845,7 +1851,7 @@
   const computeFallbackSre = (leaves) => {
     const list = Array.isArray(leaves) && leaves.length ? leaves : $$('.tree-leaf');
     return list.reduce((total, leaf) => {
-      const raw = Number.parseFloat(leaf?.dataset?.sre);
+      const raw = getLeafSre(leaf);
       return Number.isFinite(raw) ? total + raw : total;
     }, 0);
   };
@@ -1885,7 +1891,7 @@
 
     if (Array.isArray(leaves) && leaves.length) {
       leaves.forEach((leaf) => {
-        const sre = Number.parseFloat(leaf?.dataset?.sre);
+        const sre = getLeafSre(leaf);
         if (!Number.isFinite(sre) || sre <= 0) return;
         const buildingId = leaf.dataset?.building || '';
         const buildingInfo = ENERGY_BASE_DATA.buildings?.[buildingId] || {};
@@ -3262,8 +3268,19 @@
 
   function getLeafSre(leafBtn) {
     if (!leafBtn) return 0;
-    const raw = Number.parseFloat(leafBtn.dataset?.sre);
-    return Number.isFinite(raw) ? raw : 0;
+    const dataset = leafBtn.dataset || {};
+    const mode = FILTERS.surface === 'regulatory' ? 'regulatory' : 'real';
+    const rawValue = mode === 'regulatory'
+      ? (dataset.sreReg ?? dataset.sreReglementaire ?? dataset.sre)
+      : (dataset.sreReal ?? dataset.sre);
+
+    const parsed = Number.parseFloat(rawValue);
+    if (Number.isFinite(parsed) && parsed > 0) {
+      return parsed;
+    }
+
+    const fallback = Number.parseFloat(dataset.sre);
+    return Number.isFinite(fallback) ? fallback : 0;
   }
 
   function computeSelectedPerimeter() {
@@ -3438,6 +3455,47 @@
   if (burger) burger.addEventListener('click', () => toggleMenu());
   if (overlay) overlay.addEventListener('click', () => toggleMenu(false));
   window.addEventListener('keydown', (e) => { if (e.key === 'Escape') toggleMenu(false); });
+
+  function applySurfaceMode(mode) {
+    const nextMode = mode === 'regulatory' ? 'regulatory' : 'real';
+    FILTERS.surface = nextMode;
+
+    const appRoot = document.querySelector('.app');
+    if (appRoot) {
+      appRoot.dataset.surface = nextMode;
+    }
+
+    const sreUnit = document.getElementById('sum-sre-unit');
+    if (sreUnit) {
+      sreUnit.textContent = nextMode === 'regulatory' ? 'm² (réglementaire)' : 'm² (réelle)';
+    }
+
+    updatePerimeterBadges();
+  }
+
+  function setupSurfaceSwitch() {
+    const wrap = document.getElementById('surface-switch');
+    if (!wrap) return;
+
+    const radios = Array.from(wrap.querySelectorAll('input[name="surface-mode"]'));
+    const applyFromRadio = (radio) => {
+      if (!radio?.checked) return;
+      applySurfaceMode(radio.value);
+    };
+
+    radios.forEach((radio) => {
+      radio.addEventListener('change', () => applyFromRadio(radio));
+    });
+
+    const initialId = FILTERS.surface === 'regulatory' ? '#surface-reg' : '#surface-real';
+    const initialRadio = wrap.querySelector(initialId) || radios[0];
+    if (initialRadio) {
+      initialRadio.checked = true;
+      applyFromRadio(initialRadio);
+    } else {
+      applySurfaceMode(FILTERS.surface);
+    }
+  }
 
   function applyNormalization(mode) {
     FILTERS.norm = mode;
@@ -3797,6 +3855,7 @@
     syncTreeSelectionState();
 
     wireYearPicker();
+    setupSurfaceSwitch();
     setupChartCatalog();
     setupEnergyFilters();
     setupTreeSearch();

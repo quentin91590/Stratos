@@ -136,9 +136,9 @@
             Site Alpha <span class="badge">3 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" data-building="bat-a" data-sre="1640"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
-            <li><button class="tree-leaf" data-building="bat-b" data-sre="1420"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
-            <li><button class="tree-leaf" data-building="bat-c" data-sre="1580"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
+            <li><button class="tree-leaf" data-building="bat-a" data-sre="1640" data-sre-real="1640" data-sre-reg="1480"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
+            <li><button class="tree-leaf" data-building="bat-b" data-sre="1420" data-sre-real="1420" data-sre-reg="1360"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
+            <li><button class="tree-leaf" data-building="bat-c" data-sre="1580" data-sre-real="1580" data-sre-reg="1500"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
           </ul>
         </div>
 
@@ -149,8 +149,8 @@
             Site Beta <span class="badge">2 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" data-building="bat-d" data-sre="2020"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
-            <li><button class="tree-leaf" data-building="bat-e" data-sre="1980"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
+            <li><button class="tree-leaf" data-building="bat-d" data-sre="2020" data-sre-real="2020" data-sre-reg="1910"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
+            <li><button class="tree-leaf" data-building="bat-e" data-sre="1980" data-sre-real="1980" data-sre-reg="1875"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
           </ul>
         </div>
       </nav>
@@ -216,6 +216,16 @@
             <!-- Poussoir à droite + sélecteur d'année -->
             <!-- Top-right (remplace l'ancien <select id="year-picker"> … ) -->
             <div class="top-right">
+              <div id="surface-switch" class="surface-switch" role="group" aria-label="Type de surface">
+                <span class="surface-switch-label">Surface</span>
+                <div class="seg2 surface-switch-control">
+                  <input type="radio" id="surface-real" name="surface-mode" value="real" checked>
+                  <label for="surface-real">Réelle</label>
+                  <input type="radio" id="surface-reg" name="surface-mode" value="regulatory">
+                  <label for="surface-reg">Réglementaire</label>
+                  <span class="pill" aria-hidden="true"></span>
+                </div>
+              </div>
               <div id="year-picker" class="year-picker-wrap" data-years="2022,2023,2024,2025,2026">
                 <button type="button" class="year-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Année">
                   <span class="year-current">2024</span>
@@ -487,7 +497,7 @@
                     </svg>
                   </span>
                   <span class="pill-label">SRE totale</span>
-                  <span class="pill-value" id="sum-sre-val">8 640</span><span class="pill-unit">m²</span>
+                  <span class="pill-value" id="sum-sre-val">8 640</span><span class="pill-unit" id="sum-sre-unit">m² (réelle)</span>
                 </div>
               </div>
 

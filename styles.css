@@ -1032,6 +1032,46 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   gap: 8px;
 }
 
+.surface-switch{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(148,163,184,.15);
+  border:1px solid rgba(148,163,184,.35);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
+}
+
+.surface-switch-label{
+  font-size:.85rem;
+  font-weight:700;
+  color:#475569;
+  letter-spacing:.01em;
+}
+
+.surface-switch-control{
+  --ctrl-h:34px;
+  --ctrl-fs:.9rem;
+  --pad-x:12px;
+}
+
+@media (max-width: 640px){
+  .surface-switch{
+    padding:4px 8px;
+    gap:8px;
+  }
+
+  .surface-switch-label{
+    font-size:.8rem;
+  }
+
+  .surface-switch-control{
+    --ctrl-h:32px;
+    --ctrl-fs:.85rem;
+  }
+}
+
 /* Mobile : évite l’écrasement si la barre ne wrap pas */
 @media (max-width: 640px){
   .year-picker{ height: 32px; font-size: .9rem; }

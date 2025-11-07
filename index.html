@@ -552,11 +552,11 @@
                 <div class="energy-chart-zone">
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
-                      <figure class="energy-mix-card" aria-label="Mix énergétique du périmètre" data-chart-scope="general" data-chart-slot="mix-primary" data-chart-type="mix-primary-pie" data-chart-group="mix-primary">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-primary">
+                      <figure class="energy-mix-card" aria-label="Mix énergétique du périmètre" data-chart-scope="general" data-chart-slot="mix-primary" data-chart-type="mix-primary-pie" data-chart-group="mix-primary" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -592,14 +592,11 @@
 
                       <figure class="energy-ranking-card" aria-label="Classement des bâtiments les plus consommateurs"
                         data-chart-scope="general" data-ranking-metric="general"
-                        data-chart-slot="mix-secondary" data-chart-type="mix-secondary-ranking" data-chart-group="mix-secondary">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog"
-                          aria-expanded="false" aria-haspopup="dialog" data-chart-target="mix-secondary">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor"
-                            stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-slot="mix-secondary" data-chart-type="mix-secondary-ranking" data-chart-group="mix-secondary" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-ranking-header">
@@ -618,11 +615,11 @@
                         <figcaption>Bâtiments les plus consommateurs du périmètre sélectionné.</figcaption>
                       </figure>
 
-                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-trend" data-chart-type="intensity-bars">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      <figure class="energy-trend-chart" aria-label="Intensité énergétique annuelle du bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-trend" data-chart-type="intensity-bars" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -889,11 +886,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-typology-card" aria-label="Consommation par typologie de bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="typology" data-chart-type="typology-columns" data-chart-group="typology">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="typology">
+                      <figure class="energy-typology-card" aria-label="Consommation par typologie de bâtiment" data-chart-scope="general" data-chart-metric="general" data-chart-slot="typology" data-chart-type="typology-columns" data-chart-group="typology" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-typology-header">
@@ -944,11 +941,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-map-card" aria-label="Carte énergétique du parc" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="energy-map">
+                      <figure class="energy-map-card" aria-label="Carte énergétique du parc" data-chart-scope="general" data-chart-metric="general" data-chart-slot="energy-map" data-chart-type="map-bubbles" data-chart-group="energy-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -1003,11 +1000,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-monthly-card" aria-label="Consommation mensuelle énergie" data-chart-scope="general" data-chart-metric="general" data-chart-slot="monthly" data-chart-type="monthly-stacked" data-chart-group="monthly">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="monthly">
+                      <figure class="energy-monthly-card" aria-label="Consommation mensuelle énergie" data-chart-scope="general" data-chart-metric="general" data-chart-slot="monthly" data-chart-type="monthly-stacked" data-chart-group="monthly" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -1085,11 +1082,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-distribution-card" aria-label="Distribution des intensités énergétiques" data-chart-scope="general" data-chart-metric="general" data-chart-slot="intensity-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="intensity-distribution">
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités énergétiques" data-chart-scope="general" data-chart-metric="general" data-chart-slot="intensity-distribution" data-chart-type="distribution-columns" data-chart-group="distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-distribution-header">
@@ -2061,11 +2058,11 @@
                 <div class="energy-chart-zone heat-chart-zone">
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
-                      <figure class="energy-mix-card" aria-label="Mix combustibles chaleur" data-chart-scope="chaleur" data-heat-dataset="fuels" data-chart-slot="heat-mix-fuels" data-chart-type="heat-fuels-donut" data-chart-group="heat-mix-fuels">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-mix-fuels">
+                      <figure class="energy-mix-card" aria-label="Mix combustibles chaleur" data-chart-scope="chaleur" data-heat-dataset="fuels" data-chart-slot="heat-mix-fuels" data-chart-type="heat-fuels-donut" data-chart-group="heat-mix-fuels" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2117,11 +2114,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-mix-card" aria-label="Répartition des usages chaleur" data-chart-scope="chaleur" data-heat-dataset="uses" data-chart-slot="heat-uses" data-chart-type="heat-uses-bars" data-chart-group="heat-mix-uses">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-uses">
+                      <figure class="energy-mix-card" aria-label="Répartition des usages chaleur" data-chart-scope="chaleur" data-heat-dataset="uses" data-chart-slot="heat-uses" data-chart-type="heat-uses-bars" data-chart-group="heat-mix-uses" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2163,12 +2160,6 @@
                       </template>
 
                       <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs de chaleur" data-chart-scope="chaleur" data-ranking-metric="chaleur">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-ranking">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
-                          </svg>
-                        </button>
                         <header class="energy-ranking-header">
                           <div class="energy-ranking-header__titles">
                             <span class="ranking-title">Top 5 chaleur</span>
@@ -2185,11 +2176,11 @@
                         <figcaption>Bâtiments triés par intensité de chaleur sur le périmètre sélectionné.</figcaption>
                       </figure>
 
-                      <figure class="energy-trend-chart" aria-label="Tendance d'intensité chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-trend" data-chart-type="heat-intensity-bars">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      <figure class="energy-trend-chart" aria-label="Tendance d'intensité chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-trend" data-chart-type="heat-intensity-bars" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -2226,11 +2217,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-typology-card" aria-label="Chaleur par typologie de bâtiment" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-typology" data-chart-type="typology-columns" data-chart-group="typology">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-typology">
+                      <figure class="energy-typology-card" aria-label="Chaleur par typologie de bâtiment" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-typology" data-chart-type="typology-columns" data-chart-group="typology" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-typology-header">
@@ -2254,11 +2245,11 @@
                         <figcaption data-chart-role="caption">Classement des typologies selon leur consommation de chaleur.</figcaption>
                       </figure>
 
-                      <figure class="energy-map-card" aria-label="Carte chaleur du parc" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-map" data-chart-type="map-bubbles" data-chart-group="energy-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-map">
+                      <figure class="energy-map-card" aria-label="Carte chaleur du parc" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-map" data-chart-type="map-bubbles" data-chart-group="energy-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -2278,11 +2269,11 @@
                         <figcaption data-chart-role="caption">Visualisation spatiale de l'intensité de chaleur des bâtiments sélectionnés.</figcaption>
                       </figure>
 
-                      <figure class="energy-monthly-card" aria-label="Profil mensuel de chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-monthly" data-chart-type="heat-monthly" data-monthly-series="chaleur" data-chart-group="heat-monthly">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-monthly">
+                      <figure class="energy-monthly-card" aria-label="Profil mensuel de chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-monthly" data-chart-type="heat-monthly" data-monthly-series="chaleur" data-chart-group="heat-monthly" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -2537,11 +2528,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-distribution-card" aria-label="Distribution des intensités chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-distribution" data-chart-type="distribution-columns" data-chart-group="distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="heat-distribution">
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités chaleur" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-distribution" data-chart-type="distribution-columns" data-chart-group="distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-distribution-header">
@@ -2591,14 +2582,11 @@
                     <div class="energy-chart-stack">
                       <figure class="energy-mix-card" aria-label="Mix de production de froid" data-chart-scope="froid"
                         data-cold-dataset="production" data-chart-slot="cold-production" data-chart-type="cold-production-donut"
-                        data-chart-group="cold-production">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-production">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="cold-production" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2632,14 +2620,11 @@
 
                       <figure class="energy-mix-card" aria-label="Usages du froid" data-chart-scope="froid"
                         data-cold-dataset="uses" data-chart-slot="cold-uses" data-chart-type="cold-uses-bars"
-                        data-chart-group="cold-uses">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-uses">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="cold-uses" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2668,14 +2653,11 @@
 
                       <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs de froid"
                         data-chart-scope="froid" data-ranking-metric="froid" data-chart-slot="cold-ranking"
-                        data-chart-type="mix-secondary-ranking" data-chart-group="cold-ranking">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-ranking">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-type="mix-secondary-ranking" data-chart-group="cold-ranking" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-ranking-header">
@@ -2697,13 +2679,11 @@
 
                       <figure class="energy-trend-chart" aria-label="Tendance annuelle du froid" data-chart-scope="froid"
                         data-chart-metric="froid" data-chart-slot="cold-trend" data-chart-type="cold-intensity-bars"
-                        data-chart-group="cold-trend">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques"
-                          aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="cold-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="cold-trend" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -2735,14 +2715,11 @@
                       </figure>
 
                       <figure class="energy-map-card" aria-label="Carte du froid" data-chart-scope="froid" data-chart-metric="froid"
-                        data-chart-slot="cold-map" data-chart-type="map-bubbles" data-chart-group="cold-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-map">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-slot="cold-map" data-chart-type="map-bubbles" data-chart-group="cold-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -2773,14 +2750,11 @@
 
                       <figure class="energy-monthly-card" aria-label="Profil mensuel du froid" data-chart-scope="froid"
                         data-chart-metric="froid" data-chart-slot="cold-monthly" data-chart-type="cold-monthly"
-                        data-monthly-series="froid" data-chart-group="cold-monthly">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-monthly">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-monthly-series="froid" data-chart-group="cold-monthly" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -2814,14 +2788,11 @@
 
                       <figure class="energy-distribution-card" aria-label="Distribution des intensités de froid"
                         data-chart-scope="froid" data-chart-metric="froid" data-chart-slot="cold-distribution"
-                        data-chart-type="cold-distribution" data-chart-group="cold-distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="cold-distribution">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-type="cold-distribution" data-chart-group="cold-distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-distribution-header">
@@ -2873,14 +2844,11 @@
                     <div class="energy-chart-stack">
                       <figure class="energy-mix-card" aria-label="Origine de l'électricité" data-chart-scope="elec"
                         data-elec-dataset="sources" data-chart-slot="elec-sources" data-chart-type="elec-sources-donut"
-                        data-chart-group="elec-sources">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-sources">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="elec-sources" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2911,14 +2879,11 @@
 
                       <figure class="energy-mix-card" aria-label="Usages de l'électricité" data-chart-scope="elec"
                         data-elec-dataset="uses" data-chart-slot="elec-uses" data-chart-type="elec-uses-bars"
-                        data-chart-group="elec-uses">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-uses">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="elec-uses" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -2953,14 +2918,11 @@
 
                       <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs d'électricité"
                         data-chart-scope="elec" data-ranking-metric="elec" data-chart-slot="elec-ranking"
-                        data-chart-type="mix-secondary-ranking" data-chart-group="elec-ranking">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-ranking">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-type="mix-secondary-ranking" data-chart-group="elec-ranking" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-ranking-header">
@@ -2982,13 +2944,11 @@
 
                       <figure class="energy-trend-chart" aria-label="Tendance annuelle de l'électricité" data-chart-scope="elec"
                         data-chart-metric="elec" data-chart-slot="elec-trend" data-chart-type="elec-intensity-bars"
-                        data-chart-group="elec-trend">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques"
-                          aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="elec-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-group="elec-trend" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -3020,14 +2980,11 @@
                       </figure>
 
                       <figure class="energy-map-card" aria-label="Carte électricité" data-chart-scope="elec" data-chart-metric="elec"
-                        data-chart-slot="elec-map" data-chart-type="map-bubbles" data-chart-group="elec-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-map">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-slot="elec-map" data-chart-type="map-bubbles" data-chart-group="elec-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -3057,14 +3014,11 @@
 
                       <figure class="energy-monthly-card" aria-label="Profil mensuel électrique" data-chart-scope="elec"
                         data-chart-metric="elec" data-chart-slot="elec-monthly" data-chart-type="elec-monthly"
-                        data-monthly-series="elec" data-chart-group="elec-monthly">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-monthly">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-monthly-series="elec" data-chart-group="elec-monthly" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -3098,14 +3052,11 @@
 
                       <figure class="energy-distribution-card" aria-label="Distribution des intensités électriques"
                         data-chart-scope="elec" data-chart-metric="elec" data-chart-slot="elec-distribution"
-                        data-chart-type="elec-distribution" data-chart-group="elec-distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small"
-                          aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false"
-                          aria-haspopup="dialog" data-chart-target="elec-distribution">
-                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
-                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                        data-chart-type="elec-distribution" data-chart-group="elec-distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-distribution-header">
@@ -3155,11 +3106,11 @@
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
 
-                      <figure class="energy-mix-card" aria-label="Répartition des émissions par scope" data-chart-scope="co2" data-co2-dataset="scopes" data-chart-slot="co2-scopes" data-chart-type="co2-scopes-donut" data-chart-group="co2-scopes">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-scopes">
+                      <figure class="energy-mix-card" aria-label="Répartition des émissions par scope" data-chart-scope="co2" data-co2-dataset="scopes" data-chart-slot="co2-scopes" data-chart-type="co2-scopes-donut" data-chart-group="co2-scopes" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -3205,11 +3156,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-mix-card" aria-label="Origine des émissions CO₂" data-chart-scope="co2" data-co2-dataset="sources" data-chart-slot="co2-sources" data-chart-type="co2-sources-bars" data-chart-group="co2-sources">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-sources">
+                      <figure class="energy-mix-card" aria-label="Origine des émissions CO₂" data-chart-scope="co2" data-co2-dataset="sources" data-chart-slot="co2-sources" data-chart-type="co2-sources-bars" data-chart-group="co2-sources" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -3242,11 +3193,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus émetteurs" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-ranking" data-chart-type="co2-ranking" data-chart-group="co2-ranking">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-ranking">
+                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus émetteurs" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-ranking" data-chart-type="co2-ranking" data-chart-group="co2-ranking" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-ranking-header">
@@ -3265,11 +3216,11 @@
                         <figcaption data-chart-role="caption">Bâtiments présentant les émissions les plus élevées.</figcaption>
                       </figure>
 
-                      <figure class="energy-trend-chart" aria-label="Tendance annuelle des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-trend" data-chart-type="co2-intensity-bars" data-chart-group="co2-trend">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      <figure class="energy-trend-chart" aria-label="Tendance annuelle des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-trend" data-chart-type="co2-intensity-bars" data-chart-group="co2-trend" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -3320,11 +3271,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-monthly-card" aria-label="Profil mensuel des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-monthly" data-chart-type="co2-monthly" data-chart-group="co2-monthly" data-monthly-series="co2scope1,co2scope2">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-monthly">
+                      <figure class="energy-monthly-card" aria-label="Profil mensuel des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-monthly" data-chart-type="co2-monthly" data-chart-group="co2-monthly" data-monthly-series="co2scope1,co2scope2" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -3377,11 +3328,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-distribution-card" aria-label="Distribution des intensités carbone" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-distribution" data-chart-type="co2-distribution" data-chart-group="co2-distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-distribution">
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités carbone" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-distribution" data-chart-type="co2-distribution" data-chart-group="co2-distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -3424,11 +3375,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-typology-card" aria-label="Émissions par typologie" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-typology" data-chart-type="typology-columns" data-chart-group="co2-typology">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-typology">
+                      <figure class="energy-typology-card" aria-label="Émissions par typologie" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-typology" data-chart-type="typology-columns" data-chart-group="co2-typology" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -3446,11 +3397,11 @@
                         <figcaption data-chart-role="caption">Répartition des émissions annuelles par typologie bâtiment.</figcaption>
                       </figure>
 
-                      <figure class="energy-map-card" aria-label="Carte des émissions du parc" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-map" data-chart-type="map-bubbles" data-chart-group="co2-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-map">
+                      <figure class="energy-map-card" aria-label="Carte des émissions du parc" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-map" data-chart-type="map-bubbles" data-chart-group="co2-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -3518,11 +3469,11 @@
                 <div class="energy-chart-zone water-chart-zone">
                   <div class="energy-chart-wrapper">
                     <div class="energy-chart-stack">
-                      <figure class="energy-mix-card" aria-label="Origine de l’eau consommée" data-chart-scope="eau" data-water-dataset="sources" data-chart-slot="water-sources" data-chart-type="water-sources-donut" data-chart-group="water-sources">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-sources">
+                      <figure class="energy-mix-card" aria-label="Origine de l’eau consommée" data-chart-scope="eau" data-water-dataset="sources" data-chart-slot="water-sources" data-chart-type="water-sources-donut" data-chart-group="water-sources" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -3574,11 +3525,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-mix-card" aria-label="Usages de l’eau" data-chart-scope="eau" data-water-dataset="uses" data-chart-slot="water-uses" data-chart-type="water-uses-bars" data-chart-group="water-uses">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-uses">
+                      <figure class="energy-mix-card" aria-label="Usages de l’eau" data-chart-scope="eau" data-water-dataset="uses" data-chart-slot="water-uses" data-chart-type="water-uses-bars" data-chart-group="water-uses" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-mix-header">
@@ -3625,11 +3576,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs d’eau" data-chart-scope="eau" data-ranking-metric="eau" data-chart-slot="water-ranking" data-chart-type="water-ranking" data-chart-group="water-ranking">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-ranking">
+                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus consommateurs d’eau" data-chart-scope="eau" data-ranking-metric="eau" data-chart-slot="water-ranking" data-chart-type="water-ranking" data-chart-group="water-ranking" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-ranking-header">
@@ -3660,11 +3611,11 @@
                     </div>
 
                     <div class="energy-chart-stack">
-                      <figure class="energy-trend-chart" aria-label="Intensité d’eau annuelle" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-trend" data-chart-type="water-intensity-bars" data-chart-group="water-trend">
-                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-trend">
-                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                      <figure class="energy-trend-chart" aria-label="Intensité d’eau annuelle" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-trend" data-chart-type="water-intensity-bars" data-chart-group="water-trend" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <div class="chart-body" data-chart-role="body">
@@ -3701,11 +3652,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-typology-card" aria-label="Eau par typologie de bâtiment" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-typology" data-chart-type="typology-columns" data-chart-group="typology">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-typology">
+                      <figure class="energy-typology-card" aria-label="Eau par typologie de bâtiment" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-typology" data-chart-type="typology-columns" data-chart-group="typology" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-typology-header">
@@ -3731,11 +3682,11 @@
                     </div>
 
                     <div class="energy-chart-stack">
-                      <figure class="energy-map-card" aria-label="Carte de consommation d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-map" data-chart-type="map-bubbles" data-chart-group="water-map">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-map">
+                      <figure class="energy-map-card" aria-label="Carte de consommation d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-map" data-chart-type="map-bubbles" data-chart-group="water-map" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-map-header">
@@ -3762,11 +3713,11 @@
                         <figcaption data-chart-role="caption">Localisation des bâtiments avec intensité et surface de consommation d’eau.</figcaption>
                       </figure>
 
-                      <figure class="energy-monthly-card" aria-label="Profil mensuel des consommations d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-monthly" data-chart-type="water-monthly" data-monthly-series="eau" data-chart-group="water-monthly">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-monthly">
+                      <figure class="energy-monthly-card" aria-label="Profil mensuel des consommations d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-monthly" data-chart-type="water-monthly" data-monthly-series="eau" data-chart-group="water-monthly" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-monthly-header">
@@ -3803,11 +3754,11 @@
                         </div>
                       </template>
 
-                      <figure class="energy-distribution-card" aria-label="Distribution des intensités d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-distribution" data-chart-type="water-distribution" data-chart-group="water-distribution">
-                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="water-distribution">
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités d’eau" data-chart-scope="eau" data-chart-metric="eau" data-chart-slot="water-distribution" data-chart-type="water-distribution" data-chart-group="water-distribution" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                            <path d="M12 20h9" />
-                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                            <path d="M6 6l12 12" />
+                            <path d="M18 6L6 18" />
                           </svg>
                         </button>
                         <header class="energy-distribution-header">

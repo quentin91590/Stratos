@@ -1539,7 +1539,41 @@
     const panel = document.getElementById('chart-catalog');
     if (!panel) return;
 
-    const toggles = Array.from(document.querySelectorAll('.chart-edit-toggle'));
+    const zoneSelector = '.energy-chart-zone';
+    const slotSelector = '[data-chart-slot]';
+    const selectionClass = 'is-chart-selected';
+
+    const ensureZoneTriggers = () => {
+      document.querySelectorAll(zoneSelector).forEach(zone => {
+        if (!zone || zone.querySelector('.chart-catalog-trigger')) return;
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.className = 'chart-catalog-trigger';
+        trigger.setAttribute('aria-haspopup', 'dialog');
+        trigger.setAttribute('aria-controls', 'chart-catalog');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.innerHTML = `
+          <span class="chart-catalog-trigger__icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="9"></circle>
+              <line x1="12" y1="8" x2="12" y2="16"></line>
+              <line x1="8" y1="12" x2="16" y2="12"></line>
+            </svg>
+          </span>
+          <span class="chart-catalog-trigger__label">Ajouter un graphique</span>
+        `;
+        const panelHost = zone.querySelector('.chart-catalog');
+        if (panelHost) {
+          panelHost.before(trigger);
+        } else {
+          zone.append(trigger);
+        }
+      });
+    };
+
+    ensureZoneTriggers();
+
+    const toggles = Array.from(document.querySelectorAll('.chart-catalog-trigger'));
     if (!toggles.length) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
     const getCardContainer = (card) => card?.closest('li') || null;
@@ -1552,6 +1586,7 @@
     let focusTargetOnClose = null;
     let activeSlot = null;
     let activeZone = null;
+    let selectedSlot = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -1564,12 +1599,80 @@
       )
     );
 
-    const getSlotFromToggle = (trigger) => {
-      if (!trigger) return null;
-      const slotName = trigger.dataset.chartTarget || trigger.closest('[data-chart-slot]')?.dataset.chartSlot;
-      if (!slotName) return null;
-      return document.querySelector(`[data-chart-slot="${slotName}"]`);
+    const getSlots = (scope = document) => Array.from(scope.querySelectorAll(slotSelector));
+
+    const selectSlot = (slot) => {
+      if (selectedSlot && selectedSlot !== slot) {
+        selectedSlot.classList.remove(selectionClass);
+      }
+      selectedSlot = slot && document.contains(slot) ? slot : null;
+      if (selectedSlot) selectedSlot.classList.add(selectionClass);
+      return selectedSlot;
     };
+
+    const ensureSelectedSlot = (zoneEl = null) => {
+      const candidates = zoneEl ? getSlots(zoneEl) : getSlots();
+      if (selectedSlot && candidates.includes(selectedSlot) && document.contains(selectedSlot)) {
+        selectedSlot.classList.add(selectionClass);
+        return selectedSlot;
+      }
+      const fallback = candidates[0] || null;
+      return selectSlot(fallback);
+    };
+
+    const boundSlots = new WeakSet();
+    const bindSlotInteractions = () => {
+      getSlots().forEach(slot => {
+        if (boundSlots.has(slot)) return;
+        boundSlots.add(slot);
+        slot.addEventListener('click', (event) => {
+          if (event.target.closest('.chart-delete-btn')) return;
+          selectSlot(slot);
+        });
+        slot.addEventListener('focusin', () => selectSlot(slot));
+      });
+    };
+
+    const boundDeleteButtons = new WeakSet();
+    const handleDelete = (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      const btn = event.currentTarget;
+      const slot = btn?.closest(slotSelector);
+      if (!slot) return;
+      const zoneEl = slot.closest(zoneSelector);
+      const shouldRefocus = slot === selectedSlot;
+      const wasActive = slot === activeSlot;
+      slot.remove();
+      updateEnergyVisuals();
+      const next = ensureSelectedSlot(zoneEl || undefined);
+      if (wasActive) {
+        activeSlot = next || null;
+        if (isOpen) {
+          if (activeSlot) {
+            updateCatalogForSlot(activeSlot);
+          } else {
+            closePanel({ returnFocus: false });
+          }
+        }
+      }
+      if (!next) return;
+      if (shouldRefocus) {
+        next.focus({ preventScroll: true });
+      }
+    };
+
+    const bindDeleteInteractions = () => {
+      document.querySelectorAll('.chart-delete-btn').forEach(btn => {
+        if (boundDeleteButtons.has(btn)) return;
+        boundDeleteButtons.add(btn);
+        btn.addEventListener('click', handleDelete);
+      });
+    };
+
+    bindSlotInteractions();
+    bindDeleteInteractions();
+    ensureSelectedSlot();
 
     const setCardState = (card, isActive) => {
       if (!card) return;
@@ -1601,6 +1704,7 @@
     };
 
     const updateCatalogForSlot = (slotEl) => {
+      if (slotEl) selectSlot(slotEl);
       const group = getSlotGroup(slotEl);
       updateCardVisibility(group);
       markActiveCard(slotEl);
@@ -1748,18 +1852,28 @@
       if (activeToggle && activeToggle !== trigger) {
         setToggleState(activeToggle, false);
       }
-      activeToggle = trigger;
-      activeSlot = getSlotFromToggle(trigger);
-      const zoneEl = trigger.closest('.energy-chart-zone') || null;
+      const zoneEl = trigger.closest(zoneSelector) || null;
       const previousZone = getActiveZone();
       if (previousZone && previousZone !== zoneEl) {
         previousZone.classList.remove('catalog-open');
       }
+
+      activeToggle = trigger;
       activeZone = zoneEl;
+
       if (activeZone) {
         ensurePanelWithinZone(activeZone);
         activeZone.classList.add('catalog-open');
       }
+
+      activeSlot = ensureSelectedSlot(activeZone || undefined);
+      if (!activeSlot) {
+        setToggleState(activeToggle, false);
+        activeToggle = null;
+        activeZone = null;
+        return;
+      }
+
       isOpen = true;
       restoreFocusAfterClose = false;
       panel.hidden = false;

@@ -399,12 +399,21 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bullet.it{background:#6366f1}
 .mix-bullet.process{background:#ef4444}
 .mix-bullet.services{background:#94a3b8}
+.mix-bullet.reseau-eau{background:#38bdf8}
+.mix-bullet.nappe{background:#0ea5e9}
+.mix-bullet.pluie{background:#22d3ee}
+.mix-bullet.recyclee{background:#14b8a6}
+.mix-bullet.sanitaires{background:#3b82f6}
+.mix-bullet.nettoyage{background:#0ea5e9}
+.mix-bullet.irrigation{background:#22c55e}
+.mix-bullet.pertes{background:#f97316}
 .mix-label{font-weight:600}
 .mix-value{font-weight:700; color:#0f172a}
 .mix-donut{--mix-chaleur:80; --mix-elec:15; --mix-froid:5; position:relative; width:132px; height:132px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#0f172a; font-weight:700; background:conic-gradient(#f97316 0 calc(var(--mix-chaleur) * 1%), #38bdf8 calc(var(--mix-chaleur) * 1%) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%), #6366f1 calc((var(--mix-chaleur) + var(--mix-elec)) * 1%) 100%); box-shadow:0 8px 22px rgba(15,23,42,0.08)}
 .mix-donut.heat{--mix-gaz:52; --mix-pac:20; --mix-reseau:18; --mix-biomasse:10; background:conic-gradient(#f97316 0 calc(var(--mix-gaz) * 1%), #0ea5e9 calc(var(--mix-gaz) * 1%) calc((var(--mix-gaz) + var(--mix-pac)) * 1%), #ef4444 calc((var(--mix-gaz) + var(--mix-pac)) * 1%) calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%), #16a34a calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%) 100%)}
 .mix-donut.cold{--mix-compression:58; --mix-freecooling:22; --mix-reseau:12; --mix-absorption:8; background:conic-gradient(#6366f1 0 calc(var(--mix-compression) * 1%), #0ea5e9 calc(var(--mix-compression) * 1%) calc((var(--mix-compression) + var(--mix-freecooling)) * 1%), #ef4444 calc((var(--mix-compression) + var(--mix-freecooling)) * 1%) calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%), #a855f7 calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%) 100%)}
 .mix-donut.elec{--mix-reseau:68; --mix-autoprod:22; --mix-verte:10; background:conic-gradient(#38bdf8 0 calc(var(--mix-reseau) * 1%), #fbbf24 calc(var(--mix-reseau) * 1%) calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%), #22c55e calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%) 100%)}
+.mix-donut.water{--mix-reseau-eau:48; --mix-nappe:22; --mix-pluie:18; --mix-recyclee:12; background:conic-gradient(#38bdf8 0 calc(var(--mix-reseau-eau) * 1%), #0ea5e9 calc(var(--mix-reseau-eau) * 1%) calc((var(--mix-reseau-eau) + var(--mix-nappe)) * 1%), #22d3ee calc((var(--mix-reseau-eau) + var(--mix-nappe)) * 1%) calc((var(--mix-reseau-eau) + var(--mix-nappe) + var(--mix-pluie)) * 1%), #14b8a6 calc((var(--mix-reseau-eau) + var(--mix-nappe) + var(--mix-pluie)) * 1%) 100%)}
 .mix-donut.co2{--mix-scope1:64; --mix-scope2:36; background:conic-gradient(#fb7185 0 calc(var(--mix-scope1) * 1%), #38bdf8 calc(var(--mix-scope1) * 1%) 100%)}
 .mix-donut::after{content:""; position:absolute; inset:24px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
 .mix-donut__center,.mix-donut__label{position:relative; z-index:1}
@@ -440,6 +449,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-bar.electricite-reseau{--mix-color:#38bdf8}
 .mix-bar.electricite-verte{--mix-color:#22c55e}
 .mix-bar.services{--mix-color:#94a3b8}
+.mix-bar.reseau-eau{--mix-color:#38bdf8}
+.mix-bar.nappe{--mix-color:#0ea5e9}
+.mix-bar.pluie{--mix-color:#22d3ee}
+.mix-bar.recyclee{--mix-color:#14b8a6}
+.mix-bar.sanitaires{--mix-color:#3b82f6}
+.mix-bar.nettoyage{--mix-color:#0ea5e9}
+.mix-bar.irrigation{--mix-color:#22c55e}
+.mix-bar.pertes{--mix-color:#f97316}
 .mix-rings{display:flex; gap:18px; flex-wrap:wrap}
 .mix-ring{--mix-color:#f97316; position:relative; width:96px; height:96px; border-radius:50%; background:conic-gradient(var(--mix-color) 0 calc(var(--mix-value) * 1%), rgba(226,232,240,0.7) calc(var(--mix-value) * 1%) 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(15,23,42,0.08)}
 .mix-ring::after{content:""; position:absolute; inset:20px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
@@ -460,6 +477,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .mix-ring.eclairage{--mix-color:#f59e0b}
 .mix-ring.hvac{--mix-color:#38bdf8}
 .mix-ring.services{--mix-color:#94a3b8}
+.mix-ring.reseau-eau{--mix-color:#38bdf8}
+.mix-ring.nappe{--mix-color:#0ea5e9}
+.mix-ring.pluie{--mix-color:#22d3ee}
+.mix-ring.recyclee{--mix-color:#14b8a6}
+.mix-ring.sanitaires{--mix-color:#3b82f6}
+.mix-ring.nettoyage{--mix-color:#0ea5e9}
+.mix-ring.irrigation{--mix-color:#22c55e}
+.mix-ring.pertes{--mix-color:#f97316}
 .mix-columns{display:flex; gap:18px; align-items:flex-end; justify-content:flex-start; height:128px; padding:0 4px}
 .mix-column{flex:1; min-width:18px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg, rgba(59,130,246,0.25), rgba(59,130,246,0)); position:relative; height:100%}
 .mix-column::before{content:""; position:absolute; left:0; right:0; bottom:0; border-radius:inherit; background:var(--mix-color); opacity:.85; height:calc(var(--mix-value) * 1%)}
@@ -648,6 +673,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .monthly-segment--froid{background:linear-gradient(180deg, #6366f1, #818cf8)}
 .monthly-segment--scope1{background:linear-gradient(180deg, #fb7185, #f472b6)}
 .monthly-segment--scope2{background:linear-gradient(180deg, #38bdf8, #0ea5e9)}
+.monthly-segment--eau{background:linear-gradient(180deg, #0ea5e9, #38bdf8)}
 .monthly-bar__value{font-weight:700; font-size:.95rem}
 .monthly-bar__label{font-size:.82rem; color:#475569}
 .monthly-line{position:absolute; inset:0; width:100%; height:100%; stroke:#1e293b; fill:none; pointer-events:none}
@@ -677,6 +703,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .monthly-chart--co2 .monthly-stack{background:linear-gradient(180deg, rgba(251,113,133,0.18), rgba(56,189,248,0.04))}
 .monthly-chart--co2 .monthly-line polyline{stroke:#fb7185}
 .monthly-chart--co2 .legend-line{background:linear-gradient(90deg, rgba(56,189,248,0.2), rgba(251,113,133,0.85))}
+.monthly-chart--water .monthly-stack{background:linear-gradient(180deg, rgba(14,165,233,0.18), rgba(56,189,248,0.04))}
+.monthly-chart--water .monthly-line polyline{stroke:#0ea5e9}
+.monthly-chart--water .legend-line{background:linear-gradient(90deg, rgba(14,165,233,0.2), rgba(14,165,233,0.85))}
+.energy-monthly--lines{position:relative; display:flex; flex-direction:column; gap:18px}
+.energy-monthly--lines .monthly-bars{position:relative; z-index:1}
+.energy-monthly--lines .monthly-line{position:absolute; left:0; right:0; top:0; bottom:48px; z-index:2}
+.energy-monthly--lines .monthly-summary{position:relative; z-index:3}
 .monthly-summary{margin:0; font-size:.88rem; color:#475569}
 
 .distribution-chart{display:grid; gap:18px; align-content:start}

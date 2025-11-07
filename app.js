@@ -300,6 +300,15 @@
     'distribution-line': { width: 'full', height: 'medium' },
     'cold-distribution': { width: 'full', height: 'medium' },
     'elec-distribution': { width: 'full', height: 'medium' },
+    'water-sources-donut': { width: 'half', height: 'medium' },
+    'water-sources-bars': { width: 'half', height: 'medium' },
+    'water-uses-bars': { width: 'half', height: 'medium' },
+    'water-uses-rings': { width: 'half', height: 'medium' },
+    'water-ranking': { width: 'half', height: 'tall' },
+    'water-intensity-bars': { width: 'full', height: 'medium' },
+    'water-monthly': { width: 'full', height: 'xl' },
+    'water-monthly-lines': { width: 'full', height: 'xl' },
+    'water-distribution': { width: 'full', height: 'medium' },
   };
 
   const TILE_LAYOUT_BY_SLOT = {
@@ -339,6 +348,14 @@
     'co2-distribution': { width: 'full', height: 'medium' },
     'co2-typology': { width: 'full', height: 'xl' },
     'co2-map': { width: 'full', height: 'tall' },
+    'water-sources': { width: 'half', height: 'medium' },
+    'water-uses': { width: 'half', height: 'medium' },
+    'water-ranking': { width: 'half', height: 'tall' },
+    'water-trend': { width: 'full', height: 'medium' },
+    'water-typology': { width: 'full', height: 'xl' },
+    'water-map': { width: 'full', height: 'tall' },
+    'water-monthly': { width: 'full', height: 'xl' },
+    'water-distribution': { width: 'full', height: 'medium' },
   };
 
   const VALID_TILE_WIDTHS = new Set(['full', 'half']);
@@ -518,18 +535,18 @@
         position: { x: 14, y: 70 },
         metrics: { general: 182, chaleur: 108, froid: 11, elec: 74, co2: 24, eau: 1.28 },
         monthly: [
-          { month: 'jan', chaleur: 24797, elec: 10316, froid: 0, climate: 1.25 },
-          { month: 'fév', chaleur: 21254, elec: 10316, froid: 0, climate: 1.18 },
-          { month: 'mar', chaleur: 19483, elec: 10316, froid: 361, climate: 1.02 },
-          { month: 'avr', chaleur: 15941, elec: 9952, froid: 1082, climate: 0.9 },
-          { month: 'mai', chaleur: 12398, elec: 9952, froid: 1804, climate: 0.78 },
-          { month: 'jun', chaleur: 8856, elec: 9952, froid: 2886, climate: 0.62 },
-          { month: 'jul', chaleur: 7085, elec: 10073, froid: 3608, climate: 0.55 },
-          { month: 'aoû', chaleur: 7085, elec: 10073, froid: 3608, climate: 0.6 },
-          { month: 'sep', chaleur: 10627, elec: 10073, froid: 2526, climate: 0.74 },
-          { month: 'oct', chaleur: 14170, elec: 9952, froid: 1443, climate: 0.94 },
-          { month: 'nov', chaleur: 17712, elec: 10194, froid: 541, climate: 1.08 },
-          { month: 'déc', chaleur: 17712, elec: 10073, froid: 180, climate: 1.2 },
+          { month: 'jan', chaleur: 24797, elec: 10316, froid: 0, eau: 169, climate: 1.25 },
+          { month: 'fév', chaleur: 21254, elec: 10316, froid: 0, eau: 158, climate: 1.18 },
+          { month: 'mar', chaleur: 19483, elec: 10316, froid: 361, eau: 158, climate: 1.02 },
+          { month: 'avr', chaleur: 15941, elec: 9952, froid: 1082, eau: 168, climate: 0.9 },
+          { month: 'mai', chaleur: 12398, elec: 9952, froid: 1804, eau: 178, climate: 0.78 },
+          { month: 'jun', chaleur: 8856, elec: 9952, froid: 2886, eau: 189, climate: 0.62 },
+          { month: 'jul', chaleur: 7085, elec: 10073, froid: 3608, eau: 199, climate: 0.55 },
+          { month: 'aoû', chaleur: 7085, elec: 10073, froid: 3608, eau: 220, climate: 0.6 },
+          { month: 'sep', chaleur: 10627, elec: 10073, froid: 2526, eau: 210, climate: 0.74 },
+          { month: 'oct', chaleur: 14170, elec: 9952, froid: 1443, eau: 178, climate: 0.94 },
+          { month: 'nov', chaleur: 17712, elec: 10194, froid: 541, eau: 136, climate: 1.08 },
+          { month: 'déc', chaleur: 17712, elec: 10073, froid: 180, eau: 136, climate: 1.2 },
         ],
       },
       'bat-b': {
@@ -539,18 +556,18 @@
         position: { x: 22, y: 64 },
         metrics: { general: 205, chaleur: 126, froid: 14, elec: 82, co2: 28, eau: 1.52 },
         monthly: [
-          { month: 'jan', chaleur: 25049, elec: 9897, froid: 0, climate: 1.3 },
-          { month: 'fév', chaleur: 21470, elec: 9897, froid: 0, climate: 1.23 },
-          { month: 'mar', chaleur: 19681, elec: 9897, froid: 398, climate: 1.06 },
-          { month: 'avr', chaleur: 16103, elec: 9548, froid: 1193, climate: 0.94 },
-          { month: 'mai', chaleur: 12524, elec: 9548, froid: 1988, climate: 0.81 },
-          { month: 'jun', chaleur: 8946, elec: 9548, froid: 3181, climate: 0.64 },
-          { month: 'jul', chaleur: 7157, elec: 9665, froid: 3976, climate: 0.57 },
-          { month: 'aoû', chaleur: 7157, elec: 9665, froid: 3976, climate: 0.62 },
-          { month: 'sep', chaleur: 10735, elec: 9665, froid: 2783, climate: 0.77 },
-          { month: 'oct', chaleur: 14314, elec: 9548, froid: 1590, climate: 0.98 },
-          { month: 'nov', chaleur: 17892, elec: 9781, froid: 596, climate: 1.12 },
-          { month: 'déc', chaleur: 17892, elec: 9665, froid: 199, climate: 1.25 },
+          { month: 'jan', chaleur: 25049, elec: 9897, froid: 0, eau: 173, climate: 1.3 },
+          { month: 'fév', chaleur: 21470, elec: 9897, froid: 0, eau: 162, climate: 1.23 },
+          { month: 'mar', chaleur: 19681, elec: 9897, froid: 398, eau: 162, climate: 1.06 },
+          { month: 'avr', chaleur: 16103, elec: 9548, froid: 1193, eau: 173, climate: 0.94 },
+          { month: 'mai', chaleur: 12524, elec: 9548, froid: 1988, eau: 183, climate: 0.81 },
+          { month: 'jun', chaleur: 8946, elec: 9548, froid: 3181, eau: 194, climate: 0.64 },
+          { month: 'jul', chaleur: 7157, elec: 9665, froid: 3976, eau: 205, climate: 0.57 },
+          { month: 'aoû', chaleur: 7157, elec: 9665, froid: 3976, eau: 227, climate: 0.62 },
+          { month: 'sep', chaleur: 10735, elec: 9665, froid: 2783, eau: 216, climate: 0.77 },
+          { month: 'oct', chaleur: 14314, elec: 9548, froid: 1590, eau: 183, climate: 0.98 },
+          { month: 'nov', chaleur: 17892, elec: 9781, froid: 596, eau: 140, climate: 1.12 },
+          { month: 'déc', chaleur: 17892, elec: 9665, froid: 199, eau: 140, climate: 1.25 },
         ],
       },
       'bat-c': {
@@ -560,18 +577,18 @@
         position: { x: 38, y: 48 },
         metrics: { general: 191, chaleur: 115, froid: 13, elec: 77, co2: 25, eau: 1.36 },
         monthly: [
-          { month: 'jan', chaleur: 25438, elec: 10341, froid: 0, climate: 1.21 },
-          { month: 'fév', chaleur: 21804, elec: 10341, froid: 0, climate: 1.14 },
-          { month: 'mar', chaleur: 19987, elec: 10341, froid: 411, climate: 0.99 },
-          { month: 'avr', chaleur: 16353, elec: 9976, froid: 1232, climate: 0.87 },
-          { month: 'mai', chaleur: 12719, elec: 9976, froid: 2054, climate: 0.76 },
-          { month: 'jun', chaleur: 9085, elec: 9976, froid: 3286, climate: 0.6 },
-          { month: 'jul', chaleur: 7268, elec: 10098, froid: 4108, climate: 0.53 },
-          { month: 'aoû', chaleur: 7268, elec: 10098, froid: 4108, climate: 0.58 },
-          { month: 'sep', chaleur: 10902, elec: 10098, froid: 2876, climate: 0.72 },
-          { month: 'oct', chaleur: 14536, elec: 9976, froid: 1643, climate: 0.91 },
-          { month: 'nov', chaleur: 18170, elec: 10219, froid: 616, climate: 1.05 },
-          { month: 'déc', chaleur: 18170, elec: 10098, froid: 205, climate: 1.16 },
+          { month: 'jan', chaleur: 25438, elec: 10341, froid: 0, eau: 171, climate: 1.21 },
+          { month: 'fév', chaleur: 21804, elec: 10341, froid: 0, eau: 161, climate: 1.14 },
+          { month: 'mar', chaleur: 19987, elec: 10341, froid: 411, eau: 161, climate: 0.99 },
+          { month: 'avr', chaleur: 16353, elec: 9976, froid: 1232, eau: 172, climate: 0.87 },
+          { month: 'mai', chaleur: 12719, elec: 9976, froid: 2054, eau: 183, climate: 0.76 },
+          { month: 'jun', chaleur: 9085, elec: 9976, froid: 3286, eau: 193, climate: 0.6 },
+          { month: 'jul', chaleur: 7268, elec: 10098, froid: 4108, eau: 204, climate: 0.53 },
+          { month: 'aoû', chaleur: 7268, elec: 10098, froid: 4108, eau: 226, climate: 0.58 },
+          { month: 'sep', chaleur: 10902, elec: 10098, froid: 2876, eau: 215, climate: 0.72 },
+          { month: 'oct', chaleur: 14536, elec: 9976, froid: 1643, eau: 183, climate: 0.91 },
+          { month: 'nov', chaleur: 18170, elec: 10219, froid: 616, eau: 140, climate: 1.05 },
+          { month: 'déc', chaleur: 18170, elec: 10098, froid: 205, eau: 140, climate: 1.16 },
         ],
       },
       'bat-d': {
@@ -581,18 +598,18 @@
         position: { x: 58, y: 38 },
         metrics: { general: 214, chaleur: 134, froid: 16, elec: 89, co2: 30, eau: 1.62 },
         monthly: [
-          { month: 'jan', chaleur: 37895, elec: 15281, froid: 0, climate: 1.19 },
-          { month: 'fév', chaleur: 32482, elec: 15281, froid: 0, climate: 1.12 },
-          { month: 'mar', chaleur: 29775, elec: 15281, froid: 646, climate: 0.97 },
-          { month: 'avr', chaleur: 24361, elec: 14742, froid: 1939, climate: 0.85 },
-          { month: 'mai', chaleur: 18948, elec: 14742, froid: 3232, climate: 0.74 },
-          { month: 'jun', chaleur: 13534, elec: 14742, froid: 5171, climate: 0.59 },
-          { month: 'jul', chaleur: 10827, elec: 14922, froid: 6464, climate: 0.52 },
-          { month: 'aoû', chaleur: 10827, elec: 14922, froid: 6464, climate: 0.57 },
-          { month: 'sep', chaleur: 16241, elec: 14922, froid: 4525, climate: 0.7 },
-          { month: 'oct', chaleur: 21654, elec: 14742, froid: 2586, climate: 0.89 },
-          { month: 'nov', chaleur: 27068, elec: 15102, froid: 970, climate: 1.03 },
-          { month: 'déc', chaleur: 27068, elec: 14922, froid: 323, climate: 1.14 },
+          { month: 'jan', chaleur: 37895, elec: 15281, froid: 0, eau: 261, climate: 1.19 },
+          { month: 'fév', chaleur: 32482, elec: 15281, froid: 0, eau: 245, climate: 1.12 },
+          { month: 'mar', chaleur: 29775, elec: 15281, froid: 646, eau: 245, climate: 0.97 },
+          { month: 'avr', chaleur: 24361, elec: 14742, froid: 1939, eau: 262, climate: 0.85 },
+          { month: 'mai', chaleur: 18948, elec: 14742, froid: 3232, eau: 278, climate: 0.74 },
+          { month: 'jun', chaleur: 13534, elec: 14742, froid: 5171, eau: 295, climate: 0.59 },
+          { month: 'jul', chaleur: 10827, elec: 14922, froid: 6464, eau: 311, climate: 0.52 },
+          { month: 'aoû', chaleur: 10827, elec: 14922, froid: 6464, eau: 344, climate: 0.57 },
+          { month: 'sep', chaleur: 16241, elec: 14922, froid: 4525, eau: 327, climate: 0.7 },
+          { month: 'oct', chaleur: 21654, elec: 14742, froid: 2586, eau: 278, climate: 0.89 },
+          { month: 'nov', chaleur: 27068, elec: 15102, froid: 970, eau: 213, climate: 1.03 },
+          { month: 'déc', chaleur: 27068, elec: 14922, froid: 323, eau: 213, climate: 1.14 },
         ],
       },
       'bat-e': {
@@ -602,18 +619,18 @@
         position: { x: 72, y: 76 },
         metrics: { general: 174, chaleur: 101, froid: 9, elec: 70, co2: 22, eau: 1.18 },
         monthly: [
-          { month: 'jan', chaleur: 27997, elec: 11781, froid: 0, climate: 1.35 },
-          { month: 'fév', chaleur: 23998, elec: 11781, froid: 0, climate: 1.27 },
-          { month: 'mar', chaleur: 21998, elec: 11781, froid: 356, climate: 1.1 },
-          { month: 'avr', chaleur: 17998, elec: 11365, froid: 1069, climate: 0.97 },
-          { month: 'mai', chaleur: 13999, elec: 11365, froid: 1782, climate: 0.84 },
-          { month: 'jun', chaleur: 9999, elec: 11365, froid: 2851, climate: 0.67 },
-          { month: 'jul', chaleur: 7999, elec: 11504, froid: 3564, climate: 0.59 },
-          { month: 'aoû', chaleur: 7999, elec: 11504, froid: 3564, climate: 0.65 },
-          { month: 'sep', chaleur: 11999, elec: 11504, froid: 2495, climate: 0.8 },
-          { month: 'oct', chaleur: 15998, elec: 11365, froid: 1426, climate: 1.02 },
-          { month: 'nov', chaleur: 19998, elec: 11642, froid: 535, climate: 1.17 },
-          { month: 'déc', chaleur: 19998, elec: 11504, froid: 178, climate: 1.3 },
+          { month: 'jan', chaleur: 27997, elec: 11781, froid: 0, eau: 186, climate: 1.35 },
+          { month: 'fév', chaleur: 23998, elec: 11781, froid: 0, eau: 175, climate: 1.27 },
+          { month: 'mar', chaleur: 21998, elec: 11781, froid: 356, eau: 175, climate: 1.1 },
+          { month: 'avr', chaleur: 17998, elec: 11365, froid: 1069, eau: 187, climate: 0.97 },
+          { month: 'mai', chaleur: 13999, elec: 11365, froid: 1782, eau: 199, climate: 0.84 },
+          { month: 'jun', chaleur: 9999, elec: 11365, froid: 2851, eau: 210, climate: 0.67 },
+          { month: 'jul', chaleur: 7999, elec: 11504, froid: 3564, eau: 222, climate: 0.59 },
+          { month: 'aoû', chaleur: 7999, elec: 11504, froid: 3564, eau: 245, climate: 0.65 },
+          { month: 'sep', chaleur: 11999, elec: 11504, froid: 2495, eau: 234, climate: 0.8 },
+          { month: 'oct', chaleur: 15998, elec: 11365, froid: 1426, eau: 199, climate: 1.02 },
+          { month: 'nov', chaleur: 19998, elec: 11642, froid: 535, eau: 152, climate: 1.17 },
+          { month: 'déc', chaleur: 19998, elec: 11504, froid: 178, eau: 152, climate: 1.3 },
         ],
       },
     },
@@ -880,6 +897,74 @@
     },
   };
 
+  const WATER_BASE_DATA = {
+    mix: {
+      sources: {
+        reseauEau: 0.62,
+        nappe: 0.18,
+        pluie: 0.12,
+        recyclee: 0.08,
+      },
+      uses: {
+        sanitaires: 0.63,
+        hvac: 0.14,
+        nettoyage: 0.12,
+        irrigation: 0.07,
+        pertes: 0.04,
+      },
+      labels: {
+        sources: {
+          reseauEau: 'Réseau public',
+          nappe: 'Nappe phréatique',
+          pluie: 'Eau de pluie',
+          recyclee: 'Eau recyclée',
+        },
+        uses: {
+          sanitaires: 'Sanitaires',
+          hvac: 'HVAC / humidification',
+          nettoyage: 'Nettoyage',
+          irrigation: 'Irrigation',
+          pertes: 'Pertes & fuites',
+        },
+      },
+    },
+    trend: [
+      { year: 2021, intensity: 1.62 },
+      { year: 2022, intensity: 1.56 },
+      { year: 2023, intensity: 1.51 },
+      { year: 2024, intensity: 1.45 },
+      { year: 2025, intensity: 1.4 },
+    ],
+    benchmark: {
+      intensity: {
+        bins: [
+          { key: '0-0.8', label: '0-0,8', min: 0, max: 0.8 },
+          { key: '0.8-1.1', label: '0,8-1,1', min: 0.8, max: 1.1 },
+          { key: '1.1-1.4', label: '1,1-1,4', min: 1.1, max: 1.4 },
+          { key: '1.4-1.8', label: '1,4-1,8', min: 1.4, max: 1.8 },
+          { key: '≥1.8', label: '≥1,8', min: 1.8, max: null },
+        ],
+        curve: [220, 680, 940, 520, 180],
+        totalBuildings: 2540,
+      },
+      total: {
+        bins: [
+          { key: '0-1800', label: '0-1 800 m³', min: 0, max: 1800 },
+          { key: '1800-2600', label: '1 800-2 600 m³', min: 1800, max: 2600 },
+          { key: '2600-3400', label: '2 600-3 400 m³', min: 2600, max: 3400 },
+          { key: '3400-4500', label: '3 400-4 500 m³', min: 3400, max: 4500 },
+          { key: '≥4500', label: '≥4 500 m³', min: 4500, max: null },
+        ],
+        curve: [210, 590, 760, 410, 160],
+        totalBuildings: 2540,
+      },
+    },
+    mapThresholds: {
+      kwhm2: [1.0, 1.4, 1.8],
+      kwh: [2200, 3600, 5200],
+    },
+  };
+
   const METRIC_KEYS = Object.keys(ENERGY_BASE_DATA.metrics);
 
   const MIX_LABELS = {
@@ -904,6 +989,7 @@
     if (norm.includes('scope 2') || norm.includes('indirect')) return 'scope2';
     if (norm.includes('combust')) return 'combustibles';
     if (norm.includes('foss')) return 'combustibles';
+    if (norm.includes('reseau') && norm.includes('eau')) return 'reseauEau';
     if (norm.includes('reseau de chaleur') || norm.includes('reseau chaleur')) return 'reseauChaleur';
     if (norm.includes('electric') && norm.includes('reseau')) return 'electriciteReseau';
     if ((norm.includes('electric') && norm.includes('vert')) || norm.includes('photovolta') || norm.includes('pv')) return 'electriciteVerte';
@@ -913,9 +999,14 @@
     if (norm.includes('gaz')) return 'gaz';
     if (norm.includes('pompe') || norm.includes('pac')) return 'pac';
     if (norm.includes('reseau')) return 'reseau';
+    if (norm.includes('nappe')) return 'nappe';
+    if (norm.includes('pluie')) return 'pluie';
+    if (norm.includes('recycl') || norm.includes('reutil')) return 'recyclee';
     if (norm.includes('biomass') || norm.includes('granule')) return 'biomasse';
     if (norm.includes('chauff')) return 'chauffage';
-    if (norm.includes('sanit') || norm.includes('ecs')) return 'ecs';
+    if (norm.includes('sanit') && norm.includes('chaud')) return 'ecs';
+    if (norm.includes('sanit')) return 'sanitaires';
+    if (norm.includes('ecs')) return 'ecs';
     if (norm.includes('ventil') || norm.includes('cta')) return 'ventilation';
     if (norm.includes('compression')) return 'compression';
     if (norm.includes('absorption')) return 'absorption';
@@ -926,6 +1017,9 @@
     if (norm.includes('hvac') || norm.includes('cvc')) return 'hvac';
     if (norm.includes('process')) return 'process';
     if (norm.includes('confort')) return 'confort';
+    if (norm.includes('nettoy') || norm.includes('menage')) return 'nettoyage';
+    if (norm.includes('irrig') || norm.includes('arros')) return 'irrigation';
+    if (norm.includes('perte') || norm.includes('fuite')) return 'pertes';
     if (norm.includes('serveur') || norm.includes('inform') || norm.endsWith('it')) return 'it';
     if (norm.includes('service')) return 'services';
     return null;
@@ -1767,6 +1861,7 @@
       chaleur: 0,
       elec: 0,
       froid: 0,
+      eau: 0,
       climate: 0,
       weight: 0,
     }));
@@ -1850,6 +1945,7 @@
             bucket.chaleur += Number(entry?.chaleur) || 0;
             bucket.elec += Number(entry?.elec) || 0;
             bucket.froid += Number(entry?.froid) || 0;
+            bucket.eau += Number(entry?.eau) || 0;
             const climate = Number(entry?.climate);
             if (Number.isFinite(climate)) {
               bucket.climate += climate * sre;
@@ -1963,6 +2059,7 @@
         chaleur: entry.chaleur,
         elec: entry.elec,
         froid: entry.froid,
+        eau: entry.eau,
         total,
         climate,
       };
@@ -2015,6 +2112,7 @@
           froid: COLD_BASE_DATA.benchmark,
           elec: ELEC_BASE_DATA.benchmark,
           co2: CO2_BASE_DATA.benchmark,
+          eau: WATER_BASE_DATA.benchmark,
         },
       },
     };
@@ -2039,6 +2137,31 @@
       const decimals = mode === 'kwhm2' ? (metric.decimals || 0) : 0;
       el.textContent = formatEnergyDisplay(value, mode, decimals);
     });
+  };
+
+  const updateWaterSummary = (mode, aggregated) => {
+    const valueEl = document.querySelector('[data-water-total]');
+    if (!valueEl) return;
+    const unitEl = document.querySelector('[data-water-total-unit]');
+    const metricConfig = ENERGY_BASE_DATA.metrics?.eau || {};
+    const waterMetric = aggregated?.eau || {};
+    const intensity = Number(waterMetric.intensity);
+    const total = Number(waterMetric.total);
+    const sre = Number(waterMetric.sre) || Number(aggregated?.general?.sre) || 0;
+    const fallbackIntensity = Number(metricConfig.intensity);
+    let value = mode === 'kwhm2' ? intensity : total;
+    if (!Number.isFinite(value) || value <= 0) {
+      if (mode === 'kwhm2') {
+        value = Number.isFinite(fallbackIntensity) ? fallbackIntensity : 0;
+      } else {
+        value = (Number.isFinite(fallbackIntensity) ? fallbackIntensity : 0) * (Number.isFinite(sre) ? sre : 0);
+      }
+    }
+    const decimals = mode === 'kwhm2' ? (metricConfig.decimals || 0) : 0;
+    valueEl.textContent = formatEnergyDisplay(value, mode, decimals);
+    if (unitEl) {
+      unitEl.textContent = getUnitLabel('eau', mode);
+    }
   };
 
   const updateEnergyMeters = (aggregated) => {
@@ -2075,6 +2198,7 @@
         else if (scope === 'froid') metricKey = 'froid';
         else if (scope === 'elec') metricKey = 'elec';
         else if (scope === 'co2') metricKey = 'co2';
+        else if (scope === 'eau') metricKey = 'eau';
         else metricKey = 'general';
       }
       const unitLabel = getUnitLabel(metricKey, mode);
@@ -2086,9 +2210,13 @@
             ? ELEC_BASE_DATA.trend
             : scope === 'co2'
               ? CO2_BASE_DATA.trend
-              : ENERGY_BASE_DATA.trend;
+              : scope === 'eau'
+                ? WATER_BASE_DATA.trend
+                : ENERGY_BASE_DATA.trend;
       const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
       const sre = mode === 'kwhm2' ? 1 : (Number(metricData.sre) || Number(aggregatedMetrics.general?.sre) || computeFallbackSre());
+      const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || { decimals: 0 };
+      const decimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
 
       chart.querySelectorAll('.chart-unit').forEach(unit => { unit.textContent = unitLabel; });
 
@@ -2100,7 +2228,7 @@
         const resolvedIntensity = Number(intensity) || 0;
         const displayValue = mode === 'kwhm2' ? resolvedIntensity : resolvedIntensity * sre;
         values.push(displayValue);
-        const valueText = formatEnergyDisplay(displayValue, mode, 0);
+        const valueText = formatEnergyDisplay(displayValue, mode, decimals);
         const barValue = bar.querySelector('.bar-value');
         if (barValue) barValue.textContent = valueText;
         bar.setAttribute('aria-label', `${year} : ${valueText} ${unitLabel}`);
@@ -2365,6 +2493,55 @@
           }).join(', ');
           roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
         }
+        card.classList.toggle('is-empty', baseAmount <= 0);
+        return;
+      }
+
+      if (scope === 'eau') {
+        const datasetName = card.dataset.waterDataset || 'sources';
+        const shares = datasetName === 'uses'
+          ? WATER_BASE_DATA.mix.uses
+          : WATER_BASE_DATA.mix.sources;
+        const labels = datasetName === 'uses'
+          ? WATER_BASE_DATA.mix.labels.uses
+          : WATER_BASE_DATA.mix.labels.sources;
+        if (!shares || !labels) return;
+
+        const waterMetric = aggregated?.eau || {};
+        const perM2 = Number(waterMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.eau?.intensity) || 0;
+        const sre = Number(waterMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
+        const total = Number(waterMetric.total) || perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const unit = getUnitLabel('eau', mode);
+
+        updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
+        updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);
+        updateBars(card.querySelectorAll('.mix-bar'), shares, baseAmount, unit);
+        updateRings(card.querySelectorAll('.mix-ring'), shares, baseAmount, unit);
+
+        const donut = card.querySelector('.mix-donut.water');
+        if (donut && datasetName !== 'uses') {
+          donut.style.setProperty('--mix-reseau-eau', `${(shares.reseauEau || 0) * 100}`);
+          donut.style.setProperty('--mix-nappe', `${(shares.nappe || 0) * 100}`);
+          donut.style.setProperty('--mix-pluie', `${(shares.pluie || 0) * 100}`);
+          donut.style.setProperty('--mix-recyclee', `${(shares.recyclee || 0) * 100}`);
+          const center = donut.querySelector('.mix-donut__center');
+          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          const labelEl = donut.querySelector('.mix-donut__label');
+          if (labelEl) labelEl.textContent = unit;
+        }
+
+        const roleImg = card.querySelector('[role="img"]');
+        if (roleImg) {
+          const labelBase = card.getAttribute('aria-label') || 'Répartition de l’eau';
+          const description = Object.entries(labels).map(([key, text]) => {
+            const share = shares[key] || 0;
+            const value = baseAmount * share;
+            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+          }).join(', ');
+          roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
+        }
+
         card.classList.toggle('is-empty', baseAmount <= 0);
         return;
       }
@@ -2661,7 +2838,9 @@
             ? ELEC_BASE_DATA.mapThresholds
             : metricKey === 'co2'
               ? CO2_BASE_DATA.mapThresholds
-              : ENERGY_BASE_DATA.mapThresholds;
+              : metricKey === 'eau'
+                ? WATER_BASE_DATA.mapThresholds
+                : ENERGY_BASE_DATA.mapThresholds;
       const thresholds = thresholdsSource?.[mode] || [];
       const metricLabel = metricKey === 'chaleur'
         ? 'chaleur'
@@ -2671,7 +2850,9 @@
             ? 'électricité'
             : metricKey === 'co2'
               ? 'émissions'
-              : 'énergie';
+              : metricKey === 'eau'
+                ? 'eau'
+                : 'énergie';
 
       const classify = (value) => {
         if (!Number.isFinite(value)) return 'map-marker--medium';
@@ -2754,6 +2935,7 @@
     if (!cards.length) return;
     const cssClassForSeries = (seriesKey) => {
       if (seriesKey === 'elec') return 'electricite';
+      if (seriesKey === 'eau') return 'eau';
       if (seriesKey === 'co2scope1') return 'scope1';
       if (seriesKey === 'co2scope2') return 'scope2';
       return seriesKey;
@@ -2765,6 +2947,7 @@
       if (seriesKey === 'chaleur') return 'Chaleur';
       if (seriesKey === 'elec') return 'Électricité';
       if (seriesKey === 'froid') return 'Froid';
+      if (seriesKey === 'eau') return 'Eau';
       return seriesKey;
     };
 
@@ -2792,6 +2975,8 @@
       const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
       const sre = Number(metricData.sre) || 0;
       const divisor = mode === 'kwhm2' && sre > 0 ? sre : 1;
+      const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || { decimals: 0 };
+      const valueDecimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
 
       const dataset = Array.isArray(monthly)
         ? monthly.map(item => {
@@ -2841,10 +3026,10 @@
             segment.style.setProperty('--value', Math.max(value, 0));
             segment.setAttribute('aria-hidden', 'true');
             stack.append(segment);
-            segmentsDescription.push(`${seriesLabel(seriesKey)} ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`);
+            segmentsDescription.push(`${seriesLabel(seriesKey)} ${formatEnergyDisplay(value, mode, valueDecimals)} ${unit}`);
           });
 
-          const totalValue = formatEnergyDisplay(item.total, mode, mode === 'kwhm2' ? 0 : 0);
+          const totalValue = formatEnergyDisplay(item.total, mode, valueDecimals);
           bar.setAttribute('aria-label', `${item.label} : ${totalValue} ${unit} — ${segmentsDescription.join(', ')}`);
 
           const valueEl = document.createElement('span');
@@ -2883,7 +3068,7 @@
           summary.textContent = 'Sélection vide — aucune tendance mensuelle.';
         } else {
           const average = dataset.reduce((acc, item) => acc + item.total, 0) / dataset.length;
-          summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+          summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, valueDecimals)} ${unit}`;
         }
       }
 
@@ -3053,6 +3238,7 @@
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
+    updateWaterSummary(mode, aggregated);
     updateEnergyTrendCharts(mode, aggregated);
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);

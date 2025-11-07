@@ -126,19 +126,20 @@
       <nav class="tree" role="tree">
         <button class="tree-node" role="treeitem" aria-selected="true" aria-level="1">
           <input type="checkbox" class="tree-check" />
-          Parc <span class="badge">2 sites</span>
+          Parc <span class="badge">6 sites</span>
         </button>
 
         <div class="tree-group" role="group" aria-level="2">
           <button class="tree-node toggle" role="treeitem" aria-expanded="true">
             <span class="chev" aria-hidden="true">▾</span>
             <input type="checkbox" class="tree-check" />
-            Site Alpha <span class="badge">3 bât.</span>
+            Campus de la Rive <span class="badge">4 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" data-building="bat-a" data-sre="1640"><input type="checkbox" class="tree-check" /> Bâtiment A</button></li>
-            <li><button class="tree-leaf" data-building="bat-b" data-sre="1420"><input type="checkbox" class="tree-check" /> Bâtiment B</button></li>
-            <li><button class="tree-leaf" data-building="bat-c" data-sre="1580"><input type="checkbox" class="tree-check" /> Bâtiment C</button></li>
+            <li><button class="tree-leaf" data-building="rive-1" data-sre="410" data-tags="école campus rive"><input type="checkbox" class="tree-check" /> Pavillon Horizon</button></li>
+            <li><button class="tree-leaf" data-building="rive-2" data-sre="410" data-tags="école laboratoire"><input type="checkbox" class="tree-check" /> Laboratoire Lumen</button></li>
+            <li><button class="tree-leaf" data-building="rive-3" data-sre="410" data-tags="école ateliers"><input type="checkbox" class="tree-check" /> Atelier Delta</button></li>
+            <li><button class="tree-leaf" data-building="rive-4" data-sre="410" data-tags="école sport"><input type="checkbox" class="tree-check" /> Gymnase du Rivage</button></li>
           </ul>
         </div>
 
@@ -146,11 +147,65 @@
           <button class="tree-node toggle" role="treeitem" aria-expanded="true">
             <span class="chev" aria-hidden="true">▾</span>
             <input type="checkbox" class="tree-check" />
-            Site Beta <span class="badge">2 bât.</span>
+            Quartier des Augustins <span class="badge">4 bât.</span>
           </button>
           <ul class="tree-children" role="group">
-            <li><button class="tree-leaf" data-building="bat-d" data-sre="2020"><input type="checkbox" class="tree-check" /> Bâtiment D</button></li>
-            <li><button class="tree-leaf" data-building="bat-e" data-sre="1980"><input type="checkbox" class="tree-check" /> Bâtiment E</button></li>
+            <li><button class="tree-leaf" data-building="aug-1" data-sre="355" data-tags="piscine augustins"><input type="checkbox" class="tree-check" /> Piscine Bellefontaine</button></li>
+            <li><button class="tree-leaf" data-building="aug-2" data-sre="355" data-tags="aquatique bien-être"><input type="checkbox" class="tree-check" /> Centre Aquatique Ondine</button></li>
+            <li><button class="tree-leaf" data-building="aug-3" data-sre="355" data-tags="piscine bassin"><input type="checkbox" class="tree-check" /> Bassin des Arènes</button></li>
+            <li><button class="tree-leaf" data-building="aug-4" data-sre="355" data-tags="bien-être"><input type="checkbox" class="tree-check" /> Studio Wellness Augustins</button></li>
+          </ul>
+        </div>
+
+        <div class="tree-group" role="group" aria-level="2">
+          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+            <span class="chev" aria-hidden="true">▾</span>
+            <input type="checkbox" class="tree-check" />
+            Centre Horizon <span class="badge">4 bât.</span>
+          </button>
+          <ul class="tree-children" role="group">
+            <li><button class="tree-leaf" data-building="hzn-1" data-sre="395" data-tags="administration tour"><input type="checkbox" class="tree-check" /> Tour Confluence</button></li>
+            <li><button class="tree-leaf" data-building="hzn-2" data-sre="395" data-tags="administration bureaux"><input type="checkbox" class="tree-check" /> Bâtiment Vernal</button></li>
+            <li><button class="tree-leaf" data-building="hzn-3" data-sre="395" data-tags="administration maison"><input type="checkbox" class="tree-check" /> Maison Aérion</button></li>
+            <li><button class="tree-leaf" data-building="hzn-4" data-sre="395" data-tags="administration hôtel"><input type="checkbox" class="tree-check" /> Hôtel Administratif Orangerie</button></li>
+          </ul>
+        </div>
+
+        <div class="tree-group" role="group" aria-level="2">
+          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+            <span class="chev" aria-hidden="true">▾</span>
+            <input type="checkbox" class="tree-check" />
+            TechnoParc Atlas <span class="badge">4 bât.</span>
+          </button>
+          <ul class="tree-children" role="group">
+            <li><button class="tree-leaf" data-building="atlas-1" data-sre="505" data-tags="bureau tour"><input type="checkbox" class="tree-check" /> Tour Vertex</button></li>
+            <li><button class="tree-leaf" data-building="atlas-2" data-sre="505" data-tags="bureau mobilité"><input type="checkbox" class="tree-check" /> Pôle Mobilis</button></li>
+            <li><button class="tree-leaf" data-building="atlas-3" data-sre="505" data-tags="bureau ateliers"><input type="checkbox" class="tree-check" /> Bureaux Forge Nord</button></li>
+            <li><button class="tree-leaf" data-building="atlas-4" data-sre="505" data-tags="bureau studios"><input type="checkbox" class="tree-check" /> Studios Atelier 5</button></li>
+          </ul>
+        </div>
+
+        <div class="tree-group" role="group" aria-level="2">
+          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+            <span class="chev" aria-hidden="true">▾</span>
+            <input type="checkbox" class="tree-check" />
+            Résidence des Cèdres <span class="badge">2 bât.</span>
+          </button>
+          <ul class="tree-children" role="group">
+            <li><button class="tree-leaf" data-building="cedlac-1" data-sre="495" data-tags="culture salle"><input type="checkbox" class="tree-check" /> Salle Lyrique</button></li>
+            <li><button class="tree-leaf" data-building="cedlac-2" data-sre="495" data-tags="culture galerie"><input type="checkbox" class="tree-check" /> Galerie des Cimes</button></li>
+          </ul>
+        </div>
+
+        <div class="tree-group" role="group" aria-level="2">
+          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+            <span class="chev" aria-hidden="true">▾</span>
+            <input type="checkbox" class="tree-check" />
+            Écoquartier du Lac <span class="badge">2 bât.</span>
+          </button>
+          <ul class="tree-children" role="group">
+            <li><button class="tree-leaf" data-building="cedlac-3" data-sre="495" data-tags="culture pavillon"><input type="checkbox" class="tree-check" /> Pavillon Promenade</button></li>
+            <li><button class="tree-leaf" data-building="cedlac-4" data-sre="495" data-tags="culture amphithéâtre"><input type="checkbox" class="tree-check" /> Amphithéâtre du Lac</button></li>
           </ul>
         </div>
       </nav>
@@ -301,7 +356,7 @@
 
             <!-- Général -->
             <button role="tab" aria-selected="true" aria-expanded="true" id="tab-energie" aria-controls="panel-energie"
-              class="kpi" data-sites="5" data-sre="8640" data-status="warn">
+              class="kpi" data-sites="20" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -328,7 +383,7 @@
 
             <!-- Chaleur -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-chaleur"
-              aria-controls="panel-chaleur" class="kpi" data-sites="5" data-sre="8640" data-status="warn">
+              aria-controls="panel-chaleur" class="kpi" data-sites="20" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -354,7 +409,7 @@
 
             <!-- Froid -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-froid" aria-controls="panel-froid"
-              class="kpi" data-sites="5" data-sre="8640" data-status="good">
+              class="kpi" data-sites="20" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8"
@@ -380,7 +435,7 @@
 
             <!-- Électricité -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-elec" aria-controls="panel-elec"
-              class="kpi" data-sites="5" data-sre="8640" data-status="good">
+              class="kpi" data-sites="20" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">
@@ -404,7 +459,7 @@
 
             <!-- CO₂ -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-co2" aria-controls="panel-co2"
-              class="kpi" data-sites="5" data-sre="8640" data-status="warn">
+              class="kpi" data-sites="20" data-sre="8640" data-status="warn">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"
@@ -430,7 +485,7 @@
 
             <!-- Eau -->
             <button role="tab" aria-selected="false" aria-expanded="false" id="tab-eau" aria-controls="panel-eau"
-              class="kpi" data-sites="5" data-sre="8640" data-status="good">
+              class="kpi" data-sites="20" data-sre="8640" data-status="good">
               <span class="kpi-head">
                 <span class="kpi-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor">

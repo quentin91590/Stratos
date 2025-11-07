@@ -1666,6 +1666,121 @@
                           </span>
                         </button>
                       </li>
+                      <li data-chart-group="co2-scopes">
+                        <button type="button" class="catalog-card" data-chart-type="co2-scopes-donut" data-chart-group="co2-scopes" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--donut-primary">
+                              <span>64%</span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Scopes 1 / 2</span>
+                            <span class="catalog-card__meta">Répartition directe / indirecte</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-sources">
+                        <button type="button" class="catalog-card" data-chart-type="co2-sources-bars" data-chart-group="co2-sources" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-mix preview-mix--bars-primary">
+                              <span class="preview-mix__bar" style="--w:80"></span>
+                              <span class="preview-mix__bar" style="--w:44"></span>
+                              <span class="preview-mix__bar" style="--w:28"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Sources d'émission</span>
+                            <span class="catalog-card__meta">Combustibles, réseau, élec</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-ranking">
+                        <button type="button" class="catalog-card" data-chart-type="co2-ranking" data-chart-group="co2-ranking" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-ranking">
+                              <span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Top émetteurs</span>
+                            <span class="catalog-card__meta">Bâtiments les plus émetteurs</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-trend">
+                        <button type="button" class="catalog-card" data-chart-type="co2-intensity-bars" data-chart-group="co2-trend" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-bars">
+                              <span style="--h:60"></span>
+                              <span style="--h:54"></span>
+                              <span style="--h:48"></span>
+                              <span style="--h:44" data-active></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Tendance CO₂</span>
+                            <span class="catalog-card__meta">Évolution annuelle</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-monthly">
+                        <button type="button" class="catalog-card" data-chart-type="co2-monthly" data-chart-group="co2-monthly" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-monthly preview-monthly--stacked">
+                              <span></span><span></span><span></span><span></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Profil mensuel CO₂</span>
+                            <span class="catalog-card__meta">Scopes 1 et 2</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-distribution">
+                        <button type="button" class="catalog-card" data-chart-type="co2-distribution" data-chart-group="co2-distribution" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-distribution preview-distribution--bars">
+                              <span style="--h:52"></span>
+                              <span style="--h:62"></span>
+                              <span style="--h:34"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Histogramme CO₂</span>
+                            <span class="catalog-card__meta">Comparaison benchmark</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-typology">
+                        <button type="button" class="catalog-card" data-chart-type="typology-columns" data-chart-group="co2-typology" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-typology">
+                              <span style="--h:72"></span>
+                              <span style="--h:48"></span>
+                              <span style="--h:36"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Typologies CO₂</span>
+                            <span class="catalog-card__meta">Émissions par usage</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-group="co2-map">
+                        <button type="button" class="catalog-card" data-chart-type="map-bubbles" data-chart-group="co2-map" aria-pressed="true">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-map preview-map--bubbles">
+                              <span class="bubble bubble--1"></span>
+                              <span class="bubble bubble--2"></span>
+                              <span class="bubble bubble--3"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Carte CO₂</span>
+                            <span class="catalog-card__meta">Intensité par bâtiment</span>
+                          </span>
+                        </button>
+                      </li>
                       <li data-chart-group="heat-trend">
                         <button type="button" class="catalog-card" data-chart-type="intensity-line" data-chart-group="heat-trend" aria-pressed="false">
                           <span class="catalog-card__preview" aria-hidden="true">
@@ -2788,9 +2903,342 @@
               </section>
 
               <section id="panel-co2" role="tabpanel" aria-labelledby="tab-co2" hidden>
-                <h3>CO₂ (Scope 1+2)</h3>
-                <p>Facteur réseau: 0,10 kgCO₂e/kWh — Gaz: 0,204</p>
-                <div class="meter">
+                <div class="panel-intro">
+                  <h3>CO₂ (Scope 1+2)</h3>
+                  <p>Suivi des émissions directes (combustibles) et indirectes (électricité réseau & froid) pour le périmètre sélectionné.</p>
+                </div>
+
+                <div class="energy-chart-zone co2-chart-zone">
+                  <div class="energy-chart-wrapper">
+                    <div class="energy-chart-stack">
+
+                      <figure class="energy-mix-card" aria-label="Répartition des émissions par scope" data-chart-scope="co2" data-co2-dataset="scopes" data-chart-slot="co2-scopes" data-chart-type="co2-scopes-donut" data-chart-group="co2-scopes">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-scopes">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Scopes d'émissions</span>
+                            <span class="mix-subtitle">Répartition en kgCO₂e</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--donut">
+                            <div class="mix-donut co2" role="img" aria-label="Répartition scopes : 64 % direct, 36 % indirect">
+                              <span class="mix-donut__center">0</span>
+                              <span class="mix-donut__label">kgCO₂e</span>
+                            </div>
+                            <ul class="mix-legend mix-legend--compact">
+                              <li><span class="mix-bullet scope1"></span><span class="mix-label">Direct (scope 1)</span><span class="mix-value">64&nbsp;%</span></li>
+                              <li><span class="mix-bullet scope2"></span><span class="mix-label">Indirect (scope 2)</span><span class="mix-value">36&nbsp;%</span></li>
+                            </ul>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Part respective des émissions directes (combustibles) et indirectes (électricité réseau).</figcaption>
+                      </figure>
+
+                      <template id="chart-template-co2-scopes-donut" data-caption="Répartition des émissions directes et indirectes.">
+                        <div class="energy-mix-content mix-variant mix-variant--donut">
+                          <div class="mix-donut co2" role="img">
+                            <span class="mix-donut__center">0</span>
+                            <span class="mix-donut__label">kgCO₂e</span>
+                          </div>
+                          <ul class="mix-legend mix-legend--compact">
+                            <li><span class="mix-bullet scope1"></span><span class="mix-label">Direct (scope 1)</span><span class="mix-value">—</span></li>
+                            <li><span class="mix-bullet scope2"></span><span class="mix-label">Indirect (scope 2)</span><span class="mix-value">—</span></li>
+                          </ul>
+                        </div>
+                      </template>
+
+                      <template id="chart-template-co2-scopes-bars" data-caption="Histogramme des émissions par scope.">
+                        <div class="energy-mix-content mix-variant mix-variant--bars">
+                          <div class="mix-bars" role="list">
+                            <div class="mix-bar scope1" role="listitem"><span class="mix-bar__label">Direct (scope 1)</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar scope2" role="listitem"><span class="mix-bar__label">Indirect (scope 2)</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-mix-card" aria-label="Origine des émissions CO₂" data-chart-scope="co2" data-co2-dataset="sources" data-chart-slot="co2-sources" data-chart-type="co2-sources-bars" data-chart-group="co2-sources">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-sources">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-mix-header">
+                          <div class="energy-mix-header__titles">
+                            <span class="mix-title">Origine des émissions</span>
+                            <span class="mix-subtitle">Répartition en kgCO₂e</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-mix-content mix-variant mix-variant--bars">
+                            <div class="mix-bars" role="list">
+                              <div class="mix-bar combustibles" role="listitem"><span class="mix-bar__label">Combustibles fossiles</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                              <div class="mix-bar reseau-chaleur" role="listitem"><span class="mix-bar__label">Réseau de chaleur</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                              <div class="mix-bar electricite-reseau" role="listitem"><span class="mix-bar__label">Électricité réseau</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                              <div class="mix-bar electricite-verte" role="listitem"><span class="mix-bar__label">Électricité verte / PV</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Contribution des différentes sources énergétiques aux émissions.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-co2-sources-bars" data-caption="Répartition des émissions par source énergétique.">
+                        <div class="energy-mix-content mix-variant mix-variant--bars">
+                          <div class="mix-bars" role="list">
+                            <div class="mix-bar combustibles" role="listitem"><span class="mix-bar__label">Combustibles fossiles</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar reseau-chaleur" role="listitem"><span class="mix-bar__label">Réseau de chaleur</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar electricite-reseau" role="listitem"><span class="mix-bar__label">Électricité réseau</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                            <div class="mix-bar electricite-verte" role="listitem"><span class="mix-bar__label">Électricité verte / PV</span><span class="mix-bar__track" aria-hidden="true"><span class="mix-bar__fill"></span></span><span class="mix-bar__value">—</span></div>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-ranking-card" aria-label="Bâtiments les plus émetteurs" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-ranking" data-chart-type="co2-ranking" data-chart-group="co2-ranking">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-ranking">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-ranking-header">
+                          <div class="energy-ranking-header__titles">
+                            <span class="ranking-title">Top 5 émissions</span>
+                            <span class="ranking-subtitle">Émissions <span data-ranking-unit>kgCO₂e</span></span>
+                          </div>
+                        </header>
+                        <div class="chart-body">
+                          <div class="energy-ranking" role="presentation">
+                            <ol class="ranking-list" data-ranking-list aria-live="polite" aria-label="Bâtiments les plus émetteurs">
+                              <li class="ranking-item ranking-item--empty" data-ranking-placeholder>Chargement des données…</li>
+                            </ol>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Bâtiments présentant les émissions les plus élevées.</figcaption>
+                      </figure>
+
+                      <figure class="energy-trend-chart" aria-label="Tendance annuelle des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-trend" data-chart-type="co2-intensity-bars" data-chart-group="co2-trend">
+                        <button type="button" class="chart-edit-toggle" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-trend">
+                          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="chart-variant chart-variant--bars">
+                            <div class="chart-title">
+                              <span>Intensité annuelle</span>
+                              <span class="chart-unit">kgCO₂e/m²</span>
+                            </div>
+                            <div class="chart-bars" role="list">
+                              <div class="chart-bar" role="listitem" data-year="2021" aria-label="2021 : 34 kgCO₂e par mètre carré" style="--value:34">
+                                <span class="bar-value">34</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2021</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2022" aria-label="2022 : 31 kgCO₂e par mètre carré" style="--value:31">
+                                <span class="bar-value">31</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2022</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2023" aria-label="2023 : 28 kgCO₂e par mètre carré" style="--value:28">
+                                <span class="bar-value">28</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2023</span>
+                              </div>
+                              <div class="chart-bar is-selected" role="listitem" data-year="2024" aria-label="2024 : 26 kgCO₂e par mètre carré" style="--value:26">
+                                <span class="bar-value">26</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2024</span>
+                              </div>
+                              <div class="chart-bar" role="listitem" data-year="2025" aria-label="2025 : 24 kgCO₂e par mètre carré" style="--value:24">
+                                <span class="bar-value">24</span>
+                                <span class="bar-fill" aria-hidden="true"></span>
+                                <span class="bar-year">2025</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Réduction progressive de l'intensité carbone projetée.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-co2-intensity-bars" data-caption="Tendance annuelle des émissions.">
+                        <div class="chart-variant chart-variant--bars">
+                          <div class="chart-title">
+                            <span>Intensité annuelle</span>
+                            <span class="chart-unit">kgCO₂e/m²</span>
+                          </div>
+                          <div class="chart-bars" role="list"></div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-monthly-card" aria-label="Profil mensuel des émissions" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-monthly" data-chart-type="co2-monthly" data-chart-group="co2-monthly" data-monthly-series="co2scope1,co2scope2">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-monthly">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-monthly-header">
+                          <div class="energy-monthly-header__titles">
+                            <span class="monthly-title">Profil mensuel</span>
+                            <span class="monthly-subtitle">kgCO₂e</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="monthly-chart monthly-chart--co2">
+                            <div class="chart-title">
+                              <span>Répartition par mois</span>
+                              <span class="chart-unit">kgCO₂e</span>
+                            </div>
+                            <div class="monthly-chart__viewport">
+                              <div class="monthly-bars" data-monthly-bars role="list"></div>
+                              <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="monthly-legend">
+                              <span><span class="legend-dot scope1"></span> Scope 1</span>
+                              <span><span class="legend-dot scope2"></span> Scope 2</span>
+                              <span class="legend-line-wrap"><span class="legend-line"></span> Climat</span>
+                            </div>
+                            <p class="monthly-summary" data-monthly-summary>Chargement…</p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Saisonnalité des émissions directes et indirectes.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-co2-monthly" data-caption="Saisonnalité des émissions directes et indirectes.">
+                        <div class="monthly-chart monthly-chart--co2">
+                          <div class="chart-title">
+                            <span>Répartition par mois</span>
+                            <span class="chart-unit">kgCO₂e</span>
+                          </div>
+                          <div class="monthly-chart__viewport">
+                            <div class="monthly-bars" data-monthly-bars role="list"></div>
+                            <svg class="monthly-line" data-monthly-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="monthly-legend">
+                            <span><span class="legend-dot scope1"></span> Scope 1</span>
+                            <span><span class="legend-dot scope2"></span> Scope 2</span>
+                            <span class="legend-line-wrap"><span class="legend-line"></span> Climat</span>
+                          </div>
+                          <p class="monthly-summary" data-monthly-summary></p>
+                        </div>
+                      </template>
+
+                      <figure class="energy-distribution-card" aria-label="Distribution des intensités carbone" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-distribution" data-chart-type="co2-distribution" data-chart-group="co2-distribution">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-distribution">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="distribution-chart distribution-chart--columns">
+                            <div class="chart-title">
+                              <span>Répartition sélection</span>
+                              <span class="chart-unit">kgCO₂e/m²</span>
+                            </div>
+                            <div class="distribution-graph">
+                              <div class="distribution-bars" data-distribution-bars role="list"></div>
+                              <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline points=""></polyline>
+                              </svg>
+                            </div>
+                            <div class="distribution-legend">
+                              <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                              <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>7 200 bât.</span>)</span>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Positionnement des intensités carbone face au benchmark sectoriel.</figcaption>
+                      </figure>
+
+                      <template id="chart-template-co2-distribution" data-caption="Distribution des intensités carbone.">
+                        <div class="distribution-chart distribution-chart--columns">
+                          <div class="chart-title">
+                            <span>Répartition sélection</span>
+                            <span class="chart-unit">kgCO₂e/m²</span>
+                          </div>
+                          <div class="distribution-graph">
+                            <div class="distribution-bars" data-distribution-bars role="list"></div>
+                            <svg class="distribution-line" data-distribution-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                              <polyline points=""></polyline>
+                            </svg>
+                          </div>
+                          <div class="distribution-legend">
+                            <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
+                            <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>7 200 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
+
+                      <figure class="energy-typology-card" aria-label="Émissions par typologie" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-typology" data-chart-type="typology-columns" data-chart-group="co2-typology">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-typology">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="typology-chart typology-chart--columns">
+                            <div class="chart-title">
+                              <span>Typologies principales</span>
+                              <span class="chart-unit">kgCO₂e/an</span>
+                            </div>
+                            <div class="typology-bars" data-typology-bars role="list">
+                              <p class="chart-empty">Chargement des typologies…</p>
+                            </div>
+                            <p class="typology-summary" data-typology-summary>Chargement…</p>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Répartition des émissions annuelles par typologie bâtiment.</figcaption>
+                      </figure>
+
+                      <figure class="energy-map-card" aria-label="Carte des émissions du parc" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-map" data-chart-type="map-bubbles" data-chart-group="co2-map">
+                        <button type="button" class="chart-edit-toggle chart-edit-toggle--small" aria-label="Ouvrir le catalogue de graphiques" aria-controls="chart-catalog" aria-expanded="false" aria-haspopup="dialog" data-chart-target="co2-map">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12 20h9" />
+                            <path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                          </svg>
+                        </button>
+                        <header class="energy-map-header">
+                          <div class="energy-map-header__titles">
+                            <span class="map-title">Carte des émissions</span>
+                            <span class="map-subtitle">Intensité & surface par site</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="energy-map energy-map--bubbles">
+                            <div class="map-canvas">
+                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
+                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
+                              </svg>
+                              <div class="map-markers" data-map-markers role="list"></div>
+                              <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
+                            </div>
+                            <div class="map-legend-wrapper">
+                              <span class="map-legend-title">Émissions</span>
+                              <ul class="map-legend" data-map-legend></ul>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Localisation des bâtiments avec intensité carbone et taille proportionnelle à la surface.</figcaption>
+                      </figure>
+
+                    </div>
+                  </div>
+                </div>
+
+                <div class="meter" aria-hidden="true">
                   <div style="width: 0"></div>
                 </div>
               </section>

@@ -216,16 +216,6 @@
             <!-- Poussoir à droite + sélecteur d'année -->
             <!-- Top-right (remplace l'ancien <select id="year-picker"> … ) -->
             <div class="top-right">
-              <div id="surface-switch" class="surface-switch" role="group" aria-label="Type de surface">
-                <span class="surface-switch-label">Surface</span>
-                <div class="seg2 surface-switch-control">
-                  <input type="radio" id="surface-real" name="surface-mode" value="real" checked>
-                  <label for="surface-real">Réelle</label>
-                  <input type="radio" id="surface-reg" name="surface-mode" value="regulatory">
-                  <label for="surface-reg">Réglementaire</label>
-                  <span class="pill" aria-hidden="true"></span>
-                </div>
-              </div>
               <div id="year-picker" class="year-picker-wrap" data-years="2022,2023,2024,2025,2026">
                 <button type="button" class="year-btn" aria-haspopup="listbox" aria-expanded="false" aria-label="Année">
                   <span class="year-current">2024</span>
@@ -295,6 +285,19 @@
 
                   <input type="radio" id="ref-externe" name="bench-type-energy" value="external">
                   <label for="ref-externe">Réglementaire</label>
+
+                  <span class="pill" aria-hidden="true"></span>
+                </div>
+              </div>
+
+              <div class="fi-item">
+                <div class="fi-label" id="surface-mode-label">Surface</div>
+                <div id="surface-switch" class="seg2 surface-switch-control" role="radiogroup" aria-labelledby="surface-mode-label">
+                  <input type="radio" id="surface-real" name="surface-mode" value="real" checked>
+                  <label for="surface-real">Réelle</label>
+
+                  <input type="radio" id="surface-reg" name="surface-mode" value="regulatory">
+                  <label for="surface-reg">Réglementaire</label>
 
                   <span class="pill" aria-hidden="true"></span>
                 </div>

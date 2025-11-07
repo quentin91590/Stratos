@@ -1726,16 +1726,81 @@
       if (zoneEl) zoneEl.classList.remove('catalog-open');
     };
 
-    const applyChartToSlot = (chartType) => {
-      if (!activeSlot) return false;
+    const cloneSlotForCard = (card) => {
+      const zoneEl = getActiveZone();
+      if (!zoneEl) return null;
+      const stack = zoneEl.querySelector('.energy-chart-stack');
+      const host = stack || zoneEl;
+      const sourceGroup = card.dataset.chartGroup || getSlotGroup(activeSlot) || '';
+      let templateSource = null;
+      if (sourceGroup) {
+        templateSource = host.querySelector(`[data-chart-group="${sourceGroup}"]`)
+          || document.querySelector(`[data-chart-group="${sourceGroup}"]`);
+      }
+      if (!templateSource) {
+        templateSource = activeSlot || host.querySelector(slotSelector);
+      }
+      if (!templateSource) {
+        templateSource = document.querySelector(slotSelector);
+      }
+      if (!templateSource) return null;
+
+      const slot = templateSource.cloneNode(true);
+      slot.classList.remove(selectionClass, 'is-empty');
+      slot.removeAttribute('data-tile-width');
+      slot.removeAttribute('data-tile-height');
+      slot.style.removeProperty('--tile-equal-height');
+      delete slot.dataset.chartType;
+      if (sourceGroup) {
+        slot.dataset.chartGroup = sourceGroup;
+      } else if (templateSource.dataset.chartGroup) {
+        slot.dataset.chartGroup = templateSource.dataset.chartGroup;
+      } else {
+        delete slot.dataset.chartGroup;
+      }
+      const body = slot.querySelector('[data-chart-role="body"]');
+      if (body) {
+        body.replaceChildren();
+      } else {
+        const newBody = document.createElement('div');
+        newBody.className = 'chart-body';
+        newBody.dataset.chartRole = 'body';
+        slot.append(newBody);
+      }
+      const captionEl = slot.querySelector('[data-chart-role="caption"]');
+      if (captionEl) {
+        captionEl.textContent = '';
+      } else {
+        const caption = document.createElement('figcaption');
+        caption.dataset.chartRole = 'caption';
+        slot.append(caption);
+      }
+      const cardTitle = card.querySelector('.catalog-card__title')?.textContent?.trim();
+      if (cardTitle) {
+        slot.setAttribute('aria-label', cardTitle);
+      }
+      if (!slot.hasAttribute('tabindex')) {
+        slot.tabIndex = 0;
+      }
+      host.append(slot);
+      bindSlotInteractions();
+      bindDeleteInteractions();
+      selectSlot(slot);
+      return slot;
+    };
+
+    const applyChartToSlot = (chartType, targetSlot = null) => {
+      const slot = targetSlot || activeSlot;
+      if (!slot) return false;
       const template = document.getElementById(`chart-template-${chartType}`);
       if (!template) return false;
-      const body = activeSlot.querySelector('[data-chart-role="body"]');
+      const body = slot.querySelector('[data-chart-role="body"]');
       if (!body) return false;
       body.replaceChildren(template.content.cloneNode(true));
-      const captionEl = activeSlot.querySelector('[data-chart-role="caption"]');
+      const captionEl = slot.querySelector('[data-chart-role="caption"]');
       if (captionEl) captionEl.textContent = template.dataset.caption || '';
-      activeSlot.dataset.chartType = chartType;
+      slot.dataset.chartType = chartType;
+      applyTileLayout(slot);
       if (chartType === 'intensity-bars') {
         highlightEnergyTrend(FILTERS.year);
       }
@@ -1959,12 +2024,22 @@
     cards.forEach(card => {
       card.addEventListener('click', (event) => {
         event.preventDefault();
-        if (!activeSlot) return;
         const type = card.dataset.chartType;
         if (!type) return;
-        if (applyChartToSlot(type)) {
-          updateCatalogForSlot(activeSlot);
-          closePanel();
+        const slot = cloneSlotForCard(card);
+        if (!slot) return;
+        activeSlot = slot;
+        if (applyChartToSlot(type, slot)) {
+          updateCatalogForSlot(slot);
+          closePanel({ returnFocus: false });
+          requestAnimationFrame(() => {
+            if (document.contains(slot)) {
+              slot.focus({ preventScroll: true });
+            }
+          });
+        } else {
+          slot.remove();
+          activeSlot = ensureSelectedSlot(activeZone || undefined);
         }
       });
     });

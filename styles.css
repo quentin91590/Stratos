@@ -1032,19 +1032,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   gap: 8px;
 }
 
-.surface-switch-control{
-  --ctrl-h:34px;
-  --ctrl-fs:.9rem;
-  --pad-x:12px;
-}
-
-@media (max-width: 640px){
-  .surface-switch-control{
-    --ctrl-h:32px;
-    --ctrl-fs:.85rem;
-  }
-}
-
 /* Mobile : évite l’écrasement si la barre ne wrap pas */
 @media (max-width: 640px){
   .year-picker{ height: 32px; font-size: .9rem; }

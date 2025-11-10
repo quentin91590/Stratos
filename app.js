@@ -684,20 +684,55 @@
     buildings: {},
   };
 
-  const assignBuildingsData = (payload) => {
-    if (!payload || typeof payload !== 'object') return false;
-    const buildings = payload?.buildings ?? payload;
-    if (!buildings || typeof buildings !== 'object') return false;
+  const assignBuildingsData = (payload, options = {}) => {
+    const { globalObject = null, updateGlobal = false } = options;
+    if (!payload || typeof payload !== 'object') {
+      return false;
+    }
+
+    const normalizedPayload = payload?.buildings && typeof payload.buildings === 'object'
+      ? payload
+      : { buildings: payload };
+
+    const buildings = normalizedPayload.buildings;
+    if (!buildings || typeof buildings !== 'object' || Array.isArray(buildings)) {
+      return false;
+    }
+
     ENERGY_BASE_DATA.buildings = buildings;
+
+    if (updateGlobal && globalObject && typeof globalObject === 'object') {
+      const target = globalObject.STRATOS_BUILDINGS;
+      if (target && typeof target === 'object') {
+        Object.keys(target).forEach((key) => {
+          if (!(key in normalizedPayload)) {
+            delete target[key];
+          }
+        });
+
+        const targetBuildings = target.buildings && typeof target.buildings === 'object' ? target.buildings : {};
+        Object.keys(targetBuildings).forEach((key) => {
+          if (!(key in buildings)) {
+            delete targetBuildings[key];
+          }
+        });
+        Object.keys(buildings).forEach((key) => {
+          targetBuildings[key] = buildings[key];
+        });
+
+        Object.assign(target, normalizedPayload);
+        target.buildings = targetBuildings;
+      } else {
+        globalObject.STRATOS_BUILDINGS = normalizedPayload;
+      }
+    }
+
     return true;
   };
 
   async function loadBuildingsData() {
     const globalObject = typeof window !== 'undefined' ? window : {};
     const inlineDataset = globalObject.STRATOS_BUILDINGS;
-    if (assignBuildingsData(inlineDataset)) {
-      return;
-    }
 
     const shouldAttemptFetch = (() => {
       if (typeof window === 'undefined') return true;
@@ -705,28 +740,82 @@
       return protocol !== 'file:';
     })();
 
-    if (!shouldAttemptFetch) {
-      console.warn('Chargement local détecté : utilisation des données intégrées pour les bâtiments.');
-      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
+    if (shouldAttemptFetch) {
+      try {
+        const response = await fetch('Buildings.json', { cache: 'no-cache' });
+        if (!response.ok) {
+          throw new Error(`Erreur HTTP ${response.status}`);
+        }
+        const payload = await response.json();
+        if (assignBuildingsData(payload, { globalObject, updateGlobal: true })) {
+          return;
+        }
+        console.warn('Format inattendu pour Buildings.json');
+      } catch (error) {
+        console.error('Impossible de charger Buildings.json', error);
+      }
+    }
+
+    if (assignBuildingsData(inlineDataset)) {
       return;
     }
 
-    try {
-      const response = await fetch('Buildings.json', { cache: 'no-cache' });
-      if (!response.ok) {
-        throw new Error(`Erreur HTTP ${response.status}`);
-      }
-      const payload = await response.json();
-      if (assignBuildingsData(payload)) {
-        return;
-      }
-      console.warn('Format inattendu pour Buildings.json');
-      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
-    } catch (error) {
-      console.error('Impossible de charger Buildings.json', error);
-      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
+    if (!shouldAttemptFetch) {
+      console.warn('Chargement local détecté : utilisation des données intégrées pour les bâtiments.');
     }
+
+    ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
   }
+
+  const syncTreeLeafLabelsFromDataset = () => {
+    const registry = ENERGY_BASE_DATA.buildings;
+    if (!registry || typeof registry !== 'object') {
+      return;
+    }
+
+    const textNodeType = typeof Node !== 'undefined' ? Node.TEXT_NODE : 3;
+
+    const ensureLabelElement = (leaf) => {
+      let labelEl = leaf.querySelector('.tree-leaf__label');
+      if (labelEl) {
+        return labelEl;
+      }
+
+      Array.from(leaf.childNodes).forEach((node) => {
+        if (node.nodeType === textNodeType) {
+          leaf.removeChild(node);
+        }
+      });
+
+      labelEl = document.createElement('span');
+      labelEl.className = 'tree-leaf__label';
+      const checkbox = leaf.querySelector('.tree-check');
+      if (checkbox) {
+        checkbox.after(labelEl);
+      } else {
+        leaf.append(labelEl);
+      }
+
+      return labelEl;
+    };
+
+    $$('.tree-leaf[data-building]').forEach((leaf) => {
+      const buildingId = leaf.dataset?.building;
+      if (!buildingId) return;
+
+      const info = registry[buildingId];
+      if (!info || typeof info !== 'object') return;
+
+      const label = (info.label ?? '').toString().trim();
+      if (!label) return;
+
+      leaf.dataset.label = label;
+      const labelEl = ensureLabelElement(leaf);
+      if (labelEl.textContent !== label) {
+        labelEl.textContent = label;
+      }
+    });
+  };
 
   const HEAT_BASE_DATA = {
     mix: {
@@ -4267,6 +4356,7 @@
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   async function initializeApp() {
     await loadBuildingsData();
+    syncTreeLeafLabelsFromDataset();
 
     syncStickyTop();
     $$('.tabset').forEach(initTabset);

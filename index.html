@@ -2261,12 +2261,17 @@
                           </div>
                         </header>
                         <div class="chart-body" data-chart-role="body">
-                          <div class="map-canvas" role="img" aria-label="Carte chaleur du périmètre">
-                            <div class="map-base"></div>
-                            <div class="map-markers" data-map-markers></div>
-                            <p class="map-empty" data-map-empty>Aucune sélection pour afficher la carte.</p>
+                          <div class="energy-map energy-map--bubbles">
+                            <div class="map-canvas">
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive de la chaleur du parc"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
+                              <p class="map-empty" data-map-empty>Aucune sélection pour afficher la carte.</p>
+                            </div>
+                            <div class="map-legend-wrapper">
+                              <span class="map-legend-title">Intensité</span>
+                              <ul class="map-legend" data-map-legend aria-label="Légende des intensités chaleur"></ul>
+                            </div>
                           </div>
-                          <ul class="map-legend" data-map-legend aria-label="Légende des intensités chaleur"></ul>
                         </div>
                         <figcaption data-chart-role="caption">Visualisation spatiale de l'intensité de chaleur des bâtiments sélectionnés.</figcaption>
                       </figure>

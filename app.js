@@ -702,7 +702,29 @@
     ENERGY_BASE_DATA.buildings = buildings;
 
     if (updateGlobal && globalObject && typeof globalObject === 'object') {
-      globalObject.STRATOS_BUILDINGS = normalizedPayload;
+      const target = globalObject.STRATOS_BUILDINGS;
+      if (target && typeof target === 'object') {
+        Object.keys(target).forEach((key) => {
+          if (!(key in normalizedPayload)) {
+            delete target[key];
+          }
+        });
+
+        const targetBuildings = target.buildings && typeof target.buildings === 'object' ? target.buildings : {};
+        Object.keys(targetBuildings).forEach((key) => {
+          if (!(key in buildings)) {
+            delete targetBuildings[key];
+          }
+        });
+        Object.keys(buildings).forEach((key) => {
+          targetBuildings[key] = buildings[key];
+        });
+
+        Object.assign(target, normalizedPayload);
+        target.buildings = targetBuildings;
+      } else {
+        globalObject.STRATOS_BUILDINGS = normalizedPayload;
+      }
     }
 
     return true;

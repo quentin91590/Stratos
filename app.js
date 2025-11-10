@@ -1560,6 +1560,198 @@
     'tab-eau': ['eau'],
   };
 
+  const MISSING_METRIC_MESSAGES = {
+    general: 'Consommation énergétique indisponible sur les SI',
+    chaleur: 'Consommation de chaleur indisponible sur les SI',
+    froid: 'Consommation de froid indisponible sur les SI',
+    elec: 'Consommation électrique indisponible sur les SI',
+    co2: 'Émissions CO₂ indisponibles sur les SI',
+    eau: 'Consommation d’eau indisponible sur les SI',
+  };
+
+  const stopTreeLeafInfoPropagation = (event) => {
+    event.stopPropagation();
+    if (event.type === 'mousedown' || event.type === 'mouseup') {
+      event.preventDefault();
+    }
+  };
+
+  const missingInfoRegistry = new WeakMap();
+  let openMissingInfoState = null;
+  let missingInfoListenersReady = false;
+  let missingInfoIdCounter = 0;
+
+  const closeMissingInfoPopover = (state) => {
+    if (!state) return;
+    const { popover, icon } = state;
+    if (!popover || !icon) return;
+    popover.classList.remove('is-visible');
+    popover.setAttribute('aria-hidden', 'true');
+    popover.hidden = true;
+    icon.setAttribute('aria-expanded', 'false');
+    if (openMissingInfoState === state) {
+      openMissingInfoState = null;
+    }
+  };
+
+  const handleMissingInfoOutsideClick = (event) => {
+    if (!openMissingInfoState) return;
+    const { icon, popover } = openMissingInfoState;
+    if (!icon || !popover) return;
+    if (icon.contains(event.target) || popover.contains(event.target)) {
+      return;
+    }
+    closeMissingInfoPopover(openMissingInfoState);
+  };
+
+  const handleMissingInfoEscape = (event) => {
+    if (event.key !== 'Escape' || !openMissingInfoState) return;
+    const { icon } = openMissingInfoState;
+    closeMissingInfoPopover(openMissingInfoState);
+    if (icon && typeof icon.focus === 'function') {
+      icon.focus();
+    }
+  };
+
+  const ensureMissingInfoListeners = () => {
+    if (missingInfoListenersReady) return;
+    document.addEventListener('click', handleMissingInfoOutsideClick);
+    document.addEventListener('keydown', handleMissingInfoEscape);
+    missingInfoListenersReady = true;
+  };
+
+  const handleMissingInfoToggle = (event) => {
+    if (event.type === 'keydown' && event.key !== 'Enter' && event.key !== ' ') {
+      return;
+    }
+    event.preventDefault();
+    event.stopPropagation();
+    const icon = event.currentTarget;
+    const state = missingInfoRegistry.get(icon);
+    if (!state || !state.popover) return;
+
+    const isOpen = state.popover.classList.contains('is-visible');
+    if (isOpen) {
+      closeMissingInfoPopover(state);
+      return;
+    }
+
+    ensureMissingInfoListeners();
+    if (openMissingInfoState && openMissingInfoState !== state) {
+      closeMissingInfoPopover(openMissingInfoState);
+    }
+
+    state.popover.hidden = false;
+    state.popover.classList.add('is-visible');
+    state.popover.setAttribute('aria-hidden', 'false');
+    icon.setAttribute('aria-expanded', 'true');
+    openMissingInfoState = state;
+  };
+
+  const buildMissingReasonMessage = (missingSet, metricsToCheck) => {
+    if (!missingSet || !missingSet.size) return '';
+    const keys = Array.isArray(metricsToCheck) && metricsToCheck.length
+      ? metricsToCheck.filter((metric) => missingSet.has(metric))
+      : Array.from(missingSet);
+    if (!keys.length) return '';
+    const messages = keys.map((key) => MISSING_METRIC_MESSAGES[key] || `Données ${key} indisponibles`);
+    return messages.join('\n');
+  };
+
+  const syncTreeLeafMissingInfo = (leaf, message) => {
+    if (!leaf || !(leaf instanceof HTMLElement)) return;
+    const existing = leaf.querySelector('.tree-leaf__missing-info');
+    if (!message) {
+      if (existing) {
+        const state = missingInfoRegistry.get(existing);
+        if (state) {
+          closeMissingInfoPopover(state);
+          if (state.popover && state.popover.parentElement) {
+            state.popover.remove();
+          }
+          missingInfoRegistry.delete(existing);
+        }
+        existing.remove();
+      }
+      const strayPopover = leaf.querySelector('.tree-leaf__missing-popover');
+      if (strayPopover) {
+        if (openMissingInfoState && openMissingInfoState.popover === strayPopover) {
+          closeMissingInfoPopover(openMissingInfoState);
+        }
+        strayPopover.remove();
+      }
+      leaf.removeAttribute('data-missing-reason');
+      return;
+    }
+
+    let icon = existing;
+    if (!icon) {
+      icon = document.createElement('span');
+      icon.className = 'tree-leaf__missing-info';
+      icon.setAttribute('role', 'button');
+      icon.setAttribute('tabindex', '0');
+      icon.setAttribute('aria-expanded', 'false');
+      icon.setAttribute('aria-label', 'Afficher les informations manquantes');
+      icon.innerHTML = `
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <line x1="12" y1="8" x2="12" y2="8" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" />
+          <line x1="12" y1="11" x2="12" y2="16" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" />
+        </svg>
+      `;
+      ['mousedown', 'mouseup', 'touchstart', 'touchend'].forEach((type) => {
+        icon.addEventListener(type, stopTreeLeafInfoPropagation);
+      });
+      icon.addEventListener('click', handleMissingInfoToggle);
+      icon.addEventListener('keydown', handleMissingInfoToggle);
+    }
+
+    let state = missingInfoRegistry.get(icon);
+    if (!state) {
+      const popover = document.createElement('div');
+      popover.className = 'tree-leaf__missing-popover';
+      popover.setAttribute('role', 'status');
+      popover.setAttribute('aria-live', 'polite');
+      popover.setAttribute('aria-hidden', 'true');
+      popover.hidden = true;
+      const popoverId = `missing-info-${++missingInfoIdCounter}`;
+      popover.id = popoverId;
+      icon.setAttribute('aria-controls', popoverId);
+      state = { icon, popover };
+      missingInfoRegistry.set(icon, state);
+    }
+
+    if (state.popover && state.popover.parentElement !== leaf) {
+      leaf.append(state.popover);
+    }
+
+    const lines = message.split('\n').filter((line) => line.trim().length);
+    if (state.popover) {
+      if (!lines.length) {
+        state.popover.textContent = message;
+      } else {
+        const fragment = document.createDocumentFragment();
+        lines.forEach((line) => {
+          const div = document.createElement('div');
+          div.className = 'tree-leaf__missing-popover-line';
+          div.textContent = line;
+          fragment.appendChild(div);
+        });
+        state.popover.replaceChildren(fragment);
+      }
+      const isOpen = state.popover.classList.contains('is-visible');
+      state.popover.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
+      state.popover.hidden = !isOpen;
+    }
+
+    leaf.setAttribute('data-missing-reason', message);
+    leaf.append(icon);
+    if (state.popover) {
+      leaf.append(state.popover);
+    }
+    icon.setAttribute('aria-expanded', state.popover?.classList.contains('is-visible') ? 'true' : 'false');
+  };
+
   const computeMissingMetricsForYear = (year) => {
     const result = new Map();
     const list = ENERGY_BASE_DATA.buildings || {};
@@ -1618,7 +1810,10 @@
     $$('.tree-leaf').forEach((leaf) => {
       const id = leaf?.dataset?.building;
       const missingSet = id ? map.get(id) : null;
-      leaf.classList.toggle('is-missing', shouldFlag(missingSet));
+      const flagged = shouldFlag(missingSet);
+      leaf.classList.toggle('is-missing', flagged);
+      const message = flagged ? buildMissingReasonMessage(missingSet, metricsToCheck) : '';
+      syncTreeLeafMissingInfo(leaf, message);
     });
   };
 

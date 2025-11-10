@@ -1135,8 +1135,74 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   --tree-ring-color: transparent;
   appearance:none; border:none; background:transparent; cursor:pointer; width:100%; text-align:left; color:#0f172a;
   padding:6px 8px 6px 6px; display:flex; align-items:center; gap:8px; border-radius:6px; transition: color .15s ease, background .15s ease, box-shadow .15s ease;
+  position:relative;
 }
 .tree-leaf__label{ flex:1 1 auto; min-width:0; }
+.tree-leaf__missing-info{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:1px solid rgba(239, 68, 68, 0.55);
+  background:rgba(254, 226, 226, 0.85);
+  color:#b91c1c;
+  cursor:pointer;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.tree-leaf__missing-info svg{
+  width:12px;
+  height:12px;
+  display:block;
+}
+.tree-leaf__missing-info:hover,
+.tree-leaf__missing-info[aria-expanded="true"]{
+  background:rgba(254, 202, 202, 0.95);
+  border-color:rgba(239, 68, 68, 0.75);
+  color:#7f1d1d;
+}
+.tree-leaf__missing-info:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 3px rgba(248, 113, 113, 0.45);
+}
+.tree-leaf__missing-popover{
+  position:absolute;
+  right:0;
+  top:calc(100% + 8px);
+  max-width:260px;
+  padding:10px 12px;
+  border-radius:10px;
+  border:1px solid rgba(239, 68, 68, 0.45);
+  background:#fef2f2;
+  color:#7f1d1d;
+  font-size:.82rem;
+  line-height:1.35;
+  box-shadow:0 12px 24px rgba(239, 68, 68, 0.16);
+  z-index:40;
+}
+.tree-leaf__missing-popover::before{
+  content:"";
+  position:absolute;
+  top:-8px;
+  right:18px;
+  border-width:0 8px 8px 8px;
+  border-style:solid;
+  border-color:transparent transparent rgba(239, 68, 68, 0.45) transparent;
+}
+.tree-leaf__missing-popover::after{
+  content:"";
+  position:absolute;
+  top:-7px;
+  right:18px;
+  border-width:0 7px 7px 7px;
+  border-style:solid;
+  border-color:transparent transparent #fef2f2 transparent;
+}
+.tree-leaf__missing-popover-line + .tree-leaf__missing-popover-line{
+  margin-top:4px;
+}
 .tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
 .tree-leaf.is-missing:hover{
   color:#991b1b;

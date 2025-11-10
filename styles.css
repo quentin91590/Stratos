@@ -567,6 +567,95 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   transform:scale(1);
 }
 
+.chart-tile-handle{
+  position:absolute;
+  top:14px;
+  right:14px;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid var(--border, rgba(148,163,184,0.35));
+  background:rgba(248,250,252,0.95);
+  color:#1f2937;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:grab;
+  z-index:13;
+  box-shadow:0 12px 28px rgba(15,23,42,0.14);
+  opacity:.88;
+  transform:none;
+  transition:opacity .18s ease, box-shadow .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
+  touch-action:none;
+}
+
+.chart-tile-handle:hover{
+  color:#0f172a;
+  border-color:rgba(148,163,184,0.6);
+  box-shadow:0 16px 32px rgba(15,23,42,0.18);
+  opacity:1;
+}
+
+.chart-tile-handle:active,
+.chart-tile-handle.is-dragging{
+  cursor:grabbing;
+  transform:scale(.98);
+  box-shadow:0 16px 32px rgba(15,23,42,0.18);
+}
+
+.chart-tile-handle:focus-visible{
+  outline:none;
+  opacity:1;
+  box-shadow:0 0 0 4px var(--ring), 0 16px 32px rgba(15,23,42,0.18);
+}
+
+.has-chart-tile-handle:hover .chart-tile-handle,
+.has-chart-tile-handle:focus-within .chart-tile-handle,
+.chart-tile-handle.is-dragging{
+  opacity:1;
+}
+
+.chart-tile-handle__icon{
+  display:grid;
+  grid-template-columns:repeat(3, minmax(0,1fr));
+  grid-auto-rows:minmax(0,1fr);
+  gap:2px 3px;
+  width:14px;
+  height:12px;
+}
+
+.chart-tile-handle__dot{
+  width:4px;
+  height:4px;
+  border-radius:999px;
+  background:currentColor;
+}
+
+.chart-tile-placeholder{
+  border:2px dashed rgba(148,163,184,0.6);
+  border-radius:16px;
+  background:rgba(148,163,184,0.12);
+  transition:height .16s ease, width .16s ease;
+  pointer-events:none;
+}
+
+[data-chart-slot].is-dragging{
+  box-shadow:0 22px 44px rgba(15,23,42,0.22);
+  cursor:grabbing;
+}
+
+body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; overscroll-behavior:contain;}
+
+@media (max-width: 640px){
+  .chart-tile-handle{
+    top:12px;
+    right:12px;
+    width:36px;
+    height:36px;
+    border-radius:10px;
+  }
+}
+
 .chart-catalog-trigger{
   position:sticky;
   bottom:24px;

@@ -614,6 +614,311 @@
     scheduleChartTileEqualize();
   };
 
+  /* ========== Chart tile dragging & reordering ========== */
+  const TILE_HANDLE_CLASS = 'chart-tile-handle';
+  const TILE_PLACEHOLDER_CLASS = 'chart-tile-placeholder';
+  let chartTileDragState = null;
+  let chartTileMutationObserver = null;
+  const boundTileHandles = new WeakSet();
+
+  const moveTileWithinStack = (tile, offset) => {
+    if (!tile || !offset) return false;
+    const stack = tile.closest('.energy-chart-stack');
+    if (!stack) return false;
+    const tiles = Array.from(stack.querySelectorAll('[data-chart-slot]'));
+    const index = tiles.indexOf(tile);
+    if (index === -1) return false;
+    const targetIndex = Math.max(0, Math.min(tiles.length - 1, index + offset));
+    if (targetIndex === index) return false;
+    const reference = tiles[targetIndex];
+    if (targetIndex > index) {
+      stack.insertBefore(tile, reference.nextSibling);
+    } else {
+      stack.insertBefore(tile, reference);
+    }
+    scheduleChartTileEqualize();
+    return true;
+  };
+
+  const moveTileToEdge = (tile, position) => {
+    if (!tile) return false;
+    const stack = tile.closest('.energy-chart-stack');
+    if (!stack) return false;
+    const tiles = Array.from(stack.querySelectorAll('[data-chart-slot]'));
+    if (!tiles.length) return false;
+    if (position === 'start' && tiles[0] !== tile) {
+      stack.insertBefore(tile, tiles[0]);
+      scheduleChartTileEqualize();
+      return true;
+    }
+    if (position === 'end' && tiles[tiles.length - 1] !== tile) {
+      stack.append(tile);
+      scheduleChartTileEqualize();
+      return true;
+    }
+    return false;
+  };
+
+  const finishChartTileDrag = (cancelled = false) => {
+    if (!chartTileDragState) return;
+    const { tile, placeholder, handle, pointerId, originStack, originNext } = chartTileDragState;
+
+    window.removeEventListener('pointermove', onChartTilePointerMove);
+    window.removeEventListener('pointerup', onChartTilePointerUp);
+    window.removeEventListener('pointercancel', onChartTilePointerCancel);
+
+    if (handle?.hasPointerCapture?.(pointerId)) {
+      try { handle.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+    }
+
+    document.body.classList.remove('chart-tiles-dragging');
+
+    tile.classList.remove('is-dragging');
+    tile.removeAttribute('aria-grabbed');
+    tile.style.removeProperty('position');
+    tile.style.removeProperty('left');
+    tile.style.removeProperty('top');
+    tile.style.removeProperty('width');
+    tile.style.removeProperty('height');
+    tile.style.removeProperty('transform');
+    tile.style.removeProperty('z-index');
+    tile.style.removeProperty('pointer-events');
+
+    if (handle) {
+      handle.classList.remove('is-dragging');
+      handle.removeAttribute('aria-pressed');
+    }
+
+    if (placeholder?.parentNode) {
+      if (cancelled && originStack) {
+        originStack.insertBefore(tile, originNext || null);
+        placeholder.remove();
+      } else {
+        placeholder.replaceWith(tile);
+      }
+    } else if (cancelled && originStack) {
+      originStack.insertBefore(tile, originNext || null);
+    }
+
+    chartTileDragState = null;
+    scheduleChartTileEqualize();
+  };
+
+  const updatePlaceholderPosition = (clientX, clientY) => {
+    if (!chartTileDragState) return;
+    const { stack, tile, placeholder } = chartTileDragState;
+    if (!stack || !placeholder) return;
+    const candidates = Array.from(stack.querySelectorAll('[data-chart-slot]')).filter(el => el !== tile);
+    if (!candidates.length) return;
+
+    let target = document.elementFromPoint(clientX, clientY)?.closest('[data-chart-slot]');
+    let rect = null;
+    if (!target || target === tile || !stack.contains(target)) {
+      let nearest = null;
+      let nearestRect = null;
+      let nearestDistance = Number.POSITIVE_INFINITY;
+      candidates.forEach((candidate) => {
+        const candidateRect = candidate.getBoundingClientRect();
+        const cx = candidateRect.left + (candidateRect.width / 2);
+        const cy = candidateRect.top + (candidateRect.height / 2);
+        const distance = Math.hypot(clientX - cx, clientY - cy);
+        if (distance < nearestDistance) {
+          nearestDistance = distance;
+          nearest = candidate;
+          nearestRect = candidateRect;
+        }
+      });
+      target = nearest;
+      rect = nearestRect;
+      if (!target || !rect) return;
+    }
+
+    if (!rect) {
+      rect = target.getBoundingClientRect();
+    }
+    const before = clientY < rect.top + (rect.height / 2);
+    const referenceNode = before ? target : target.nextSibling;
+    if (referenceNode !== placeholder) {
+      stack.insertBefore(placeholder, referenceNode || null);
+    }
+  };
+
+  const onChartTilePointerMove = (event) => {
+    if (!chartTileDragState) return;
+    const { tile, startX, startY } = chartTileDragState;
+    const dx = event.clientX - startX;
+    const dy = event.clientY - startY;
+    tile.style.transform = `translate3d(${dx}px, ${dy}px, 0)`;
+    updatePlaceholderPosition(event.clientX, event.clientY);
+  };
+
+  const onChartTilePointerUp = () => finishChartTileDrag(false);
+  const onChartTilePointerCancel = () => finishChartTileDrag(true);
+
+  const onChartTileHandlePointerDown = (event) => {
+    const handle = event.currentTarget;
+    const tile = handle?.closest('[data-chart-slot]');
+    if (!tile || chartTileDragState) return;
+    if (event.button !== 0 && event.pointerType !== 'touch' && event.pointerType !== 'pen') return;
+    const stack = tile.closest('.energy-chart-stack');
+    if (!stack) return;
+
+    event.preventDefault();
+    handle.focus({ preventScroll: true });
+
+    const rect = tile.getBoundingClientRect();
+    const placeholder = document.createElement('div');
+    placeholder.className = TILE_PLACEHOLDER_CLASS;
+    placeholder.style.height = `${rect.height}px`;
+    placeholder.style.width = `${rect.width}px`;
+    placeholder.setAttribute('aria-hidden', 'true');
+    placeholder.setAttribute('role', 'presentation');
+
+    const originNext = tile.nextSibling;
+    stack.insertBefore(placeholder, tile);
+
+    chartTileDragState = {
+      tile,
+      stack,
+      placeholder,
+      handle,
+      pointerId: event.pointerId,
+      startX: event.clientX,
+      startY: event.clientY,
+      originStack: stack,
+      originNext,
+    };
+
+    tile.classList.add('is-dragging');
+    tile.setAttribute('aria-grabbed', 'true');
+    tile.style.position = 'fixed';
+    tile.style.left = `${rect.left}px`;
+    tile.style.top = `${rect.top}px`;
+    tile.style.width = `${rect.width}px`;
+    tile.style.height = `${rect.height}px`;
+    tile.style.transform = 'translate3d(0, 0, 0)';
+    tile.style.zIndex = '1000';
+    tile.style.pointerEvents = 'none';
+
+    handle.classList.add('is-dragging');
+    handle.setAttribute('aria-pressed', 'true');
+
+    document.body.classList.add('chart-tiles-dragging');
+
+    if (handle.setPointerCapture) {
+      try { handle.setPointerCapture(event.pointerId); } catch (err) { /* noop */ }
+    }
+
+    window.addEventListener('pointermove', onChartTilePointerMove);
+    window.addEventListener('pointerup', onChartTilePointerUp);
+    window.addEventListener('pointercancel', onChartTilePointerCancel);
+  };
+
+  const onChartTileHandleKeyDown = (event) => {
+    const handle = event.currentTarget;
+    const tile = handle?.closest('[data-chart-slot]');
+    if (!tile) return;
+    let handled = false;
+    switch (event.key) {
+      case 'ArrowUp':
+      case 'ArrowLeft':
+        handled = moveTileWithinStack(tile, -1);
+        break;
+      case 'ArrowDown':
+      case 'ArrowRight':
+        handled = moveTileWithinStack(tile, 1);
+        break;
+      case 'Home':
+        handled = moveTileToEdge(tile, 'start');
+        break;
+      case 'End':
+        handled = moveTileToEdge(tile, 'end');
+        break;
+      default:
+        break;
+    }
+    if (handled) {
+      event.preventDefault();
+      requestAnimationFrame(() => {
+        handle.focus({ preventScroll: true });
+      });
+    }
+  };
+
+  const ensureChartTileHandle = (slot) => {
+    if (!slot || !(slot instanceof HTMLElement)) return;
+    slot.classList.add('has-chart-tile-handle');
+    let handle = slot.querySelector(`.${TILE_HANDLE_CLASS}`);
+    if (!handle) {
+      handle = document.createElement('button');
+      handle.type = 'button';
+      handle.className = TILE_HANDLE_CLASS;
+      handle.setAttribute('aria-label', 'Déplacer ce graphique');
+      handle.innerHTML = `
+        <span class="chart-tile-handle__icon" aria-hidden="true">
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+        </span>
+      `;
+      slot.append(handle);
+    }
+    if (!boundTileHandles.has(handle)) {
+      boundTileHandles.add(handle);
+      handle.addEventListener('pointerdown', onChartTileHandlePointerDown);
+      handle.addEventListener('keydown', onChartTileHandleKeyDown);
+    }
+  };
+
+  const ensureChartTileHandles = (scope = document) => {
+    if (!scope) return;
+    let slots = [];
+    if (scope instanceof HTMLElement) {
+      if (scope.matches('[data-chart-slot]')) {
+        slots = [scope];
+      } else {
+        slots = Array.from(scope.querySelectorAll('[data-chart-slot]'));
+      }
+    } else {
+      slots = Array.from(document.querySelectorAll('[data-chart-slot]'));
+    }
+    slots.forEach(ensureChartTileHandle);
+  };
+
+  const observeChartTileStacks = () => {
+    if (typeof MutationObserver === 'undefined') return;
+    if (chartTileMutationObserver) {
+      chartTileMutationObserver.disconnect();
+    }
+    chartTileMutationObserver = new MutationObserver((mutations) => {
+      let needsEqualize = false;
+      mutations.forEach((mutation) => {
+        mutation.addedNodes.forEach((node) => {
+          if (!(node instanceof HTMLElement)) return;
+          if (node.matches('[data-chart-slot]')) {
+            ensureChartTileHandle(node);
+            needsEqualize = true;
+          } else {
+            ensureChartTileHandles(node);
+            needsEqualize = true;
+          }
+        });
+      });
+      if (needsEqualize) scheduleChartTileEqualize();
+    });
+    Array.from(document.querySelectorAll('.energy-chart-stack')).forEach((stack) => {
+      chartTileMutationObserver.observe(stack, { childList: true });
+    });
+  };
+
+  const setupChartTileDragging = () => {
+    ensureChartTileHandles();
+    observeChartTileStacks();
+  };
+
   const ENERGY_BASE_DATA = {
     metrics: {
       general: { intensity: 196, decimals: 0 },
@@ -1645,6 +1950,7 @@
     const boundSlots = new WeakSet();
     const bindSlotInteractions = () => {
       getSlots().forEach(slot => {
+        ensureChartTileHandle(slot);
         if (boundSlots.has(slot)) return;
         boundSlots.add(slot);
         slot.addEventListener('click', (event) => {
@@ -1805,6 +2111,7 @@
         slot.tabIndex = 0;
       }
       host.append(slot);
+      ensureChartTileHandle(slot);
       bindSlotInteractions();
       bindDeleteInteractions();
       selectSlot(slot);
@@ -4370,6 +4677,7 @@
 
     wireYearPicker();
     setupChartCatalog();
+    setupChartTileDragging();
     setupEnergyFilters();
     setupTreeSearch();
 

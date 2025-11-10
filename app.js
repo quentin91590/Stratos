@@ -880,6 +880,7 @@
   };
 
   const METRIC_KEYS = Object.keys(ENERGY_BASE_DATA.metrics);
+  const METRIC_KEY_SET = new Set(METRIC_KEYS);
 
   const MIX_LABELS = {
     chaleur: 'Chaleur',
@@ -895,6 +896,87 @@
     .replace(/[\u0300-\u036f]/g, '')
     .toLowerCase()
     .trim();
+
+  const looksLikeMetricBundle = (value) => {
+    if (!value || typeof value !== 'object' || Array.isArray(value)) return false;
+    return Object.keys(value).some((key) => METRIC_KEY_SET.has(key));
+  };
+
+  const looksLikeMonthlyList = (value) => Array.isArray(value)
+    && value.some(entry => entry && typeof entry === 'object' && 'month' in entry);
+
+  const buildYearKeyCandidates = (year) => {
+    const candidates = [];
+    if (year !== undefined && year !== null) {
+      const str = String(year).trim();
+      if (str) {
+        candidates.push(str);
+        const num = Number(str);
+        if (Number.isFinite(num)) {
+          const intStr = String(Math.trunc(num));
+          if (!candidates.includes(intStr)) candidates.push(intStr);
+          if (!candidates.includes(num)) candidates.push(num);
+        }
+      }
+    }
+    return candidates;
+  };
+
+  const pickYearEntry = (source, candidates) => {
+    if (!source || typeof source !== 'object') return null;
+    for (const key of candidates) {
+      if (key === undefined || key === null) continue;
+      if (Object.prototype.hasOwnProperty.call(source, key)) {
+        const value = source[key];
+        if (value !== undefined) return value;
+      }
+    }
+    return null;
+  };
+
+  const resolveMetricsForYear = (info, year) => {
+    const metrics = info?.metrics;
+    if (!metrics) return {};
+    if (looksLikeMetricBundle(metrics)) return metrics;
+    const candidates = buildYearKeyCandidates(year);
+    if (metrics.byYear) {
+      const fromByYear = pickYearEntry(metrics.byYear, candidates);
+      if (looksLikeMetricBundle(fromByYear)) return fromByYear;
+    }
+    const direct = pickYearEntry(metrics, candidates);
+    if (looksLikeMetricBundle(direct)) return direct;
+    if (metrics.default && looksLikeMetricBundle(metrics.default)) return metrics.default;
+    if (metrics.latest && looksLikeMetricBundle(metrics.latest)) return metrics.latest;
+    if (metrics.byYear) {
+      const list = Object.values(metrics.byYear).find(looksLikeMetricBundle);
+      if (looksLikeMetricBundle(list)) return list;
+    }
+    const fallback = Object.values(metrics).find(looksLikeMetricBundle);
+    if (looksLikeMetricBundle(fallback)) return fallback;
+    return {};
+  };
+
+  const resolveMonthlyForYear = (info, year) => {
+    const monthly = info?.monthly;
+    if (!monthly) return [];
+    if (looksLikeMonthlyList(monthly)) return monthly;
+    const candidates = buildYearKeyCandidates(year);
+    if (monthly.byYear) {
+      const fromByYear = pickYearEntry(monthly.byYear, candidates);
+      if (looksLikeMonthlyList(fromByYear)) return fromByYear;
+    }
+    const direct = pickYearEntry(monthly, candidates);
+    if (looksLikeMonthlyList(direct)) return direct;
+    if (looksLikeMonthlyList(monthly.default)) return monthly.default;
+    if (looksLikeMonthlyList(monthly.latest)) return monthly.latest;
+    if (monthly.byYear) {
+      const list = Object.values(monthly.byYear).find(looksLikeMonthlyList);
+      if (looksLikeMonthlyList(list)) return list;
+    }
+    const fallback = Object.values(monthly).find(looksLikeMonthlyList);
+    if (looksLikeMonthlyList(fallback)) return fallback;
+    return [];
+  };
 
   const resolveMixKey = (label) => {
     const norm = normalizeText(label);
@@ -1016,6 +1098,7 @@
       });
     }
     highlightEnergyTrend(yr);
+    updateEnergyVisuals();
   }
 
   // Initialise le picker custom (clavier + souris + fermeture extérieure)
@@ -1960,6 +2043,7 @@
     const buildingSummaries = {};
     const monthKeys = ENERGY_BASE_DATA.calendar?.keys || [];
     const monthCount = monthKeys.length || 12;
+    const selectedYear = FILTERS?.year;
     const monthlyTotals = Array.from({ length: monthCount }, () => ({
       chaleur: 0,
       elec: 0,
@@ -1992,7 +2076,8 @@
         if (!Number.isFinite(sre) || sre <= 0) return;
         const buildingId = leaf.dataset?.building || '';
         const buildingInfo = ENERGY_BASE_DATA.buildings?.[buildingId] || {};
-        const buildingMetrics = buildingInfo.metrics || {};
+        const buildingMetrics = resolveMetricsForYear(buildingInfo, selectedYear);
+        const buildingMonthly = resolveMonthlyForYear(buildingInfo, selectedYear);
         const existingSummary = buildingSummaries[buildingId];
         const summary = existingSummary || {
           id: buildingId,
@@ -2004,6 +2089,7 @@
         };
 
         summary.sre += sre;
+        summary.year = selectedYear || summary.year || null;
 
         const typologyKey = summary.typologyKey || buildingInfo.typology || 'autre';
         const typologyDef = ENERGY_BASE_DATA.typologies?.[typologyKey] || {};
@@ -2020,7 +2106,7 @@
         }
 
         METRIC_KEYS.forEach((key) => {
-          const candidate = Number(buildingMetrics[key]);
+          const candidate = Number(buildingMetrics?.[key]);
           const intensity = Number.isFinite(candidate) ? candidate : fallbackIntensity[key];
           const energyValue = intensity * sre;
           totals[key].energy += energyValue;
@@ -2041,8 +2127,8 @@
           }
         });
 
-        if (Array.isArray(buildingInfo.monthly)) {
-          buildingInfo.monthly.forEach((entry, idx) => {
+        if (Array.isArray(buildingMonthly)) {
+          buildingMonthly.forEach((entry, idx) => {
             const bucket = monthlyTotals[idx];
             if (!bucket) return;
             bucket.chaleur += Number(entry?.chaleur) || 0;
@@ -2058,7 +2144,7 @@
         }
 
         summary.position = summary.position || buildingInfo.position || null;
-        summary.monthly = summary.monthly || buildingInfo.monthly || null;
+        summary.monthly = summary.monthly || buildingMonthly || null;
         typologyTotals[typologyKey] = typologySummary;
         buildingSummaries[buildingId] = summary;
       });
@@ -2129,6 +2215,7 @@
         total: totalEnergy,
         sre,
         metrics: metricsMap,
+        year: summary.year || selectedYear || null,
       });
 
       if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
@@ -2142,6 +2229,7 @@
           sre,
           position,
           metrics: metricsMap,
+          year: summary.year || selectedYear || null,
         });
       }
     });
@@ -3036,6 +3124,7 @@
   const updateMonthlyChart = (mode, monthly = [], aggregatedMetrics = {}) => {
     const cards = document.querySelectorAll('.energy-monthly-card');
     if (!cards.length) return;
+    const selectedYearLabel = FILTERS?.year ? String(FILTERS.year) : '';
     const cssClassForSeries = (seriesKey) => {
       if (seriesKey === 'elec') return 'electricite';
       if (seriesKey === 'eau') return 'eau';
@@ -3171,7 +3260,8 @@
           summary.textContent = 'Sélection vide — aucune tendance mensuelle.';
         } else {
           const average = dataset.reduce((acc, item) => acc + item.total, 0) / dataset.length;
-          summary.textContent = `Moyenne mensuelle : ${formatEnergyDisplay(average, mode, valueDecimals)} ${unit}`;
+          const yearPhrase = selectedYearLabel ? ` en ${selectedYearLabel}` : '';
+          summary.textContent = `Moyenne mensuelle${yearPhrase} : ${formatEnergyDisplay(average, mode, valueDecimals)} ${unit}`;
         }
       }
 

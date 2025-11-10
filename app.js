@@ -574,20 +574,44 @@
     buildings: {},
   };
 
+  const assignBuildingsData = (payload) => {
+    if (!payload || typeof payload !== 'object') return false;
+    const buildings = payload?.buildings ?? payload;
+    if (!buildings || typeof buildings !== 'object') return false;
+    ENERGY_BASE_DATA.buildings = buildings;
+    return true;
+  };
+
   async function loadBuildingsData() {
+    const globalObject = typeof window !== 'undefined' ? window : {};
+    const inlineDataset = globalObject.STRATOS_BUILDINGS;
+    if (assignBuildingsData(inlineDataset)) {
+      return;
+    }
+
+    const shouldAttemptFetch = (() => {
+      if (typeof window === 'undefined') return true;
+      const protocol = window.location?.protocol || '';
+      return protocol !== 'file:';
+    })();
+
+    if (!shouldAttemptFetch) {
+      console.warn('Chargement local détecté : utilisation des données intégrées pour les bâtiments.');
+      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
+      return;
+    }
+
     try {
       const response = await fetch('Buildings.json', { cache: 'no-cache' });
       if (!response.ok) {
         throw new Error(`Erreur HTTP ${response.status}`);
       }
       const payload = await response.json();
-      const buildings = payload?.buildings ?? payload;
-      if (buildings && typeof buildings === 'object') {
-        ENERGY_BASE_DATA.buildings = buildings;
-      } else {
-        ENERGY_BASE_DATA.buildings = {};
-        console.warn('Format inattendu pour Buildings.json');
+      if (assignBuildingsData(payload)) {
+        return;
       }
+      console.warn('Format inattendu pour Buildings.json');
+      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
     } catch (error) {
       console.error('Impossible de charger Buildings.json', error);
       ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};

@@ -1560,6 +1560,64 @@
     'tab-eau': ['eau'],
   };
 
+  const MISSING_METRIC_MESSAGES = {
+    general: 'Consommation énergétique indisponible sur les SI',
+    chaleur: 'Consommation de chaleur indisponible sur les SI',
+    froid: 'Consommation de froid indisponible sur les SI',
+    elec: 'Consommation électrique indisponible sur les SI',
+    co2: 'Émissions CO₂ indisponibles sur les SI',
+    eau: 'Consommation d’eau indisponible sur les SI',
+  };
+
+  const stopTreeLeafInfoPropagation = (event) => {
+    event.stopPropagation();
+    if (event.type === 'click') {
+      event.preventDefault();
+    }
+  };
+
+  const buildMissingReasonMessage = (missingSet, metricsToCheck) => {
+    if (!missingSet || !missingSet.size) return '';
+    const keys = Array.isArray(metricsToCheck) && metricsToCheck.length
+      ? metricsToCheck.filter((metric) => missingSet.has(metric))
+      : Array.from(missingSet);
+    if (!keys.length) return '';
+    const messages = keys.map((key) => MISSING_METRIC_MESSAGES[key] || `Données ${key} indisponibles`);
+    return messages.join('\n');
+  };
+
+  const syncTreeLeafMissingInfo = (leaf, message) => {
+    if (!leaf || !(leaf instanceof HTMLElement)) return;
+    const existing = leaf.querySelector('.tree-leaf__missing-info');
+    if (!message) {
+      if (existing) existing.remove();
+      leaf.removeAttribute('data-missing-reason');
+      return;
+    }
+
+    let icon = existing;
+    if (!icon) {
+      icon = document.createElement('span');
+      icon.className = 'tree-leaf__missing-info';
+      icon.setAttribute('aria-hidden', 'true');
+      icon.innerHTML = `
+        <svg viewBox="0 0 24 24" focusable="false" aria-hidden="true">
+          <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+          <line x1="12" y1="8" x2="12" y2="8" stroke="currentColor" stroke-linecap="round" stroke-width="2.2" />
+          <line x1="12" y1="11" x2="12" y2="16" stroke="currentColor" stroke-linecap="round" stroke-width="1.8" />
+        </svg>
+      `;
+      ['click', 'mousedown', 'mouseup', 'touchstart', 'touchend'].forEach((type) => {
+        icon.addEventListener(type, stopTreeLeafInfoPropagation);
+      });
+    }
+
+    icon.setAttribute('title', message);
+    icon.dataset.tooltip = message;
+    leaf.setAttribute('data-missing-reason', message);
+    leaf.append(icon);
+  };
+
   const computeMissingMetricsForYear = (year) => {
     const result = new Map();
     const list = ENERGY_BASE_DATA.buildings || {};
@@ -1618,7 +1676,10 @@
     $$('.tree-leaf').forEach((leaf) => {
       const id = leaf?.dataset?.building;
       const missingSet = id ? map.get(id) : null;
-      leaf.classList.toggle('is-missing', shouldFlag(missingSet));
+      const flagged = shouldFlag(missingSet);
+      leaf.classList.toggle('is-missing', flagged);
+      const message = flagged ? buildMissingReasonMessage(missingSet, metricsToCheck) : '';
+      syncTreeLeafMissingInfo(leaf, message);
     });
   };
 

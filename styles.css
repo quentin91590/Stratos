@@ -1137,6 +1137,29 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   padding:6px 8px 6px 6px; display:flex; align-items:center; gap:8px; border-radius:6px; transition: color .15s ease, background .15s ease, box-shadow .15s ease;
 }
 .tree-leaf__label{ flex:1 1 auto; min-width:0; }
+.tree-leaf__missing-info{
+  flex:0 0 auto;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  border:1px solid rgba(239, 68, 68, 0.55);
+  background:rgba(254, 226, 226, 0.85);
+  color:#b91c1c;
+  cursor:help;
+  transition: background .15s ease, border-color .15s ease, color .15s ease;
+}
+.tree-leaf__missing-info svg{
+  width:12px;
+  height:12px;
+  display:block;
+}
+.tree-leaf__missing-info:hover{
+  background:rgba(254, 202, 202, 0.95);
+  border-color:rgba(239, 68, 68, 0.65);
+}
 .tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
 .tree-leaf.is-missing:hover{
   color:#991b1b;

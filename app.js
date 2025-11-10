@@ -855,9 +855,16 @@
       handle.className = TILE_HANDLE_CLASS;
       handle.setAttribute('aria-label', 'Déplacer ce graphique');
       handle.innerHTML = `
-        <span class="chart-tile-handle__icon" aria-hidden="true"></span>
+        <span class="chart-tile-handle__icon" aria-hidden="true">
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+          <span class="chart-tile-handle__dot"></span>
+        </span>
       `;
-      slot.prepend(handle);
+      slot.append(handle);
     }
     if (!boundTileHandles.has(handle)) {
       boundTileHandles.add(handle);

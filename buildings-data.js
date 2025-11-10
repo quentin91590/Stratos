@@ -576,7 +576,7 @@ window.STRATOS_BUILDINGS = {
           "general": 173,
           "chaleur": 103,
           "froid": 10,
-          "elec": 70,
+          "elec": 0,
           "co2": 23,
           "eau": 1.22
         },
@@ -3308,7 +3308,7 @@ window.STRATOS_BUILDINGS = {
         "2025": {
           "general": 228,
           "chaleur": 140,
-          "froid": 15,
+          "froid": "",
           "elec": 92,
           "co2": 31,
           "eau": 1.689
@@ -8196,7 +8196,7 @@ window.STRATOS_BUILDINGS = {
         },
         "2023": {
           "general": 233,
-          "chaleur": 146,
+          "chaleur": 0,
           "froid": 17,
           "elec": 97,
           "co2": 33,

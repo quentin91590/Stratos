@@ -1156,6 +1156,78 @@
     return [];
   };
 
+  const MISSING_METRIC_CACHE = { year: null, map: new Map() };
+  const TAB_MISSING_RULES = {
+    'tab-energie': ['chaleur', 'froid', 'elec'],
+    'tab-chaleur': ['chaleur'],
+    'tab-froid': ['froid'],
+    'tab-elec': ['elec'],
+    'tab-co2': ['co2'],
+    'tab-eau': ['eau'],
+  };
+
+  const computeMissingMetricsForYear = (year) => {
+    const result = new Map();
+    const list = ENERGY_BASE_DATA.buildings || {};
+    const keys = Object.keys(list);
+    if (!keys.length) {
+      return result;
+    }
+
+    keys.forEach((id) => {
+      const info = list[id] || {};
+      const metrics = resolveMetricsForYear(info, year);
+      const missing = new Set();
+
+      METRIC_KEYS.forEach((metricKey) => {
+        const value = metrics?.[metricKey];
+        if (value === '' || value === null || value === undefined) {
+          missing.add(metricKey);
+          return;
+        }
+        const num = Number(value);
+        if (!Number.isFinite(num) || num <= 0) {
+          missing.add(metricKey);
+        }
+      });
+
+      if (missing.size > 0) {
+        result.set(id, missing);
+      }
+    });
+
+    return result;
+  };
+
+  const getMissingMetricMap = (year) => {
+    if (MISSING_METRIC_CACHE.year !== year) {
+      MISSING_METRIC_CACHE.map = computeMissingMetricsForYear(year);
+      MISSING_METRIC_CACHE.year = year;
+    }
+    return MISSING_METRIC_CACHE.map;
+  };
+
+  const getActiveEnergyTabId = () => {
+    const active = document.querySelector('#energy-block .kpi-tabs [role="tab"][aria-selected="true"]');
+    return active?.id || 'tab-energie';
+  };
+
+  const updateTreeMissingState = (activeTabId) => {
+    const tabId = activeTabId || getActiveEnergyTabId();
+    const metricsToCheck = TAB_MISSING_RULES[tabId];
+    const map = getMissingMetricMap(FILTERS?.year);
+    const shouldFlag = (missingSet) => {
+      if (!missingSet || !metricsToCheck || !metricsToCheck.length) return false;
+      return metricsToCheck.some(metric => missingSet.has(metric));
+    };
+
+    $$('.tree-leaf').forEach((leaf) => {
+      const id = leaf?.dataset?.building;
+      const missingSet = id ? map.get(id) : null;
+      leaf.classList.toggle('is-missing', shouldFlag(missingSet));
+    });
+  };
+
   const resolveMixKey = (label) => {
     const norm = normalizeText(label);
     if (!norm) return null;
@@ -1277,6 +1349,7 @@
     }
     highlightEnergyTrend(yr);
     updateEnergyVisuals();
+    updateTreeMissingState();
   }
 
   // Initialise le picker custom (clavier + souris + fermeture extérieure)
@@ -1997,6 +2070,7 @@
       if (container.id === 'energy-block') {
         setEnergySubnavActive(tab.id);
         scheduleEnergySubnavMeasure(true);
+        updateTreeMissingState(tab.id);
       }
 
       // Couleur active
@@ -4202,6 +4276,7 @@
     hydrateTreeCheckboxMap();
     checkWholeParc(true);
     syncTreeSelectionState();
+    updateTreeMissingState();
 
     wireYearPicker();
     setupChartCatalog();

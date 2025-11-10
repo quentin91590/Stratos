@@ -1040,7 +1040,13 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   appearance:none; border:none; background:transparent; cursor:pointer; width:100%; text-align:left; color:#0f172a;
   padding:6px 8px 6px 6px; display:flex; align-items:center; gap:8px; border-radius:6px; transition: color .15s ease, background .15s ease;
 }
+.tree-leaf.is-missing{
+  color:#b91c1c;
+}
 .tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
+.tree-leaf.is-missing:hover{
+  color:#991b1b;
+}
 
 .tree-leaf.is-active,
 .tree-node.is-active{

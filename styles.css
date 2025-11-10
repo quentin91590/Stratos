@@ -567,6 +567,82 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   transform:scale(1);
 }
 
+.chart-tile-handle{
+  position:absolute;
+  top:16px;
+  left:16px;
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  border:1px solid var(--border, rgba(148,163,184,0.35));
+  background:rgba(255,255,255,0.94);
+  color:#475569;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  cursor:grab;
+  z-index:13;
+  box-shadow:0 10px 24px rgba(15,23,42,0.12);
+  opacity:0;
+  transform:scale(.94);
+  transition:opacity .18s ease, transform .18s ease, box-shadow .18s ease, color .18s ease;
+}
+
+[data-chart-slot]:hover .chart-tile-handle,
+[data-chart-slot]:focus-within .chart-tile-handle{
+  opacity:1;
+  transform:scale(1);
+}
+
+.chart-tile-handle:hover{
+  color:#1f2937;
+  box-shadow:0 14px 32px rgba(15,23,42,0.16);
+}
+
+.chart-tile-handle:active{
+  cursor:grabbing;
+}
+
+.chart-tile-handle.is-dragging{
+  cursor:grabbing;
+  box-shadow:0 18px 36px rgba(15,23,42,0.18);
+}
+
+.chart-tile-handle:focus-visible{
+  outline:none;
+  box-shadow:0 0 0 4px var(--ring);
+  opacity:1;
+  transform:scale(1);
+}
+
+.chart-tile-handle__icon{display:inline-flex;}
+.chart-tile-handle__icon svg{display:block;}
+
+.chart-tile-placeholder{
+  border:2px dashed rgba(148,163,184,0.6);
+  border-radius:16px;
+  background:rgba(148,163,184,0.12);
+  transition:height .16s ease, width .16s ease;
+  pointer-events:none;
+}
+
+[data-chart-slot].is-dragging{
+  box-shadow:0 22px 44px rgba(15,23,42,0.22);
+  cursor:grabbing;
+}
+
+body.chart-tiles-dragging{user-select:none; cursor:grabbing;}
+
+@media (max-width: 640px){
+  .chart-tile-handle{
+    top:12px;
+    left:12px;
+    width:34px;
+    height:34px;
+    border-radius:10px;
+  }
+}
+
 .chart-catalog-trigger{
   position:sticky;
   bottom:24px;

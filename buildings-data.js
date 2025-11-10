@@ -1,4 +1,4 @@
-{
+window.STRATOS_BUILDINGS = {
   "buildings": {
     "rive-1": {
       "label": "Pavillon Horizon",
@@ -10901,4 +10901,4 @@
       }
     }
   }
-}
+};

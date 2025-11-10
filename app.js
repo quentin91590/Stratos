@@ -24,6 +24,50 @@
   let energySubnavGeometryEnabled = false;
   let energySubnavTabsGrid = null;
 
+  const MAP_SEVERITY_COLORS = {
+    low: '#4ade80',
+    medium: '#38bdf8',
+    high: '#f97316',
+    critical: '#ef4444',
+  };
+
+  const LEAFLET_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+  const LEAFLET_ATTRIBUTION = '© OpenStreetMap contributors';
+  const LEAFLET_STATE = new WeakMap();
+
+  const ensureLeafletState = (card) => {
+    if (typeof L === 'undefined') return null;
+    if (!card || !(card instanceof HTMLElement)) return null;
+    let state = LEAFLET_STATE.get(card);
+    if (state) {
+      return state;
+    }
+    const container = card.querySelector('[data-leaflet-map]');
+    if (!container) return null;
+    const map = L.map(container, {
+      zoomControl: true,
+      scrollWheelZoom: true,
+      dragging: true,
+      tap: true,
+    });
+    L.tileLayer(LEAFLET_TILE_URL, {
+      maxZoom: 19,
+      attribution: LEAFLET_ATTRIBUTION,
+    }).addTo(map);
+    const markers = L.layerGroup().addTo(map);
+    state = {
+      map,
+      markers,
+      userInteracted: false,
+      fitPerformed: false,
+    };
+    map.on('movestart zoomstart', () => {
+      state.userInteracted = true;
+    });
+    LEAFLET_STATE.set(card, state);
+    return state;
+  };
+
   const toRgbComponents = (input) => {
     if (!input) return null;
     const value = input.trim();
@@ -2218,7 +2262,10 @@
         year: summary.year || selectedYear || null,
       });
 
-      if (position && Number.isFinite(position.x) && Number.isFinite(position.y)) {
+      const hasCoordinates = position
+        && ((Number.isFinite(position.x) && Number.isFinite(position.y))
+          || (Number.isFinite(position.lat) && Number.isFinite(position.lng)));
+      if (hasCoordinates) {
         mapPoints.push({
           id: summary.id,
           label: summary.label,
@@ -3001,7 +3048,8 @@
       const markersWrap = card.querySelector('[data-map-markers]');
       const legendList = card.querySelector('[data-map-legend]');
       const emptyState = card.querySelector('[data-map-empty]');
-      if (!markersWrap) return;
+      const mapContainer = card.querySelector('[data-leaflet-map]');
+      const useLeaflet = Boolean(mapContainer && typeof L !== 'undefined' && (card.dataset.chartType || '') !== 'map-grid');
 
       const points = Array.isArray(mapPoints)
         ? mapPoints.map(point => {
@@ -3015,10 +3063,19 @@
         }).filter(point => Number.isFinite(mode === 'kwhm2' ? point.intensity : point.total))
         : [];
 
-      markersWrap.innerHTML = '';
+      if (markersWrap) markersWrap.innerHTML = '';
       const hasData = points.length > 0;
       if (emptyState) emptyState.hidden = hasData;
       card.classList.toggle('is-empty', !hasData);
+
+      let leafletState = null;
+      if (useLeaflet) {
+        leafletState = ensureLeafletState(card);
+        if (leafletState && !hasData) {
+          leafletState.markers.clearLayers();
+        }
+      }
+
       if (!hasData) return;
 
       const thresholdsSource = metricKey === 'chaleur'
@@ -3046,45 +3103,104 @@
                 : 'énergie';
 
       const classify = (value) => {
-        if (!Number.isFinite(value)) return 'map-marker--medium';
+        if (!Number.isFinite(value)) return 'medium';
         const [t1, t2, t3] = thresholds;
-        if (!thresholds.length) return 'map-marker--medium';
+        if (!thresholds.length) return 'medium';
         if (thresholds.length === 1) {
-          return value <= t1 ? 'map-marker--low' : 'map-marker--high';
+          return value <= t1 ? 'low' : 'high';
         }
-        if (value <= t1) return 'map-marker--low';
-        if (thresholds.length === 2) return value <= t2 ? 'map-marker--medium' : 'map-marker--high';
-        if (value <= t2) return 'map-marker--medium';
-        if (value <= t3) return 'map-marker--high';
-        return 'map-marker--critical';
+        if (value <= t1) return 'low';
+        if (thresholds.length === 2) return value <= t2 ? 'medium' : 'high';
+        if (value <= t2) return 'medium';
+        if (value <= t3) return 'high';
+        return 'critical';
       };
 
       const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
-      points.forEach((point) => {
-        const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
-        const sre = Number(point.sre) || 0;
-        const marker = document.createElement('div');
-        marker.className = `map-marker ${classify(value)}`;
-        const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
-        marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
-        marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
-        marker.style.setProperty('--size', `${size}`);
-        marker.setAttribute('role', 'listitem');
-        const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
-        marker.setAttribute('aria-label', `${point.label} : ${formattedValue} ${unit} (${metricLabel}), ${formatCount(sre)} m²`);
-        marker.title = `${point.label} — ${formattedValue} ${unit}`;
+      let handledByLeaflet = false;
+      if (leafletState && useLeaflet) {
+        const { map, markers } = leafletState;
+        markers.clearLayers();
+        const boundsPoints = [];
+        points.forEach((point) => {
+          const lat = Number(point.position?.lat);
+          const lng = Number(point.position?.lng);
+          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+          const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
+          const sre = Number(point.sre) || 0;
+          const severity = classify(value);
+          const fillColor = MAP_SEVERITY_COLORS[severity] || MAP_SEVERITY_COLORS.medium;
+          const radius = maxSre > 0 ? 10 + ((Math.min(sre, maxSre) / maxSre) * 14) : 10;
+          const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
+          const circle = L.circleMarker([lat, lng], {
+            radius,
+            color: '#ffffff',
+            weight: 2,
+            fillColor,
+            fillOpacity: 0.88,
+          });
+          circle.bindPopup(`${point.label} — ${formattedValue} ${unit}<br>${formatCount(sre)} m² (${metricLabel})`);
+          circle.bindTooltip(point.label, {
+            permanent: true,
+            direction: 'top',
+            className: `map-tooltip map-tooltip--${severity}`,
+            offset: [0, -radius - 4],
+          });
+          markers.addLayer(circle);
+          boundsPoints.push([lat, lng]);
+          if (markersWrap) {
+            const itemTag = (markersWrap.tagName === 'UL' || markersWrap.tagName === 'OL') ? 'li' : 'div';
+            const item = document.createElement(itemTag);
+            item.textContent = `${point.label} — ${formattedValue} ${unit}`;
+            item.setAttribute('role', 'listitem');
+            markersWrap.append(item);
+          }
+        });
+        if (boundsPoints.length) {
+          const bounds = L.latLngBounds(boundsPoints);
+          const shouldRefit = !leafletState.fitPerformed
+            || !leafletState.userInteracted
+            || (leafletState.lastBounds && !leafletState.lastBounds.contains(bounds));
+          if (shouldRefit) {
+            map.fitBounds(bounds, { padding: [36, 36] });
+            leafletState.fitPerformed = true;
+          }
+          leafletState.lastBounds = bounds;
+          requestAnimationFrame(() => map.invalidateSize());
+        }
+        handledByLeaflet = true;
+      }
 
-        const dot = document.createElement('span');
-        dot.className = 'map-marker__dot';
-        dot.setAttribute('aria-hidden', 'true');
+      if (!handledByLeaflet && markersWrap) {
+        points.forEach((point) => {
+          const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
+          const sre = Number(point.sre) || 0;
+          const severity = classify(value);
+          const marker = document.createElement('div');
+          marker.className = `map-marker map-marker--${severity}`;
+          const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
+          marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
+          marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
+          marker.style.setProperty('--size', `${size}`);
+          marker.style.left = `${Number(point.position?.x) || 0}%`;
+          marker.style.top = `${Number(point.position?.y) || 0}%`;
+          marker.setAttribute('role', 'listitem');
+          const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
+          marker.setAttribute('aria-label', `${point.label} : ${formattedValue} ${unit} (${metricLabel}), ${formatCount(sre)} m²`);
+          marker.title = `${point.label} — ${formattedValue} ${unit}`;
 
-        const label = document.createElement('span');
-        label.className = 'map-marker__label';
-        label.textContent = point.label;
+          const dot = document.createElement('span');
+          dot.className = 'map-marker__dot';
+          dot.setAttribute('aria-hidden', 'true');
 
-        marker.append(dot, label);
-        markersWrap.append(marker);
-      });
+          const label = document.createElement('span');
+          label.className = 'map-marker__label';
+          label.textContent = point.label;
+
+          marker.append(dot, label);
+          markersWrap.append(marker);
+        });
+      }
 
       if (legendList) {
         legendList.innerHTML = '';

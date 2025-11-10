@@ -527,429 +527,28 @@
       kwhm2: [120, 180, 230],
       kwh: [150000, 300000, 500000],
     },
-    buildings: {
-      'rive-1': {
-        label: 'Pavillon Horizon',
-        typology: 'ecole',
-        sre: 410,
-        position: { x: 12, y: 68 },
-        metrics: { general: 160, chaleur: 95, froid: 10, elec: 65, co2: 21, eau: 1.13 },
-        monthly: [
-          { month: 'jan', chaleur: 5456, elec: 2270, froid: 0, eau: 38, climate: 1.25 },
-          { month: 'fév', chaleur: 4676, elec: 2270, froid: 0, eau: 35, climate: 1.18 },
-          { month: 'mar', chaleur: 4286, elec: 2270, froid: 80, eau: 35, climate: 1.02 },
-          { month: 'avr', chaleur: 3508, elec: 2189, froid: 238, eau: 37, climate: 0.9 },
-          { month: 'mai', chaleur: 2728, elec: 2189, froid: 397, eau: 40, climate: 0.78 },
-          { month: 'jun', chaleur: 1948, elec: 2189, froid: 635, eau: 42, climate: 0.62 },
-          { month: 'jul', chaleur: 1559, elec: 2217, froid: 794, eau: 44, climate: 0.55 },
-          { month: 'aoû', chaleur: 1559, elec: 2217, froid: 794, eau: 48, climate: 0.6 },
-          { month: 'sep', chaleur: 2338, elec: 2217, froid: 556, eau: 47, climate: 0.74 },
-          { month: 'oct', chaleur: 3118, elec: 2189, froid: 318, eau: 40, climate: 0.94 },
-          { month: 'nov', chaleur: 3897, elec: 2243, froid: 120, eau: 30, climate: 1.08 },
-          { month: 'déc', chaleur: 3897, elec: 2217, froid: 40, eau: 30, climate: 1.2 }
-        ],
-      },
-      'rive-2': {
-        label: 'Laboratoire Lumen',
-        typology: 'ecole',
-        sre: 410,
-        position: { x: 16, y: 72 },
-        metrics: { general: 173, chaleur: 103, froid: 10, elec: 70, co2: 23, eau: 1.22 },
-        monthly: [
-          { month: 'jan', chaleur: 5889, elec: 2450, froid: 0, eau: 40, climate: 1.25 },
-          { month: 'fév', chaleur: 5048, elec: 2450, froid: 0, eau: 38, climate: 1.18 },
-          { month: 'mar', chaleur: 4627, elec: 2450, froid: 86, eau: 38, climate: 1.02 },
-          { month: 'avr', chaleur: 3786, elec: 2364, froid: 257, eau: 40, climate: 0.9 },
-          { month: 'mai', chaleur: 2945, elec: 2364, froid: 428, eau: 43, climate: 0.78 },
-          { month: 'jun', chaleur: 2103, elec: 2364, froid: 686, eau: 45, climate: 0.62 },
-          { month: 'jul', chaleur: 1682, elec: 2392, froid: 857, eau: 48, climate: 0.55 },
-          { month: 'aoû', chaleur: 1682, elec: 2392, froid: 857, eau: 52, climate: 0.6 },
-          { month: 'sep', chaleur: 2524, elec: 2392, froid: 600, eau: 50, climate: 0.74 },
-          { month: 'oct', chaleur: 3366, elec: 2364, froid: 343, eau: 43, climate: 0.94 },
-          { month: 'nov', chaleur: 4207, elec: 2422, froid: 128, eau: 32, climate: 1.08 },
-          { month: 'déc', chaleur: 4207, elec: 2392, froid: 43, eau: 32, climate: 1.2 }
-        ],
-      },
-      'rive-3': {
-        label: 'Atelier Delta',
-        typology: 'ecole',
-        sre: 410,
-        position: { x: 18, y: 66 },
-        metrics: { general: 186, chaleur: 110, froid: 11, elec: 75, co2: 24, eau: 1.31 },
-        monthly: [
-          { month: 'jan', chaleur: 6323, elec: 2631, froid: 0, eau: 43, climate: 1.25 },
-          { month: 'fév', chaleur: 5419, elec: 2631, froid: 0, eau: 40, climate: 1.18 },
-          { month: 'mar', chaleur: 4968, elec: 2631, froid: 92, eau: 40, climate: 1.02 },
-          { month: 'avr', chaleur: 4065, elec: 2538, froid: 275, eau: 43, climate: 0.9 },
-          { month: 'mai', chaleur: 3161, elec: 2538, froid: 460, eau: 45, climate: 0.78 },
-          { month: 'jun', chaleur: 2258, elec: 2538, froid: 735, eau: 48, climate: 0.62 },
-          { month: 'jul', chaleur: 1806, elec: 2568, froid: 920, eau: 51, climate: 0.55 },
-          { month: 'aoû', chaleur: 1806, elec: 2568, froid: 920, eau: 56, climate: 0.6 },
-          { month: 'sep', chaleur: 2710, elec: 2568, froid: 644, eau: 53, climate: 0.74 },
-          { month: 'oct', chaleur: 3613, elec: 2538, froid: 368, eau: 45, climate: 0.94 },
-          { month: 'nov', chaleur: 4517, elec: 2599, froid: 138, eau: 35, climate: 1.08 },
-          { month: 'déc', chaleur: 4517, elec: 2568, froid: 46, eau: 35, climate: 1.2 }
-        ],
-      },
-      'rive-4': {
-        label: 'Gymnase du Rivage',
-        typology: 'ecole',
-        sre: 410,
-        position: { x: 10, y: 74 },
-        metrics: { general: 197, chaleur: 117, froid: 12, elec: 80, co2: 26, eau: 1.38 },
-        monthly: [
-          { month: 'jan', chaleur: 6695, elec: 2785, froid: 0, eau: 45, climate: 1.25 },
-          { month: 'fév', chaleur: 5738, elec: 2785, froid: 0, eau: 42, climate: 1.18 },
-          { month: 'mar', chaleur: 5260, elec: 2785, froid: 97, eau: 42, climate: 1.02 },
-          { month: 'avr', chaleur: 4304, elec: 2687, froid: 292, eau: 45, climate: 0.9 },
-          { month: 'mai', chaleur: 3347, elec: 2687, froid: 487, eau: 48, climate: 0.78 },
-          { month: 'jun', chaleur: 2391, elec: 2687, froid: 779, eau: 51, climate: 0.62 },
-          { month: 'jul', chaleur: 1913, elec: 2719, froid: 974, eau: 53, climate: 0.55 },
-          { month: 'aoû', chaleur: 1913, elec: 2719, froid: 974, eau: 59, climate: 0.6 },
-          { month: 'sep', chaleur: 2868, elec: 2719, froid: 681, eau: 56, climate: 0.74 },
-          { month: 'oct', chaleur: 3825, elec: 2687, froid: 389, eau: 48, climate: 0.94 },
-          { month: 'nov', chaleur: 4782, elec: 2752, froid: 146, eau: 37, climate: 1.08 },
-          { month: 'déc', chaleur: 4782, elec: 2719, froid: 49, eau: 37, climate: 1.2 }
-        ],
-      },
-      'aug-1': {
-        label: 'Piscine Bellefontaine',
-        typology: 'piscine',
-        sre: 355,
-        position: { x: 20, y: 62 },
-        metrics: { general: 193, chaleur: 118, froid: 13, elec: 77, co2: 26, eau: 1.43 },
-        monthly: [
-          { month: 'jan', chaleur: 5887, elec: 2326, froid: 0, eau: 41, climate: 1.3 },
-          { month: 'fév', chaleur: 5046, elec: 2326, froid: 0, eau: 39, climate: 1.23 },
-          { month: 'mar', chaleur: 4626, elec: 2326, froid: 94, eau: 39, climate: 1.06 },
-          { month: 'avr', chaleur: 3784, elec: 2244, froid: 281, eau: 41, climate: 0.94 },
-          { month: 'mai', chaleur: 2943, elec: 2244, froid: 467, eau: 43, climate: 0.81 },
-          { month: 'jun', chaleur: 2103, elec: 2244, froid: 748, eau: 46, climate: 0.64 },
-          { month: 'jul', chaleur: 1683, elec: 2272, froid: 934, eau: 49, climate: 0.57 },
-          { month: 'aoû', chaleur: 1683, elec: 2272, froid: 934, eau: 54, climate: 0.62 },
-          { month: 'sep', chaleur: 2523, elec: 2272, froid: 654, eau: 51, climate: 0.77 },
-          { month: 'oct', chaleur: 3364, elec: 2244, froid: 374, eau: 43, climate: 0.98 },
-          { month: 'nov', chaleur: 4205, elec: 2299, froid: 140, eau: 33, climate: 1.12 },
-          { month: 'déc', chaleur: 4205, elec: 2272, froid: 47, eau: 33, climate: 1.25 }
-        ],
-      },
-      'aug-2': {
-        label: 'Centre Aquatique Ondine',
-        typology: 'piscine',
-        sre: 355,
-        position: { x: 24, y: 63 },
-        metrics: { general: 205, chaleur: 126, froid: 14, elec: 82, co2: 28, eau: 1.52 },
-        monthly: [
-          { month: 'jan', chaleur: 6262, elec: 2474, froid: 0, eau: 43, climate: 1.3 },
-          { month: 'fév', chaleur: 5368, elec: 2474, froid: 0, eau: 41, climate: 1.23 },
-          { month: 'mar', chaleur: 4920, elec: 2474, froid: 100, eau: 41, climate: 1.06 },
-          { month: 'avr', chaleur: 4026, elec: 2387, froid: 298, eau: 43, climate: 0.94 },
-          { month: 'mai', chaleur: 3131, elec: 2387, froid: 497, eau: 46, climate: 0.81 },
-          { month: 'jun', chaleur: 2237, elec: 2387, froid: 795, eau: 49, climate: 0.64 },
-          { month: 'jul', chaleur: 1789, elec: 2416, froid: 994, eau: 51, climate: 0.57 },
-          { month: 'aoû', chaleur: 1789, elec: 2416, froid: 994, eau: 57, climate: 0.62 },
-          { month: 'sep', chaleur: 2684, elec: 2416, froid: 696, eau: 54, climate: 0.77 },
-          { month: 'oct', chaleur: 3579, elec: 2387, froid: 398, eau: 46, climate: 0.98 },
-          { month: 'nov', chaleur: 4473, elec: 2445, froid: 149, eau: 35, climate: 1.12 },
-          { month: 'déc', chaleur: 4473, elec: 2416, froid: 50, eau: 35, climate: 1.25 }
-        ],
-      },
-      'aug-3': {
-        label: 'Bassin des Arènes',
-        typology: 'piscine',
-        sre: 355,
-        position: { x: 26, y: 66 },
-        metrics: { general: 221, chaleur: 136, froid: 15, elec: 89, co2: 30, eau: 1.64 },
-        monthly: [
-          { month: 'jan', chaleur: 6763, elec: 2672, froid: 0, eau: 46, climate: 1.3 },
-          { month: 'fév', chaleur: 5796, elec: 2672, froid: 0, eau: 43, climate: 1.23 },
-          { month: 'mar', chaleur: 5314, elec: 2672, froid: 107, eau: 43, climate: 1.06 },
-          { month: 'avr', chaleur: 4348, elec: 2578, froid: 322, eau: 46, climate: 0.94 },
-          { month: 'mai', chaleur: 3381, elec: 2578, froid: 537, eau: 50, climate: 0.81 },
-          { month: 'jun', chaleur: 2415, elec: 2578, froid: 859, eau: 52, climate: 0.64 },
-          { month: 'jul', chaleur: 1932, elec: 2609, froid: 1074, eau: 55, climate: 0.57 },
-          { month: 'aoû', chaleur: 1932, elec: 2609, froid: 1074, eau: 62, climate: 0.62 },
-          { month: 'sep', chaleur: 2899, elec: 2609, froid: 752, eau: 58, climate: 0.77 },
-          { month: 'oct', chaleur: 3864, elec: 2578, froid: 429, eau: 50, climate: 0.98 },
-          { month: 'nov', chaleur: 4831, elec: 2641, froid: 161, eau: 38, climate: 1.12 },
-          { month: 'déc', chaleur: 4831, elec: 2609, froid: 54, eau: 38, climate: 1.25 }
-        ],
-      },
-      'aug-4': {
-        label: 'Studio Wellness Augustins',
-        typology: 'piscine',
-        sre: 355,
-        position: { x: 21, y: 68 },
-        metrics: { general: 230, chaleur: 141, froid: 16, elec: 92, co2: 31, eau: 1.70 },
-        monthly: [
-          { month: 'jan', chaleur: 7013, elec: 2771, froid: 0, eau: 48, climate: 1.3 },
-          { month: 'fév', chaleur: 6011, elec: 2771, froid: 0, eau: 45, climate: 1.23 },
-          { month: 'mar', chaleur: 5510, elec: 2771, froid: 111, eau: 45, climate: 1.06 },
-          { month: 'avr', chaleur: 4508, elec: 2673, froid: 334, eau: 48, climate: 0.94 },
-          { month: 'mai', chaleur: 3507, elec: 2673, froid: 557, eau: 50, climate: 0.81 },
-          { month: 'jun', chaleur: 2504, elec: 2673, froid: 890, eau: 54, climate: 0.64 },
-          { month: 'jul', chaleur: 2004, elec: 2706, froid: 1113, eau: 57, climate: 0.57 },
-          { month: 'aoû', chaleur: 2004, elec: 2706, froid: 1113, eau: 63, climate: 0.62 },
-          { month: 'sep', chaleur: 3005, elec: 2706, froid: 778, eau: 60, climate: 0.77 },
-          { month: 'oct', chaleur: 4007, elec: 2673, froid: 445, eau: 50, climate: 0.98 },
-          { month: 'nov', chaleur: 5010, elec: 2738, froid: 167, eau: 39, climate: 1.12 },
-          { month: 'déc', chaleur: 5010, elec: 2706, froid: 55, eau: 39, climate: 1.25 }
-        ],
-      },
-      'hzn-1': {
-        label: 'Tour Confluence',
-        typology: 'administration',
-        sre: 395,
-        position: { x: 36, y: 47 },
-        metrics: { general: 172, chaleur: 104, froid: 12, elec: 69, co2: 22, eau: 1.22 },
-        monthly: [
-          { month: 'jan', chaleur: 5724, elec: 2327, froid: 0, eau: 39, climate: 1.21 },
-          { month: 'fév', chaleur: 4906, elec: 2327, froid: 0, eau: 37, climate: 1.14 },
-          { month: 'mar', chaleur: 4497, elec: 2327, froid: 93, eau: 37, climate: 0.99 },
-          { month: 'avr', chaleur: 3680, elec: 2245, froid: 277, eau: 39, climate: 0.87 },
-          { month: 'mai', chaleur: 2862, elec: 2245, froid: 463, eau: 41, climate: 0.76 },
-          { month: 'jun', chaleur: 2045, elec: 2245, froid: 740, eau: 44, climate: 0.6 },
-          { month: 'jul', chaleur: 1635, elec: 2272, froid: 924, eau: 46, climate: 0.53 },
-          { month: 'aoû', chaleur: 1635, elec: 2272, froid: 924, eau: 51, climate: 0.58 },
-          { month: 'sep', chaleur: 2453, elec: 2272, froid: 647, eau: 49, climate: 0.72 },
-          { month: 'oct', chaleur: 3271, elec: 2245, froid: 370, eau: 41, climate: 0.91 },
-          { month: 'nov', chaleur: 4089, elec: 2300, froid: 139, eau: 32, climate: 1.05 },
-          { month: 'déc', chaleur: 4089, elec: 2272, froid: 47, eau: 32, climate: 1.16 }
-        ],
-      },
-      'hzn-2': {
-        label: 'Bâtiment Vernal',
-        typology: 'administration',
-        sre: 395,
-        position: { x: 39, y: 49 },
-        metrics: { general: 187, chaleur: 113, froid: 13, elec: 75, co2: 24, eau: 1.33 },
-        monthly: [
-          { month: 'jan', chaleur: 6233, elec: 2533, froid: 0, eau: 42, climate: 1.21 },
-          { month: 'fév', chaleur: 5342, elec: 2533, froid: 0, eau: 39, climate: 1.14 },
-          { month: 'mar', chaleur: 4897, elec: 2533, froid: 101, eau: 39, climate: 0.99 },
-          { month: 'avr', chaleur: 4006, elec: 2444, froid: 302, eau: 42, climate: 0.87 },
-          { month: 'mai', chaleur: 3116, elec: 2444, froid: 504, eau: 45, climate: 0.76 },
-          { month: 'jun', chaleur: 2226, elec: 2444, froid: 806, eau: 47, climate: 0.6 },
-          { month: 'jul', chaleur: 1781, elec: 2474, froid: 1006, eau: 50, climate: 0.53 },
-          { month: 'aoû', chaleur: 1781, elec: 2474, froid: 1006, eau: 56, climate: 0.58 },
-          { month: 'sep', chaleur: 2671, elec: 2474, froid: 705, eau: 53, climate: 0.72 },
-          { month: 'oct', chaleur: 3561, elec: 2444, froid: 403, eau: 45, climate: 0.91 },
-          { month: 'nov', chaleur: 4452, elec: 2504, froid: 151, eau: 34, climate: 1.05 },
-          { month: 'déc', chaleur: 4452, elec: 2474, froid: 50, eau: 34, climate: 1.16 }
-        ],
-      },
-      'hzn-3': {
-        label: 'Maison Aérion',
-        typology: 'administration',
-        sre: 395,
-        position: { x: 41, y: 46 },
-        metrics: { general: 199, chaleur: 120, froid: 14, elec: 80, co2: 26, eau: 1.41 },
-        monthly: [
-          { month: 'jan', chaleur: 6613, elec: 2688, froid: 0, eau: 45, climate: 1.21 },
-          { month: 'fév', chaleur: 5669, elec: 2688, froid: 0, eau: 42, climate: 1.14 },
-          { month: 'mar', chaleur: 5197, elec: 2688, froid: 107, eau: 42, climate: 0.99 },
-          { month: 'avr', chaleur: 4252, elec: 2594, froid: 320, eau: 45, climate: 0.87 },
-          { month: 'mai', chaleur: 3307, elec: 2594, froid: 534, eau: 48, climate: 0.76 },
-          { month: 'jun', chaleur: 2362, elec: 2594, froid: 854, eau: 50, climate: 0.6 },
-          { month: 'jul', chaleur: 1890, elec: 2625, froid: 1068, eau: 53, climate: 0.53 },
-          { month: 'aoû', chaleur: 1890, elec: 2625, froid: 1068, eau: 58, climate: 0.58 },
-          { month: 'sep', chaleur: 2834, elec: 2625, froid: 748, eau: 56, climate: 0.72 },
-          { month: 'oct', chaleur: 3779, elec: 2594, froid: 427, eau: 48, climate: 0.91 },
-          { month: 'nov', chaleur: 4724, elec: 2657, froid: 160, eau: 36, climate: 1.05 },
-          { month: 'déc', chaleur: 4724, elec: 2625, froid: 53, eau: 36, climate: 1.16 }
-        ],
-      },
-      'hzn-4': {
-        label: 'Hôtel Administratif Orangerie',
-        typology: 'administration',
-        sre: 395,
-        position: { x: 37, y: 50 },
-        metrics: { general: 210, chaleur: 127, froid: 14, elec: 85, co2: 28, eau: 1.50 },
-        monthly: [
-          { month: 'jan', chaleur: 6995, elec: 2844, froid: 0, eau: 46, climate: 1.21 },
-          { month: 'fév', chaleur: 5996, elec: 2844, froid: 0, eau: 44, climate: 1.14 },
-          { month: 'mar', chaleur: 5496, elec: 2844, froid: 112, eau: 44, climate: 0.99 },
-          { month: 'avr', chaleur: 4497, elec: 2743, froid: 339, eau: 47, climate: 0.87 },
-          { month: 'mai', chaleur: 3497, elec: 2743, froid: 564, eau: 50, climate: 0.76 },
-          { month: 'jun', chaleur: 2498, elec: 2743, froid: 903, eau: 53, climate: 0.6 },
-          { month: 'jul', chaleur: 1999, elec: 2776, froid: 1130, eau: 56, climate: 0.53 },
-          { month: 'aoû', chaleur: 1999, elec: 2776, froid: 1130, eau: 62, climate: 0.58 },
-          { month: 'sep', chaleur: 2998, elec: 2776, froid: 791, eau: 58, climate: 0.72 },
-          { month: 'oct', chaleur: 3997, elec: 2743, froid: 451, eau: 50, climate: 0.91 },
-          { month: 'nov', chaleur: 4996, elec: 2809, froid: 169, eau: 38, climate: 1.05 },
-          { month: 'déc', chaleur: 4996, elec: 2776, froid: 56, eau: 38, climate: 1.16 }
-        ],
-      },
-      'atlas-1': {
-        label: 'Tour Vertex',
-        typology: 'bureau',
-        sre: 505,
-        position: { x: 56, y: 36 },
-        metrics: { general: 197, chaleur: 123, froid: 15, elec: 82, co2: 28, eau: 1.49 },
-        monthly: [
-          { month: 'jan', chaleur: 8716, elec: 3515, froid: 0, eau: 61, climate: 1.19 },
-          { month: 'fév', chaleur: 7471, elec: 3515, froid: 0, eau: 57, climate: 1.12 },
-          { month: 'mar', chaleur: 6848, elec: 3515, froid: 149, eau: 57, climate: 0.97 },
-          { month: 'avr', chaleur: 5604, elec: 3391, froid: 446, eau: 61, climate: 0.85 },
-          { month: 'mai', chaleur: 4358, elec: 3391, froid: 743, eau: 64, climate: 0.74 },
-          { month: 'jun', chaleur: 3113, elec: 3391, froid: 1190, eau: 68, climate: 0.59 },
-          { month: 'jul', chaleur: 2490, elec: 3433, froid: 1487, eau: 72, climate: 0.52 },
-          { month: 'aoû', chaleur: 2490, elec: 3433, froid: 1487, eau: 79, climate: 0.57 },
-          { month: 'sep', chaleur: 3736, elec: 3433, froid: 1041, eau: 75, climate: 0.7 },
-          { month: 'oct', chaleur: 4981, elec: 3391, froid: 595, eau: 64, climate: 0.89 },
-          { month: 'nov', chaleur: 6226, elec: 3474, froid: 224, eau: 50, climate: 1.03 },
-          { month: 'déc', chaleur: 6226, elec: 3433, froid: 75, eau: 50, climate: 1.14 }
-        ],
-      },
-      'atlas-2': {
-        label: 'Pôle Mobilis',
-        typology: 'bureau',
-        sre: 505,
-        position: { x: 60, y: 37 },
-        metrics: { general: 212, chaleur: 133, froid: 16, elec: 88, co2: 30, eau: 1.60 },
-        monthly: [
-          { month: 'jan', chaleur: 9379, elec: 3782, froid: 0, eau: 64, climate: 1.19 },
-          { month: 'fév', chaleur: 8040, elec: 3782, froid: 0, eau: 60, climate: 1.12 },
-          { month: 'mar', chaleur: 7370, elec: 3782, froid: 160, eau: 60, climate: 0.97 },
-          { month: 'avr', chaleur: 6029, elec: 3649, froid: 480, eau: 65, climate: 0.85 },
-          { month: 'mai', chaleur: 4690, elec: 3649, froid: 800, eau: 69, climate: 0.74 },
-          { month: 'jun', chaleur: 3350, elec: 3649, froid: 1280, eau: 73, climate: 0.59 },
-          { month: 'jul', chaleur: 2680, elec: 3694, froid: 1600, eau: 77, climate: 0.52 },
-          { month: 'aoû', chaleur: 2680, elec: 3694, froid: 1600, eau: 85, climate: 0.57 },
-          { month: 'sep', chaleur: 4019, elec: 3694, froid: 1120, eau: 81, climate: 0.7 },
-          { month: 'oct', chaleur: 5360, elec: 3649, froid: 641, eau: 69, climate: 0.89 },
-          { month: 'nov', chaleur: 6699, elec: 3738, froid: 241, eau: 52, climate: 1.03 },
-          { month: 'déc', chaleur: 6699, elec: 3694, froid: 80, eau: 52, climate: 1.14 }
-        ],
-      },
-      'atlas-3': {
-        label: 'Bureaux Forge Nord',
-        typology: 'bureau',
-        sre: 505,
-        position: { x: 62, y: 40 },
-        metrics: { general: 225, chaleur: 141, froid: 17, elec: 93, co2: 32, eau: 1.70 },
-        monthly: [
-          { month: 'jan', chaleur: 9948, elec: 4011, froid: 0, eau: 68, climate: 1.19 },
-          { month: 'fév', chaleur: 8526, elec: 4011, froid: 0, eau: 64, climate: 1.12 },
-          { month: 'mar', chaleur: 7816, elec: 4011, froid: 169, eau: 64, climate: 0.97 },
-          { month: 'avr', chaleur: 6394, elec: 3869, froid: 509, eau: 68, climate: 0.85 },
-          { month: 'mai', chaleur: 4974, elec: 3869, froid: 848, eau: 72, climate: 0.74 },
-          { month: 'jun', chaleur: 3552, elec: 3869, froid: 1358, eau: 78, climate: 0.59 },
-          { month: 'jul', chaleur: 2842, elec: 3916, froid: 1697, eau: 82, climate: 0.52 },
-          { month: 'aoû', chaleur: 2842, elec: 3916, froid: 1697, eau: 90, climate: 0.57 },
-          { month: 'sep', chaleur: 4263, elec: 3916, froid: 1188, eau: 86, climate: 0.7 },
-          { month: 'oct', chaleur: 5684, elec: 3869, froid: 678, eau: 72, climate: 0.89 },
-          { month: 'nov', chaleur: 7105, elec: 3964, froid: 254, eau: 56, climate: 1.03 },
-          { month: 'déc', chaleur: 7105, elec: 3916, froid: 85, eau: 56, climate: 1.14 }
-        ],
-      },
-      'atlas-4': {
-        label: 'Studios Atelier 5',
-        typology: 'bureau',
-        sre: 505,
-        position: { x: 57, y: 41 },
-        metrics: { general: 240, chaleur: 150, froid: 18, elec: 100, co2: 34, eau: 1.81 },
-        monthly: [
-          { month: 'jan', chaleur: 10610, elec: 4278, froid: 0, eau: 73, climate: 1.19 },
-          { month: 'fév', chaleur: 9094, elec: 4278, froid: 0, eau: 68, climate: 1.12 },
-          { month: 'mar', chaleur: 8336, elec: 4278, froid: 180, eau: 68, climate: 0.97 },
-          { month: 'avr', chaleur: 6821, elec: 4127, froid: 542, eau: 73, climate: 0.85 },
-          { month: 'mai', chaleur: 5305, elec: 4127, froid: 905, eau: 77, climate: 0.74 },
-          { month: 'jun', chaleur: 3789, elec: 4127, froid: 1447, eau: 82, climate: 0.59 },
-          { month: 'jul', chaleur: 3031, elec: 4178, froid: 1810, eau: 86, climate: 0.52 },
-          { month: 'aoû', chaleur: 3031, elec: 4178, froid: 1810, eau: 96, climate: 0.57 },
-          { month: 'sep', chaleur: 4547, elec: 4178, froid: 1267, eau: 91, climate: 0.7 },
-          { month: 'oct', chaleur: 6063, elec: 4127, froid: 724, eau: 77, climate: 0.89 },
-          { month: 'nov', chaleur: 7579, elec: 4228, froid: 271, eau: 59, climate: 1.03 },
-          { month: 'déc', chaleur: 7579, elec: 4178, froid: 90, eau: 59, climate: 1.14 }
-        ],
-      },
-      'cedlac-1': {
-        label: 'Salle Lyrique',
-        typology: 'culture',
-        sre: 495,
-        position: { x: 70, y: 74 },
-        metrics: { general: 157, chaleur: 91, froid: 8, elec: 63, co2: 20, eau: 1.06 },
-        monthly: [
-          { month: 'jan', chaleur: 6300, elec: 2651, froid: 0, eau: 42, climate: 1.35 },
-          { month: 'fév', chaleur: 5400, elec: 2651, froid: 0, eau: 40, climate: 1.27 },
-          { month: 'mar', chaleur: 4950, elec: 2651, froid: 80, eau: 40, climate: 1.1 },
-          { month: 'avr', chaleur: 4050, elec: 2558, froid: 241, eau: 42, climate: 0.97 },
-          { month: 'mai', chaleur: 3150, elec: 2558, froid: 401, eau: 45, climate: 0.84 },
-          { month: 'jun', chaleur: 2250, elec: 2558, froid: 642, eau: 48, climate: 0.67 },
-          { month: 'jul', chaleur: 1800, elec: 2588, froid: 802, eau: 50, climate: 0.59 },
-          { month: 'aoû', chaleur: 1800, elec: 2588, froid: 802, eau: 56, climate: 0.65 },
-          { month: 'sep', chaleur: 2700, elec: 2588, froid: 562, eau: 53, climate: 0.8 },
-          { month: 'oct', chaleur: 3600, elec: 2558, froid: 321, eau: 45, climate: 1.02 },
-          { month: 'nov', chaleur: 4500, elec: 2620, froid: 121, eau: 34, climate: 1.17 },
-          { month: 'déc', chaleur: 4500, elec: 2588, froid: 40, eau: 34, climate: 1.3 }
-        ],
-      },
-      'cedlac-2': {
-        label: 'Galerie des Cimes',
-        typology: 'culture',
-        sre: 495,
-        position: { x: 74, y: 75 },
-        metrics: { general: 171, chaleur: 99, froid: 9, elec: 69, co2: 22, eau: 1.16 },
-        monthly: [
-          { month: 'jan', chaleur: 6859, elec: 2886, froid: 0, eau: 46, climate: 1.35 },
-          { month: 'fév', chaleur: 5880, elec: 2886, froid: 0, eau: 43, climate: 1.27 },
-          { month: 'mar', chaleur: 5390, elec: 2886, froid: 87, eau: 43, climate: 1.1 },
-          { month: 'avr', chaleur: 4410, elec: 2784, froid: 262, eau: 46, climate: 0.97 },
-          { month: 'mai', chaleur: 3430, elec: 2784, froid: 437, eau: 49, climate: 0.84 },
-          { month: 'jun', chaleur: 2450, elec: 2784, froid: 699, eau: 52, climate: 0.67 },
-          { month: 'jul', chaleur: 1960, elec: 2818, froid: 873, eau: 55, climate: 0.59 },
-          { month: 'aoû', chaleur: 1960, elec: 2818, froid: 873, eau: 60, climate: 0.65 },
-          { month: 'sep', chaleur: 2940, elec: 2818, froid: 612, eau: 58, climate: 0.8 },
-          { month: 'oct', chaleur: 3920, elec: 2784, froid: 350, eau: 49, climate: 1.02 },
-          { month: 'nov', chaleur: 4900, elec: 2853, froid: 131, eau: 37, climate: 1.17 },
-          { month: 'déc', chaleur: 4900, elec: 2818, froid: 44, eau: 37, climate: 1.3 }
-        ],
-      },
-      'cedlac-3': {
-        label: 'Pavillon Promenade',
-        typology: 'culture',
-        sre: 495,
-        position: { x: 76, y: 78 },
-        metrics: { general: 181, chaleur: 105, froid: 9, elec: 73, co2: 23, eau: 1.23 },
-        monthly: [
-          { month: 'jan', chaleur: 7279, elec: 3063, froid: 0, eau: 48, climate: 1.35 },
-          { month: 'fév', chaleur: 6239, elec: 3063, froid: 0, eau: 46, climate: 1.27 },
-          { month: 'mar', chaleur: 5719, elec: 3063, froid: 93, eau: 46, climate: 1.1 },
-          { month: 'avr', chaleur: 4679, elec: 2955, froid: 278, eau: 49, climate: 0.97 },
-          { month: 'mai', chaleur: 3640, elec: 2955, froid: 463, eau: 52, climate: 0.84 },
-          { month: 'jun', chaleur: 2600, elec: 2955, froid: 742, eau: 54, climate: 0.67 },
-          { month: 'jul', chaleur: 2080, elec: 2991, froid: 927, eau: 57, climate: 0.59 },
-          { month: 'aoû', chaleur: 2080, elec: 2991, froid: 927, eau: 63, climate: 0.65 },
-          { month: 'sep', chaleur: 3120, elec: 2991, froid: 649, eau: 60, climate: 0.8 },
-          { month: 'oct', chaleur: 4159, elec: 2955, froid: 370, eau: 52, climate: 1.02 },
-          { month: 'nov', chaleur: 5199, elec: 3026, froid: 139, eau: 40, climate: 1.17 },
-          { month: 'déc', chaleur: 5199, elec: 2991, froid: 46, eau: 40, climate: 1.3 }
-        ],
-      },
-      'cedlac-4': {
-        label: 'Amphithéâtre du Lac',
-        typology: 'culture',
-        sre: 495,
-        position: { x: 71, y: 80 },
-        metrics: { general: 195, chaleur: 113, froid: 10, elec: 78, co2: 25, eau: 1.32 },
-        monthly: [
-          { month: 'jan', chaleur: 7839, elec: 3298, froid: 0, eau: 52, climate: 1.35 },
-          { month: 'fév', chaleur: 6719, elec: 3298, froid: 0, eau: 48, climate: 1.27 },
-          { month: 'mar', chaleur: 6159, elec: 3298, froid: 100, eau: 48, climate: 1.1 },
-          { month: 'avr', chaleur: 5039, elec: 3182, froid: 299, eau: 52, climate: 0.97 },
-          { month: 'mai', chaleur: 3919, elec: 3182, froid: 498, eau: 55, climate: 0.84 },
-          { month: 'jun', chaleur: 2799, elec: 3182, froid: 797, eau: 58, climate: 0.67 },
-          { month: 'jul', chaleur: 2239, elec: 3221, froid: 998, eau: 62, climate: 0.59 },
-          { month: 'aoû', chaleur: 2239, elec: 3221, froid: 998, eau: 68, climate: 0.65 },
-          { month: 'sep', chaleur: 3359, elec: 3221, froid: 698, eau: 65, climate: 0.8 },
-          { month: 'oct', chaleur: 4479, elec: 3182, froid: 399, eau: 55, climate: 1.02 },
-          { month: 'nov', chaleur: 5599, elec: 3259, froid: 149, eau: 43, climate: 1.17 },
-          { month: 'déc', chaleur: 5599, elec: 3221, froid: 49, eau: 43, climate: 1.3 }
-        ],
-      }
-    },
+    buildings: {},
   };
+
+  async function loadBuildingsData() {
+    try {
+      const response = await fetch('Buildings.json', { cache: 'no-cache' });
+      if (!response.ok) {
+        throw new Error(`Erreur HTTP ${response.status}`);
+      }
+      const payload = await response.json();
+      const buildings = payload?.buildings ?? payload;
+      if (buildings && typeof buildings === 'object') {
+        ENERGY_BASE_DATA.buildings = buildings;
+      } else {
+        ENERGY_BASE_DATA.buildings = {};
+        console.warn('Format inattendu pour Buildings.json');
+      }
+    } catch (error) {
+      console.error('Impossible de charger Buildings.json', error);
+      ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
+    }
+  }
 
   const HEAT_BASE_DATA = {
     mix: {
@@ -4290,7 +3889,9 @@
 
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
-  document.addEventListener('DOMContentLoaded', () => {
+  async function initializeApp() {
+    await loadBuildingsData();
+
     syncStickyTop();
     $$('.tabset').forEach(initTabset);
     selectSection('energie');
@@ -4321,6 +3922,12 @@
         toggleBtn.classList.toggle('is-open', open);
       });
     }
+  }
+
+  document.addEventListener('DOMContentLoaded', () => {
+    initializeApp().catch((error) => {
+      console.error('Erreur lors de l\'initialisation de Stratos', error);
+    });
   });
 
 

@@ -855,20 +855,9 @@
       handle.className = TILE_HANDLE_CLASS;
       handle.setAttribute('aria-label', 'Déplacer ce graphique');
       handle.innerHTML = `
-        <span class="chart-tile-handle__icon" aria-hidden="true">
-          <svg viewBox="0 0 16 16" width="16" height="16" focusable="false" aria-hidden="true">
-            <g fill="currentColor">
-              <circle cx="5" cy="4" r="1.4"></circle>
-              <circle cx="11" cy="4" r="1.4"></circle>
-              <circle cx="5" cy="8" r="1.4"></circle>
-              <circle cx="11" cy="8" r="1.4"></circle>
-              <circle cx="5" cy="12" r="1.4"></circle>
-              <circle cx="11" cy="12" r="1.4"></circle>
-            </g>
-          </svg>
-        </span>
+        <span class="chart-tile-handle__icon" aria-hidden="true"></span>
       `;
-      slot.append(handle);
+      slot.prepend(handle);
     }
     if (!boundTileHandles.has(handle)) {
       boundTileHandles.add(handle);

@@ -7,6 +7,12 @@
   <title>Dashboard — Énergie</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@500;700&display=swap" rel="stylesheet">
+  <link
+    rel="stylesheet"
+    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha512-mn0R2nS4WvRhXZeK6Fz4WxZmf0RduCMsZ/HdlIQK5vCk1vZ1tcHTul3e8Dqg3OjaxAg/P070MqxsAo5A3v0u1Q=="
+    crossorigin=""
+  >
   <link rel="stylesheet" href="styles.css">
 </head>
 
@@ -957,10 +963,8 @@
                         <div class="chart-body" data-chart-role="body">
                           <div class="energy-map energy-map--bubbles">
                             <div class="map-canvas">
-                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
-                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-                              </svg>
-                              <div class="map-markers" data-map-markers role="list"></div>
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive du parc"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                               <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                             </div>
                             <div class="map-legend-wrapper">
@@ -975,10 +979,8 @@
                       <template id="chart-template-map-bubbles" data-caption="Carte des bâtiments avec bulles proportionnelles à la surface.">
                         <div class="energy-map energy-map--bubbles">
                           <div class="map-canvas">
-                            <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
-                              <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-                            </svg>
-                            <div class="map-markers" data-map-markers role="list"></div>
+                            <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive des bâtiments"></div>
+                            <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                             <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                           </div>
                           <div class="map-legend-wrapper">
@@ -2731,11 +2733,8 @@
                         <div class="chart-body" data-chart-role="body">
                           <div class="energy-map energy-map--bubbles">
                             <div class="map-canvas">
-                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée du parc">
-                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor"
-                                  stroke-width="1.6" stroke-linejoin="round" />
-                              </svg>
-                              <div class="map-markers" data-map-markers role="list"></div>
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive du parc"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                               <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                             </div>
                             <div class="map-legend-wrapper">
@@ -2996,11 +2995,8 @@
                         <div class="chart-body" data-chart-role="body">
                           <div class="energy-map energy-map--bubbles">
                             <div class="map-canvas">
-                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée du parc">
-                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor"
-                                  stroke-width="1.6" stroke-linejoin="round" />
-                              </svg>
-                              <div class="map-markers" data-map-markers role="list"></div>
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive du parc"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                               <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                             </div>
                             <div class="map-legend-wrapper">
@@ -3413,10 +3409,8 @@
                         <div class="chart-body" data-chart-role="body">
                           <div class="energy-map energy-map--bubbles">
                             <div class="map-canvas">
-                              <svg class="map-outline" viewBox="0 0 200 120" role="img" aria-label="Carte stylisée de la Suisse">
-                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-                              </svg>
-                              <div class="map-markers" data-map-markers role="list"></div>
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive des émissions"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                               <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                             </div>
                             <div class="map-legend-wrapper">
@@ -3697,11 +3691,9 @@
                         </header>
                         <div class="chart-body" data-chart-role="body">
                           <div class="energy-map energy-map--bubbles">
-                            <div class="map-canvas" role="img" aria-label="Carte des consommations d’eau">
-                              <svg class="map-outline" viewBox="0 0 200 120" role="presentation" aria-hidden="true">
-                                <path d="M18 68 L46 32 L92 24 L140 46 L154 84 L110 102 L58 92 Z" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" />
-                              </svg>
-                              <div class="map-markers" data-map-markers role="list"></div>
+                            <div class="map-canvas">
+                              <div class="map-viewport" data-leaflet-map role="img" aria-label="Carte interactive de l’eau"></div>
+                              <ul class="map-markers sr-only" data-map-markers role="list"></ul>
                               <p class="map-empty" data-map-empty>Chargement des bâtiments…</p>
                             </div>
                             <div class="map-legend-wrapper">
@@ -4252,7 +4244,12 @@
 
   <!-- Overlay pour mobile (liée au burger) -->
   <div class="side-overlay" hidden></div>
-
+  <script
+    src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha512-o9N1j7kGStG6u6QcmGeXjr6UIK/Y/xFd25tOfvtTDHkHWuZ4wNG0Ax7Anxr1j403rwhhtjfiPgkBC5TGSf3zOA=="
+    crossorigin=""
+    defer
+  ></script>
   <script src="app.js" defer></script>
 </body>
 

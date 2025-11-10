@@ -31,41 +31,151 @@
     critical: '#ef4444',
   };
 
-  const LEAFLET_TILE_URL = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
-  const LEAFLET_ATTRIBUTION = '© OpenStreetMap contributors';
-  const LEAFLET_STATE = new WeakMap();
+  const MAP_CARD_STATE = new WeakMap();
 
-  const ensureLeafletState = (card) => {
-    if (typeof L === 'undefined') return null;
+  const ensureMapFrame = (card) => {
     if (!card || !(card instanceof HTMLElement)) return null;
-    let state = LEAFLET_STATE.get(card);
-    if (state) {
-      return state;
+    let state = MAP_CARD_STATE.get(card);
+    if (state) return state;
+    const viewport = card.querySelector('[data-leaflet-map]');
+    if (!viewport) return null;
+    let frame = viewport.querySelector('.map-viewport__frame');
+    if (!frame) {
+      frame = document.createElement('div');
+      frame.className = 'map-viewport__frame';
+      viewport.appendChild(frame);
     }
-    const container = card.querySelector('[data-leaflet-map]');
-    if (!container) return null;
-    const map = L.map(container, {
-      zoomControl: true,
-      scrollWheelZoom: true,
-      dragging: true,
-      tap: true,
-    });
-    L.tileLayer(LEAFLET_TILE_URL, {
-      maxZoom: 19,
-      attribution: LEAFLET_ATTRIBUTION,
-    }).addTo(map);
-    const markers = L.layerGroup().addTo(map);
-    state = {
-      map,
-      markers,
-      userInteracted: false,
-      fitPerformed: false,
-    };
-    map.on('movestart zoomstart', () => {
-      state.userInteracted = true;
-    });
-    LEAFLET_STATE.set(card, state);
+    state = { viewport, frame };
+    MAP_CARD_STATE.set(card, state);
     return state;
+  };
+
+  const projectMapPoints = (points) => {
+    if (!Array.isArray(points) || !points.length) {
+      return { projectedBounds: null };
+    }
+
+    const latLngCandidates = points.filter((point) => {
+      const lat = Number(point?.position?.lat);
+      const lng = Number(point?.position?.lng);
+      return Number.isFinite(lat) && Number.isFinite(lng);
+    });
+
+    let frameMinX = Infinity;
+    let frameMaxX = -Infinity;
+    let frameMinY = Infinity;
+    let frameMaxY = -Infinity;
+
+    if (latLngCandidates.length >= 2) {
+      const lats = latLngCandidates.map(point => Number(point.position.lat));
+      const lngs = latLngCandidates.map(point => Number(point.position.lng));
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      const latSpan = Math.max(maxLat - minLat, 0.0001);
+      const lngSpan = Math.max(maxLng - minLng, 0.0001);
+
+      points.forEach((point) => {
+        const lat = Number(point?.position?.lat);
+        const lng = Number(point?.position?.lng);
+        let x = null;
+        let y = null;
+
+        if (Number.isFinite(lat) && Number.isFinite(lng)) {
+          x = ((lng - minLng) / lngSpan) * 100;
+          y = 100 - ((lat - minLat) / latSpan) * 100;
+        } else {
+          const px = Number(point?.position?.x);
+          const py = Number(point?.position?.y);
+          if (Number.isFinite(px) && Number.isFinite(py)) {
+            x = px;
+            y = py;
+          }
+        }
+
+        if (Number.isFinite(x) && Number.isFinite(y)) {
+          point.projected = { x, y };
+          frameMinX = Math.min(frameMinX, x);
+          frameMaxX = Math.max(frameMaxX, x);
+          frameMinY = Math.min(frameMinY, y);
+          frameMaxY = Math.max(frameMaxY, y);
+        } else {
+          point.projected = null;
+        }
+      });
+    } else {
+      const valid = points.filter((point) => {
+        const px = Number(point?.position?.x);
+        const py = Number(point?.position?.y);
+        return Number.isFinite(px) && Number.isFinite(py);
+      });
+
+      if (!valid.length) {
+        points.forEach((point) => { point.projected = null; });
+        return { projectedBounds: null };
+      }
+
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minY = Infinity;
+      let maxY = -Infinity;
+
+      valid.forEach((point) => {
+        const px = Number(point.position.x);
+        const py = Number(point.position.y);
+        minX = Math.min(minX, px);
+        maxX = Math.max(maxX, px);
+        minY = Math.min(minY, py);
+        maxY = Math.max(maxY, py);
+      });
+
+      const spanX = Math.max(maxX - minX, 0.0001);
+      const spanY = Math.max(maxY - minY, 0.0001);
+
+      points.forEach((point) => {
+        const px = Number(point?.position?.x);
+        const py = Number(point?.position?.y);
+        if (Number.isFinite(px) && Number.isFinite(py)) {
+          const x = ((px - minX) / spanX) * 100;
+          const y = ((py - minY) / spanY) * 100;
+          point.projected = { x, y };
+          frameMinX = Math.min(frameMinX, x);
+          frameMaxX = Math.max(frameMaxX, x);
+          frameMinY = Math.min(frameMinY, y);
+          frameMaxY = Math.max(frameMaxY, y);
+        } else {
+          point.projected = null;
+        }
+      });
+    }
+
+    if (!Number.isFinite(frameMinX) || !Number.isFinite(frameMinY) || !Number.isFinite(frameMaxX) || !Number.isFinite(frameMaxY)) {
+      return { projectedBounds: null };
+    }
+
+    const margin = 4;
+    const bounds = {
+      minX: Math.max(0, frameMinX - margin),
+      minY: Math.max(0, frameMinY - margin),
+      maxX: Math.min(100, frameMaxX + margin),
+      maxY: Math.min(100, frameMaxY + margin),
+    };
+
+    const width = bounds.maxX - bounds.minX;
+    const height = bounds.maxY - bounds.minY;
+    if (width < 8) {
+      const centerX = (bounds.minX + bounds.maxX) / 2;
+      bounds.minX = Math.max(0, centerX - 4);
+      bounds.maxX = Math.min(100, centerX + 4);
+    }
+    if (height < 8) {
+      const centerY = (bounds.minY + bounds.maxY) / 2;
+      bounds.minY = Math.max(0, centerY - 4);
+      bounds.maxY = Math.min(100, centerY + 4);
+    }
+
+    return { projectedBounds: bounds };
   };
 
   const toRgbComponents = (input) => {
@@ -3073,7 +3183,6 @@
       const legendList = card.querySelector('[data-map-legend]');
       const emptyState = card.querySelector('[data-map-empty]');
       const mapContainer = card.querySelector('[data-leaflet-map]');
-      const useLeaflet = Boolean(mapContainer && typeof L !== 'undefined' && (card.dataset.chartType || '') !== 'map-grid');
 
       const points = Array.isArray(mapPoints)
         ? mapPoints.map(point => {
@@ -3092,15 +3201,15 @@
       if (emptyState) emptyState.hidden = hasData;
       card.classList.toggle('is-empty', !hasData);
 
-      let leafletState = null;
-      if (useLeaflet) {
-        leafletState = ensureLeafletState(card);
-        if (leafletState && !hasData) {
-          leafletState.markers.clearLayers();
+      if (!hasData) {
+        if (mapContainer) {
+          const existingState = MAP_CARD_STATE.get(card);
+          if (existingState?.frame) {
+            existingState.frame.hidden = true;
+          }
         }
+        return;
       }
-
-      if (!hasData) return;
 
       const thresholdsSource = metricKey === 'chaleur'
         ? HEAT_BASE_DATA.mapThresholds
@@ -3141,73 +3250,36 @@
       };
 
       const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
-      let handledByLeaflet = false;
-      if (leafletState && useLeaflet) {
-        const { map, markers } = leafletState;
-        markers.clearLayers();
-        const boundsPoints = [];
-        points.forEach((point) => {
-          const lat = Number(point.position?.lat);
-          const lng = Number(point.position?.lng);
-          if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
-          const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
-          const sre = Number(point.sre) || 0;
-          const severity = classify(value);
-          const fillColor = MAP_SEVERITY_COLORS[severity] || MAP_SEVERITY_COLORS.medium;
-          const radius = maxSre > 0 ? 10 + ((Math.min(sre, maxSre) / maxSre) * 14) : 10;
-          const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
-          const circle = L.circleMarker([lat, lng], {
-            radius,
-            color: '#ffffff',
-            weight: 2,
-            fillColor,
-            fillOpacity: 0.88,
-          });
-          circle.bindPopup(`${point.label} — ${formattedValue} ${unit}<br>${formatCount(sre)} m² (${metricLabel})`);
-          circle.bindTooltip(point.label, {
-            permanent: true,
-            direction: 'top',
-            className: `map-tooltip map-tooltip--${severity}`,
-            offset: [0, -radius - 4],
-          });
-          markers.addLayer(circle);
-          boundsPoints.push([lat, lng]);
-          if (markersWrap) {
-            const itemTag = (markersWrap.tagName === 'UL' || markersWrap.tagName === 'OL') ? 'li' : 'div';
-            const item = document.createElement(itemTag);
-            item.textContent = `${point.label} — ${formattedValue} ${unit}`;
-            item.setAttribute('role', 'listitem');
-            markersWrap.append(item);
-          }
-        });
-        if (boundsPoints.length) {
-          const bounds = L.latLngBounds(boundsPoints);
-          const shouldRefit = !leafletState.fitPerformed
-            || !leafletState.userInteracted
-            || (leafletState.lastBounds && !leafletState.lastBounds.contains(bounds));
-          if (shouldRefit) {
-            map.fitBounds(bounds, { padding: [36, 36] });
-            leafletState.fitPerformed = true;
-          }
-          leafletState.lastBounds = bounds;
-          requestAnimationFrame(() => map.invalidateSize());
+      const projection = projectMapPoints(points);
+      const mapState = mapContainer ? ensureMapFrame(card) : null;
+
+      if (mapState && mapState.frame) {
+        const bounds = projection.projectedBounds;
+        if (bounds) {
+          mapState.frame.style.left = `${bounds.minX}%`;
+          mapState.frame.style.top = `${bounds.minY}%`;
+          mapState.frame.style.width = `${Math.max(2, bounds.maxX - bounds.minX)}%`;
+          mapState.frame.style.height = `${Math.max(2, bounds.maxY - bounds.minY)}%`;
+          mapState.frame.hidden = false;
+        } else {
+          mapState.frame.hidden = true;
         }
-        handledByLeaflet = true;
       }
 
-      if (!handledByLeaflet && markersWrap) {
+      if (markersWrap) {
+        const markerTag = (markersWrap.tagName === 'UL' || markersWrap.tagName === 'OL') ? 'li' : 'div';
+
         points.forEach((point) => {
+          if (!point || !point.projected) return;
           const value = mode === 'kwhm2' ? Number(point.intensity) || 0 : Number(point.total) || 0;
           const sre = Number(point.sre) || 0;
           const severity = classify(value);
-          const marker = document.createElement('div');
+          const marker = document.createElement(markerTag);
           marker.className = `map-marker map-marker--${severity}`;
           const size = maxSre > 0 ? 24 + ((Math.min(sre, maxSre) / maxSre) * 28) : 24;
-          marker.style.setProperty('--x', `${Number(point.position?.x) || 0}`);
-          marker.style.setProperty('--y', `${Number(point.position?.y) || 0}`);
-          marker.style.setProperty('--size', `${size}`);
-          marker.style.left = `${Number(point.position?.x) || 0}%`;
-          marker.style.top = `${Number(point.position?.y) || 0}%`;
+          marker.style.setProperty('--marker-size', `${size}px`);
+          marker.style.left = `${point.projected.x}%`;
+          marker.style.top = `${point.projected.y}%`;
           marker.setAttribute('role', 'listitem');
           const formattedValue = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 0 : 0);
           marker.setAttribute('aria-label', `${point.label} : ${formattedValue} ${unit} (${metricLabel}), ${formatCount(sre)} m²`);

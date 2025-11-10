@@ -767,6 +767,56 @@
     ENERGY_BASE_DATA.buildings = ENERGY_BASE_DATA.buildings || {};
   }
 
+  const syncTreeLeafLabelsFromDataset = () => {
+    const registry = ENERGY_BASE_DATA.buildings;
+    if (!registry || typeof registry !== 'object') {
+      return;
+    }
+
+    const textNodeType = typeof Node !== 'undefined' ? Node.TEXT_NODE : 3;
+
+    const ensureLabelElement = (leaf) => {
+      let labelEl = leaf.querySelector('.tree-leaf__label');
+      if (labelEl) {
+        return labelEl;
+      }
+
+      Array.from(leaf.childNodes).forEach((node) => {
+        if (node.nodeType === textNodeType) {
+          leaf.removeChild(node);
+        }
+      });
+
+      labelEl = document.createElement('span');
+      labelEl.className = 'tree-leaf__label';
+      const checkbox = leaf.querySelector('.tree-check');
+      if (checkbox) {
+        checkbox.after(labelEl);
+      } else {
+        leaf.append(labelEl);
+      }
+
+      return labelEl;
+    };
+
+    $$('.tree-leaf[data-building]').forEach((leaf) => {
+      const buildingId = leaf.dataset?.building;
+      if (!buildingId) return;
+
+      const info = registry[buildingId];
+      if (!info || typeof info !== 'object') return;
+
+      const label = (info.label ?? '').toString().trim();
+      if (!label) return;
+
+      leaf.dataset.label = label;
+      const labelEl = ensureLabelElement(leaf);
+      if (labelEl.textContent !== label) {
+        labelEl.textContent = label;
+      }
+    });
+  };
+
   const HEAT_BASE_DATA = {
     mix: {
       fuels: {
@@ -4306,6 +4356,7 @@
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   async function initializeApp() {
     await loadBuildingsData();
+    syncTreeLeafLabelsFromDataset();
 
     syncStickyTop();
     $$('.tabset').forEach(initTabset);

@@ -584,8 +584,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   cursor:grab;
   z-index:13;
   box-shadow:0 12px 28px rgba(15,23,42,0.14);
-  opacity:.88;
-  transform:none;
+  opacity:0;
+  transform:scale(.92);
   transition:opacity .18s ease, box-shadow .18s ease, color .18s ease, border-color .18s ease, transform .18s ease;
   touch-action:none;
 }
@@ -595,6 +595,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   border-color:rgba(148,163,184,0.6);
   box-shadow:0 16px 32px rgba(15,23,42,0.18);
   opacity:1;
+  transform:scale(1);
 }
 
 .chart-tile-handle:active,
@@ -608,12 +609,15 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   outline:none;
   opacity:1;
   box-shadow:0 0 0 4px var(--ring), 0 16px 32px rgba(15,23,42,0.18);
+  transform:scale(1);
 }
 
 .has-chart-tile-handle:hover .chart-tile-handle,
 .has-chart-tile-handle:focus-within .chart-tile-handle,
+[data-chart-slot].is-chart-selected .chart-tile-handle,
 .chart-tile-handle.is-dragging{
   opacity:1;
+  transform:scale(1);
 }
 
 .chart-tile-handle__icon{

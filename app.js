@@ -2704,16 +2704,21 @@
       if (!state) return;
       pendingLongPress = null;
       clearTimeout(state.timer);
+      const { card, pointerId, pointerType, lockedTargets } = state;
       if (!state.triggered) {
-        const { card, pointerId, pointerType } = state;
         if (card && typeof card.releasePointerCapture === 'function') {
           try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
         }
-        if (pointerType === 'touch') {
+        if (lockedTargets) {
+          lockedTargets.forEach(target => unlockTouchAction(target));
+        }
+        if (pointerType === 'touch' && lockedTargets && !lockedTargets.has(card)) {
           unlockTouchAction(card);
         }
-      } else if (state.pointerType === 'touch' && state.card && !dragState) {
-        unlockTouchAction(state.card);
+      } else if (!dragState || dragState.card !== card) {
+        if (lockedTargets) {
+          lockedTargets.forEach(target => unlockTouchAction(target));
+        }
       }
     }
 
@@ -2724,21 +2729,15 @@
       if (pendingLongPress === state) {
         pendingLongPress = null;
       }
-      const { card, pointerId } = state;
+      const { card, pointerId, lockedTargets } = state;
       if (!card) return;
       card.dataset.longPressActive = 'true';
       if (card && typeof card.releasePointerCapture === 'function') {
         try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
       }
-      startChartDrag(card, state.latestEvent);
-      if (state.pointerType === 'touch') {
-        if (dragState && dragState.card === card) {
-          if (dragState.touchActionTargets instanceof Set && TOUCH_ACTION_OVERRIDES.has(card)) {
-            dragState.touchActionTargets.add(card);
-          }
-        } else {
-          unlockTouchAction(card);
-        }
+      const started = startChartDrag(card, state.latestEvent, lockedTargets);
+      if (!started && lockedTargets) {
+        lockedTargets.forEach(target => unlockTouchAction(target));
       }
     }
 
@@ -2997,7 +2996,7 @@
       window.removeEventListener('pointermove', onDragPointerMove);
       window.removeEventListener('pointerup', onDragPointerUp);
       window.removeEventListener('pointercancel', onDragPointerCancel);
-      const { ghost, card, touchActionTargets } = dragState;
+      const { ghost, card, touchActionTargets, preventWindowTouchMove } = dragState;
       let dropSuccess = false;
       if (!canceled && event && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
         dropSuccess = applyDropResult(event.clientX, event.clientY);
@@ -3006,6 +3005,9 @@
       if (ghost && ghost.parentNode) ghost.remove();
       document.body.classList.remove('chart-catalog-dragging');
       unlockGlobalTouchAction(touchActionTargets);
+      if (preventWindowTouchMove) {
+        window.removeEventListener('touchmove', preventWindowTouchMove, false);
+      }
       if (card) delete card.dataset.longPressActive;
       dragState = null;
       return dropSuccess;
@@ -3032,10 +3034,10 @@
       finishDrag(event, true);
     }
 
-    function startChartDrag(card, originEvent) {
-      if (!card) return;
+    function startChartDrag(card, originEvent, lockedTargets = null) {
+      if (!card) return false;
       const type = card.dataset.chartType;
-      if (!type) return;
+      if (!type) return false;
 
       pendingLongPress = null;
       const rect = card.getBoundingClientRect();
@@ -3054,11 +3056,29 @@
       document.body.append(ghost);
 
       const touchActionTargets = new Set();
+      if (lockedTargets && typeof lockedTargets.forEach === 'function') {
+        lockedTargets.forEach(target => {
+          if (!target) return;
+          if (!TOUCH_ACTION_OVERRIDES.has(target)) {
+            lockTouchAction(target);
+          }
+          touchActionTargets.add(target);
+        });
+      }
       if (TOUCH_ACTION_OVERRIDES.has(card)) {
         touchActionTargets.add(card);
       }
       if (pointerType === 'touch') {
         lockGlobalTouchAction().forEach(target => touchActionTargets.add(target));
+      }
+
+      const preventWindowTouchMove = (evt) => {
+        if (evt?.cancelable !== false) {
+          evt.preventDefault();
+        }
+      };
+      if (pointerType === 'touch') {
+        window.addEventListener('touchmove', preventWindowTouchMove, { passive: false });
       }
 
       dragState = {
@@ -3077,6 +3097,7 @@
         placeholderHost: null,
         placeholderSize: null,
         touchActionTargets,
+        preventWindowTouchMove: pointerType === 'touch' ? preventWindowTouchMove : null,
       };
 
       document.body.classList.add('chart-catalog-dragging');
@@ -3087,6 +3108,7 @@
       window.addEventListener('pointermove', onDragPointerMove, { passive: false });
       window.addEventListener('pointerup', onDragPointerUp, { passive: false });
       window.addEventListener('pointercancel', onDragPointerCancel, { passive: false });
+      return true;
     }
 
     function scheduleLongPress(card, event) {
@@ -3096,8 +3118,14 @@
       if (isMouse && event.button !== 0 && event.buttons !== 1) return;
 
       cancelPendingLongPress();
+      const lockedTargets = pointerType === 'touch' ? new Set() : null;
       if (pointerType === 'touch') {
         lockTouchAction(card);
+        lockedTargets.add(card);
+        if (panel) {
+          lockTouchAction(panel);
+          lockedTargets.add(panel);
+        }
       }
       const pointerId = event.pointerId;
       const state = {
@@ -3108,6 +3136,7 @@
         latestEvent: event,
         triggered: false,
         pointerType,
+        lockedTargets,
         timer: window.setTimeout(() => {
           activatePendingDrag(state);
         }, LONG_PRESS_DELAY),

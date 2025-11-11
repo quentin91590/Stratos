@@ -2362,11 +2362,15 @@
       card.setAttribute('aria-pressed', isActive ? 'true' : 'false');
     };
 
-    const getSlotGroup = (slotEl) => slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
+    function getSlotGroup(slotEl) {
+      return slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
+    }
 
-    const getSlotScope = (slotEl) => slotEl?.dataset.chartScope || slotEl?.dataset.chartMetric || null;
+    function getSlotScope(slotEl) {
+      return slotEl?.dataset.chartScope || slotEl?.dataset.chartMetric || null;
+    }
 
-    const registerScopeEntry = (map, key, scope) => {
+    function registerScopeEntry(map, key, scope) {
       if (!map || !key || !scope) return;
       const existing = map.get(key);
       if (existing) {
@@ -2374,7 +2378,7 @@
       } else {
         map.set(key, new Set([scope]));
       }
-    };
+    }
 
     function registerSlotScope(slotEl) {
       if (!slotEl || !(slotEl instanceof HTMLElement)) return;

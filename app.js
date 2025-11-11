@@ -2251,6 +2251,8 @@
     if (!toggles.length) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
     const getCardContainer = (card) => card?.closest('li') || null;
+    const scopeByGroup = new Map();
+    const scopeByType = new Map();
     const closeButton = panel.querySelector('.catalog-close');
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
@@ -2301,6 +2303,7 @@
     const boundSlots = new WeakSet();
     const bindSlotInteractions = () => {
       getSlots().forEach(slot => {
+        registerSlotScope(slot);
         ensureChartTileHandle(slot);
         if (boundSlots.has(slot)) return;
         boundSlots.add(slot);
@@ -2361,12 +2364,83 @@
 
     const getSlotGroup = (slotEl) => slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
 
-    const updateCardVisibility = () => {
+    const getSlotScope = (slotEl) => slotEl?.dataset.chartScope || slotEl?.dataset.chartMetric || null;
+
+    const registerScopeEntry = (map, key, scope) => {
+      if (!map || !key || !scope) return;
+      const existing = map.get(key);
+      if (existing) {
+        existing.add(scope);
+      } else {
+        map.set(key, new Set([scope]));
+      }
+    };
+
+    function registerSlotScope(slotEl) {
+      if (!slotEl || !(slotEl instanceof HTMLElement)) return;
+      const scope = getSlotScope(slotEl);
+      if (!scope) return;
+      const group = slotEl.dataset.chartGroup || null;
+      const type = slotEl.dataset.chartType || null;
+      registerScopeEntry(scopeByGroup, group, scope);
+      registerScopeEntry(scopeByType, type, scope);
+    }
+
+    const inferScopeFromKey = (value) => {
+      if (!value) return null;
+      const normalized = String(value).toLowerCase();
+      if (normalized.includes('water') || normalized.includes('eau')) return 'eau';
+      if (normalized.includes('heat') || normalized.includes('chaleur')) return 'chaleur';
+      if (normalized.includes('cold') || normalized.includes('froid')) return 'froid';
+      if (normalized.includes('elec')) return 'elec';
+      if (normalized.includes('co2')) return 'co2';
+      if (normalized.includes('energy') || normalized.includes('mix') || normalized.includes('typology') || normalized.includes('distribution') || normalized.includes('monthly') || normalized.includes('intensity')) {
+        return 'general';
+      }
+      return null;
+    };
+
+    const getCardScopes = (card) => {
+      if (!card) return [];
+      const scopes = new Set();
+      const attr = card.dataset.chartScope;
+      if (attr) {
+        attr.split(/\s+/).forEach(token => {
+          const normalized = token.trim();
+          if (normalized) scopes.add(normalized);
+        });
+      }
+      const group = card.dataset.chartGroup || null;
+      if (group && scopeByGroup.has(group)) {
+        scopeByGroup.get(group).forEach(scope => scopes.add(scope));
+      }
+      const type = card.dataset.chartType || null;
+      if (type && scopeByType.has(type)) {
+        scopeByType.get(type).forEach(scope => scopes.add(scope));
+      }
+      if (!scopes.size) {
+        const fallback = inferScopeFromKey(group || type || attr || '');
+        if (fallback) scopes.add(fallback);
+      }
+      return Array.from(scopes);
+    };
+
+    const shouldShowCardForScope = (card, scope) => {
+      if (!scope) return true;
+      const scopes = getCardScopes(card);
+      if (!scopes.length) {
+        return scope === 'general';
+      }
+      return scopes.includes(scope);
+    };
+
+    const updateCardVisibility = (slotEl = activeSlot) => {
+      const scope = getSlotScope(slotEl);
       cards.forEach(card => {
         const container = getCardContainer(card);
-        if (container) {
-          container.hidden = false;
-        }
+        if (!container) return;
+        const visible = shouldShowCardForScope(card, scope);
+        container.hidden = !visible;
       });
     };
 
@@ -2383,7 +2457,7 @@
 
     const updateCatalogForSlot = (slotEl) => {
       if (slotEl) selectSlot(slotEl);
-      updateCardVisibility();
+      updateCardVisibility(slotEl || activeSlot);
       markActiveCard(slotEl);
     };
 
@@ -2481,6 +2555,7 @@
       const captionEl = slot.querySelector('[data-chart-role="caption"]');
       if (captionEl) captionEl.textContent = template.dataset.caption || '';
       slot.dataset.chartType = chartType;
+      registerSlotScope(slot);
       applyTileLayout(slot);
       if (chartType === 'intensity-bars') {
         highlightEnergyTrend(FILTERS.year);

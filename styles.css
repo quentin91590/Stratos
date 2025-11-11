@@ -614,7 +614,6 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .has-chart-tile-handle:hover .chart-tile-handle,
 .has-chart-tile-handle:focus-within .chart-tile-handle,
-[data-chart-slot].is-chart-selected .chart-tile-handle,
 .chart-tile-handle.is-dragging{
   opacity:1;
   transform:scale(1);

@@ -2509,12 +2509,36 @@
       return scopes.includes(scope);
     };
 
+    const getZoneForSlot = (slotEl) => {
+      if (slotEl && typeof slotEl.closest === 'function') {
+        const zone = slotEl.closest(zoneSelector);
+        if (zone) return zone;
+      }
+      if (activeZone && document.contains(activeZone)) {
+        return activeZone;
+      }
+      return null;
+    };
+
+    const getZoneChartTypes = (zoneEl) => {
+      const types = new Set();
+      if (!zoneEl) return types;
+      getSlots(zoneEl).forEach(slot => {
+        const type = slot?.dataset?.chartType;
+        if (type) types.add(type);
+      });
+      return types;
+    };
+
     const updateCardVisibility = (slotEl = activeSlot) => {
       const scope = getSlotScope(slotEl);
+      const zoneEl = getZoneForSlot(slotEl);
+      const usedTypes = getZoneChartTypes(zoneEl);
       cards.forEach(card => {
         const container = getCardContainer(card);
         if (!container) return;
-        const visible = shouldShowCardForScope(card, scope);
+        const type = card.dataset.chartType || '';
+        const visible = shouldShowCardForScope(card, scope) && (!type || !usedTypes.has(type));
         container.hidden = !visible;
       });
     };

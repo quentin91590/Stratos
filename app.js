@@ -3904,7 +3904,9 @@
       }
 
       if (bars) {
-        bars.hidden = !renderBars;
+        bars.toggleAttribute('hidden', !renderBars);
+        bars.setAttribute('aria-hidden', String(!renderBars));
+        bars.style.display = renderBars ? '' : 'none';
       }
 
       if (renderBars && bars) {

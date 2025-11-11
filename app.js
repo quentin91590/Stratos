@@ -154,6 +154,35 @@
   };
 
   const MAP_CARD_STATE = new WeakMap();
+  const TOUCH_ACTION_OVERRIDES = new WeakMap();
+
+  const lockTouchAction = (element, value = 'none') => {
+    if (!element) return;
+    if (!TOUCH_ACTION_OVERRIDES.has(element)) {
+      const previous = element.style?.touchAction || '';
+      TOUCH_ACTION_OVERRIDES.set(element, previous || null);
+    }
+    try {
+      element.style.touchAction = value;
+    } catch (err) {
+      /* noop */
+    }
+  };
+
+  const unlockTouchAction = (element) => {
+    if (!element || !TOUCH_ACTION_OVERRIDES.has(element)) return;
+    const previous = TOUCH_ACTION_OVERRIDES.get(element);
+    TOUCH_ACTION_OVERRIDES.delete(element);
+    try {
+      if (previous === null || previous === '') {
+        element.style.removeProperty('touch-action');
+      } else {
+        element.style.touchAction = previous;
+      }
+    } catch (err) {
+      /* noop */
+    }
+  };
 
   const ensureMapFrame = (card) => {
     if (!card || !(card instanceof HTMLElement)) return null;
@@ -2630,15 +2659,132 @@
     };
 
     function cancelPendingLongPress() {
-      if (!pendingLongPress) return;
-      clearTimeout(pendingLongPress.timer);
-      if (!pendingLongPress.triggered) {
-        const { card, pointerId } = pendingLongPress;
+      const state = pendingLongPress;
+      if (!state) return;
+      pendingLongPress = null;
+      clearTimeout(state.timer);
+      if (!state.triggered) {
+        const { card, pointerId, pointerType } = state;
         if (card && typeof card.releasePointerCapture === 'function') {
           try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
         }
+        if (pointerType === 'touch') {
+          unlockTouchAction(card);
+        }
+      } else if (state.pointerType === 'touch' && state.card && !dragState) {
+        unlockTouchAction(state.card);
       }
-      pendingLongPress = null;
+    }
+
+    function activatePendingDrag(state) {
+      if (!state || state.triggered) return;
+      state.triggered = true;
+      clearTimeout(state.timer);
+      if (pendingLongPress === state) {
+        pendingLongPress = null;
+      }
+      const { card, pointerId } = state;
+      if (!card) return;
+      card.dataset.longPressActive = 'true';
+      if (card && typeof card.releasePointerCapture === 'function') {
+        try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+      }
+      startChartDrag(card, state.latestEvent);
+      if (state.pointerType === 'touch') {
+        if (dragState && dragState.card === card) {
+          dragState.touchActionTarget = card;
+        } else {
+          unlockTouchAction(card);
+        }
+      }
+    }
+
+    function getPlaceholderHost(zoneEl) {
+      if (!zoneEl) return null;
+      return zoneEl.querySelector('.energy-chart-stack') || zoneEl;
+    }
+
+    function removeDragPlaceholder() {
+      if (!dragState) return;
+      const { placeholder } = dragState;
+      if (placeholder?.parentNode) {
+        placeholder.remove();
+      }
+      dragState.placeholderZone = null;
+      dragState.placeholderHost = null;
+    }
+
+    function ensureDragPlaceholder(zoneEl) {
+      if (!dragState || !zoneEl) return null;
+      const host = getPlaceholderHost(zoneEl);
+      if (!host) return null;
+      let { placeholder } = dragState;
+      if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.className = `${TILE_PLACEHOLDER_CLASS} chart-catalog-drop-placeholder`;
+        placeholder.setAttribute('aria-hidden', 'true');
+        placeholder.dataset.catalogPlaceholder = 'true';
+        dragState.placeholder = placeholder;
+      }
+      if (placeholder.parentNode !== host) {
+        placeholder.remove();
+        host.appendChild(placeholder);
+      }
+      dragState.placeholderZone = zoneEl;
+      dragState.placeholderHost = host;
+      return placeholder;
+    }
+
+    function updatePlaceholderSize(referenceEl, zoneEl) {
+      if (!dragState?.placeholder) return;
+      const placeholder = dragState.placeholder;
+      let rect = null;
+      if (referenceEl?.getBoundingClientRect) {
+        rect = referenceEl.getBoundingClientRect();
+      }
+      if (!rect) {
+        const sample = zoneEl?.querySelector(slotSelector) || document.querySelector(slotSelector);
+        if (sample && sample !== referenceEl && sample.getBoundingClientRect) {
+          rect = sample.getBoundingClientRect();
+        }
+      }
+      if (rect && Number.isFinite(rect.height)) {
+        placeholder.style.height = `${rect.height}px`;
+        if (Number.isFinite(rect.width)) {
+          placeholder.style.width = `${rect.width}px`;
+        } else {
+          placeholder.style.removeProperty('width');
+        }
+        dragState.placeholderSize = { height: rect.height, width: rect.width };
+      } else {
+        const fallbackHeight = dragState.placeholderSize?.height;
+        const fallbackWidth = dragState.placeholderSize?.width;
+        placeholder.style.height = `${Number.isFinite(fallbackHeight) ? fallbackHeight : CATALOG_PLACEHOLDER_MIN_HEIGHT}px`;
+        if (Number.isFinite(fallbackWidth)) {
+          placeholder.style.width = `${fallbackWidth}px`;
+        } else {
+          placeholder.style.removeProperty('width');
+        }
+      }
+    }
+
+    function syncDragPlaceholder(zoneEl, slotEl, before) {
+      if (!dragState) return;
+      if (!zoneEl) {
+        removeDragPlaceholder();
+        return;
+      }
+      const placeholder = ensureDragPlaceholder(zoneEl);
+      if (!placeholder) return;
+      updatePlaceholderSize(slotEl, zoneEl);
+      const host = dragState.placeholderHost;
+      if (!host) return;
+      let referenceNode = null;
+      if (slotEl && host.contains(slotEl)) {
+        const insertBefore = typeof before === 'boolean' ? before : true;
+        referenceNode = insertBefore ? slotEl : slotEl.nextElementSibling;
+      }
+      host.insertBefore(placeholder, referenceNode || null);
     }
 
     function activatePendingDrag(state) {
@@ -2912,7 +3058,7 @@
       window.removeEventListener('pointermove', onDragPointerMove);
       window.removeEventListener('pointerup', onDragPointerUp);
       window.removeEventListener('pointercancel', onDragPointerCancel);
-      const { ghost, card } = dragState;
+      const { ghost, card, touchActionTarget } = dragState;
       let dropSuccess = false;
       if (!canceled && event && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
         dropSuccess = applyDropResult(event.clientX, event.clientY);
@@ -2920,6 +3066,9 @@
       clearDragHover();
       if (ghost && ghost.parentNode) ghost.remove();
       document.body.classList.remove('chart-catalog-dragging');
+      if (touchActionTarget) {
+        unlockTouchAction(touchActionTarget);
+      }
       if (card) delete card.dataset.longPressActive;
       dragState = null;
       return dropSuccess;
@@ -2980,6 +3129,7 @@
         placeholderZone: null,
         placeholderHost: null,
         placeholderSize: null,
+        touchActionTarget: TOUCH_ACTION_OVERRIDES.has(card) ? card : null,
       };
 
       document.body.classList.add('chart-catalog-dragging');
@@ -2999,6 +3149,9 @@
       if (isMouse && event.button !== 0 && event.buttons !== 1) return;
 
       cancelPendingLongPress();
+      if (pointerType === 'touch') {
+        lockTouchAction(card);
+      }
       const pointerId = event.pointerId;
       const state = {
         card,

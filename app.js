@@ -3892,7 +3892,92 @@
       const hasData = dataset.length > 0;
 
       const treemap = card.querySelector('[data-typology-treemap]');
+      const bars = card.querySelector('[data-typology-bars]');
+      const renderBars = mode === 'kwhm2' && !!bars;
+
       if (treemap) {
+        treemap.hidden = !!renderBars;
+        if (renderBars) {
+          treemap.innerHTML = '';
+          treemap.classList.remove('is-empty');
+        }
+      }
+
+      if (bars) {
+        bars.hidden = !renderBars;
+      }
+
+      if (renderBars && bars) {
+        bars.innerHTML = '';
+        bars.classList.toggle('is-empty', !hasData);
+        if (!hasData) {
+          const empty = document.createElement('p');
+          empty.className = 'chart-empty';
+          empty.textContent = 'Aucune typologie disponible pour la sélection.';
+          bars.append(empty);
+        } else {
+          const paletteSize = TREEMAP_COLORS.length;
+          const maxValue = dataset.reduce((acc, item) => (item.value > acc ? item.value : acc), 0);
+
+          dataset.forEach((item, index) => {
+            const bar = document.createElement('div');
+            bar.className = 'typology-bar';
+            bar.setAttribute('role', 'listitem');
+
+            const baseColor = TREEMAP_COLORS[index % paletteSize];
+            bar.style.setProperty('--bar-color-strong', baseColor);
+            bar.style.setProperty('--bar-color-soft', mixWithWhite(baseColor, 0.55));
+
+            const percent = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
+            bar.style.setProperty('--bar-fill', percent.toFixed(4));
+
+            const valueEl = document.createElement('div');
+            valueEl.className = 'typology-bar__value';
+            valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit}`;
+
+            const column = document.createElement('div');
+            column.className = 'typology-bar__column';
+
+            const track = document.createElement('div');
+            track.className = 'typology-bar__column-track';
+
+            const fill = document.createElement('div');
+            fill.className = 'typology-bar__column-fill';
+            track.append(fill);
+            column.append(track);
+
+            const label = document.createElement('div');
+            label.className = 'typology-bar__label';
+            label.textContent = item.label;
+
+            const share = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+            let shareText = '0 %';
+            if (share > 0) {
+              shareText = share < 0.1 ? '<0,1 %' : `${PERCENT_FORMAT.format(share)} %`;
+            }
+
+            const footer = document.createElement('div');
+            footer.className = 'typology-bar__footer';
+
+            const shareEl = document.createElement('span');
+            shareEl.className = 'typology-bar__share';
+            shareEl.textContent = shareText;
+            if (share <= 0) shareEl.hidden = true;
+
+            const countEl = document.createElement('span');
+            countEl.className = 'typology-bar__count';
+            countEl.textContent = `${formatCount(item.buildings)} bât.`;
+
+            footer.append(shareEl, countEl);
+
+            bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}${share > 0 ? ` (${shareText})` : ''}`);
+            bar.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent}${share > 0 ? ` (${shareText})` : ''}`;
+
+            bar.append(valueEl, column, label, footer);
+            bars.append(bar);
+          });
+        }
+      } else if (treemap) {
         treemap.innerHTML = '';
         treemap.classList.toggle('is-empty', !hasData);
         if (!hasData) {
@@ -3966,6 +4051,11 @@
         }
       }
 
+      if (!renderBars && bars) {
+        bars.innerHTML = '';
+        bars.classList.remove('is-empty');
+      }
+
       const tableBody = card.querySelector('[data-typology-table]');
       if (tableBody) {
         tableBody.innerHTML = '';
@@ -3974,7 +4064,7 @@
           const labelCell = document.createElement('td');
           labelCell.textContent = item.label;
           const valueCell = document.createElement('td');
-          valueCell.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
+          valueCell.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit}`;
           const countCell = document.createElement('td');
           countCell.textContent = formatCount(item.buildings);
           row.append(labelCell, valueCell, countCell);

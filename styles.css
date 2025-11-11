@@ -1220,21 +1220,12 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   margin-top:4px;
 }
 .tree-node:hover, .tree-leaf:hover{ background:rgba(0,0,0,.03); color:#0b1220; }
-.tree-leaf.is-missing:hover{
-  color:#991b1b;
-}
-
 .tree-leaf.is-active,
 .tree-node.is-active{
   --tree-ring-bg: #e0f7ec;
   --tree-ring-color: rgba(16, 185, 129, 0.5);
   font-weight: 700;
   position: relative;
-}
-
-.tree-leaf.is-missing,
-.tree-node.is-missing{
-  font-weight: 700;
 }
 
 .tree-leaf.is-missing.is-active,

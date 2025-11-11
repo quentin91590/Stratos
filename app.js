@@ -1118,6 +1118,13 @@
       const info = registry[buildingId];
       if (!info || typeof info !== 'object') return;
 
+      const typology = (info.typology ?? '').toString().trim();
+      if (typology) {
+        leaf.dataset.typology = typology;
+      } else {
+        delete leaf.dataset.typology;
+      }
+
       const label = (info.label ?? '').toString().trim();
       if (!label) return;
 
@@ -4784,6 +4791,58 @@
     // état initial,
     if (countEl) countEl.textContent = 'Tous les éléments';
   }
+
+  const getSidebarSelectedAffectations = (side) => {
+    if (!side) return [];
+    const checks = side.querySelectorAll('.ms[data-name="affectation"] .ms-menu input:checked');
+    return Array.from(checks).map(cb => cb.value).filter(Boolean);
+  };
+
+  function applySidebarFilters() {
+    const side = document.querySelector('#sidebar');
+    if (!side) return;
+
+    const affectations = getSidebarSelectedAffectations(side);
+    const hasAffectationFilter = affectations.length > 0;
+    const affectationSet = new Set(affectations);
+    const registry = ENERGY_BASE_DATA.buildings || {};
+
+    $$('.tree-leaf').forEach((leaf) => {
+      const cb = leafCheck(leaf);
+      if (!cb) return;
+
+      const buildingId = leaf.dataset?.building || '';
+      const info = registry[buildingId];
+      const typology = leaf.dataset?.typology || info?.typology || 'autre';
+      const matchesAffectation = !hasAffectationFilter || affectationSet.has(typology);
+
+      cb.checked = matchesAffectation;
+      cb.indeterminate = false;
+      setActive(leaf, matchesAffectation);
+    });
+
+    siteBtns.forEach((siteBtn) => updateSiteFromLeaves(siteBtn));
+    updateParcFromSites();
+
+    const countEl = document.getElementById('tree-search-count');
+    if (countEl) {
+      const selectedLeaves = $$('.tree-leaf .tree-check').filter(c => c.checked).length;
+      const selectedFullSites = siteBtns.filter((btn) => {
+        const scb = siteCheck(btn);
+        return !!scb && scb.checked === true && scb.indeterminate === false;
+      }).length;
+
+      if (selectedLeaves === 0 && selectedFullSites === 0) {
+        countEl.textContent = 'Aucun élément sélectionné';
+      } else {
+        const { sre } = computeSelectedPerimeter();
+        const safe = Number.isFinite(sre) ? Math.round(sre) : 0;
+        const formattedSre = NF.format(safe);
+        countEl.textContent = `${selectedLeaves} bâtiment(s) sélectionné(s), ${selectedFullSites} site(s) entiers — ${formattedSre} m² SRE`;
+      }
+    }
+  }
+
   // === Multi-select dans la sidebar (Canton / Affectation / Année) ===
   function setupSidebarMultiSelects() {
     const side = document.querySelector('#sidebar');
@@ -4835,9 +4894,12 @@
         const ms = opt.closest('.ms');
         const cb = opt.querySelector('input[type="checkbox"]');
         if (cb) {
-          cb.checked = !cb.checked;
-          updateDisplay(ms);
-          e.preventDefault();
+          const clickedCheckboxDirectly = e.target === cb;
+          if (!clickedCheckboxDirectly) {
+            e.preventDefault();
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
+          }
         }
         return;
       }
@@ -4848,6 +4910,9 @@
         const ms = clear.closest('.ms');
         ms.querySelectorAll('input[type="checkbox"]').forEach(c => c.checked = false);
         updateDisplay(ms);
+        if (ms?.dataset?.name === 'affectation') {
+          applySidebarFilters();
+        }
         return;
       }
 
@@ -4857,8 +4922,21 @@
       }
     });
 
+    side.addEventListener('change', (e) => {
+      const input = e.target;
+      if (!(input instanceof HTMLInputElement)) return;
+      if (input.type !== 'checkbox') return;
+      const ms = input.closest('.ms');
+      if (!ms || !side.contains(ms)) return;
+      updateDisplay(ms);
+      if (ms?.dataset?.name === 'affectation') {
+        applySidebarFilters();
+      }
+    });
+
     // Init affichage
     side.querySelectorAll('.ms').forEach(ms => updateDisplay(ms));
+    applySidebarFilters();
   }
 
   /* ========== Boot ==========

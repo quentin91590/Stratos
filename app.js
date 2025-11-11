@@ -2406,8 +2406,9 @@
       if (zoneEl) zoneEl.classList.remove('catalog-open');
     };
 
-    const cloneSlotForCard = (card) => {
-      const zoneEl = getActiveZone();
+    const cloneSlotForCard = (card, options = {}) => {
+      const { zone: zoneOverride = null, reference: referenceNode = null } = options;
+      const zoneEl = zoneOverride || getActiveZone();
       if (!zoneEl) return null;
       const stack = zoneEl.querySelector('.energy-chart-stack');
       const host = stack || zoneEl;
@@ -2462,7 +2463,8 @@
       if (!slot.hasAttribute('tabindex')) {
         slot.tabIndex = 0;
       }
-      host.append(slot);
+      const insertionReference = (referenceNode && referenceNode.parentNode === host) ? referenceNode : null;
+      host.insertBefore(slot, insertionReference);
       ensureChartTileHandle(slot);
       bindSlotInteractions();
       bindDeleteInteractions();
@@ -2563,18 +2565,23 @@
 
     function clearDragHover() {
       if (dragState?.hoverSlot) {
-        dragState.hoverSlot.classList.remove('is-drop-target-slot');
+        const slot = dragState.hoverSlot;
+        slot.classList.remove('is-drop-target-slot');
+        slot.removeAttribute('data-drop-position');
         dragState.hoverSlot = null;
       }
       if (dragState?.hoverZone) {
         dragState.hoverZone.classList.remove('is-drop-target-zone');
         dragState.hoverZone = null;
       }
+      if (dragState) {
+        dragState.hoverBefore = null;
+      }
     }
 
     function getDropInfo(clientX, clientY) {
       if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) {
-        return { element: null, zone: null, slot: null };
+        return { element: null, zone: null, slot: null, before: null };
       }
       const ghost = dragState?.ghost || null;
       let element = null;
@@ -2588,7 +2595,21 @@
       }
       const slot = element?.closest?.(slotSelector) || null;
       const zone = slot ? slot.closest(zoneSelector) : element?.closest?.(zoneSelector) || null;
-      return { element, zone, slot };
+      let before = null;
+      if (slot) {
+        const rect = slot.getBoundingClientRect();
+        if (rect && Number.isFinite(rect.top) && Number.isFinite(rect.left)) {
+          const useHorizontal = rect.width > rect.height;
+          if (useHorizontal) {
+            const midpoint = rect.left + (rect.width / 2);
+            before = clientX < midpoint;
+          } else {
+            const midpoint = rect.top + (rect.height / 2);
+            before = clientY < midpoint;
+          }
+        }
+      }
+      return { element, zone, slot, before };
     }
 
     function updateDragPosition(clientX, clientY) {
@@ -2603,14 +2624,21 @@
       const info = getDropInfo(clientX, clientY);
       if (dragState.hoverSlot && dragState.hoverSlot !== info.slot) {
         dragState.hoverSlot.classList.remove('is-drop-target-slot');
+        dragState.hoverSlot.removeAttribute('data-drop-position');
       }
       if (dragState.hoverZone && dragState.hoverZone !== info.zone) {
         dragState.hoverZone.classList.remove('is-drop-target-zone');
       }
       dragState.hoverSlot = info.slot || null;
       dragState.hoverZone = info.zone || null;
+      dragState.hoverBefore = typeof info.before === 'boolean' ? info.before : null;
       if (dragState.hoverSlot) {
         dragState.hoverSlot.classList.add('is-drop-target-slot');
+        if (typeof info.before === 'boolean') {
+          dragState.hoverSlot.dataset.dropPosition = info.before ? 'before' : 'after';
+        } else {
+          dragState.hoverSlot.removeAttribute('data-drop-position');
+        }
       }
       if (dragState.hoverZone) {
         dragState.hoverZone.classList.add('is-drop-target-zone');
@@ -2630,6 +2658,31 @@
         const zoneForSlot = slotEl.closest(zoneSelector);
         if (!zoneForSlot) return false;
         activeZone = zoneForSlot;
+        const body = slotEl.querySelector('[data-chart-role="body"]');
+        const isSlotEmpty = (!slotEl.dataset.chartType && (!body || body.childElementCount === 0));
+
+        if (!isSlotEmpty) {
+          const referenceNode = info.before === false ? slotEl.nextElementSibling : slotEl;
+          const newSlot = cloneSlotForCard(card, {
+            zone: zoneForSlot,
+            reference: referenceNode || null,
+          });
+          if (!newSlot) return false;
+          activeSlot = newSlot;
+          const applied = applyChartToSlot(type, newSlot);
+          if (!applied) {
+            newSlot.remove();
+            activeSlot = ensureSelectedSlot(zoneForSlot) || null;
+            return false;
+          }
+          requestAnimationFrame(() => {
+            if (document.contains(newSlot)) {
+              newSlot.focus({ preventScroll: true });
+            }
+          });
+          return true;
+        }
+
         selectSlot(slotEl);
         activeSlot = slotEl;
         const applied = applyChartToSlot(type, slotEl);
@@ -2733,6 +2786,7 @@
         offsetY,
         hoverZone: null,
         hoverSlot: null,
+        hoverBefore: null,
       };
 
       document.body.classList.add('chart-catalog-dragging');

@@ -2641,6 +2641,22 @@
       pendingLongPress = null;
     }
 
+    function activatePendingDrag(state) {
+      if (!state || state.triggered) return;
+      state.triggered = true;
+      clearTimeout(state.timer);
+      if (pendingLongPress === state) {
+        pendingLongPress = null;
+      }
+      const { card, pointerId } = state;
+      if (!card) return;
+      card.dataset.longPressActive = 'true';
+      if (card && typeof card.releasePointerCapture === 'function') {
+        try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+      }
+      startChartDrag(card, state.latestEvent);
+    }
+
     function getPlaceholderHost(zoneEl) {
       if (!zoneEl) return null;
       return zoneEl.querySelector('.energy-chart-stack') || zoneEl;
@@ -2991,15 +3007,9 @@
         startY: event.clientY,
         latestEvent: event,
         triggered: false,
+        pointerType,
         timer: window.setTimeout(() => {
-          state.triggered = true;
-          if (pendingLongPress !== state) return;
-          pendingLongPress = null;
-          card.dataset.longPressActive = 'true';
-          if (typeof card.releasePointerCapture === 'function') {
-            try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
-          }
-          startChartDrag(card, state.latestEvent);
+          activatePendingDrag(state);
         }, LONG_PRESS_DELAY),
       };
       pendingLongPress = state;
@@ -3015,7 +3025,13 @@
       const dx = event.clientX - pendingLongPress.startX;
       const dy = event.clientY - pendingLongPress.startY;
       if (Math.hypot(dx, dy) > LONG_PRESS_MOVE_TOLERANCE) {
-        cancelPendingLongPress();
+        const pointerType = pendingLongPress.pointerType || '';
+        if (pointerType === 'touch') {
+          cancelPendingLongPress();
+        } else {
+          const state = pendingLongPress;
+          activatePendingDrag(state);
+        }
       }
     }
 

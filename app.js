@@ -2746,9 +2746,46 @@
       return zoneEl.querySelector('.energy-chart-stack') || zoneEl;
     }
 
+    function clearPlaceholderVisualState(placeholder) {
+      if (!placeholder) return;
+      placeholder.classList.remove('is-drop-target-placeholder');
+      placeholder.removeAttribute('data-drop-position');
+    }
+
+    function resetPlaceholderLayoutAttributes(placeholder) {
+      if (!placeholder) return;
+      placeholder.removeAttribute('data-tile-width');
+      placeholder.removeAttribute('data-tile-height');
+      if (placeholder.style && typeof placeholder.style.removeProperty === 'function') {
+        placeholder.style.removeProperty('--tile-equal-height');
+      }
+    }
+
+    function applyPlaceholderLayoutFromSlot(slotEl, placeholder) {
+      if (!placeholder) return;
+      resetPlaceholderLayoutAttributes(placeholder);
+      if (!slotEl) return;
+      if (slotEl.hasAttribute('data-tile-width')) {
+        placeholder.setAttribute('data-tile-width', slotEl.getAttribute('data-tile-width'));
+      }
+      if (slotEl.hasAttribute('data-tile-height')) {
+        placeholder.setAttribute('data-tile-height', slotEl.getAttribute('data-tile-height'));
+      }
+      if (slotEl.style && typeof slotEl.style.getPropertyValue === 'function') {
+        const equalHeight = slotEl.style.getPropertyValue('--tile-equal-height');
+        if (equalHeight) {
+          placeholder.style.setProperty('--tile-equal-height', equalHeight);
+        }
+      }
+    }
+
     function removeDragPlaceholder() {
       if (!dragState) return;
       const { placeholder } = dragState;
+      if (placeholder) {
+        clearPlaceholderVisualState(placeholder);
+        resetPlaceholderLayoutAttributes(placeholder);
+      }
       if (placeholder?.parentNode) {
         placeholder.remove();
       }
@@ -2768,6 +2805,8 @@
         placeholder.dataset.catalogPlaceholder = 'true';
         dragState.placeholder = placeholder;
       }
+      clearPlaceholderVisualState(placeholder);
+      resetPlaceholderLayoutAttributes(placeholder);
       if (placeholder.parentNode !== host) {
         placeholder.remove();
         host.appendChild(placeholder);
@@ -2811,28 +2850,29 @@
     }
 
     function syncDragPlaceholder(zoneEl, slotEl, before) {
-      if (!dragState) return;
+      if (!dragState) return null;
       if (!zoneEl) {
         removeDragPlaceholder();
-        return;
+        return null;
       }
       const placeholder = ensureDragPlaceholder(zoneEl);
-      if (!placeholder) return;
+      if (!placeholder) return null;
+      applyPlaceholderLayoutFromSlot(slotEl, placeholder);
       updatePlaceholderSize(slotEl, zoneEl);
       const host = dragState.placeholderHost;
-      if (!host) return;
+      if (!host) return placeholder;
       let referenceNode = null;
       if (slotEl && host.contains(slotEl)) {
         const insertBefore = typeof before === 'boolean' ? before : true;
         referenceNode = insertBefore ? slotEl : slotEl.nextElementSibling;
       }
       host.insertBefore(placeholder, referenceNode || null);
+      return placeholder;
     }
 
     function clearDragHover() {
       if (dragState?.hoverSlot) {
         const slot = dragState.hoverSlot;
-        slot.classList.remove('is-drop-target-slot');
         slot.removeAttribute('data-drop-position');
         dragState.hoverSlot = null;
       }
@@ -2842,6 +2882,7 @@
       }
       if (dragState) {
         dragState.hoverBefore = null;
+        clearPlaceholderVisualState(dragState.placeholder);
         removeDragPlaceholder();
       }
     }
@@ -2895,7 +2936,6 @@
         removeDragPlaceholder();
       }
       if (dragState.hoverSlot && dragState.hoverSlot !== info.slot) {
-        dragState.hoverSlot.classList.remove('is-drop-target-slot');
         dragState.hoverSlot.removeAttribute('data-drop-position');
       }
       if (dragState.hoverZone && dragState.hoverZone !== info.zone) {
@@ -2904,18 +2944,20 @@
       dragState.hoverSlot = info.slot || null;
       dragState.hoverZone = info.zone || null;
       dragState.hoverBefore = typeof info.before === 'boolean' ? info.before : null;
-      if (dragState.hoverSlot) {
-        dragState.hoverSlot.classList.add('is-drop-target-slot');
-        if (typeof info.before === 'boolean') {
-          dragState.hoverSlot.dataset.dropPosition = info.before ? 'before' : 'after';
-        } else {
-          dragState.hoverSlot.removeAttribute('data-drop-position');
-        }
-      }
       if (dragState.hoverZone) {
         dragState.hoverZone.classList.add('is-drop-target-zone');
       }
-      syncDragPlaceholder(info.zone || null, info.slot || null, dragState.hoverBefore);
+      const placeholder = syncDragPlaceholder(info.zone || null, info.slot || null, dragState.hoverBefore);
+      if (placeholder) {
+        placeholder.classList.add('is-drop-target-placeholder');
+        if (typeof dragState.hoverBefore === 'boolean') {
+          placeholder.setAttribute('data-drop-position', dragState.hoverBefore ? 'before' : 'after');
+        } else if (!info.slot) {
+          placeholder.setAttribute('data-drop-position', 'append');
+        } else {
+          placeholder.removeAttribute('data-drop-position');
+        }
+      }
     }
 
     function applyDropResult(clientX, clientY) {

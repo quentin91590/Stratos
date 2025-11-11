@@ -4,6 +4,128 @@
   const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
   const $ = (sel, root = document) => root.querySelector(sel);
   const NF = new Intl.NumberFormat('fr-FR');
+  const PERCENT_FORMAT = new Intl.NumberFormat('fr-FR', {
+    maximumFractionDigits: 1,
+    minimumFractionDigits: 0,
+  });
+
+  const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+
+  const hexToRgb = (hex) => {
+    if (typeof hex !== 'string') return null;
+    let normalized = hex.trim().replace(/^#/, '');
+    if (normalized.length === 3) {
+      normalized = normalized.split('').map((c) => `${c}${c}`).join('');
+    }
+    if (normalized.length !== 6) return null;
+    const value = Number.parseInt(normalized, 16);
+    if (Number.isNaN(value)) return null;
+    return {
+      r: (value >> 16) & 255,
+      g: (value >> 8) & 255,
+      b: value & 255,
+    };
+  };
+
+  const mixWithWhite = (hex, amount = 0.5) => {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return hex;
+    const ratio = clamp01(amount);
+    const blend = (channel) => Math.round(channel + (255 - channel) * ratio);
+    return `rgb(${blend(rgb.r)}, ${blend(rgb.g)}, ${blend(rgb.b)})`;
+  };
+
+  const withAlpha = (hex, alpha = 1) => {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return hex;
+    const ratio = clamp01(alpha);
+    return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${ratio})`;
+  };
+
+  const TREEMAP_COLORS = [
+    '#2563eb',
+    '#0ea5e9',
+    '#6366f1',
+    '#22c55e',
+    '#f97316',
+    '#14b8a6',
+    '#a855f7',
+    '#f59e0b',
+    '#ec4899',
+  ];
+
+  const computeTreemapLayout = (items, x = 0, y = 0, width = 1, height = 1, splitHorizontal = width >= height) => {
+    if (!Array.isArray(items) || !items.length) return [];
+
+    const fallbackLayout = () => {
+      if (splitHorizontal) {
+        const cellWidth = width / items.length;
+        return items.map((item, index) => ({
+          item,
+          x: x + cellWidth * index,
+          y,
+          width: cellWidth,
+          height,
+        }));
+      }
+      const cellHeight = height / items.length;
+      return items.map((item, index) => ({
+        item,
+        x,
+        y: y + cellHeight * index,
+        width,
+        height: cellHeight,
+      }));
+    };
+
+    if (items.length === 1) {
+      return [{ item: items[0], x, y, width, height }];
+    }
+
+    const safeTotal = items.reduce((sum, entry) => sum + Math.max(entry?.value || 0, 0), 0);
+    if (safeTotal <= 0) {
+      return fallbackLayout();
+    }
+
+    let pivot = 0;
+    let accumulator = 0;
+    const target = safeTotal / 2;
+    while (pivot < items.length && accumulator < target) {
+      accumulator += Math.max(items[pivot]?.value || 0, 0);
+      pivot += 1;
+    }
+
+    if (pivot <= 0) pivot = 1;
+    if (pivot >= items.length) pivot = items.length - 1;
+
+    const firstGroup = items.slice(0, pivot);
+    const secondGroup = items.slice(pivot);
+    const firstTotal = firstGroup.reduce((sum, entry) => sum + Math.max(entry?.value || 0, 0), 0);
+    const ratio = safeTotal > 0 ? firstTotal / safeTotal : firstGroup.length / items.length;
+
+    if (ratio <= 0 || ratio >= 1) {
+      return fallbackLayout();
+    }
+
+    if (splitHorizontal) {
+      const width1 = width * ratio;
+      const width2 = width - width1;
+      if (width1 <= 0 || width2 <= 0) return fallbackLayout();
+      return [
+        ...computeTreemapLayout(firstGroup, x, y, width1, height, !splitHorizontal),
+        ...computeTreemapLayout(secondGroup, x + width1, y, width2, height, !splitHorizontal),
+      ];
+    }
+
+    const height1 = height * ratio;
+    const height2 = height - height1;
+    if (height1 <= 0 || height2 <= 0) return fallbackLayout();
+
+    return [
+      ...computeTreemapLayout(firstGroup, x, y, width, height1, !splitHorizontal),
+      ...computeTreemapLayout(secondGroup, x, y + height1, width, height2, !splitHorizontal),
+    ];
+  };
   const isReducedMotionPreferred = () => {
     try {
       return !!window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -3761,53 +3883,85 @@
             sre,
             buildings: Number(item?.count) || 0,
           };
-        }).filter(entry => entry.energy > 0)
+        }).filter(entry => entry.value > 0)
         : [];
 
       dataset.sort((a, b) => (b.value || 0) - (a.value || 0));
-      const maxValue = dataset.reduce((max, item) => (item.value > max ? item.value : max), 0);
+      const totalValue = dataset.reduce((sum, item) => sum + (item.value || 0), 0);
       const totalBuildings = dataset.reduce((acc, item) => acc + (item.buildings || 0), 0);
       const hasData = dataset.length > 0;
 
-      const barsWrap = card.querySelector('[data-typology-bars]');
-      if (barsWrap) {
-        barsWrap.innerHTML = '';
+      const treemap = card.querySelector('[data-typology-treemap]');
+      if (treemap) {
+        treemap.innerHTML = '';
+        treemap.classList.toggle('is-empty', !hasData);
         if (!hasData) {
           const empty = document.createElement('p');
           empty.className = 'chart-empty';
           empty.textContent = 'Aucune typologie disponible pour la sélection.';
-          barsWrap.append(empty);
+          treemap.append(empty);
         } else {
-          const scale = maxValue > 0 ? (140 / maxValue) : 0;
-          if (scale > 0) barsWrap.style.setProperty('--typology-scale', `${scale}px`);
-          else barsWrap.style.removeProperty('--typology-scale');
+          const layout = computeTreemapLayout(dataset);
+          const paletteSize = TREEMAP_COLORS.length;
 
-          dataset.forEach((item) => {
-            const bar = document.createElement('div');
-            bar.className = 'typology-bar';
-            bar.dataset.key = item.key;
-            bar.setAttribute('role', 'listitem');
+          layout.forEach(({ item, x, y, width, height }, index) => {
+            const node = document.createElement('div');
+            node.className = 'typology-node';
+            node.dataset.key = item.key;
+            node.setAttribute('role', 'listitem');
+            node.style.setProperty('--x', x.toFixed(6));
+            node.style.setProperty('--y', y.toFixed(6));
+            node.style.setProperty('--w', width.toFixed(6));
+            node.style.setProperty('--h', height.toFixed(6));
 
-            const fill = document.createElement('span');
-            fill.className = 'typology-bar__fill';
-            fill.style.setProperty('--value', Math.max(item.value, 0));
-            fill.setAttribute('aria-hidden', 'true');
+            const baseColor = TREEMAP_COLORS[index % paletteSize];
+            node.style.setProperty('--treemap-color-strong', baseColor);
+            node.style.setProperty('--treemap-color-soft', mixWithWhite(baseColor, 0.72));
+            node.style.setProperty('--treemap-color-outline', withAlpha(baseColor, 0.45));
+
+            const header = document.createElement('div');
+            header.className = 'typology-node__header';
 
             const label = document.createElement('span');
-            label.className = 'typology-bar__label';
+            label.className = 'typology-node__label';
             label.textContent = item.label;
 
+            const share = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
+            let shareText = '0 %';
+            if (share > 0) {
+              shareText = share < 0.1 ? '<0,1 %' : `${PERCENT_FORMAT.format(share)} %`;
+            }
+
+            const shareEl = document.createElement('span');
+            shareEl.className = 'typology-node__share';
+            shareEl.textContent = shareText;
+            if (share <= 0) shareEl.hidden = true;
+
+            const footer = document.createElement('div');
+            footer.className = 'typology-node__footer';
+
             const valueEl = document.createElement('span');
-            valueEl.className = 'typology-bar__value';
+            valueEl.className = 'typology-node__value';
             valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 0 : 0)} ${unit}`;
 
             const countEl = document.createElement('span');
-            countEl.className = 'typology-bar__count';
+            countEl.className = 'typology-node__count';
             countEl.textContent = `${formatCount(item.buildings)} bât.`;
 
-            bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}`);
-            bar.append(fill, valueEl, label, countEl);
-            barsWrap.append(bar);
+            header.append(label, shareEl);
+            footer.append(valueEl, countEl);
+
+            const area = width * height;
+            if (area < 0.12) node.classList.add('is-compact');
+            if (area < 0.07) node.classList.add('is-tight');
+            if (area < 0.045) node.classList.add('is-mini');
+            if (area < 0.02) node.classList.add('is-micro');
+
+            node.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent} (${shareText})`);
+            node.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent} (${shareText})`;
+
+            node.append(header, footer);
+            treemap.append(node);
           });
         }
       }

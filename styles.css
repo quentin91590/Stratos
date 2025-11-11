@@ -1040,7 +1040,7 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   inset:-8px;
   border-radius:28px;
   border:2px dashed rgba(147,197,253,0.75);
-  background:rgba(96,165,250,0.12);
+  background:transparent;
   pointer-events:none;
   z-index:2;
 }

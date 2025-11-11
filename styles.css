@@ -1178,9 +1178,9 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   box-shadow:0 0 0 3px rgba(248, 113, 113, 0.45);
 }
 .tree-leaf__missing-popover{
-  position:absolute;
+  position:fixed;
   top:50%;
-  left:calc(100% + 14px);
+  left:50%;
   transform:translateY(-50%);
   min-width:220px;
   max-width:280px;
@@ -1193,7 +1193,7 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   font-size:.84rem;
   line-height:1.45;
   box-shadow:0 16px 34px rgba(15, 23, 42, 0.16);
-  z-index:40;
+  z-index:4000;
 }
 .tree-leaf__missing-popover::before{
   content:"";

@@ -1717,6 +1717,20 @@
   let missingInfoListenersReady = false;
   let missingInfoIdCounter = 0;
 
+  const positionMissingInfoPopover = (state) => {
+    if (!state || !state.popover || !state.icon) return;
+    const rect = state.icon.getBoundingClientRect();
+    const top = rect.top + rect.height / 2;
+    const left = rect.right + 14;
+    state.popover.style.top = `${top}px`;
+    state.popover.style.left = `${left}px`;
+  };
+
+  const updateOpenMissingInfoPosition = () => {
+    if (!openMissingInfoState) return;
+    positionMissingInfoPopover(openMissingInfoState);
+  };
+
   const closeMissingInfoPopover = (state) => {
     if (!state) return;
     const { popover, icon } = state;
@@ -1724,6 +1738,8 @@
     popover.classList.remove('is-visible');
     popover.setAttribute('aria-hidden', 'true');
     popover.hidden = true;
+    popover.style.removeProperty('top');
+    popover.style.removeProperty('left');
     icon.setAttribute('aria-expanded', 'false');
     if (openMissingInfoState === state) {
       openMissingInfoState = null;
@@ -1753,6 +1769,8 @@
     if (missingInfoListenersReady) return;
     document.addEventListener('click', handleMissingInfoOutsideClick);
     document.addEventListener('keydown', handleMissingInfoEscape);
+    window.addEventListener('resize', updateOpenMissingInfoPosition);
+    window.addEventListener('scroll', updateOpenMissingInfoPosition, true);
     missingInfoListenersReady = true;
   };
 
@@ -1777,6 +1795,7 @@
       closeMissingInfoPopover(openMissingInfoState);
     }
 
+    positionMissingInfoPopover(state);
     state.popover.hidden = false;
     state.popover.classList.add('is-visible');
     state.popover.setAttribute('aria-hidden', 'false');

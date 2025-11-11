@@ -3926,30 +3926,29 @@
 
             const baseColor = TREEMAP_COLORS[index % paletteSize];
             bar.style.setProperty('--bar-color-strong', baseColor);
-            bar.style.setProperty('--bar-color-soft', mixWithWhite(baseColor, 0.72));
+            bar.style.setProperty('--bar-color-soft', mixWithWhite(baseColor, 0.55));
 
             const percent = maxValue > 0 ? (item.value / maxValue) * 100 : 0;
             bar.style.setProperty('--bar-fill', percent.toFixed(4));
 
-            const header = document.createElement('div');
-            header.className = 'typology-bar__header';
-
-            const label = document.createElement('span');
-            label.className = 'typology-bar__label';
-            label.textContent = item.label;
-
-            const valueEl = document.createElement('span');
+            const valueEl = document.createElement('div');
             valueEl.className = 'typology-bar__value';
             valueEl.textContent = `${formatEnergyDisplay(item.value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit}`;
 
-            header.append(label, valueEl);
+            const column = document.createElement('div');
+            column.className = 'typology-bar__column';
 
             const track = document.createElement('div');
-            track.className = 'typology-bar__track';
+            track.className = 'typology-bar__column-track';
 
             const fill = document.createElement('div');
-            fill.className = 'typology-bar__fill';
+            fill.className = 'typology-bar__column-fill';
             track.append(fill);
+            column.append(track);
+
+            const label = document.createElement('div');
+            label.className = 'typology-bar__label';
+            label.textContent = item.label;
 
             const share = totalValue > 0 ? (item.value / totalValue) * 100 : 0;
             let shareText = '0 %';
@@ -3971,10 +3970,10 @@
 
             footer.append(shareEl, countEl);
 
-            bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent} (${shareText})`);
-            bar.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent} (${shareText})`;
+            bar.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent}${share > 0 ? ` (${shareText})` : ''}`);
+            bar.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent}${share > 0 ? ` (${shareText})` : ''}`;
 
-            bar.append(header, track, footer);
+            bar.append(valueEl, column, label, footer);
             bars.append(bar);
           });
         }

@@ -2209,6 +2209,10 @@
     const panel = document.getElementById('chart-catalog');
     if (!panel) return;
 
+    if (panel.parentElement !== document.body) {
+      document.body.append(panel);
+    }
+
     const zoneSelector = '.energy-chart-zone';
     const slotSelector = '[data-chart-slot]';
     const selectionClass = 'is-chart-selected';
@@ -2247,9 +2251,11 @@
     if (!toggles.length) return;
     const cards = Array.from(panel.querySelectorAll('.catalog-card[data-chart-type]'));
     const getCardContainer = (card) => card?.closest('li') || null;
+    const closeButton = panel.querySelector('.catalog-close');
 
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
-    const layoutQuery = window.matchMedia('(max-width: 960px)');
+    const LONG_PRESS_DELAY = 480;
+    const LONG_PRESS_MOVE_TOLERANCE = 12;
     let isOpen = false;
     let restoreFocusAfterClose = false;
     let activeToggle = null;
@@ -2257,6 +2263,8 @@
     let activeSlot = null;
     let activeZone = null;
     let selectedSlot = null;
+    let pendingLongPress = null;
+    let dragState = null;
 
     const prefersReducedMotion = () => window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -2387,9 +2395,10 @@
       return fallbackZone || null;
     };
 
-    const ensurePanelWithinZone = (zoneEl) => {
-      if (!zoneEl) return;
-      if (!zoneEl.contains(panel)) zoneEl.append(panel);
+    const ensurePanelWithinZone = () => {
+      if (panel.parentElement !== document.body) {
+        document.body.append(panel);
+      }
     };
 
     const clearZoneState = () => {
@@ -2480,49 +2489,6 @@
       return true;
     };
 
-    const positionCatalog = (trigger) => {
-      if (!trigger) return;
-      const zoneEl = getActiveZone();
-      if (!zoneEl) {
-        panel.style.removeProperty('--catalog-top');
-        panel.style.removeProperty('--catalog-right');
-        return;
-      }
-      if (layoutQuery.matches) {
-        panel.style.removeProperty('--catalog-top');
-        panel.style.removeProperty('--catalog-right');
-        return;
-      }
-
-      const zoneRect = zoneEl.getBoundingClientRect();
-      const buttonRect = trigger.getBoundingClientRect();
-      const rawWidth = panel.offsetWidth || panel.getBoundingClientRect().width || 0;
-      const panelWidth = Math.max(rawWidth, 0);
-      const top = Math.max(buttonRect.top - zoneRect.top, 0);
-      const availableRight = zoneRect.right - buttonRect.right;
-      const maxRight = Math.max(zoneRect.width - panelWidth, 0);
-      const anchorMode = (panel.dataset.catalogAnchor || 'contain').toLowerCase();
-
-      let resolvedRight;
-      if (anchorMode === 'trigger') {
-        resolvedRight = availableRight;
-      } else {
-        resolvedRight = Math.min(Math.max(availableRight, 0), maxRight);
-      }
-
-      if (!Number.isFinite(resolvedRight)) {
-        resolvedRight = 0;
-      }
-
-      panel.style.setProperty('--catalog-top', `${top}px`);
-      panel.style.setProperty('--catalog-right', `${resolvedRight}px`);
-    };
-
-    const clearCatalogPosition = () => {
-      panel.style.removeProperty('--catalog-top');
-      panel.style.removeProperty('--catalog-right');
-    };
-
     const focusFirstElement = () => {
       const focusables = getFocusableElements();
       const target = focusables[0] || panel;
@@ -2566,11 +2532,10 @@
     };
 
     const handleTransitionEnd = (event) => {
-      if (event.target !== panel || event.propertyName !== 'opacity') return;
+      if (event.target !== panel || event.propertyName !== 'transform') return;
       panel.removeEventListener('transitionend', handleTransitionEnd);
       if (isOpen) return;
       panel.hidden = true;
-      clearCatalogPosition();
       if (restoreFocusAfterClose && focusTargetOnClose) {
         focusTargetOnClose.focus({ preventScroll: true });
       }
@@ -2583,6 +2548,251 @@
       btn.setAttribute('aria-expanded', expanded ? 'true' : 'false');
       btn.classList.toggle('is-in-catalog', expanded);
     };
+
+    function cancelPendingLongPress() {
+      if (!pendingLongPress) return;
+      clearTimeout(pendingLongPress.timer);
+      if (!pendingLongPress.triggered) {
+        const { card, pointerId } = pendingLongPress;
+        if (card && typeof card.releasePointerCapture === 'function') {
+          try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+        }
+      }
+      pendingLongPress = null;
+    }
+
+    function clearDragHover() {
+      if (dragState?.hoverSlot) {
+        dragState.hoverSlot.classList.remove('is-drop-target-slot');
+        dragState.hoverSlot = null;
+      }
+      if (dragState?.hoverZone) {
+        dragState.hoverZone.classList.remove('is-drop-target-zone');
+        dragState.hoverZone = null;
+      }
+    }
+
+    function getDropInfo(clientX, clientY) {
+      if (!Number.isFinite(clientX) || !Number.isFinite(clientY)) {
+        return { element: null, zone: null, slot: null };
+      }
+      const ghost = dragState?.ghost || null;
+      let element = null;
+      if (ghost) {
+        const previousVisibility = ghost.style.visibility;
+        ghost.style.visibility = 'hidden';
+        element = document.elementFromPoint(clientX, clientY);
+        ghost.style.visibility = previousVisibility;
+      } else {
+        element = document.elementFromPoint(clientX, clientY);
+      }
+      const slot = element?.closest?.(slotSelector) || null;
+      const zone = slot ? slot.closest(zoneSelector) : element?.closest?.(zoneSelector) || null;
+      return { element, zone, slot };
+    }
+
+    function updateDragPosition(clientX, clientY) {
+      if (!dragState || !dragState.ghost) return;
+      const x = clientX - (dragState.offsetX || 0);
+      const y = clientY - (dragState.offsetY || 0);
+      dragState.ghost.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+    }
+
+    function updateDragHover(clientX, clientY) {
+      if (!dragState) return;
+      const info = getDropInfo(clientX, clientY);
+      if (dragState.hoverSlot && dragState.hoverSlot !== info.slot) {
+        dragState.hoverSlot.classList.remove('is-drop-target-slot');
+      }
+      if (dragState.hoverZone && dragState.hoverZone !== info.zone) {
+        dragState.hoverZone.classList.remove('is-drop-target-zone');
+      }
+      dragState.hoverSlot = info.slot || null;
+      dragState.hoverZone = info.zone || null;
+      if (dragState.hoverSlot) {
+        dragState.hoverSlot.classList.add('is-drop-target-slot');
+      }
+      if (dragState.hoverZone) {
+        dragState.hoverZone.classList.add('is-drop-target-zone');
+      }
+    }
+
+    function applyDropResult(clientX, clientY) {
+      if (!dragState) return false;
+      const { type, card } = dragState;
+      if (!type || !card) return false;
+
+      const info = getDropInfo(clientX, clientY);
+      const slotEl = info.slot && document.contains(info.slot) ? info.slot : null;
+      let zoneEl = info.zone && document.contains(info.zone) ? info.zone : null;
+
+      if (slotEl) {
+        const zoneForSlot = slotEl.closest(zoneSelector);
+        if (!zoneForSlot) return false;
+        activeZone = zoneForSlot;
+        selectSlot(slotEl);
+        activeSlot = slotEl;
+        const applied = applyChartToSlot(type, slotEl);
+        if (applied) {
+          requestAnimationFrame(() => {
+            if (document.contains(slotEl)) {
+              slotEl.focus({ preventScroll: true });
+            }
+          });
+        }
+        return applied;
+      }
+
+      if (!zoneEl) return false;
+
+      activeZone = zoneEl;
+      const reference = ensureSelectedSlot(zoneEl) || null;
+      activeSlot = reference;
+      const slot = cloneSlotForCard(card);
+      if (!slot) return false;
+      activeSlot = slot;
+      const applied = applyChartToSlot(type, slot);
+      if (!applied) {
+        slot.remove();
+        activeSlot = ensureSelectedSlot(zoneEl) || null;
+        return false;
+      }
+      requestAnimationFrame(() => {
+        if (document.contains(slot)) {
+          slot.focus({ preventScroll: true });
+        }
+      });
+      return true;
+    }
+
+    function finishDrag(event, canceled = false) {
+      if (!dragState) return;
+      window.removeEventListener('pointermove', onDragPointerMove);
+      window.removeEventListener('pointerup', onDragPointerUp);
+      window.removeEventListener('pointercancel', onDragPointerCancel);
+      const { ghost, card } = dragState;
+      let dropSuccess = false;
+      if (!canceled && event && Number.isFinite(event.clientX) && Number.isFinite(event.clientY)) {
+        dropSuccess = applyDropResult(event.clientX, event.clientY);
+      }
+      clearDragHover();
+      if (ghost && ghost.parentNode) ghost.remove();
+      document.body.classList.remove('chart-catalog-dragging');
+      if (card) delete card.dataset.longPressActive;
+      dragState = null;
+      return dropSuccess;
+    }
+
+    function onDragPointerMove(event) {
+      if (!dragState) return;
+      if (dragState.pointerId !== null && event.pointerId !== dragState.pointerId) return;
+      event.preventDefault();
+      updateDragPosition(event.clientX, event.clientY);
+      updateDragHover(event.clientX, event.clientY);
+    }
+
+    function onDragPointerUp(event) {
+      if (!dragState) return;
+      if (dragState.pointerId !== null && event.pointerId !== dragState.pointerId) return;
+      event.preventDefault();
+      finishDrag(event, false);
+    }
+
+    function onDragPointerCancel(event) {
+      if (!dragState) return;
+      if (dragState.pointerId !== null && event.pointerId !== dragState.pointerId) return;
+      finishDrag(event, true);
+    }
+
+    function startChartDrag(card, originEvent) {
+      if (!card) return;
+      const type = card.dataset.chartType;
+      if (!type) return;
+
+      pendingLongPress = null;
+      const rect = card.getBoundingClientRect();
+      const clientX = originEvent?.clientX ?? (rect.left + rect.width / 2);
+      const clientY = originEvent?.clientY ?? (rect.top + rect.height / 2);
+      const offsetX = clientX - rect.left;
+      const offsetY = clientY - rect.top;
+
+      const ghost = document.createElement('div');
+      ghost.className = 'chart-catalog-drag-ghost';
+      const preview = card.querySelector('.catalog-card__preview');
+      const text = card.querySelector('.catalog-card__text');
+      if (preview) ghost.append(preview.cloneNode(true));
+      if (text) ghost.append(text.cloneNode(true));
+      document.body.append(ghost);
+
+      dragState = {
+        card,
+        type,
+        pointerId: originEvent?.pointerId ?? null,
+        ghost,
+        offsetX,
+        offsetY,
+        hoverZone: null,
+        hoverSlot: null,
+      };
+
+      document.body.classList.add('chart-catalog-dragging');
+      closePanel({ returnFocus: false });
+      updateDragPosition(clientX, clientY);
+      updateDragHover(clientX, clientY);
+
+      window.addEventListener('pointermove', onDragPointerMove, { passive: false });
+      window.addEventListener('pointerup', onDragPointerUp, { passive: false });
+      window.addEventListener('pointercancel', onDragPointerCancel, { passive: false });
+    }
+
+    function scheduleLongPress(card, event) {
+      if (!isOpen || !card) return;
+      const pointerType = event.pointerType || '';
+      const isMouse = pointerType === 'mouse';
+      if (isMouse && event.button !== 0 && event.buttons !== 1) return;
+
+      cancelPendingLongPress();
+      const pointerId = event.pointerId;
+      const state = {
+        card,
+        pointerId,
+        startX: event.clientX,
+        startY: event.clientY,
+        latestEvent: event,
+        triggered: false,
+        timer: window.setTimeout(() => {
+          state.triggered = true;
+          if (pendingLongPress !== state) return;
+          pendingLongPress = null;
+          card.dataset.longPressActive = 'true';
+          if (typeof card.releasePointerCapture === 'function') {
+            try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+          }
+          startChartDrag(card, state.latestEvent);
+        }, LONG_PRESS_DELAY),
+      };
+      pendingLongPress = state;
+      if (typeof card.setPointerCapture === 'function') {
+        try { card.setPointerCapture(pointerId); } catch (err) { /* noop */ }
+      }
+    }
+
+    function handleCardPointerMove(event) {
+      if (!pendingLongPress || event.pointerId !== pendingLongPress.pointerId) return;
+      pendingLongPress.latestEvent = event;
+      if (pendingLongPress.triggered) return;
+      const dx = event.clientX - pendingLongPress.startX;
+      const dy = event.clientY - pendingLongPress.startY;
+      if (Math.hypot(dx, dy) > LONG_PRESS_MOVE_TOLERANCE) {
+        cancelPendingLongPress();
+      }
+    }
+
+    function handleCardPointerEnd(event) {
+      if (pendingLongPress && event.pointerId === pendingLongPress.pointerId) {
+        cancelPendingLongPress();
+      }
+    }
 
     const openPanel = (trigger) => {
       if (!trigger) return;
@@ -2599,7 +2809,7 @@
       activeZone = zoneEl;
 
       if (activeZone) {
-        ensurePanelWithinZone(activeZone);
+        ensurePanelWithinZone();
         activeZone.classList.add('catalog-open');
       }
 
@@ -2616,8 +2826,8 @@
       panel.hidden = false;
       panel.setAttribute('aria-hidden', 'false');
       setToggleState(activeToggle, true);
+      panel.classList.add('is-open');
       panel.scrollTop = 0;
-      positionCatalog(trigger);
       updateCatalogForSlot(activeSlot);
       // Force a reflow so the transition plays even when the panel was hidden
       void panel.getBoundingClientRect();
@@ -2629,10 +2839,12 @@
 
     const closePanel = ({ returnFocus = true } = {}) => {
       if (!isOpen) return;
+      cancelPendingLongPress();
       isOpen = false;
       panel.setAttribute('aria-hidden', 'true');
       focusTargetOnClose = returnFocus ? activeToggle : null;
       setToggleState(activeToggle, false);
+      panel.classList.remove('is-open');
       panel.removeEventListener('keydown', trapFocus);
       document.removeEventListener('click', onDocClick, true);
       document.removeEventListener('keydown', onKeydown);
@@ -2644,7 +2856,6 @@
       if (prefersReducedMotion()) {
         clearZoneState();
         panel.hidden = true;
-        clearCatalogPosition();
         if (focusTargetOnClose) {
           focusTargetOnClose.focus({ preventScroll: true });
         }
@@ -2660,21 +2871,8 @@
       activeZone = null;
     };
 
-    const handleResize = () => {
-      if (!isOpen || !activeToggle) return;
-      requestAnimationFrame(() => positionCatalog(activeToggle));
-    };
-
-    const handleLayoutChange = () => {
-      if (!isOpen || !activeToggle) return;
-      positionCatalog(activeToggle);
-    };
-
-    window.addEventListener('resize', handleResize);
-    if (typeof layoutQuery.addEventListener === 'function') {
-      layoutQuery.addEventListener('change', handleLayoutChange);
-    } else if (typeof layoutQuery.addListener === 'function') {
-      layoutQuery.addListener(handleLayoutChange);
+    if (closeButton) {
+      closeButton.addEventListener('click', () => closePanel());
     }
 
     toggles.forEach(btn => {
@@ -2695,6 +2893,12 @@
 
     cards.forEach(card => {
       card.addEventListener('click', (event) => {
+        if (card.dataset.longPressActive === 'true') {
+          event.preventDefault();
+          event.stopPropagation();
+          delete card.dataset.longPressActive;
+          return;
+        }
         event.preventDefault();
         const type = card.dataset.chartType;
         if (!type) return;
@@ -2714,6 +2918,12 @@
           activeSlot = ensureSelectedSlot(activeZone || undefined);
         }
       });
+
+      card.addEventListener('pointerdown', (event) => scheduleLongPress(card, event));
+      card.addEventListener('pointermove', handleCardPointerMove);
+      card.addEventListener('pointerup', handleCardPointerEnd);
+      card.addEventListener('pointercancel', handleCardPointerEnd);
+      card.addEventListener('lostpointercapture', handleCardPointerEnd);
     });
   }
 

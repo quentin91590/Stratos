@@ -1234,20 +1234,17 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 
 .tree-leaf.is-missing,
 .tree-node.is-missing{
-  --tree-ring-bg: #fee2e2;
-  --tree-ring-color: rgba(239, 68, 68, 0.55);
   font-weight: 700;
 }
 
 .tree-leaf.is-missing.is-active,
 .tree-node.is-missing.is-active{
-  --tree-ring-color: rgba(239, 68, 68, 0.65);
+  --tree-ring-bg: #fee2e2;
+  --tree-ring-color: rgba(239, 68, 68, 0.6);
 }
 
 .tree-leaf.is-active,
-.tree-node.is-active,
-.tree-leaf.is-missing,
-.tree-node.is-missing{
+.tree-node.is-active{
   background: var(--tree-ring-bg);
   box-shadow: inset 0 0 0 2px var(--tree-ring-color);
 }
@@ -1296,20 +1293,36 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 }
 .tree-leaf.is-missing .tree-check,
 .tree-node.is-missing .tree-check{
-  border-color: rgba(239, 68, 68, 0.55);
   color:#ef4444;
 }
 .tree-leaf.is-missing .tree-check::after,
 .tree-node.is-missing .tree-check::after{
   content:'✕';
-  opacity:1;
-  transform:scale(.9);
+  transform:scale(.55);
 }
 .tree-leaf.is-missing .tree-check:checked,
 .tree-node.is-missing .tree-check:checked{
   background:#fee2e2;
   border-color:#ef4444;
   box-shadow:0 0 0 2px rgba(239, 68, 68, 0.2);
+}
+.tree-leaf.is-missing .tree-check:checked::after,
+.tree-node.is-missing .tree-check:checked::after{
+  opacity:1;
+  transform:scale(.9);
+}
+.tree-leaf.is-missing .tree-check:not(:checked),
+.tree-node.is-missing .tree-check:not(:checked){
+  border-color: rgba(15, 23, 42, 0.25);
+}
+.tree-leaf.is-missing .tree-check:not(:checked)::after,
+.tree-node.is-missing .tree-check:not(:checked)::after{
+  opacity:0;
+  transform:scale(.55);
+}
+.tree-leaf.is-missing.is-active .tree-check,
+.tree-node.is-missing.is-active .tree-check{
+  border-color:#ef4444;
 }
 .tree-leaf.is-missing .tree-check:focus-visible,
 .tree-node.is-missing .tree-check:focus-visible{

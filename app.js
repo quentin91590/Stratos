@@ -1828,13 +1828,6 @@
         }
         existing.remove();
       }
-      const strayPopover = leaf.querySelector('.tree-leaf__missing-popover');
-      if (strayPopover) {
-        if (openMissingInfoState && openMissingInfoState.popover === strayPopover) {
-          closeMissingInfoPopover(openMissingInfoState);
-        }
-        strayPopover.remove();
-      }
       leaf.removeAttribute('data-missing-reason');
       return;
     }
@@ -1876,8 +1869,8 @@
       missingInfoRegistry.set(icon, state);
     }
 
-    if (state.popover && state.popover.parentElement !== leaf) {
-      leaf.append(state.popover);
+    if (state.popover && document.body && state.popover.parentElement !== document.body) {
+      document.body.append(state.popover);
     }
 
     const lines = message.split('\n').filter((line) => line.trim().length);
@@ -1901,8 +1894,8 @@
 
     leaf.setAttribute('data-missing-reason', message);
     leaf.append(icon);
-    if (state.popover) {
-      leaf.append(state.popover);
+    if (state.popover && document.body && state.popover.parentElement !== document.body) {
+      document.body.append(state.popover);
     }
     icon.setAttribute('aria-expanded', state.popover?.classList.contains('is-visible') ? 'true' : 'false');
   };

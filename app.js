@@ -2258,6 +2258,7 @@
     const focusableSelector = 'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])';
     const LONG_PRESS_DELAY = 480;
     const LONG_PRESS_MOVE_TOLERANCE = 12;
+    const CATALOG_PLACEHOLDER_MIN_HEIGHT = 220;
     let isOpen = false;
     let restoreFocusAfterClose = false;
     let activeToggle = null;
@@ -2640,6 +2641,110 @@
       pendingLongPress = null;
     }
 
+    function activatePendingDrag(state) {
+      if (!state || state.triggered) return;
+      state.triggered = true;
+      clearTimeout(state.timer);
+      if (pendingLongPress === state) {
+        pendingLongPress = null;
+      }
+      const { card, pointerId } = state;
+      if (!card) return;
+      card.dataset.longPressActive = 'true';
+      if (card && typeof card.releasePointerCapture === 'function') {
+        try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
+      }
+      startChartDrag(card, state.latestEvent);
+    }
+
+    function getPlaceholderHost(zoneEl) {
+      if (!zoneEl) return null;
+      return zoneEl.querySelector('.energy-chart-stack') || zoneEl;
+    }
+
+    function removeDragPlaceholder() {
+      if (!dragState) return;
+      const { placeholder } = dragState;
+      if (placeholder?.parentNode) {
+        placeholder.remove();
+      }
+      dragState.placeholderZone = null;
+      dragState.placeholderHost = null;
+    }
+
+    function ensureDragPlaceholder(zoneEl) {
+      if (!dragState || !zoneEl) return null;
+      const host = getPlaceholderHost(zoneEl);
+      if (!host) return null;
+      let { placeholder } = dragState;
+      if (!placeholder) {
+        placeholder = document.createElement('div');
+        placeholder.className = `${TILE_PLACEHOLDER_CLASS} chart-catalog-drop-placeholder`;
+        placeholder.setAttribute('aria-hidden', 'true');
+        placeholder.dataset.catalogPlaceholder = 'true';
+        dragState.placeholder = placeholder;
+      }
+      if (placeholder.parentNode !== host) {
+        placeholder.remove();
+        host.appendChild(placeholder);
+      }
+      dragState.placeholderZone = zoneEl;
+      dragState.placeholderHost = host;
+      return placeholder;
+    }
+
+    function updatePlaceholderSize(referenceEl, zoneEl) {
+      if (!dragState?.placeholder) return;
+      const placeholder = dragState.placeholder;
+      let rect = null;
+      if (referenceEl?.getBoundingClientRect) {
+        rect = referenceEl.getBoundingClientRect();
+      }
+      if (!rect) {
+        const sample = zoneEl?.querySelector(slotSelector) || document.querySelector(slotSelector);
+        if (sample && sample !== referenceEl && sample.getBoundingClientRect) {
+          rect = sample.getBoundingClientRect();
+        }
+      }
+      if (rect && Number.isFinite(rect.height)) {
+        placeholder.style.height = `${rect.height}px`;
+        if (Number.isFinite(rect.width)) {
+          placeholder.style.width = `${rect.width}px`;
+        } else {
+          placeholder.style.removeProperty('width');
+        }
+        dragState.placeholderSize = { height: rect.height, width: rect.width };
+      } else {
+        const fallbackHeight = dragState.placeholderSize?.height;
+        const fallbackWidth = dragState.placeholderSize?.width;
+        placeholder.style.height = `${Number.isFinite(fallbackHeight) ? fallbackHeight : CATALOG_PLACEHOLDER_MIN_HEIGHT}px`;
+        if (Number.isFinite(fallbackWidth)) {
+          placeholder.style.width = `${fallbackWidth}px`;
+        } else {
+          placeholder.style.removeProperty('width');
+        }
+      }
+    }
+
+    function syncDragPlaceholder(zoneEl, slotEl, before) {
+      if (!dragState) return;
+      if (!zoneEl) {
+        removeDragPlaceholder();
+        return;
+      }
+      const placeholder = ensureDragPlaceholder(zoneEl);
+      if (!placeholder) return;
+      updatePlaceholderSize(slotEl, zoneEl);
+      const host = dragState.placeholderHost;
+      if (!host) return;
+      let referenceNode = null;
+      if (slotEl && host.contains(slotEl)) {
+        const insertBefore = typeof before === 'boolean' ? before : true;
+        referenceNode = insertBefore ? slotEl : slotEl.nextElementSibling;
+      }
+      host.insertBefore(placeholder, referenceNode || null);
+    }
+
     function clearDragHover() {
       if (dragState?.hoverSlot) {
         const slot = dragState.hoverSlot;
@@ -2653,6 +2758,7 @@
       }
       if (dragState) {
         dragState.hoverBefore = null;
+        removeDragPlaceholder();
       }
     }
 
@@ -2699,6 +2805,11 @@
     function updateDragHover(clientX, clientY) {
       if (!dragState) return;
       const info = getDropInfo(clientX, clientY);
+      if (!info.zone) {
+        removeDragPlaceholder();
+      } else if (dragState.placeholderZone && dragState.placeholderZone !== info.zone) {
+        removeDragPlaceholder();
+      }
       if (dragState.hoverSlot && dragState.hoverSlot !== info.slot) {
         dragState.hoverSlot.classList.remove('is-drop-target-slot');
         dragState.hoverSlot.removeAttribute('data-drop-position');
@@ -2720,6 +2831,7 @@
       if (dragState.hoverZone) {
         dragState.hoverZone.classList.add('is-drop-target-zone');
       }
+      syncDragPlaceholder(info.zone || null, info.slot || null, dragState.hoverBefore);
     }
 
     function applyDropResult(clientX, clientY) {
@@ -2864,6 +2976,10 @@
         hoverZone: null,
         hoverSlot: null,
         hoverBefore: null,
+        placeholder: null,
+        placeholderZone: null,
+        placeholderHost: null,
+        placeholderSize: null,
       };
 
       document.body.classList.add('chart-catalog-dragging');
@@ -2891,15 +3007,9 @@
         startY: event.clientY,
         latestEvent: event,
         triggered: false,
+        pointerType,
         timer: window.setTimeout(() => {
-          state.triggered = true;
-          if (pendingLongPress !== state) return;
-          pendingLongPress = null;
-          card.dataset.longPressActive = 'true';
-          if (typeof card.releasePointerCapture === 'function') {
-            try { card.releasePointerCapture(pointerId); } catch (err) { /* noop */ }
-          }
-          startChartDrag(card, state.latestEvent);
+          activatePendingDrag(state);
         }, LONG_PRESS_DELAY),
       };
       pendingLongPress = state;
@@ -2915,7 +3025,13 @@
       const dx = event.clientX - pendingLongPress.startX;
       const dy = event.clientY - pendingLongPress.startY;
       if (Math.hypot(dx, dy) > LONG_PRESS_MOVE_TOLERANCE) {
-        cancelPendingLongPress();
+        const pointerType = pendingLongPress.pointerType || '';
+        if (pointerType === 'touch') {
+          cancelPendingLongPress();
+        } else {
+          const state = pendingLongPress;
+          activatePendingDrag(state);
+        }
       }
     }
 

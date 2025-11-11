@@ -2,7 +2,7 @@
   "buildings": {
     "rive-1": {
       "label": "Pavillon Horizon",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 12,
@@ -547,7 +547,7 @@
     },
     "rive-2": {
       "label": "Laboratoire Lumen",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 16,
@@ -1092,7 +1092,7 @@
     },
     "rive-3": {
       "label": "Atelier Delta",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 18,
@@ -1637,7 +1637,7 @@
     },
     "rive-4": {
       "label": "Gymnase du Rivage",
-      "typology": "ecole",
+      "typology": "installations_sportives",
       "sre": 410,
       "position": {
         "x": 10,
@@ -2182,7 +2182,7 @@
     },
     "aug-1": {
       "label": "Piscine Bellefontaine",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 20,
@@ -2727,7 +2727,7 @@
     },
     "aug-2": {
       "label": "Centre Aquatique Ondine",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 24,
@@ -3272,7 +3272,7 @@
     },
     "aug-3": {
       "label": "Bassin des Arènes",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 26,
@@ -3817,7 +3817,7 @@
     },
     "aug-4": {
       "label": "Studio Wellness Augustins",
-      "typology": "piscine",
+      "typology": "installations_sportives",
       "sre": 355,
       "position": {
         "x": 21,
@@ -4907,7 +4907,7 @@
     },
     "hzn-2": {
       "label": "Bâtiment Vernal",
-      "typology": "administration",
+      "typology": "hopitaux",
       "sre": 395,
       "position": {
         "x": 39,
@@ -5452,7 +5452,7 @@
     },
     "hzn-3": {
       "label": "Maison Aérion",
-      "typology": "administration",
+      "typology": "habitat_individuel",
       "sre": 395,
       "position": {
         "x": 41,
@@ -5997,7 +5997,7 @@
     },
     "hzn-4": {
       "label": "Hôtel Administratif Orangerie",
-      "typology": "administration",
+      "typology": "habitat_collectif",
       "sre": 395,
       "position": {
         "x": 37,
@@ -6542,7 +6542,7 @@
     },
     "atlas-1": {
       "label": "Tour Vertex",
-      "typology": "bureau",
+      "typology": "commerce",
       "sre": 505,
       "position": {
         "x": 56,
@@ -7087,7 +7087,7 @@
     },
     "atlas-2": {
       "label": "Pôle Mobilis",
-      "typology": "bureau",
+      "typology": "industrie",
       "sre": 505,
       "position": {
         "x": 60,
@@ -7632,7 +7632,7 @@
     },
     "atlas-3": {
       "label": "Bureaux Forge Nord",
-      "typology": "bureau",
+      "typology": "depots",
       "sre": 505,
       "position": {
         "x": 62,
@@ -8177,7 +8177,7 @@
     },
     "atlas-4": {
       "label": "Studios Atelier 5",
-      "typology": "bureau",
+      "typology": "restauration",
       "sre": 505,
       "position": {
         "x": 57,
@@ -8722,7 +8722,7 @@
     },
     "cedlac-1": {
       "label": "Salle Lyrique",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 70,
@@ -9267,7 +9267,7 @@
     },
     "cedlac-2": {
       "label": "Galerie des Cimes",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 74,
@@ -9812,7 +9812,7 @@
     },
     "cedlac-3": {
       "label": "Pavillon Promenade",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 76,
@@ -10357,7 +10357,7 @@
     },
     "cedlac-4": {
       "label": "Amphithéâtre du Lac",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 71,

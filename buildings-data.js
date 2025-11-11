@@ -4,7 +4,7 @@ window.STRATOS_BUILDINGS = {
   "buildings": {
     "rive-1": {
       "label": "Pavillon Horizon",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 12,
@@ -549,7 +549,7 @@ window.STRATOS_BUILDINGS = {
     },
     "rive-2": {
       "label": "Laboratoire Lumen",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 16,
@@ -1094,7 +1094,7 @@ window.STRATOS_BUILDINGS = {
     },
     "rive-3": {
       "label": "Atelier Delta",
-      "typology": "ecole",
+      "typology": "ecoles",
       "sre": 410,
       "position": {
         "x": 18,
@@ -1639,7 +1639,7 @@ window.STRATOS_BUILDINGS = {
     },
     "rive-4": {
       "label": "Gymnase du Rivage",
-      "typology": "ecole",
+      "typology": "installations_sportives",
       "sre": 410,
       "position": {
         "x": 10,
@@ -2184,7 +2184,7 @@ window.STRATOS_BUILDINGS = {
     },
     "aug-1": {
       "label": "Piscine Bellefontaine",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 20,
@@ -2729,7 +2729,7 @@ window.STRATOS_BUILDINGS = {
     },
     "aug-2": {
       "label": "Centre Aquatique Ondine",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 24,
@@ -3274,7 +3274,7 @@ window.STRATOS_BUILDINGS = {
     },
     "aug-3": {
       "label": "Bassin des Arènes",
-      "typology": "piscine",
+      "typology": "piscines_couvertes",
       "sre": 355,
       "position": {
         "x": 26,
@@ -3819,7 +3819,7 @@ window.STRATOS_BUILDINGS = {
     },
     "aug-4": {
       "label": "Studio Wellness Augustins",
-      "typology": "piscine",
+      "typology": "installations_sportives",
       "sre": 355,
       "position": {
         "x": 21,
@@ -4909,7 +4909,7 @@ window.STRATOS_BUILDINGS = {
     },
     "hzn-2": {
       "label": "Bâtiment Vernal",
-      "typology": "administration",
+      "typology": "hopitaux",
       "sre": 395,
       "position": {
         "x": 39,
@@ -5454,7 +5454,7 @@ window.STRATOS_BUILDINGS = {
     },
     "hzn-3": {
       "label": "Maison Aérion",
-      "typology": "administration",
+      "typology": "habitat_individuel",
       "sre": 395,
       "position": {
         "x": 41,
@@ -5999,7 +5999,7 @@ window.STRATOS_BUILDINGS = {
     },
     "hzn-4": {
       "label": "Hôtel Administratif Orangerie",
-      "typology": "administration",
+      "typology": "habitat_collectif",
       "sre": 395,
       "position": {
         "x": 37,
@@ -6544,7 +6544,7 @@ window.STRATOS_BUILDINGS = {
     },
     "atlas-1": {
       "label": "Tour Vertex",
-      "typology": "bureau",
+      "typology": "commerce",
       "sre": 505,
       "position": {
         "x": 56,
@@ -7089,7 +7089,7 @@ window.STRATOS_BUILDINGS = {
     },
     "atlas-2": {
       "label": "Pôle Mobilis",
-      "typology": "bureau",
+      "typology": "industrie",
       "sre": 505,
       "position": {
         "x": 60,
@@ -7634,7 +7634,7 @@ window.STRATOS_BUILDINGS = {
     },
     "atlas-3": {
       "label": "Bureaux Forge Nord",
-      "typology": "bureau",
+      "typology": "depots",
       "sre": 505,
       "position": {
         "x": 62,
@@ -8179,7 +8179,7 @@ window.STRATOS_BUILDINGS = {
     },
     "atlas-4": {
       "label": "Studios Atelier 5",
-      "typology": "bureau",
+      "typology": "restauration",
       "sre": 505,
       "position": {
         "x": 57,
@@ -8724,7 +8724,7 @@ window.STRATOS_BUILDINGS = {
     },
     "cedlac-1": {
       "label": "Salle Lyrique",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 70,
@@ -9269,7 +9269,7 @@ window.STRATOS_BUILDINGS = {
     },
     "cedlac-2": {
       "label": "Galerie des Cimes",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 74,
@@ -9814,7 +9814,7 @@ window.STRATOS_BUILDINGS = {
     },
     "cedlac-3": {
       "label": "Pavillon Promenade",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 76,
@@ -10359,7 +10359,7 @@ window.STRATOS_BUILDINGS = {
     },
     "cedlac-4": {
       "label": "Amphithéâtre du Lac",
-      "typology": "culture",
+      "typology": "lieux_rassemblement",
       "sre": 495,
       "position": {
         "x": 71,

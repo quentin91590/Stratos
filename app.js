@@ -4894,12 +4894,12 @@
         const ms = opt.closest('.ms');
         const cb = opt.querySelector('input[type="checkbox"]');
         if (cb) {
-          cb.checked = !cb.checked;
-          updateDisplay(ms);
-          if (ms?.dataset?.name === 'affectation') {
-            applySidebarFilters();
+          const clickedCheckboxDirectly = e.target === cb;
+          if (!clickedCheckboxDirectly) {
+            e.preventDefault();
+            cb.checked = !cb.checked;
+            cb.dispatchEvent(new Event('change', { bubbles: true }));
           }
-          e.preventDefault();
         }
         return;
       }

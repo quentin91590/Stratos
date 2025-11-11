@@ -2361,12 +2361,11 @@
 
     const getSlotGroup = (slotEl) => slotEl?.dataset.chartGroup || slotEl?.dataset.chartSlot || null;
 
-    const updateCardVisibility = (group) => {
+    const updateCardVisibility = () => {
       cards.forEach(card => {
-        const matches = !group || card.dataset.chartGroup === group;
         const container = getCardContainer(card);
         if (container) {
-          container.hidden = !matches;
+          container.hidden = false;
         }
       });
     };
@@ -2384,8 +2383,7 @@
 
     const updateCatalogForSlot = (slotEl) => {
       if (slotEl) selectSlot(slotEl);
-      const group = getSlotGroup(slotEl);
-      updateCardVisibility(group);
+      updateCardVisibility();
       markActiveCard(slotEl);
     };
 

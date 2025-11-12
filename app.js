@@ -3554,7 +3554,7 @@
     const energyBlock = document.getElementById('energy-block');
     if (energyBlock) energyBlock.hidden = (name !== 'energie');
 
-    ['etat', 'travaux', 'financier'].forEach(n => {
+    ['general', 'etat', 'travaux', 'financier'].forEach(n => {
       const el = document.getElementById('section-' + n);
       if (el) el.hidden = (n !== name);
     });
@@ -3562,7 +3562,7 @@
     // Couleur
     if (name === 'energie') root.style.setProperty('--section-color', '#60a5fa');
     else {
-      const map = { etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
+      const map = { general: '#6366f1', etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
       root.style.setProperty('--section-color', map[name] || '#94a3b8');
     }
 

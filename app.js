@@ -521,6 +521,28 @@
       }
       h3.textContent = title;
     });
+
+    // (4) Graphique barres par affectation
+    const affChart = document.querySelector('.affectation-chart');
+    if (affChart) {
+      affChart.dataset.chartMode = mode;
+
+      const heightKey = mode === 'kwhm2' ? 'heightKwhm2' : 'heightKwh';
+      const valueKey = mode === 'kwhm2' ? 'valKwhm2' : 'valKwh';
+
+      affChart.querySelectorAll('.affectation-chart__bar').forEach(bar => {
+        const h = bar.dataset[heightKey];
+        if (h) bar.style.setProperty('--value', h);
+      });
+
+      affChart.querySelectorAll('.affectation-chart__value').forEach(valEl => {
+        const txt = valEl.dataset[valueKey];
+        if (txt) valEl.textContent = txt;
+      });
+
+      const unitEl = document.querySelector('[data-affectation-unit]');
+      if (unitEl) unitEl.textContent = (mode === 'kwhm2') ? 'kWh/m²' : 'kWh';
+    }
   }
 
   function setupEnergyFilters() {

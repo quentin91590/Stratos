@@ -4550,6 +4550,7 @@
       const barsContainer = figure.querySelector('[data-pareto-bars]');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
+      const markersContainer = figure.querySelector('[data-pareto-markers]');
       const noteEl = figure.querySelector('[data-pareto-note]');
       const totalEl = figure.querySelector('[data-pareto-total]');
       const coverageEl = figure.querySelector('[data-pareto-coverage]');
@@ -4594,11 +4595,13 @@
             const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
             const label = entry.label || `Bâtiment ${index + 1}`;
             const valueText = `${formatEnergyDisplay(entry.value, 'kwh', decimals)} ${unit}`;
+            const computedWidth = Math.max(180, Math.min(380, label.length * 7.2));
             const bar = document.createElement('div');
             bar.className = 'pareto-chart__bar';
             bar.setAttribute('role', 'listitem');
             bar.tabIndex = 0;
             bar.style.setProperty('--value', percent.toFixed(4));
+            bar.style.setProperty('--pareto-label-width', `${computedWidth.toFixed(2)}px`);
             bar.dataset.label = label;
             bar.dataset.value = valueText;
             bar.setAttribute('aria-label', `${label} : ${valueText}`);
@@ -4606,6 +4609,11 @@
             barsContainer.append(bar);
           });
         }
+      }
+
+      if (markersContainer) {
+        markersContainer.innerHTML = '';
+        markersContainer.setAttribute('hidden', '');
       }
 
       const noteMessages = [];
@@ -4648,19 +4656,64 @@
         const targetPolyline = polyline instanceof SVGPolylineElement ? polyline : svg.querySelector('polyline');
         if (!count || totalValue <= 0 || mode === 'kwhm2' || !targetPolyline) {
           svg.setAttribute('hidden', '');
+          if (markersContainer) {
+            markersContainer.innerHTML = '';
+            markersContainer.setAttribute('hidden', '');
+          }
         } else {
           svg.removeAttribute('hidden');
-          const points = ['0,100'];
+          const points = [];
+          const markerData = [];
+          points.push('0,100');
           let cumulative = 0;
+          const columnWidth = count > 0 ? 100 / count : 100;
+
           entries.forEach((entry, index) => {
             cumulative += entry.value;
-            const shareValue = totalValue > 0 ? Math.min(100, (cumulative / totalValue) * 100) : 0;
-            const x = ((index + 0.5) / count) * 100;
-            const y = 100 - shareValue;
-            points.push(`${x.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
+            let shareValue = totalValue > 0 ? (cumulative / totalValue) * 100 : 0;
+            if (index === count - 1 && shareValue < 100) {
+              shareValue = 100;
+            }
+
+            const clampedShare = Math.min(100, Math.max(0, shareValue));
+            const centerX = Math.min(100, Math.max(0, (index + 0.5) * columnWidth));
+            const y = 100 - clampedShare;
+
+            points.push(`${centerX.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
+            markerData.push({
+              x: centerX,
+              y: Math.max(0, y),
+              share: clampedShare,
+              label: entry.label || `Bâtiment ${index + 1}`,
+            });
           });
-          points.push('100,0');
+
           targetPolyline.setAttribute('points', points.join(' '));
+
+          if (markersContainer) {
+            markersContainer.innerHTML = '';
+            markerData.forEach((marker) => {
+              const markerEl = document.createElement('span');
+              markerEl.className = 'pareto-chart__marker';
+              markerEl.style.setProperty('--x', marker.x.toFixed(2));
+              markerEl.style.setProperty('--y', marker.y.toFixed(2));
+              const shareDisplay = marker.share > 0 && marker.share < 0.1
+                ? '<0,1 %'
+                : `${PERCENT_FORMAT.format(marker.share)} %`;
+              markerEl.dataset.share = shareDisplay;
+              markerEl.tabIndex = 0;
+              markerEl.setAttribute('role', 'img');
+              markerEl.setAttribute('aria-label', `${marker.label || ''} : ${shareDisplay} cumulés`);
+              markerEl.title = `${marker.label || ''} • ${shareDisplay}`.trim();
+              markersContainer.append(markerEl);
+            });
+
+            if (markerData.length) {
+              markersContainer.removeAttribute('hidden');
+            } else {
+              markersContainer.setAttribute('hidden', '');
+            }
+          }
         }
       }
     });

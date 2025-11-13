@@ -134,6 +134,133 @@
     }
   };
 
+  const measureParetoLabelWidth = (() => {
+    const MIN_WIDTH = 220;
+    const MAX_WIDTH = 640;
+    const MAX_LINES = 2;
+    let measureEl = null;
+
+    const ensureMeasureElement = () => {
+      if (measureEl && measureEl.isConnected) {
+        return measureEl;
+      }
+
+      const el = document.createElement('div');
+      el.setAttribute('aria-hidden', 'true');
+      el.style.cssText = [
+        'position:absolute',
+        'left:-9999px',
+        'top:-9999px',
+        'pointer-events:none',
+        'visibility:hidden',
+        'z-index:-1',
+        'font-weight:600',
+        'font-size:0.72rem',
+        'line-height:1.3',
+        'font-family:Inter, system-ui, "Segoe UI", sans-serif',
+        'padding:4px 10px',
+        'max-width:none',
+        'box-sizing:border-box',
+        'display:block',
+        'white-space:normal',
+      ].join(';');
+      const host = document.body || document.documentElement;
+      if (host) {
+        host.appendChild(el);
+        measureEl = el;
+        return measureEl;
+      }
+
+      return null;
+    };
+
+    const parsePx = (value) => {
+      const parsed = Number.parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : 0;
+    };
+
+    const fallbackWidth = (text = '') => {
+      if (!text) return MIN_WIDTH;
+      const averageCharWidth = 7.2;
+      const estimated = Math.max(text.length * averageCharWidth, MIN_WIDTH);
+      return Math.min(MAX_WIDTH, estimated + 32);
+    };
+
+    return (rawLabel = '') => {
+      const label = typeof rawLabel === 'string' ? rawLabel.trim() : '';
+      if (!label) return MIN_WIDTH;
+
+      const element = ensureMeasureElement();
+      if (!element) {
+        return fallbackWidth(label);
+      }
+
+      element.textContent = label;
+      element.style.whiteSpace = 'nowrap';
+      element.style.width = 'auto';
+
+      const singleLineWidth = Math.ceil(element.scrollWidth);
+
+      const words = label.split(/\s+/).filter(Boolean);
+      let longestWordWidth = singleLineWidth;
+      if (words.length) {
+        longestWordWidth = words.reduce((max, word) => {
+          element.textContent = word;
+          const width = Math.ceil(element.scrollWidth);
+          return width > max ? width : max;
+        }, 0);
+      }
+
+      element.textContent = label;
+      element.style.whiteSpace = 'normal';
+      element.style.display = 'block';
+
+      const computed = window.getComputedStyle(element);
+      const paddingTop = parsePx(computed.paddingTop);
+      const paddingBottom = parsePx(computed.paddingBottom);
+      const fontSize = parsePx(computed.fontSize) || 11.5;
+      let lineHeight = parsePx(computed.lineHeight);
+      if (!lineHeight) {
+        const numeric = Number.parseFloat(computed.lineHeight);
+        if (Number.isFinite(numeric)) {
+          lineHeight = numeric;
+        } else {
+          lineHeight = fontSize * 1.3;
+        }
+      }
+      const maxHeight = paddingTop + paddingBottom + lineHeight * MAX_LINES + 0.5;
+
+      const minCandidate = Math.max(
+        MIN_WIDTH,
+        Math.ceil(singleLineWidth / MAX_LINES),
+        Math.ceil(longestWordWidth * 1.02),
+      );
+      const maxCandidate = Math.max(
+        minCandidate,
+        Math.min(MAX_WIDTH, Math.max(singleLineWidth, longestWordWidth, MIN_WIDTH)),
+      );
+
+      let low = minCandidate;
+      let high = maxCandidate;
+      let best = maxCandidate;
+
+      while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        element.style.width = `${mid}px`;
+        const height = element.scrollHeight;
+        if (height <= maxHeight) {
+          best = mid;
+          high = mid - 1;
+        } else {
+          low = mid + 1;
+        }
+      }
+
+      const finalWidth = Math.min(MAX_WIDTH, Math.max(best, longestWordWidth, MIN_WIDTH));
+      return finalWidth;
+    };
+  })();
+
   const energySubnav = document.getElementById('energy-subnav');
   const topNavMenu = document.querySelector('.top-nav');
   let energySubnavEnabled = false;
@@ -4595,7 +4722,7 @@
             const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
             const label = entry.label || `Bâtiment ${index + 1}`;
             const valueText = `${formatEnergyDisplay(entry.value, 'kwh', decimals)} ${unit}`;
-            const computedWidth = Math.max(180, Math.min(380, label.length * 7.2));
+            const computedWidth = measureParetoLabelWidth(label);
             const bar = document.createElement('div');
             bar.className = 'pareto-chart__bar';
             bar.setAttribute('role', 'listitem');

@@ -10,6 +10,11 @@
   });
 
   const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
+  const clamp = (value, min, max) => {
+    const num = Number(value);
+    if (!Number.isFinite(num)) return min;
+    return Math.min(Math.max(num, min), max);
+  };
 
   const hexToRgb = (hex) => {
     if (typeof hex !== 'string') return null;
@@ -289,6 +294,7 @@
   };
 
   const MAP_CARD_STATE = new WeakMap();
+  let MAP_DOMAIN_CACHE = null;
   const TOUCH_ACTION_OVERRIDES = new WeakMap();
 
   const lockTouchAction = (element, value = 'none') => {
@@ -353,20 +359,267 @@
     if (state) return state;
     const viewport = card.querySelector('[data-leaflet-map]');
     if (!viewport) return null;
+    const canvas = card.querySelector('.map-canvas');
     let frame = viewport.querySelector('.map-viewport__frame');
     if (!frame) {
       frame = document.createElement('div');
       frame.className = 'map-viewport__frame';
       viewport.appendChild(frame);
     }
-    state = { viewport, frame };
+    let controls = null;
+    if (canvas) {
+      controls = canvas.querySelector('.map-controls');
+      if (!controls) {
+        controls = document.createElement('div');
+        controls.className = 'map-controls';
+
+        const zoomOutBtn = document.createElement('button');
+        zoomOutBtn.type = 'button';
+        zoomOutBtn.className = 'map-controls__btn map-controls__btn--out';
+        zoomOutBtn.setAttribute('aria-label', 'Dézoomer la carte');
+        zoomOutBtn.textContent = '−';
+
+        const zoomInBtn = document.createElement('button');
+        zoomInBtn.type = 'button';
+        zoomInBtn.className = 'map-controls__btn map-controls__btn--in';
+        zoomInBtn.setAttribute('aria-label', 'Zoomer la carte');
+        zoomInBtn.textContent = '+';
+
+        controls.append(zoomOutBtn, zoomInBtn);
+        canvas.appendChild(controls);
+      }
+    }
+
+    state = {
+      viewport,
+      frame,
+      canvas: canvas || null,
+      controls: controls || null,
+      manualScale: 1,
+      minScale: 0.5,
+      maxScale: 6,
+      autoTransform: null,
+    };
+
+    if (state.controls) {
+      const zoomButtons = state.controls.querySelectorAll('.map-controls__btn');
+      zoomButtons.forEach((btn) => {
+        if (btn.dataset.boundZoom === 'true') return;
+        btn.dataset.boundZoom = 'true';
+        const isZoomIn = btn.classList.contains('map-controls__btn--in');
+        const factor = isZoomIn ? 1.25 : 1 / 1.25;
+        btn.addEventListener('click', () => {
+          const nextScale = clamp(state.manualScale * factor, state.minScale, state.maxScale);
+          state.manualScale = nextScale;
+          applyMapTransform(state);
+        });
+      });
+    }
+
     MAP_CARD_STATE.set(card, state);
     return state;
+  };
+
+  const computeGlobalMapDomain = () => {
+    const buildings = ENERGY_BASE_DATA.buildings || {};
+    const latLngPoints = [];
+    const cartPoints = [];
+
+    Object.values(buildings).forEach((info) => {
+      const position = info?.position || {};
+      const lat = Number(position.lat);
+      const lng = Number(position.lng);
+      if (Number.isFinite(lat) && Number.isFinite(lng)) {
+        latLngPoints.push({ lat, lng });
+      }
+      const x = Number(position.x);
+      const y = Number(position.y);
+      if (Number.isFinite(x) && Number.isFinite(y)) {
+        cartPoints.push({ x, y });
+      }
+    });
+
+    if (latLngPoints.length >= 1) {
+      const lats = latLngPoints.map(point => point.lat);
+      const lngs = latLngPoints.map(point => point.lng);
+      const minLat = Math.min(...lats);
+      const maxLat = Math.max(...lats);
+      const minLng = Math.min(...lngs);
+      const maxLng = Math.max(...lngs);
+      const spanLat = Math.max(maxLat - minLat, 0.0001);
+      const spanLng = Math.max(maxLng - minLng, 0.0001);
+      const centerLat = (minLat + maxLat) / 2;
+      const centerLng = (minLng + maxLng) / 2;
+      const centerX = ((centerLng - minLng) / spanLng) * 100;
+      const centerY = 100 - ((centerLat - minLat) / spanLat) * 100;
+      return {
+        type: 'geo',
+        minLat,
+        maxLat,
+        minLng,
+        maxLng,
+        spanLat,
+        spanLng,
+        centerX: Number.isFinite(centerX) ? centerX : 50,
+        centerY: Number.isFinite(centerY) ? centerY : 50,
+      };
+    }
+
+    if (cartPoints.length >= 1) {
+      const xs = cartPoints.map(point => point.x);
+      const ys = cartPoints.map(point => point.y);
+      const minX = Math.min(...xs);
+      const maxX = Math.max(...xs);
+      const minY = Math.min(...ys);
+      const maxY = Math.max(...ys);
+      const spanX = Math.max(maxX - minX, 0.0001);
+      const spanY = Math.max(maxY - minY, 0.0001);
+      const centerX = ((minX + maxX) / 2 - minX) / spanX * 100;
+      const centerY = ((minY + maxY) / 2 - minY) / spanY * 100;
+      return {
+        type: 'cartesian',
+        minX,
+        maxX,
+        minY,
+        maxY,
+        spanX,
+        spanY,
+        centerX: Number.isFinite(centerX) ? centerX : 50,
+        centerY: Number.isFinite(centerY) ? centerY : 50,
+      };
+    }
+
+    return null;
+  };
+
+  const getGlobalMapDomain = () => {
+    if (MAP_DOMAIN_CACHE) return MAP_DOMAIN_CACHE;
+    MAP_DOMAIN_CACHE = computeGlobalMapDomain();
+    return MAP_DOMAIN_CACHE;
+  };
+
+  const projectCoordinate = (position, domain) => {
+    if (!position || !domain) return null;
+    if (domain.type === 'geo') {
+      const lat = Number(position.lat);
+      const lng = Number(position.lng);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+      const x = ((lng - domain.minLng) / domain.spanLng) * 100;
+      const y = 100 - ((lat - domain.minLat) / domain.spanLat) * 100;
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      return { x, y };
+    }
+    if (domain.type === 'cartesian') {
+      const x = Number(position.x);
+      const y = Number(position.y);
+      if (!Number.isFinite(x) || !Number.isFinite(y)) return null;
+      const px = ((x - domain.minX) / domain.spanX) * 100;
+      const py = ((y - domain.minY) / domain.spanY) * 100;
+      if (!Number.isFinite(px) || !Number.isFinite(py)) return null;
+      return { x: px, y: py };
+    }
+    return null;
+  };
+
+  const defaultMapCenter = () => {
+    const domain = getGlobalMapDomain();
+    if (!domain) return { x: 50, y: 50 };
+    return {
+      x: Number.isFinite(domain.centerX) ? domain.centerX : 50,
+      y: Number.isFinite(domain.centerY) ? domain.centerY : 50,
+    };
+  };
+
+  const applyMapTransform = (state) => {
+    if (!state || !state.canvas) return;
+    const center = state.autoTransform?.center || defaultMapCenter();
+    const autoScale = Number(state.autoTransform?.scale) || 1;
+    const finalScale = clamp(autoScale * (state.manualScale || 1), state.minScale || 0.5, state.maxScale || 6);
+    const translateX = (50 / finalScale) - center.x;
+    const translateY = (50 / finalScale) - center.y;
+    state.canvas.style.setProperty('--map-scale', finalScale.toFixed(4));
+    state.canvas.style.setProperty('--map-translate-x', `${translateX.toFixed(4)}%`);
+    state.canvas.style.setProperty('--map-translate-y', `${translateY.toFixed(4)}%`);
+    state.canvas.dataset.mapTransform = 'applied';
+  };
+
+  const computeAutoMapTransform = (bounds, pointCount = 0) => {
+    const centerFallback = defaultMapCenter();
+    if (!bounds) {
+      return { center: centerFallback, scale: 1 };
+    }
+
+    const width = Math.max(1, Number(bounds.maxX) - Number(bounds.minX));
+    const height = Math.max(1, Number(bounds.maxY) - Number(bounds.minY));
+    const centerX = (Number(bounds.minX) + Number(bounds.maxX)) / 2;
+    const centerY = (Number(bounds.minY) + Number(bounds.maxY)) / 2;
+    const paddingFactor = pointCount <= 1 ? 1.6 : 1.25;
+    const scaleX = 100 / (width * paddingFactor);
+    const scaleY = 100 / (height * paddingFactor);
+    const maxAutoScale = pointCount <= 1 ? 4.5 : 3.5;
+    const minAutoScale = 1;
+    const scale = clamp(Math.min(scaleX, scaleY), minAutoScale, maxAutoScale);
+    return {
+      center: {
+        x: Number.isFinite(centerX) ? clamp(centerX, 0, 100) : centerFallback.x,
+        y: Number.isFinite(centerY) ? clamp(centerY, 0, 100) : centerFallback.y,
+      },
+      scale,
+    };
   };
 
   const projectMapPoints = (points) => {
     if (!Array.isArray(points) || !points.length) {
       return { projectedBounds: null };
+    }
+
+    const domain = getGlobalMapDomain();
+    if (domain) {
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minY = Infinity;
+      let maxY = -Infinity;
+
+      points.forEach((point) => {
+        const projected = projectCoordinate(point?.position || null, domain);
+        if (projected) {
+          point.projected = projected;
+          minX = Math.min(minX, projected.x);
+          maxX = Math.max(maxX, projected.x);
+          minY = Math.min(minY, projected.y);
+          maxY = Math.max(maxY, projected.y);
+        } else {
+          point.projected = null;
+        }
+      });
+
+      if (!Number.isFinite(minX) || !Number.isFinite(maxX) || !Number.isFinite(minY) || !Number.isFinite(maxY)) {
+        return { projectedBounds: null };
+      }
+
+      const margin = points.length > 1 ? 3.5 : 2.5;
+      const bounds = {
+        minX: Math.max(0, minX - margin),
+        maxX: Math.min(100, maxX + margin),
+        minY: Math.max(0, minY - margin),
+        maxY: Math.min(100, maxY + margin),
+      };
+
+      const width = bounds.maxX - bounds.minX;
+      const height = bounds.maxY - bounds.minY;
+      const minSpan = points.length > 1 ? 10 : 6;
+      if (width < minSpan) {
+        const centerX = (bounds.minX + bounds.maxX) / 2;
+        bounds.minX = Math.max(0, centerX - minSpan / 2);
+        bounds.maxX = Math.min(100, centerX + minSpan / 2);
+      }
+      if (height < minSpan) {
+        const centerY = (bounds.minY + bounds.maxY) / 2;
+        bounds.minY = Math.max(0, centerY - minSpan / 2);
+        bounds.maxY = Math.min(100, centerY + minSpan / 2);
+      }
+
+      return { projectedBounds: bounds };
     }
 
     const latLngCandidates = points.filter((point) => {
@@ -1351,6 +1604,7 @@
     }
 
     ENERGY_BASE_DATA.buildings = buildings;
+    MAP_DOMAIN_CACHE = null;
 
     if (updateGlobal && globalObject && typeof globalObject === 'object') {
       const target = globalObject.STRATOS_BUILDINGS;
@@ -5467,9 +5721,14 @@
 
       if (!hasData) {
         if (mapContainer) {
-          const existingState = MAP_CARD_STATE.get(card);
+          const existingState = MAP_CARD_STATE.get(card) || ensureMapFrame(card);
           if (existingState?.frame) {
             existingState.frame.hidden = true;
+          }
+          if (existingState) {
+            existingState.autoTransform = computeAutoMapTransform(null, 0);
+            existingState.manualScale = 1;
+            applyMapTransform(existingState);
           }
         }
         return;
@@ -5515,10 +5774,15 @@
 
       const maxSre = points.reduce((acc, point) => (point.sre > acc ? point.sre : acc), 0);
       const projection = projectMapPoints(points);
+      const bounds = projection.projectedBounds;
       const mapState = mapContainer ? ensureMapFrame(card) : null;
 
+      if (mapState) {
+        mapState.autoTransform = computeAutoMapTransform(bounds, points.length);
+        applyMapTransform(mapState);
+      }
+
       if (mapState && mapState.frame) {
-        const bounds = projection.projectedBounds;
         if (bounds) {
           mapState.frame.style.left = `${bounds.minX}%`;
           mapState.frame.style.top = `${bounds.minY}%`;

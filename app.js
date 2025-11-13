@@ -4690,6 +4690,14 @@
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
       const markersContainer = figure.querySelector('[data-pareto-markers]');
+      const tooltipHost = figure.querySelector('.pareto-chart__inner');
+      let tooltipLayer = figure.querySelector('[data-pareto-tooltips]');
+      if (!tooltipLayer && tooltipHost) {
+        tooltipLayer = document.createElement('div');
+        tooltipLayer.className = 'pareto-chart__tooltip-layer';
+        tooltipLayer.setAttribute('data-pareto-tooltips', '');
+        tooltipHost.append(tooltipLayer);
+      }
       const noteEl = figure.querySelector('[data-pareto-note]');
       const totalEl = figure.querySelector('[data-pareto-total]');
       const coverageEl = figure.querySelector('[data-pareto-coverage]');
@@ -4728,6 +4736,10 @@
       const maxValue = entries.reduce((acc, entry) => (entry.value > acc ? entry.value : acc), 0);
       const count = entries.length;
 
+      if (tooltipLayer) {
+        tooltipLayer.innerHTML = '';
+      }
+
       if (barsContainer) {
         barsContainer.innerHTML = '';
         barsContainer.classList.toggle('is-empty', count === 0);
@@ -4758,6 +4770,7 @@
             tooltip.className = 'pareto-chart__tooltip';
             tooltip.style.setProperty('--pareto-label-width', `${computedWidth.toFixed(2)}px`);
             tooltip.setAttribute('aria-hidden', 'true');
+            tooltip.dataset.visible = 'false';
 
             const valueBadge = document.createElement('span');
             valueBadge.className = 'pareto-chart__tooltip-value';
@@ -4768,14 +4781,44 @@
             labelBadge.textContent = label;
 
             tooltip.append(valueBadge, labelBadge);
-            bar.append(tooltip);
+
+            if (tooltipLayer) {
+              const slotKey = (figure.getAttribute('data-chart-slot') || figure.id || 'pareto').replace(/[^a-zA-Z0-9_-]/g, '-');
+              const tooltipId = `${slotKey}-tooltip-${index}`;
+              tooltip.id = tooltipId;
+              tooltipLayer.append(tooltip);
+              bar.setAttribute('aria-describedby', tooltipId);
+            } else {
+              bar.append(tooltip);
+            }
+
+            const repositionTooltip = () => {
+              if (!tooltipLayer) return;
+              const barRect = bar.getBoundingClientRect();
+              const layerRect = tooltipLayer.getBoundingClientRect();
+              const left = barRect.left + (barRect.width / 2) - layerRect.left;
+              const bottom = layerRect.bottom - barRect.top;
+              tooltip.style.setProperty('--tooltip-left', `${left}px`);
+              tooltip.style.setProperty('--tooltip-bottom', `${Math.max(0, bottom)}px`);
+            };
 
             const activateTooltip = () => {
+              tooltip.dataset.visible = 'true';
+              tooltip.setAttribute('aria-hidden', 'false');
               bar.classList.add('is-tooltip-active');
+              if (!tooltipLayer) return;
+              repositionTooltip();
+              window.addEventListener('resize', repositionTooltip);
+              window.addEventListener('scroll', repositionTooltip, true);
             };
 
             const deactivateTooltip = () => {
+              tooltip.dataset.visible = 'false';
+              tooltip.setAttribute('aria-hidden', 'true');
               bar.classList.remove('is-tooltip-active');
+              if (!tooltipLayer) return;
+              window.removeEventListener('resize', repositionTooltip);
+              window.removeEventListener('scroll', repositionTooltip, true);
             };
 
             bar.addEventListener('mouseenter', activateTooltip);

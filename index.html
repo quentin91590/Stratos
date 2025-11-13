@@ -2395,6 +2395,47 @@
                         <figcaption data-chart-role="caption">Profil mensuel de consommation de chaleur et rigueur climatique associée.</figcaption>
                       </figure>
 
+                      <figure class="energy-chart-card" aria-label="Pareto chaleur par bâtiment" data-chart-scope="chaleur" data-chart-metric="chaleur" data-chart-slot="heat-pareto" data-chart-type="heat-pareto" data-chart-group="heat-pareto" tabindex="0">
+                        <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
+                          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M3 6h18" />
+                            <path d="M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+                            <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6" />
+                            <path d="M10 11v6" />
+                            <path d="M14 11v6" />
+                          </svg>
+                        </button>
+                        <header class="energy-chart-card__header">
+                          <div class="energy-chart-card__titles">
+                            <span class="chart-card-title">Pareto chaleur</span>
+                            <span class="chart-card-subtitle">Consommation totale par bâtiment</span>
+                          </div>
+                        </header>
+                        <div class="chart-body" data-chart-role="body">
+                          <div class="chart-variant chart-variant--pareto">
+                            <div class="chart-title">
+                              <span>Consommation totale</span>
+                              <span class="chart-unit" data-pareto-unit>kWh</span>
+                            </div>
+                            <div class="pareto-chart" data-pareto-chart>
+                              <div class="pareto-chart__inner">
+                                <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation de chaleur par bâtiment"></div>
+                                <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                  <polyline data-pareto-polyline points=""></polyline>
+                                </svg>
+                              </div>
+                            </div>
+                            <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                            <div class="chart-footer">
+                              <span data-pareto-total>Total : 0 kWh</span>
+                              <span data-pareto-coverage>Top 20 % : 0 %</span>
+                              <span data-pareto-count>0 bât.</span>
+                            </div>
+                          </div>
+                        </div>
+                        <figcaption data-chart-role="caption">Classement Pareto des bâtiments selon leur consommation annuelle totale de chaleur.</figcaption>
+                      </figure>
+
                       <template id="chart-template-heat-monthly" data-caption="Profil mensuel de chaleur avec correction climatique.">
                         <div class="monthly-chart monthly-chart--heat">
                           <div class="chart-title">

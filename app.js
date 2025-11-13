@@ -5059,9 +5059,25 @@
     });
   };
 
-  const updateParetoCharts = (mode, buildingSummaries = {}) => {
+  const updateParetoCharts = (mode, buildingSummaries = {}, options = {}) => {
     const paretoFigures = document.querySelectorAll('[data-chart-type$="pareto"]');
     if (!paretoFigures.length) return;
+
+    const { allBuildings = null, selectedIds = [], hasExplicitSelection = false } = options || {};
+    const normalizeIds = (value) => {
+      if (!value) return [];
+      if (Array.isArray(value)) return value;
+      if (value instanceof Set) return Array.from(value);
+      return [value];
+    };
+    const normalizedSelectedIds = hasExplicitSelection
+      ? normalizeIds(selectedIds).map((id) => {
+        if (id === undefined || id === null) return '';
+        return String(id).trim();
+      }).filter(Boolean)
+      : [];
+    const selectionSet = normalizedSelectedIds.length ? new Set(normalizedSelectedIds) : null;
+    const hasSelection = hasExplicitSelection && selectionSet && selectionSet.size > 0;
 
     paretoFigures.forEach((figure) => {
       const scope = figure.dataset.chartScope || '';
@@ -5106,7 +5122,11 @@
         el.textContent = unit;
       });
 
-      const entries = Object.values(buildingSummaries || {}).map((summary) => {
+      const sourceMap = (allBuildings && typeof allBuildings === 'object' && Object.keys(allBuildings).length)
+        ? allBuildings
+        : buildingSummaries;
+
+      const entries = Object.values(sourceMap || {}).map((summary) => {
         const metrics = summary?.metrics?.[metricKey] || {};
         const total = Number(metrics.total);
         const sre = Number(metrics.sre) || 0;
@@ -5118,22 +5138,28 @@
           ? total
           : (Number.isFinite(resolvedIntensity) && sre > 0 ? resolvedIntensity * sre : 0);
         const rawValue = useIntensity ? resolvedIntensity : resolvedTotal;
+        const rawId = summary?.id;
+        const id = rawId === undefined || rawId === null ? '' : String(rawId).trim();
+        const resolvedId = id || (rawId === undefined || rawId === null ? '' : String(rawId));
         return {
-          id: summary?.id || '',
+          id: resolvedId,
           label: summary?.label || summary?.id || '',
           value: Number.isFinite(rawValue) ? rawValue : 0,
           total: Number.isFinite(resolvedTotal) ? resolvedTotal : 0,
           sre: Number.isFinite(sre) ? sre : 0,
+          isActive: !hasSelection || (resolvedId && selectionSet?.has(resolvedId)),
         };
       }).filter(entry => entry.value > 0);
 
       entries.sort((a, b) => b.value - a.value);
 
-      const totalValue = entries.reduce((sum, entry) => sum + entry.value, 0);
-      const totalEnergy = entries.reduce((sum, entry) => sum + (Number(entry.total) || 0), 0);
-      const totalSre = entries.reduce((sum, entry) => sum + (Number(entry.sre) || 0), 0);
+      const activeEntries = hasSelection ? entries.filter(entry => entry.isActive) : entries;
+      const totalValue = activeEntries.reduce((sum, entry) => sum + entry.value, 0);
+      const totalEnergy = activeEntries.reduce((sum, entry) => sum + (Number(entry.total) || 0), 0);
+      const totalSre = activeEntries.reduce((sum, entry) => sum + (Number(entry.sre) || 0), 0);
       const maxValue = entries.reduce((acc, entry) => (entry.value > acc ? entry.value : acc), 0);
       const count = entries.length;
+      const activeCount = activeEntries.length;
 
       if (tooltipLayer) {
         tooltipLayer.innerHTML = '';
@@ -5143,6 +5169,7 @@
         barsContainer.innerHTML = '';
         barsContainer.classList.toggle('is-empty', count === 0);
         barsContainer.style.setProperty('--pareto-count', String(Math.max(count, 1)));
+        barsContainer.classList.toggle('has-dimmed-items', hasSelection && activeCount < count);
 
         if (!count) {
           const empty = document.createElement('p');
@@ -5180,8 +5207,15 @@
                 }
               });
             }
-            bar.setAttribute('aria-label', `${label} : ${valueText}`);
-            bar.title = `${label} • ${valueText}`;
+            const ariaSuffix = hasSelection && !entry.isActive ? ' — hors sélection' : '';
+            if (hasSelection && !entry.isActive) {
+              bar.classList.add('is-dimmed');
+              bar.dataset.selectionState = 'inactive';
+            } else {
+              bar.dataset.selectionState = 'active';
+            }
+            bar.setAttribute('aria-label', `${label} : ${valueText}${ariaSuffix}`);
+            bar.title = `${label} • ${valueText}${ariaSuffix}`;
 
             const tooltip = document.createElement('div');
             tooltip.className = 'pareto-chart__tooltip';
@@ -5198,6 +5232,12 @@
             labelBadge.textContent = label;
 
             tooltip.append(valueBadge, labelBadge);
+            if (hasSelection && !entry.isActive) {
+              const noteBadge = document.createElement('span');
+              noteBadge.className = 'pareto-chart__tooltip-note';
+              noteBadge.textContent = 'Hors sélection';
+              tooltip.append(noteBadge);
+            }
 
             if (tooltipLayer) {
               const slotKey = (figure.getAttribute('data-chart-slot') || figure.id || 'pareto').replace(/[^a-zA-Z0-9_-]/g, '-');
@@ -5257,10 +5297,10 @@
       }
 
       const noteMessages = [];
-      if (!count) {
+      if (!activeCount) {
         noteMessages.push('Aucune consommation disponible pour afficher un Pareto.');
       }
-      if (mode === 'kwhm2' && count) {
+      if (mode === 'kwhm2' && activeCount) {
         noteMessages.push('La courbe de Pareto est masquée en mode kWh/m² ; les barres affichent la consommation par m².');
       }
       if (noteEl) {
@@ -5282,9 +5322,9 @@
           : `Total : ${totalFormatted}`;
       }
 
-      const topCount = count ? Math.max(1, Math.round(count * 0.2)) : 0;
+      const topCount = activeCount ? Math.max(1, Math.round(activeCount * 0.2)) : 0;
       const topValue = topCount > 0
-        ? entries.slice(0, topCount).reduce((sum, entry) => sum + (useIntensity ? entry.total : entry.value), 0)
+        ? activeEntries.slice(0, topCount).reduce((sum, entry) => sum + (useIntensity ? entry.total : entry.value), 0)
         : 0;
       const shareBase = useIntensity ? totalEnergy : totalValue;
       const share = shareBase > 0 ? (topValue / shareBase) * 100 : 0;
@@ -5295,9 +5335,9 @@
           : `Top 20 % : ${PERCENT_FORMAT.format(Math.min(share, 100))} %`;
       }
       if (coverageEl) coverageEl.textContent = shareText;
-      if (countEl) countEl.textContent = `${formatCount(count)} bât.`;
+      if (countEl) countEl.textContent = `${formatCount(activeCount)} bât.`;
 
-      figure.classList.toggle('is-empty', count === 0 || totalValue <= 0);
+      figure.classList.toggle('is-empty', activeCount === 0 || totalValue <= 0);
 
       if (svg) {
         const targetPolyline = polyline instanceof SVGPolylineElement ? polyline : svg.querySelector('polyline');
@@ -5316,7 +5356,9 @@
           const columnWidth = count > 0 ? 100 / count : 100;
 
           entries.forEach((entry, index) => {
-            cumulative += entry.value;
+            if (entry.isActive) {
+              cumulative += entry.value;
+            }
             let shareValue = totalValue > 0 ? (cumulative / totalValue) * 100 : 0;
             if (index === count - 1 && shareValue < 100) {
               shareValue = 100;
@@ -5327,12 +5369,14 @@
             const y = 100 - clampedShare;
 
             points.push(`${centerX.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
-            markerData.push({
-              x: centerX,
-              y: Math.max(0, y),
-              share: clampedShare,
-              label: entry.label || `Bâtiment ${index + 1}`,
-            });
+            if (entry.isActive) {
+              markerData.push({
+                x: centerX,
+                y: Math.max(0, y),
+                share: clampedShare,
+                label: entry.label || `Bâtiment ${index + 1}`,
+              });
+            }
           });
 
           targetPolyline.setAttribute('points', points.join(' '));
@@ -6158,7 +6202,8 @@
     const mode = FILTERS.norm || 'kwhm2';
     const allLeaves = $$('.tree-leaf');
     const selectedLeaves = allLeaves.filter(leaf => leafCheck(leaf)?.checked);
-    const activeLeaves = selectedLeaves.length ? selectedLeaves : allLeaves;
+    const hasExplicitSelection = selectedLeaves.length > 0;
+    const activeLeaves = hasExplicitSelection ? selectedLeaves : allLeaves;
     const fallbackSre = computeFallbackSre(allLeaves);
     const {
       metrics: aggregated,
@@ -6168,6 +6213,28 @@
       mapPoints,
       distribution,
     } = computeAggregatedMetrics(activeLeaves, fallbackSre);
+    let paretoAllBuildings = buildings;
+    if (hasExplicitSelection && selectedLeaves.length < allLeaves.length) {
+      const { buildings: fullBuildingSummaries } = computeAggregatedMetrics(allLeaves, fallbackSre);
+      paretoAllBuildings = fullBuildingSummaries;
+    }
+    const selectedBuildingIds = [];
+    if (hasExplicitSelection) {
+      selectedLeaves.forEach((leaf) => {
+        const buildingId = leaf?.dataset?.building;
+        if (typeof buildingId === 'string') {
+          const normalized = buildingId.trim();
+          if (normalized) {
+            selectedBuildingIds.push(normalized);
+          }
+        } else if (buildingId !== undefined && buildingId !== null) {
+          const normalized = String(buildingId).trim();
+          if (normalized) {
+            selectedBuildingIds.push(normalized);
+          }
+        }
+      });
+    }
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
     updateEnergyKpis(mode, aggregated);
@@ -6176,7 +6243,11 @@
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
     updateTopConsumersCards(mode, buildings);
-    updateParetoCharts(mode, buildings);
+    updateParetoCharts(mode, buildings, {
+      allBuildings: paretoAllBuildings,
+      selectedIds: selectedBuildingIds,
+      hasExplicitSelection,
+    });
     updateTypologyChart(mode, typologies);
     updateEnergyMap(mode, mapPoints, aggregated);
     updateMonthlyChart(mode, monthly, aggregated);

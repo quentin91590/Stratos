@@ -5135,6 +5135,7 @@
         ? (Number.isFinite(metricDef.decimals) ? metricDef.decimals : 0)
         : (Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0);
 
+      const chartEl = figure.querySelector('[data-pareto-chart]');
       const barsContainer = figure.querySelector('[data-pareto-bars]');
       const valueScaleEl = figure.querySelector('[data-pareto-scale-values]');
       const svg = figure.querySelector('[data-pareto-line]');
@@ -5196,12 +5197,47 @@
       const count = entries.length;
       const activeCount = activeEntries.length;
 
+      let scaleMax = maxValue;
+      let scaleTicks = [];
+      let scaleIntervals = 0;
+
+      if (count && maxValue > 0) {
+        const scaleInfo = computeParetoScaleTicks(maxValue, 4);
+        if (scaleInfo && typeof scaleInfo === 'object') {
+          if (Number.isFinite(scaleInfo.max) && scaleInfo.max > 0) {
+            scaleMax = scaleInfo.max;
+          }
+          if (Array.isArray(scaleInfo.ticks)) {
+            scaleTicks = scaleInfo.ticks
+              .map((tick) => (Number.isFinite(tick) ? Number(tick) : Number.parseFloat(tick)))
+              .filter((tick) => Number.isFinite(tick));
+            scaleTicks.sort((a, b) => b - a);
+            if (scaleTicks.length && Number.isFinite(scaleTicks[0]) && scaleTicks[0] > 0) {
+              scaleMax = scaleTicks[0];
+            }
+            if (scaleTicks.length > 1) {
+              scaleIntervals = scaleTicks.length - 1;
+            }
+          }
+        }
+      }
+
+      if (chartEl) {
+        if (!scaleIntervals || scaleMax <= 0) {
+          chartEl.style.removeProperty('--pareto-scale-step');
+          chartEl.style.removeProperty('--pareto-scale-intervals');
+        } else {
+          const stepPercent = 100 / scaleIntervals;
+          chartEl.style.setProperty('--pareto-scale-step', `${stepPercent.toFixed(6)}%`);
+          chartEl.style.setProperty('--pareto-scale-intervals', String(scaleIntervals));
+        }
+      }
+
       if (valueScaleEl) {
-        if (!count || maxValue <= 0) {
+        if (!scaleIntervals || scaleMax <= 0 || !scaleTicks.length) {
           valueScaleEl.innerHTML = '';
           valueScaleEl.setAttribute('hidden', '');
         } else {
-          const { ticks } = computeParetoScaleTicks(maxValue, 4);
           const formatScaleValue = (rawValue) => {
             if (!Number.isFinite(rawValue) || rawValue <= 0) {
               return `0 ${unit}`.trim();
@@ -5220,7 +5256,7 @@
           };
 
           valueScaleEl.innerHTML = '';
-          ticks.forEach((tick) => {
+          scaleTicks.forEach((tick) => {
             const item = document.createElement('li');
             item.textContent = formatScaleValue(tick);
             valueScaleEl.append(item);
@@ -5246,7 +5282,8 @@
           barsContainer.append(empty);
         } else {
           entries.forEach((entry, index) => {
-            const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
+            const rawPercent = scaleMax > 0 ? (entry.value / scaleMax) * 100 : 0;
+            const percent = Math.max(0, Math.min(100, rawPercent));
             const label = entry.label || `Bâtiment ${index + 1}`;
             const valueText = `${formatEnergyDisplay(entry.value, displayMode, decimals)} ${unit}`;
             const computedWidth = measureParetoLabelWidth(label);

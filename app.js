@@ -136,7 +136,8 @@
 
   const measureParetoLabelWidth = (() => {
     const MIN_WIDTH = 220;
-    const MAX_WIDTH = 520;
+    const MAX_WIDTH = 640;
+    const MAX_LINES = 2;
     let measureEl = null;
 
     const ensureMeasureElement = () => {
@@ -159,8 +160,9 @@
         'font-family:Inter, system-ui, "Segoe UI", sans-serif',
         'padding:4px 10px',
         'max-width:none',
-        'white-space:nowrap',
         'box-sizing:border-box',
+        'display:block',
+        'white-space:normal',
       ].join(';');
       const host = document.body || document.documentElement;
       if (host) {
@@ -170,6 +172,11 @@
       }
 
       return null;
+    };
+
+    const parsePx = (value) => {
+      const parsed = Number.parseFloat(value);
+      return Number.isFinite(parsed) ? parsed : 0;
     };
 
     const fallbackWidth = (text = '') => {
@@ -188,12 +195,13 @@
         return fallbackWidth(label);
       }
 
-      const words = label.split(/\s+/).filter(Boolean);
-
       element.textContent = label;
       element.style.whiteSpace = 'nowrap';
+      element.style.width = 'auto';
+
       const singleLineWidth = Math.ceil(element.scrollWidth);
 
+      const words = label.split(/\s+/).filter(Boolean);
       let longestWordWidth = singleLineWidth;
       if (words.length) {
         longestWordWidth = words.reduce((max, word) => {
@@ -205,12 +213,51 @@
 
       element.textContent = label;
       element.style.whiteSpace = 'normal';
+      element.style.display = 'block';
 
-      const twoLineWidth = singleLineWidth > 0 ? Math.ceil(singleLineWidth / 2) : MIN_WIDTH;
-      const comfortableLongestWord = Math.ceil(longestWordWidth * 1.05);
-      const targetWidth = Math.max(comfortableLongestWord, twoLineWidth);
-      const clamped = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, targetWidth));
-      return clamped;
+      const computed = window.getComputedStyle(element);
+      const paddingTop = parsePx(computed.paddingTop);
+      const paddingBottom = parsePx(computed.paddingBottom);
+      const fontSize = parsePx(computed.fontSize) || 11.5;
+      let lineHeight = parsePx(computed.lineHeight);
+      if (!lineHeight) {
+        const numeric = Number.parseFloat(computed.lineHeight);
+        if (Number.isFinite(numeric)) {
+          lineHeight = numeric;
+        } else {
+          lineHeight = fontSize * 1.3;
+        }
+      }
+      const maxHeight = paddingTop + paddingBottom + lineHeight * MAX_LINES + 0.5;
+
+      const minCandidate = Math.max(
+        MIN_WIDTH,
+        Math.ceil(singleLineWidth / MAX_LINES),
+        Math.ceil(longestWordWidth * 1.02),
+      );
+      const maxCandidate = Math.max(
+        minCandidate,
+        Math.min(MAX_WIDTH, Math.max(singleLineWidth, longestWordWidth, MIN_WIDTH)),
+      );
+
+      let low = minCandidate;
+      let high = maxCandidate;
+      let best = maxCandidate;
+
+      while (low <= high) {
+        const mid = Math.floor((low + high) / 2);
+        element.style.width = `${mid}px`;
+        const height = element.scrollHeight;
+        if (height <= maxHeight) {
+          best = mid;
+          high = mid - 1;
+        } else {
+          low = mid + 1;
+        }
+      }
+
+      const finalWidth = Math.min(MAX_WIDTH, Math.max(best, longestWordWidth, MIN_WIDTH));
+      return finalWidth;
     };
   })();
 

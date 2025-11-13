@@ -4651,6 +4651,7 @@
         } else {
           svg.removeAttribute('hidden');
           const points = [];
+          points.push('0,100');
           let cumulative = 0;
           const columnWidth = count > 0 ? 100 / count : 100;
 
@@ -4664,10 +4665,6 @@
             const clampedShare = Math.min(100, Math.max(0, shareValue));
             const centerX = Math.min(100, Math.max(0, (index + 0.5) * columnWidth));
             const y = 100 - clampedShare;
-
-            if (index === 0) {
-              points.push(`${centerX.toFixed(2)},100`);
-            }
 
             points.push(`${centerX.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
           });

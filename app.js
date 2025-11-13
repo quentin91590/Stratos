@@ -2511,6 +2511,40 @@
     return NF.format(Math.max(0, Math.round(num)));
   };
 
+  const niceCeil = (value) => {
+    if (!Number.isFinite(value) || value <= 0) return 0;
+    const absolute = Math.abs(value);
+    const exponent = Math.floor(Math.log10(absolute));
+    const magnitude = 10 ** exponent;
+    const fraction = absolute / magnitude;
+    let niceFraction;
+    if (fraction <= 1) {
+      niceFraction = 1;
+    } else if (fraction <= 2) {
+      niceFraction = 2;
+    } else if (fraction <= 5) {
+      niceFraction = 5;
+    } else {
+      niceFraction = 10;
+    }
+    return niceFraction * magnitude;
+  };
+
+  const computeParetoScaleTicks = (maxValue, intervals = 4) => {
+    if (!Number.isFinite(maxValue) || maxValue <= 0) {
+      return { max: 0, step: 0, ticks: [0] };
+    }
+    const safeIntervals = Math.max(1, intervals);
+    const niceMax = niceCeil(maxValue);
+    const step = niceMax / safeIntervals;
+    const ticks = [];
+    for (let i = safeIntervals; i >= 0; i -= 1) {
+      const value = Number.parseFloat((step * i).toFixed(6));
+      ticks.push(value);
+    }
+    return { max: niceMax, step, ticks };
+  };
+
   const describeMix = (shares, totalPerM2, mode, sre, unitLabel) => {
     const unit = unitLabel || (mode === 'kwhm2' ? 'kWh/m²' : 'kWh');
     const parts = [];
@@ -5102,6 +5136,7 @@
         : (Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0);
 
       const barsContainer = figure.querySelector('[data-pareto-bars]');
+      const valueScaleEl = figure.querySelector('[data-pareto-scale-values]');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
       const markersContainer = figure.querySelector('[data-pareto-markers]');
@@ -5160,6 +5195,39 @@
       const maxValue = entries.reduce((acc, entry) => (entry.value > acc ? entry.value : acc), 0);
       const count = entries.length;
       const activeCount = activeEntries.length;
+
+      if (valueScaleEl) {
+        if (!count || maxValue <= 0) {
+          valueScaleEl.innerHTML = '';
+          valueScaleEl.setAttribute('hidden', '');
+        } else {
+          const { ticks } = computeParetoScaleTicks(maxValue, 4);
+          const formatScaleValue = (rawValue) => {
+            if (!Number.isFinite(rawValue) || rawValue <= 0) {
+              return `0 ${unit}`.trim();
+            }
+            const absValue = Math.abs(rawValue);
+            let decimalsForScale = 0;
+            if (displayMode === 'kwhm2') {
+              decimalsForScale = Math.max(decimals, absValue < 1 ? 2 : decimals);
+            } else if (absValue < 1) {
+              decimalsForScale = 2;
+            } else if (absValue < 10) {
+              decimalsForScale = 1;
+            }
+            const formatted = formatNumber(rawValue, { decimals: Math.min(decimalsForScale, 6) });
+            return `${formatted} ${unit}`.trim();
+          };
+
+          valueScaleEl.innerHTML = '';
+          ticks.forEach((tick) => {
+            const item = document.createElement('li');
+            item.textContent = formatScaleValue(tick);
+            valueScaleEl.append(item);
+          });
+          valueScaleEl.removeAttribute('hidden');
+        }
+      }
 
       if (tooltipLayer) {
         tooltipLayer.innerHTML = '';

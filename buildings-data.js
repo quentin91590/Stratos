@@ -3,7 +3,7 @@
 window.STRATOS_BUILDINGS = {
   "buildings": {
     "rive-1": {
-      "label": "Pavillon Horizon",
+      "label": "Pavillon Horizo",
       "typology": "ecoles",
       "sre": 410,
       "position": {

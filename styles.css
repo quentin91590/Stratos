@@ -301,8 +301,8 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .energy-chart-card .chart-body{display:flex; flex-direction:column; gap:18px; padding:0}
 .energy-chart-card .chart-body > .chart-variant{flex:1 1 auto; display:flex; flex-direction:column; gap:18px}
 .energy-chart-card .chart-body > .chart-variant .pareto-chart{flex:1 1 auto}
-.pareto-chart{position:relative; width:100%; height:clamp(220px, 42vh, 320px); border-radius:16px; border:1px solid var(--border); background:linear-gradient(to top, rgba(148,163,184,0.15) 1px, transparent 1px) 0 100% / 100% calc(25% - 1px) repeat-y, linear-gradient(to right, rgba(148,163,184,0.08) 1px, transparent 1px) 0 0 / 12.5% 100% repeat; background-color:var(--card); padding:12px 0 32px; overflow:visible}
-.pareto-chart__inner{position:absolute; inset:12px 40px 36px 16px; overflow:visible}
+.pareto-chart{position:relative; width:100%; height:clamp(220px, 42vh, 320px); border-radius:16px; border:1px solid var(--border); background:linear-gradient(to top, rgba(148,163,184,0.15) 1px, transparent 1px) 0 100% / 100% calc(25% - 1px) repeat-y, linear-gradient(to right, rgba(148,163,184,0.08) 1px, transparent 1px) 0 0 / 12.5% 100% repeat; background-color:var(--card); padding:12px 0 32px; overflow:visible; --pareto-left-gap: 68px;}
+.pareto-chart__inner{position:absolute; inset:12px 40px 36px var(--pareto-left-gap, 68px); overflow:visible}
 .pareto-chart__bars{position:absolute; inset:0; display:grid; grid-template-columns:repeat(var(--pareto-count, 1), minmax(12px, 1fr)); gap:6px; align-items:flex-end; min-height:100%; z-index:10}
 .pareto-chart__bars.is-empty{display:flex; align-items:center; justify-content:center; padding:0 16px}
 .pareto-chart__bars.is-empty .chart-empty{margin:0}
@@ -329,6 +329,9 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .pareto-chart__marker:focus-visible{box-shadow:0 0 0 4px var(--ring, rgba(37,99,235,0.28)), 0 6px 12px rgba(15,23,42,0.18)}
 .pareto-chart__markers[hidden]{display:none}
 .pareto-chart__scale{position:absolute; inset:12px 12px 36px auto; display:flex; flex-direction:column; justify-content:space-between; align-items:flex-end; gap:0; padding:0; margin:0; list-style:none; font-size:.68rem; font-weight:600; color:rgba(15,23,42,0.52); pointer-events:none; text-shadow:0 1px 2px rgba(255,255,255,0.6)}
+.pareto-chart__scale--values{inset:12px auto 36px 12px; align-items:flex-start; text-align:left; transform:translateX(calc(-1 * var(--pareto-left-gap, 68px)));}
+.pareto-chart__scale--values li{text-align:left}
+.pareto-chart__scale--values[hidden]{display:none}
 .pareto-chart__scale li{display:block; line-height:1; letter-spacing:-0.01em}
 .chart-note{font-size:.85rem; color:#475569; margin:0}
 .chart-footer{display:flex; flex-wrap:wrap; gap:12px; font-size:.9rem; color:#475569; font-weight:600}

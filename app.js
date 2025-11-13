@@ -4883,6 +4883,7 @@
             bar.dataset.value = valueText;
             if (entry.id) {
               bar.dataset.buildingId = entry.id;
+              bar.classList.add('pareto-chart__bar--interactive');
               const activateSelection = (event) => {
                 if (event) event.preventDefault();
                 selectTreeLeafByBuilding(entry.id, {

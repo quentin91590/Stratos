@@ -292,6 +292,11 @@ figure[data-chart-scope="froid"] .chart-variant--pareto{--pareto-bar-color:#38bd
 figure[data-chart-scope="elec"] .chart-variant--pareto{--pareto-bar-color:#6366f1; --pareto-line-color:#4f46e5; --pareto-bar-shadow:rgba(99,102,241,0.22); --pareto-line-shadow:rgba(79,70,229,0.22)}
 figure[data-chart-scope="co2"] .chart-variant--pareto{--pareto-bar-color:#22c55e; --pareto-line-color:#16a34a; --pareto-bar-shadow:rgba(34,197,94,0.22); --pareto-line-shadow:rgba(22,163,74,0.2)}
 figure[data-chart-scope="eau"] .chart-variant--pareto{--pareto-bar-color:#0ea5e9; --pareto-line-color:#0284c7; --pareto-bar-shadow:rgba(14,165,233,0.22); --pareto-line-shadow:rgba(2,132,199,0.22)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="chaleur"] .chart-variant--pareto{--pareto-bar-color:#f97316; --pareto-line-color:#c2410c; --pareto-bar-shadow:rgba(249,115,22,0.24); --pareto-line-shadow:rgba(194,65,12,0.22)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="froid"] .chart-variant--pareto{--pareto-bar-color:#38bdf8; --pareto-line-color:#0ea5e9; --pareto-bar-shadow:rgba(14,165,233,0.22); --pareto-line-shadow:rgba(14,165,233,0.2)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="elec"] .chart-variant--pareto{--pareto-bar-color:#6366f1; --pareto-line-color:#4f46e5; --pareto-bar-shadow:rgba(99,102,241,0.22); --pareto-line-shadow:rgba(79,70,229,0.22)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="co2"] .chart-variant--pareto{--pareto-bar-color:#22c55e; --pareto-line-color:#16a34a; --pareto-bar-shadow:rgba(34,197,94,0.22); --pareto-line-shadow:rgba(22,163,74,0.2)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-variant--pareto{--pareto-bar-color:#0ea5e9; --pareto-line-color:#0284c7; --pareto-bar-shadow:rgba(14,165,233,0.22); --pareto-line-shadow:rgba(2,132,199,0.22)}
 .energy-chart-stack > [data-chart-slot][data-chart-type$="pareto"]{grid-column:1 / -1}
 .energy-chart-card .chart-body{display:flex; flex-direction:column; gap:18px; padding:0}
 .energy-chart-card .chart-body > .chart-variant{flex:1 1 auto; display:flex; flex-direction:column; gap:18px}
@@ -403,6 +408,11 @@ figure[data-chart-scope="eau"] .chart-variant--pareto{--pareto-bar-color:#0ea5e9
 .mix-subtitle{font-size:.85rem; color:#64748b; font-weight:600}
 .energy-chart-card__header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; font-weight:700; color:#1f2937; padding-right:56px}
 .energy-chart-card__titles{display:flex; flex-direction:column; gap:4px}
+.energy-chart-card__controls{position:relative; display:inline-flex; align-items:center; min-width:0}
+.energy-chart-card__controls::after{content:""; position:absolute; right:14px; width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-top:6px solid rgba(71,85,105,0.8); pointer-events:none}
+.energy-chart-card__controls .chart-select{appearance:none; border:1px solid var(--border); border-radius:999px; background:#fff; font-size:.78rem; font-weight:600; color:var(--ink); padding:6px 34px 6px 14px; line-height:1.2; cursor:pointer; box-shadow:0 1px 2px rgba(15,23,42,0.05); transition:border-color .18s ease, box-shadow .18s ease}
+.energy-chart-card__controls .chart-select:focus-visible{outline:2px solid var(--ring); outline-offset:2px; border-color:transparent; box-shadow:0 0 0 3px rgba(99,102,241,0.15)}
+.energy-chart-card__controls .chart-select:hover{border-color:rgba(99,102,241,0.45)}
 .chart-card-title{font-size:1.05rem; letter-spacing:-0.01em}
 .chart-card-subtitle{font-size:.85rem; color:#64748b; font-weight:600}
 .energy-mix-card .chart-body,.energy-ranking-card .chart-body{display:flex; flex-direction:column; flex:1 1 auto; justify-content:center}

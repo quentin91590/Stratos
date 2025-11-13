@@ -4728,11 +4728,27 @@
             bar.setAttribute('role', 'listitem');
             bar.tabIndex = 0;
             bar.style.setProperty('--value', percent.toFixed(4));
-            bar.style.setProperty('--pareto-label-width', `${computedWidth.toFixed(2)}px`);
             bar.dataset.label = label;
             bar.dataset.value = valueText;
             bar.setAttribute('aria-label', `${label} : ${valueText}`);
             bar.title = `${label} • ${valueText}`;
+
+            const tooltip = document.createElement('div');
+            tooltip.className = 'pareto-chart__tooltip';
+            tooltip.style.setProperty('--pareto-label-width', `${computedWidth.toFixed(2)}px`);
+            tooltip.setAttribute('aria-hidden', 'true');
+
+            const valueBadge = document.createElement('span');
+            valueBadge.className = 'pareto-chart__tooltip-value';
+            valueBadge.textContent = valueText;
+
+            const labelBadge = document.createElement('span');
+            labelBadge.className = 'pareto-chart__tooltip-label';
+            labelBadge.textContent = label;
+
+            tooltip.append(valueBadge, labelBadge);
+            bar.append(tooltip);
+
             barsContainer.append(bar);
           });
         }

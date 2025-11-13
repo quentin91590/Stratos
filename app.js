@@ -5545,7 +5545,6 @@
     const figure = document.querySelector('[data-chart-slot="general-pareto"]');
     if (!figure) return;
     const select = figure.querySelector('[data-pareto-metric-switch]');
-    if (!(select instanceof HTMLSelectElement)) return;
 
     const titleEl = figure.querySelector('.chart-card-title');
     const subtitleEl = figure.querySelector('.chart-card-subtitle');
@@ -5554,7 +5553,7 @@
     const applyMetric = (rawMetric, { silent = false } = {}) => {
       const normalized = typeof rawMetric === 'string' ? rawMetric.trim().toLowerCase() : '';
       const metric = GENERAL_PARETO_METRICS.includes(normalized) ? normalized : 'general';
-      if (select.value !== metric) {
+      if (select instanceof HTMLSelectElement && select.value !== metric) {
         select.value = metric;
       }
 
@@ -5580,13 +5579,18 @@
       }
     };
 
-    select.addEventListener('change', (event) => {
-      const target = event.target;
-      const value = (target && typeof target.value === 'string') ? target.value : select.value;
-      applyMetric(value);
-    });
+    if (select instanceof HTMLSelectElement) {
+      select.addEventListener('change', (event) => {
+        const target = event.target;
+        const value = (target && typeof target.value === 'string') ? target.value : select.value;
+        applyMetric(value);
+      });
+    }
 
-    applyMetric(select.value || 'general', { silent: true });
+    const initialMetric = select instanceof HTMLSelectElement && select.value
+      ? select.value
+      : 'general';
+    applyMetric(initialMetric, { silent: true });
   };
 
   const updateTypologyChart = (mode, typologies = []) => {

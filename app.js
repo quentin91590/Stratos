@@ -5260,6 +5260,81 @@
     return Number.isFinite(raw) ? raw : 0;
   }
 
+  const PILL_METRIC_TAB_IDS = {
+    general: 'tab-energie',
+    chaleur: 'tab-chaleur',
+    froid: 'tab-froid',
+    elec: 'tab-elec',
+    co2: 'tab-co2',
+    eau: 'tab-eau',
+  };
+
+  const PILL_METRIC_KEYS = Object.keys(PILL_METRIC_TAB_IDS);
+
+  function computePillMetricStats(selectedLeaves) {
+    const stats = {};
+    PILL_METRIC_KEYS.forEach((key) => {
+      stats[key] = { count: 0, sre: 0 };
+    });
+
+    if (!Array.isArray(selectedLeaves) || selectedLeaves.length === 0) {
+      return stats;
+    }
+
+    const selectedYear = FILTERS?.year;
+
+    selectedLeaves.forEach((leaf) => {
+      const sre = getLeafSre(leaf);
+      if (!Number.isFinite(sre) || sre <= 0) return;
+
+      const buildingId = leaf?.dataset?.building || '';
+      if (!buildingId) return;
+      const info = ENERGY_BASE_DATA.buildings?.[buildingId];
+      if (!info) return;
+
+      const metrics = resolveMetricsForYear(info, selectedYear) || {};
+      const valChaleur = Number(metrics?.chaleur);
+      const valFroid = Number(metrics?.froid);
+      const valElec = Number(metrics?.elec);
+      const valCo2 = Number(metrics?.co2);
+      const valEau = Number(metrics?.eau);
+
+      const hasChaleur = Number.isFinite(valChaleur) && valChaleur > 0;
+      const hasFroid = Number.isFinite(valFroid) && valFroid > 0;
+      const hasElec = Number.isFinite(valElec) && valElec > 0;
+      const hasCo2 = Number.isFinite(valCo2) && valCo2 > 0;
+      const hasEau = Number.isFinite(valEau) && valEau > 0;
+
+      if (hasChaleur) {
+        stats.chaleur.count += 1;
+        stats.chaleur.sre += sre;
+      }
+      if (hasFroid) {
+        stats.froid.count += 1;
+        stats.froid.sre += sre;
+      }
+      if (hasElec) {
+        stats.elec.count += 1;
+        stats.elec.sre += sre;
+      }
+      if (hasCo2) {
+        stats.co2.count += 1;
+        stats.co2.sre += sre;
+      }
+      if (hasEau) {
+        stats.eau.count += 1;
+        stats.eau.sre += sre;
+      }
+
+      if (hasChaleur || hasFroid || hasElec) {
+        stats.general.count += 1;
+        stats.general.sre += sre;
+      }
+    });
+
+    return stats;
+  }
+
   function computeSelectedPerimeter() {
     let buildings = 0;
     let sre = 0;
@@ -5274,17 +5349,38 @@
   }
 
   function updatePerimeterBadges() {
-    const { buildings, sre } = computeSelectedPerimeter();
-    const safeSre = Number.isFinite(sre) ? Math.round(sre) : 0;
-    document.querySelectorAll('.kpi[role="tab"][data-sites]').forEach(tab => {
-      tab.dataset.sites = String(buildings);
-      tab.dataset.sre = String(safeSre);
+    const selectedLeaves = [];
+    $$('.tree-leaf').forEach((leaf) => {
+      const cb = leafCheck(leaf);
+      if (cb?.checked) selectedLeaves.push(leaf);
+    });
+
+    const stats = computePillMetricStats(selectedLeaves);
+
+    Object.entries(PILL_METRIC_TAB_IDS).forEach(([metric, tabId]) => {
+      const tab = document.getElementById(tabId);
+      if (!tab) return;
+      const entry = stats[metric] || { count: 0, sre: 0 };
+      const count = Number.isFinite(entry.count) ? entry.count : 0;
+      const sreValue = Number.isFinite(entry.sre) ? Math.round(entry.sre) : 0;
+      tab.dataset.sites = String(count);
+      tab.dataset.sre = String(sreValue);
     });
 
     const sitesEl = document.getElementById('sum-sites-val');
     const sreEl = document.getElementById('sum-sre-val');
-    if (sitesEl) sitesEl.textContent = buildings ? NF.format(buildings) : '0';
-    if (sreEl) sreEl.textContent = buildings ? NF.format(safeSre) : '0';
+    const formatNumber = (value) => {
+      const num = Number(value);
+      if (!Number.isFinite(num)) return '0';
+      return NF.format(num);
+    };
+
+    const activeTab = document.querySelector('#energy-block [role="tab"][aria-selected="true"]');
+    const fallbackEntry = stats.general || { count: 0, sre: 0 };
+    const activeSites = activeTab?.dataset?.sites ?? String(fallbackEntry.count || 0);
+    const activeSre = activeTab?.dataset?.sre ?? String(Math.round(fallbackEntry.sre || 0));
+    if (sitesEl) sitesEl.textContent = formatNumber(activeSites);
+    if (sreEl) sreEl.textContent = formatNumber(activeSre);
 
     updateEnergyVisuals();
   }

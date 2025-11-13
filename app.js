@@ -4655,7 +4655,7 @@
           entries.forEach((entry, index) => {
             cumulative += entry.value;
             const shareValue = totalValue > 0 ? Math.min(100, (cumulative / totalValue) * 100) : 0;
-            const x = ((index + 0.5) / count) * 100;
+            const x = ((index + 1) / count) * 100;
             const y = 100 - shareValue;
             points.push(`${x.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
           });

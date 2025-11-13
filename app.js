@@ -4652,21 +4652,27 @@
           svg.removeAttribute('hidden');
           const points = [];
           let cumulative = 0;
+          const step = count > 0 ? 100 / count : 100;
+          let lastX = 0;
+          let lastShare = 0;
+
           entries.forEach((entry, index) => {
             cumulative += entry.value;
             const shareValue = totalValue > 0 ? (cumulative / totalValue) * 100 : 0;
             const clampedShare = Math.min(100, Math.max(0, shareValue));
-            const x = Math.min(100, Math.max(0, ((index + 1) / count) * 100));
+            const x = Math.min(100, Math.max(0, (index + 1) * step));
             const y = 100 - clampedShare;
 
             if (index === 0) {
               points.push(`${x.toFixed(2)},100`);
             }
 
+            lastX = x;
+            lastShare = clampedShare;
             points.push(`${x.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
           });
 
-          if (points.length) {
+          if (lastX < 100 || lastShare < 100) {
             points.push('100,0');
           }
 

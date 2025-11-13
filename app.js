@@ -134,6 +134,67 @@
     }
   };
 
+  const measureParetoLabelWidth = (() => {
+    const MIN_WIDTH = 220;
+    const MAX_WIDTH = 520;
+    let canvasContext = null;
+
+    const getContext = () => {
+      if (canvasContext) return canvasContext;
+      const canvas = document.createElement('canvas');
+      const context = canvas.getContext('2d');
+      if (!context) return null;
+      let fontSize = 11.52;
+      try {
+        const rootFontSize = window.getComputedStyle(document.documentElement)?.fontSize;
+        const parsed = Number.parseFloat(rootFontSize);
+        if (Number.isFinite(parsed) && parsed > 0) {
+          fontSize = parsed * 0.72;
+        }
+      } catch (e) {
+        /* ignore */
+      }
+      context.font = `600 ${fontSize}px Inter, system-ui, "Segoe UI", sans-serif`;
+      canvasContext = context;
+      return canvasContext;
+    };
+
+    const fallbackWidth = (text = '') => {
+      if (!text) return MIN_WIDTH;
+      const averageCharWidth = 7.2;
+      const estimated = Math.max(text.length * averageCharWidth, MIN_WIDTH);
+      return Math.min(MAX_WIDTH, estimated + 24);
+    };
+
+    return (rawLabel = '') => {
+      const label = typeof rawLabel === 'string' ? rawLabel.trim() : '';
+      if (!label) return MIN_WIDTH;
+
+      const context = getContext();
+      if (!context) return fallbackWidth(label);
+
+      const metrics = context.measureText(label);
+      const totalWidth = Math.max(metrics.width || 0, 0);
+
+      const parts = label.split(/\s+/).filter(Boolean);
+      let longestWordWidth = 0;
+      if (parts.length) {
+        longestWordWidth = parts.reduce((max, part) => {
+          const wordWidth = context.measureText(part).width || 0;
+          return wordWidth > max ? wordWidth : max;
+        }, 0);
+      } else {
+        longestWordWidth = totalWidth;
+      }
+
+      const paddingAllowance = 24;
+      const twoLineWidth = totalWidth > 0 ? totalWidth / 2 : MIN_WIDTH;
+      const baseWidth = Math.max(longestWordWidth, twoLineWidth);
+      const widthWithPadding = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, baseWidth + paddingAllowance));
+      return widthWithPadding;
+    };
+  })();
+
   const energySubnav = document.getElementById('energy-subnav');
   const topNavMenu = document.querySelector('.top-nav');
   let energySubnavEnabled = false;
@@ -4595,7 +4656,7 @@
             const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
             const label = entry.label || `Bâtiment ${index + 1}`;
             const valueText = `${formatEnergyDisplay(entry.value, 'kwh', decimals)} ${unit}`;
-            const computedWidth = Math.max(180, Math.min(380, label.length * 7.2));
+            const computedWidth = measureParetoLabelWidth(label);
             const bar = document.createElement('div');
             bar.className = 'pareto-chart__bar';
             bar.setAttribute('role', 'listitem');

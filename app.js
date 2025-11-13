@@ -5256,9 +5256,14 @@
           };
 
           valueScaleEl.innerHTML = '';
-          scaleTicks.forEach((tick) => {
+          const lastIndex = scaleTicks.length - 1;
+          scaleTicks.forEach((tick, index) => {
             const item = document.createElement('li');
             item.textContent = formatScaleValue(tick);
+            const ratio = scaleMax > 0 ? clamp01(tick / scaleMax) : 0;
+            item.style.setProperty('--tick-position', ratio.toFixed(6));
+            const shift = index === 0 || index === lastIndex ? '0%' : '50%';
+            item.style.setProperty('--tick-shift', shift);
             valueScaleEl.append(item);
           });
           valueScaleEl.removeAttribute('hidden');

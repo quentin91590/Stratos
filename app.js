@@ -3818,6 +3818,124 @@
     return findSiblingTreeCheck(li, leafBtn);
   });
 
+  let activeTypologyFilter = null;
+
+  function refreshActiveTypologyNodes() {
+    const nodes = document.querySelectorAll('[data-typology-node]');
+    nodes.forEach((node) => {
+      const key = node?.dataset?.typologyKey || '';
+      const isActive = !!activeTypologyFilter && key === activeTypologyFilter;
+      node.classList.toggle('is-selected', isActive);
+      if (isActive) {
+        node.setAttribute('aria-current', 'true');
+      } else {
+        node.removeAttribute('aria-current');
+      }
+    });
+  }
+
+  function clearActiveTypologyFilter() {
+    if (!activeTypologyFilter) return;
+    activeTypologyFilter = null;
+    refreshActiveTypologyNodes();
+  }
+
+  function updateTreeSelectionSummaryDisplay() {
+    const countEl = document.getElementById('tree-search-count');
+    if (!countEl) return;
+
+    const selectedLeaves = $$('.tree-leaf .tree-check').filter(c => c.checked).length;
+    const selectedFullSites = siteBtns.filter((btn) => {
+      const scb = siteCheck(btn);
+      return !!scb && scb.checked === true && scb.indeterminate === false;
+    }).length;
+
+    if (selectedLeaves === 0 && selectedFullSites === 0) {
+      countEl.textContent = 'Aucun élément sélectionné';
+      return;
+    }
+
+    const { sre } = computeSelectedPerimeter();
+    const safe = Number.isFinite(sre) ? Math.round(sre) : 0;
+    const formattedSre = NF.format(safe);
+    countEl.textContent = `${selectedLeaves} bâtiment(s) sélectionné(s), ${selectedFullSites} site(s) entiers — ${formattedSre} m² SRE`;
+  }
+
+  function toggleTypologyFilter(typologyKey) {
+    const normalizedKey = (typologyKey ?? '').toString().trim();
+    if (!normalizedKey || normalizedKey === activeTypologyFilter) {
+      activeTypologyFilter = null;
+      checkWholeParc(true);
+      const countEl = document.getElementById('tree-search-count');
+      if (countEl) countEl.textContent = 'Tous les éléments';
+      refreshActiveTypologyNodes();
+      return;
+    }
+
+    activeTypologyFilter = normalizedKey;
+
+    const leaves = $$('.tree-leaf[data-building]');
+    leaves.forEach((leaf) => {
+      const cb = leafCheck(leaf);
+      const leafTypology = leaf?.dataset?.typology || 'autre';
+      const matches = leafTypology === normalizedKey;
+      if (cb) {
+        cb.checked = matches;
+        cb.indeterminate = false;
+      }
+      setActive(leaf, matches);
+    });
+
+    siteBtns.forEach((siteBtn) => {
+      updateSiteFromLeaves(siteBtn);
+    });
+
+    updateParcFromSites();
+    refreshActiveTypologyNodes();
+  }
+
+  function setupTypologyInteractiveNode(element, typologyKey) {
+    if (!(element instanceof HTMLElement)) return;
+    const key = (typologyKey ?? '').toString().trim();
+    if (!key) return;
+
+    element.dataset.typologyNode = '1';
+    element.dataset.typologyKey = key;
+    if (element.tabIndex < 0) {
+      element.tabIndex = 0;
+    }
+
+    const label = element.getAttribute('aria-label');
+    if (label && !label.toLowerCase().includes('filtrer')) {
+      element.setAttribute('aria-label', `${label} — Cliquer pour filtrer cette typologie`);
+    }
+
+    const title = element.getAttribute('title');
+    if (title && !title.toLowerCase().includes('filtrer')) {
+      element.setAttribute('title', `${title} — Cliquer pour filtrer cette typologie`);
+    }
+
+    element.addEventListener('click', (event) => {
+      event.preventDefault();
+      toggleTypologyFilter(key);
+    });
+
+    element.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        toggleTypologyFilter(key);
+      }
+    });
+
+    const isActive = !!activeTypologyFilter && activeTypologyFilter === key;
+    element.classList.toggle('is-selected', isActive);
+    if (isActive) {
+      element.setAttribute('aria-current', 'true');
+    } else {
+      element.removeAttribute('aria-current');
+    }
+  }
+
   const computeFallbackSre = (leaves) => {
     const list = Array.isArray(leaves) && leaves.length ? leaves : $$('.tree-leaf');
     return list.reduce((total, leaf) => {
@@ -5150,6 +5268,7 @@
             bar.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent}${share > 0 ? ` (${shareText})` : ''}`;
 
             bar.append(valueEl, column, label, footer);
+            setupTypologyInteractiveNode(bar, item.key);
             bars.append(bar);
           });
         }
@@ -5222,6 +5341,7 @@
             node.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent} (${shareText})`;
 
             node.append(header, footer);
+            setupTypologyInteractiveNode(node, item.key);
             treemap.append(node);
           });
         }
@@ -5922,6 +6042,7 @@
     const parcCheck = getParcCheck();
     if (!parcCheck) {
       updatePerimeterBadges();
+      updateTreeSelectionSummaryDisplay();
       return;
     }
     const checks = siteBtns.map(siteCheck).filter(Boolean);
@@ -5936,6 +6057,7 @@
       if (!parcCheck.checked && !parcCheck.indeterminate) clearPartial(parcBtn);
     }
     updatePerimeterBadges();
+    updateTreeSelectionSummaryDisplay();
   }
   function checkWholeSite(siteBtn, on) {
     if (!siteBtn) return;
@@ -5964,6 +6086,7 @@
       cb.dispatchEvent(new Event('change', { bubbles: true }));
     });
     cb.addEventListener('change', () => {
+      clearActiveTypologyFilter();
       setActive(leafBtn, cb.checked);
       const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
       if (siteBtn) updateSiteFromLeaves(siteBtn);
@@ -5993,6 +6116,7 @@
     });
 
     cb.addEventListener('change', () => {
+      clearActiveTypologyFilter();
       checkWholeSite(siteBtn, cb.checked);
     });
   });
@@ -6014,6 +6138,7 @@
 
     // Quand la checkbox change -> (dé)sélectionne tout le parc
     initialParcCheck.addEventListener('change', () => {
+      clearActiveTypologyFilter();
       const parcCheck = getParcCheck();
       checkWholeParc(parcCheck?.checked);
 
@@ -6205,6 +6330,8 @@
     };
 
     const run = () => {
+      clearActiveTypologyFilter();
+
       const q = norm(input.value);
       clearBtn.hidden = !q;
 
@@ -6288,6 +6415,7 @@
 
       if (countEl) countEl.textContent = 'Tous les éléments';
       input.focus();
+      clearActiveTypologyFilter();
     });
 
     // Raccourcis: “/” focus, Échap efface sans toucher à la sélection,
@@ -6319,6 +6447,8 @@
     const side = document.querySelector('#sidebar');
     if (!side) return;
 
+    clearActiveTypologyFilter();
+
     const affectations = getSidebarSelectedAffectations(side);
     const hasAffectationFilter = affectations.length > 0;
     const affectationSet = new Set(affectations);
@@ -6340,24 +6470,6 @@
 
     siteBtns.forEach((siteBtn) => updateSiteFromLeaves(siteBtn));
     updateParcFromSites();
-
-    const countEl = document.getElementById('tree-search-count');
-    if (countEl) {
-      const selectedLeaves = $$('.tree-leaf .tree-check').filter(c => c.checked).length;
-      const selectedFullSites = siteBtns.filter((btn) => {
-        const scb = siteCheck(btn);
-        return !!scb && scb.checked === true && scb.indeterminate === false;
-      }).length;
-
-      if (selectedLeaves === 0 && selectedFullSites === 0) {
-        countEl.textContent = 'Aucun élément sélectionné';
-      } else {
-        const { sre } = computeSelectedPerimeter();
-        const safe = Number.isFinite(sre) ? Math.round(sre) : 0;
-        const formattedSre = NF.format(safe);
-        countEl.textContent = `${selectedLeaves} bâtiment(s) sélectionné(s), ${selectedFullSites} site(s) entiers — ${formattedSre} m² SRE`;
-      }
-    }
   }
 
   // === Multi-select dans la sidebar (Canton / Affectation / Année) ===

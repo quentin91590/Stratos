@@ -820,6 +820,13 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .typology-bar__share{background:rgba(255,255,255,0.82); border-radius:999px; padding:4px 10px; color:var(--bar-color-strong, #1d4ed8); box-shadow:inset 0 0 0 1px rgba(255,255,255,0.5)}
 .typology-bar__count{color:#475569}
 .typology-node{position:absolute; left:calc(var(--x,0) * 100%); top:calc(var(--y,0) * 100%); width:calc(var(--w,1) * 100%); height:calc(var(--h,1) * 100%); padding:16px 18px; border-radius:0; box-sizing:border-box; background:linear-gradient(155deg, var(--treemap-color-strong, #3b82f6), var(--treemap-color-soft, #dbeafe)); border:1px solid var(--treemap-color-outline, rgba(59,130,246,0.32)); box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35); display:flex; flex-direction:column; justify-content:space-between; gap:12px; color:#0f172a; font-variant-numeric:tabular-nums; overflow:hidden; transition:transform .18s ease, box-shadow .18s ease}
+.typology-node[data-typology-node],
+.typology-bar[data-typology-node]{cursor:pointer}
+.typology-node[data-typology-node]:focus-visible,
+.typology-bar[data-typology-node]:focus-visible{outline:3px solid rgba(15,23,42,0.45); outline-offset:3px}
+.typology-node.is-selected{transform:translateY(-4px); box-shadow:0 24px 44px rgba(15,23,42,0.26), 0 0 0 3px rgba(15,23,42,0.18), inset 0 0 0 1px rgba(255,255,255,0.5)}
+.typology-node.is-selected:hover{transform:translateY(-4px)}
+.typology-bar.is-selected{box-shadow:0 16px 34px rgba(15,23,42,0.22), 0 0 0 3px rgba(15,23,42,0.18)}
 .typology-node:hover{transform:translateY(-2px); box-shadow:0 16px 32px rgba(15,23,42,0.18)}
 .typology-node__header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
 .typology-node__label{font-weight:600; font-size:.94rem; color:#0f172a; line-height:1.25}

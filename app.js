@@ -4881,6 +4881,23 @@
             bar.style.setProperty('--value', percent.toFixed(4));
             bar.dataset.label = label;
             bar.dataset.value = valueText;
+            if (entry.id) {
+              bar.dataset.buildingId = entry.id;
+              const activateSelection = (event) => {
+                if (event) event.preventDefault();
+                selectTreeLeafByBuilding(entry.id, {
+                  focus: true,
+                  expandSite: true,
+                  scrollIntoView: true,
+                });
+              };
+              bar.addEventListener('click', activateSelection);
+              bar.addEventListener('keydown', (event) => {
+                if (event?.key === 'Enter' || event?.key === ' ') {
+                  activateSelection(event);
+                }
+              });
+            }
             bar.setAttribute('aria-label', `${label} : ${valueText}`);
             bar.title = `${label} • ${valueText}`;
 
@@ -6020,6 +6037,80 @@
     if (!btn) return;
     btn.classList.toggle('is-active', !!on);
     btn.setAttribute('aria-selected', String(!!on)); // pas un bool direct
+  }
+
+  function selectTreeLeafByBuilding(buildingId, options = {}) {
+    const normalized = (buildingId ?? '').toString().trim();
+    if (!normalized) return false;
+
+    const { focus = false, expandSite = false, scrollIntoView = false } = options || {};
+
+    const escapeValue = (value) => {
+      try {
+        if (typeof CSS !== 'undefined' && CSS && typeof CSS.escape === 'function') {
+          return CSS.escape(value);
+        }
+      } catch (err) {
+        // ignore
+      }
+      return value.replace(/(["\\])/g, '\\$1');
+    };
+
+    const selector = `.tree-leaf[data-building="${escapeValue(normalized)}"]`;
+    const leaf = document.querySelector(selector);
+    if (!leaf) return false;
+
+    clearActiveTypologyFilter();
+
+    const allLeaves = $$('.tree-leaf');
+    allLeaves.forEach((leafBtn) => {
+      const cb = leafCheck(leafBtn);
+      if (!cb) return;
+      const isTarget = leafBtn === leaf;
+      cb.checked = isTarget;
+      cb.indeterminate = false;
+      setActive(leafBtn, isTarget);
+    });
+
+    siteBtns.forEach((siteBtn) => {
+      const scb = siteCheck(siteBtn);
+      if (!scb) return;
+      scb.checked = false;
+      scb.indeterminate = false;
+      setActive(siteBtn, false);
+      clearPartial(siteBtn);
+    });
+
+    const targetSite = leaf.closest('.tree-group')?.querySelector('.tree-node.toggle') || null;
+    if (targetSite) {
+      if (expandSite) {
+        targetSite.setAttribute('aria-expanded', 'true');
+        const list = targetSite.parentElement?.querySelector('.tree-children');
+        if (list) list.style.display = 'flex';
+      }
+      updateSiteFromLeaves(targetSite);
+    }
+
+    const parcCheck = getParcCheck();
+    if (parcCheck) {
+      parcCheck.checked = false;
+      parcCheck.indeterminate = false;
+      if (parcBtn) {
+        setActive(parcBtn, false);
+        clearPartial(parcBtn);
+      }
+    }
+
+    updateParcFromSites();
+
+    if (focus && typeof leaf.focus === 'function') {
+      leaf.focus();
+    }
+    if (scrollIntoView && typeof leaf.scrollIntoView === 'function') {
+      leaf.scrollIntoView({ block: 'nearest' });
+    }
+
+    return true;
   }
 
   function clearPartial(btn) { btn?.classList.remove('is-partial'); }

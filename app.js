@@ -4679,8 +4679,12 @@
                   ? 'eau'
                   : 'general');
       const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
-      const unit = getUnitLabel(metricKey, 'kwh');
-      const decimals = Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0;
+      const useIntensity = mode === 'kwhm2';
+      const displayMode = useIntensity ? 'kwhm2' : 'kwh';
+      const unit = getUnitLabel(metricKey, displayMode);
+      const decimals = useIntensity
+        ? (Number.isFinite(metricDef.decimals) ? metricDef.decimals : 0)
+        : (Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0);
 
       const barsContainer = figure.querySelector('[data-pareto-bars]');
       const svg = figure.querySelector('[data-pareto-line]');
@@ -4700,18 +4704,27 @@
         const total = Number(metrics.total);
         const sre = Number(metrics.sre) || 0;
         const intensity = Number(metrics.intensity);
-        const fallback = Number.isFinite(intensity) && sre > 0 ? intensity * sre : 0;
-        const rawValue = Number.isFinite(total) ? total : fallback;
+        const resolvedIntensity = Number.isFinite(intensity)
+          ? intensity
+          : (Number.isFinite(total) && sre > 0 ? total / sre : 0);
+        const resolvedTotal = Number.isFinite(total)
+          ? total
+          : (Number.isFinite(resolvedIntensity) && sre > 0 ? resolvedIntensity * sre : 0);
+        const rawValue = useIntensity ? resolvedIntensity : resolvedTotal;
         return {
           id: summary?.id || '',
           label: summary?.label || summary?.id || '',
           value: Number.isFinite(rawValue) ? rawValue : 0,
+          total: Number.isFinite(resolvedTotal) ? resolvedTotal : 0,
+          sre: Number.isFinite(sre) ? sre : 0,
         };
       }).filter(entry => entry.value > 0);
 
       entries.sort((a, b) => b.value - a.value);
 
       const totalValue = entries.reduce((sum, entry) => sum + entry.value, 0);
+      const totalEnergy = entries.reduce((sum, entry) => sum + (Number(entry.total) || 0), 0);
+      const totalSre = entries.reduce((sum, entry) => sum + (Number(entry.sre) || 0), 0);
       const maxValue = entries.reduce((acc, entry) => (entry.value > acc ? entry.value : acc), 0);
       const count = entries.length;
 
@@ -4729,7 +4742,7 @@
           entries.forEach((entry, index) => {
             const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
             const label = entry.label || `Bâtiment ${index + 1}`;
-            const valueText = `${formatEnergyDisplay(entry.value, 'kwh', decimals)} ${unit}`;
+            const valueText = `${formatEnergyDisplay(entry.value, displayMode, decimals)} ${unit}`;
             const computedWidth = measureParetoLabelWidth(label);
             const bar = document.createElement('div');
             bar.className = 'pareto-chart__bar';
@@ -4788,7 +4801,7 @@
         noteMessages.push('Aucune consommation disponible pour afficher un Pareto.');
       }
       if (mode === 'kwhm2' && count) {
-        noteMessages.push('La courbe de Pareto est masquée en mode kWh/m² ; les barres affichent la consommation totale.');
+        noteMessages.push('La courbe de Pareto est masquée en mode kWh/m² ; les barres affichent la consommation par m².');
       }
       if (noteEl) {
         if (noteMessages.length) {
@@ -4800,14 +4813,21 @@
         }
       }
 
-      const totalFormatted = `${formatEnergyDisplay(totalValue, 'kwh', decimals)} ${unit}`;
+      const totalFormatted = useIntensity
+        ? `${formatEnergyDisplay(totalSre > 0 ? totalEnergy / totalSre : 0, 'kwhm2', decimals)} ${unit}`
+        : `${formatEnergyDisplay(totalValue, 'kwh', decimals)} ${unit}`;
       if (totalEl) {
-        totalEl.textContent = `Total : ${totalFormatted}`;
+        totalEl.textContent = useIntensity
+          ? `Moyenne pondérée : ${totalFormatted}`
+          : `Total : ${totalFormatted}`;
       }
 
       const topCount = count ? Math.max(1, Math.round(count * 0.2)) : 0;
-      const topValue = topCount > 0 ? entries.slice(0, topCount).reduce((sum, entry) => sum + entry.value, 0) : 0;
-      const share = totalValue > 0 ? (topValue / totalValue) * 100 : 0;
+      const topValue = topCount > 0
+        ? entries.slice(0, topCount).reduce((sum, entry) => sum + (useIntensity ? entry.total : entry.value), 0)
+        : 0;
+      const shareBase = useIntensity ? totalEnergy : totalValue;
+      const share = shareBase > 0 ? (topValue / shareBase) * 100 : 0;
       let shareText = 'Top 20 % : 0 %';
       if (share > 0) {
         shareText = share < 0.1

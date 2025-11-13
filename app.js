@@ -2511,6 +2511,40 @@
     return NF.format(Math.max(0, Math.round(num)));
   };
 
+  const niceCeil = (value) => {
+    if (!Number.isFinite(value) || value <= 0) return 0;
+    const absolute = Math.abs(value);
+    const exponent = Math.floor(Math.log10(absolute));
+    const magnitude = 10 ** exponent;
+    const fraction = absolute / magnitude;
+    let niceFraction;
+    if (fraction <= 1) {
+      niceFraction = 1;
+    } else if (fraction <= 2) {
+      niceFraction = 2;
+    } else if (fraction <= 5) {
+      niceFraction = 5;
+    } else {
+      niceFraction = 10;
+    }
+    return niceFraction * magnitude;
+  };
+
+  const computeParetoScaleTicks = (maxValue, intervals = 4) => {
+    if (!Number.isFinite(maxValue) || maxValue <= 0) {
+      return { max: 0, step: 0, ticks: [0] };
+    }
+    const safeIntervals = Math.max(1, intervals);
+    const niceMax = niceCeil(maxValue);
+    const step = niceMax / safeIntervals;
+    const ticks = [];
+    for (let i = safeIntervals; i >= 0; i -= 1) {
+      const value = Number.parseFloat((step * i).toFixed(6));
+      ticks.push(value);
+    }
+    return { max: niceMax, step, ticks };
+  };
+
   const describeMix = (shares, totalPerM2, mode, sre, unitLabel) => {
     const unit = unitLabel || (mode === 'kwhm2' ? 'kWh/m²' : 'kWh');
     const parts = [];
@@ -5101,7 +5135,9 @@
         ? (Number.isFinite(metricDef.decimals) ? metricDef.decimals : 0)
         : (Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0);
 
+      const chartEl = figure.querySelector('[data-pareto-chart]');
       const barsContainer = figure.querySelector('[data-pareto-bars]');
+      const valueScaleEl = figure.querySelector('[data-pareto-scale-values]');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
       const markersContainer = figure.querySelector('[data-pareto-markers]');
@@ -5161,6 +5197,74 @@
       const count = entries.length;
       const activeCount = activeEntries.length;
 
+      let scaleMax = maxValue;
+      let scaleTicks = [];
+      let scaleIntervals = 0;
+
+      if (count && maxValue > 0) {
+        const scaleInfo = computeParetoScaleTicks(maxValue, 4);
+        if (scaleInfo && typeof scaleInfo === 'object') {
+          if (Number.isFinite(scaleInfo.max) && scaleInfo.max > 0) {
+            scaleMax = scaleInfo.max;
+          }
+          if (Array.isArray(scaleInfo.ticks)) {
+            scaleTicks = scaleInfo.ticks
+              .map((tick) => (Number.isFinite(tick) ? Number(tick) : Number.parseFloat(tick)))
+              .filter((tick) => Number.isFinite(tick));
+            scaleTicks.sort((a, b) => b - a);
+            if (scaleTicks.length && Number.isFinite(scaleTicks[0]) && scaleTicks[0] > 0) {
+              scaleMax = scaleTicks[0];
+            }
+            if (scaleTicks.length > 1) {
+              scaleIntervals = scaleTicks.length - 1;
+            }
+          }
+        }
+      }
+
+      if (chartEl) {
+        if (!scaleIntervals || scaleMax <= 0) {
+          chartEl.style.removeProperty('--pareto-scale-step');
+          chartEl.style.removeProperty('--pareto-scale-intervals');
+        } else {
+          const stepPercent = 100 / scaleIntervals;
+          chartEl.style.setProperty('--pareto-scale-step', `${stepPercent.toFixed(6)}%`);
+          chartEl.style.setProperty('--pareto-scale-intervals', String(scaleIntervals));
+        }
+      }
+
+      if (valueScaleEl) {
+        if (!scaleIntervals || scaleMax <= 0 || !scaleTicks.length) {
+          valueScaleEl.innerHTML = '';
+          valueScaleEl.setAttribute('hidden', '');
+        } else {
+          const formatScaleValue = (rawValue) => {
+            if (!Number.isFinite(rawValue) || rawValue <= 0) {
+              return `0 ${unit}`.trim();
+            }
+            const absValue = Math.abs(rawValue);
+            let decimalsForScale = 0;
+            if (displayMode === 'kwhm2') {
+              decimalsForScale = Math.max(decimals, absValue < 1 ? 2 : decimals);
+            } else if (absValue < 1) {
+              decimalsForScale = 2;
+            } else if (absValue < 10) {
+              decimalsForScale = 1;
+            }
+            const formatted = formatNumber(rawValue, { decimals: Math.min(decimalsForScale, 6) });
+            return `${formatted} ${unit}`.trim();
+          };
+
+          valueScaleEl.innerHTML = '';
+          scaleTicks.forEach((tick) => {
+            const item = document.createElement('li');
+            item.textContent = formatScaleValue(tick);
+            valueScaleEl.append(item);
+          });
+          valueScaleEl.removeAttribute('hidden');
+        }
+      }
+
       if (tooltipLayer) {
         tooltipLayer.innerHTML = '';
       }
@@ -5178,7 +5282,8 @@
           barsContainer.append(empty);
         } else {
           entries.forEach((entry, index) => {
-            const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
+            const rawPercent = scaleMax > 0 ? (entry.value / scaleMax) * 100 : 0;
+            const percent = Math.max(0, Math.min(100, rawPercent));
             const label = entry.label || `Bâtiment ${index + 1}`;
             const valueText = `${formatEnergyDisplay(entry.value, displayMode, decimals)} ${unit}`;
             const computedWidth = measureParetoLabelWidth(label);

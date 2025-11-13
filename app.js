@@ -4752,9 +4752,36 @@
         const main = document.createElement('div');
         main.className = 'ranking-main';
 
-        const name = document.createElement('span');
-        name.className = 'ranking-name';
-        name.textContent = entry.label || `Bâtiment ${index + 1}`;
+        let name;
+        const label = entry.label || `Bâtiment ${index + 1}`;
+        if (entry.id) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'ranking-name ranking-name--link';
+          btn.textContent = label;
+          btn.dataset.buildingId = entry.id;
+          btn.addEventListener('click', (event) => {
+            event.preventDefault();
+            const success = selectTreeLeafByBuilding(entry.id, {
+              expandSite: true,
+              focus: true,
+              scrollIntoView: true,
+            });
+            if (success && typeof window !== 'undefined' && typeof window.scrollTo === 'function') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          });
+          name = btn;
+        } else {
+          name = document.createElement('span');
+          name.className = 'ranking-name';
+          name.textContent = label;
+        }
+        if (!name) {
+          name = document.createElement('span');
+          name.className = 'ranking-name';
+          name.textContent = label;
+        }
 
         const bar = document.createElement('div');
         bar.className = 'ranking-bar';

@@ -4757,6 +4757,22 @@
             tooltip.append(valueBadge, labelBadge);
             bar.append(tooltip);
 
+            const activateTooltip = () => {
+              bar.classList.add('is-tooltip-active');
+            };
+
+            const deactivateTooltip = () => {
+              bar.classList.remove('is-tooltip-active');
+            };
+
+            bar.addEventListener('mouseenter', activateTooltip);
+            bar.addEventListener('mouseleave', deactivateTooltip);
+            bar.addEventListener('focus', activateTooltip);
+            bar.addEventListener('blur', deactivateTooltip);
+            bar.addEventListener('touchstart', activateTooltip, { passive: true });
+            bar.addEventListener('touchend', deactivateTooltip);
+            bar.addEventListener('touchcancel', deactivateTooltip);
+
             barsContainer.append(bar);
           });
         }

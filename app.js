@@ -135,9 +135,10 @@
   };
 
   const measureParetoLabelWidth = (() => {
-    const MIN_WIDTH = 220;
+    const MIN_WIDTH = 96;
     const MAX_WIDTH = 640;
     const MAX_LINES = 2;
+    const HORIZONTAL_PADDING = 16;
     let measureEl = null;
 
     const ensureMeasureElement = () => {
@@ -181,9 +182,10 @@
 
     const fallbackWidth = (text = '') => {
       if (!text) return MIN_WIDTH;
-      const averageCharWidth = 7.2;
-      const estimated = Math.max(text.length * averageCharWidth, MIN_WIDTH);
-      return Math.min(MAX_WIDTH, estimated + 32);
+      const averageCharWidth = 7;
+      const estimated = text.length * averageCharWidth + HORIZONTAL_PADDING;
+      const clamped = Math.max(MIN_WIDTH, Math.min(MAX_WIDTH, estimated));
+      return Math.round(clamped);
     };
 
     return (rawLabel = '') => {
@@ -230,14 +232,17 @@
       }
       const maxHeight = paddingTop + paddingBottom + lineHeight * MAX_LINES + 0.5;
 
+      const paddedLongestWord = Math.ceil(longestWordWidth) + HORIZONTAL_PADDING;
+      const paddedSingleLine = Math.ceil(singleLineWidth) + HORIZONTAL_PADDING;
+
       const minCandidate = Math.max(
+        Math.ceil(singleLineWidth / MAX_LINES) + HORIZONTAL_PADDING,
+        paddedLongestWord,
         MIN_WIDTH,
-        Math.ceil(singleLineWidth / MAX_LINES),
-        Math.ceil(longestWordWidth * 1.02),
       );
       const maxCandidate = Math.max(
         minCandidate,
-        Math.min(MAX_WIDTH, Math.max(singleLineWidth, longestWordWidth, MIN_WIDTH)),
+        Math.min(MAX_WIDTH, Math.max(paddedSingleLine, paddedLongestWord, MIN_WIDTH)),
       );
 
       let low = minCandidate;
@@ -256,8 +261,11 @@
         }
       }
 
-      const finalWidth = Math.min(MAX_WIDTH, Math.max(best, longestWordWidth, MIN_WIDTH));
-      return finalWidth;
+      const finalWidth = Math.min(
+        MAX_WIDTH,
+        Math.max(best, paddedLongestWord, MIN_WIDTH),
+      );
+      return Math.round(finalWidth);
     };
   })();
 
@@ -4748,6 +4756,22 @@
 
             tooltip.append(valueBadge, labelBadge);
             bar.append(tooltip);
+
+            const activateTooltip = () => {
+              bar.classList.add('is-tooltip-active');
+            };
+
+            const deactivateTooltip = () => {
+              bar.classList.remove('is-tooltip-active');
+            };
+
+            bar.addEventListener('mouseenter', activateTooltip);
+            bar.addEventListener('mouseleave', deactivateTooltip);
+            bar.addEventListener('focus', activateTooltip);
+            bar.addEventListener('blur', deactivateTooltip);
+            bar.addEventListener('touchstart', activateTooltip, { passive: true });
+            bar.addEventListener('touchend', deactivateTooltip);
+            bar.addEventListener('touchcancel', deactivateTooltip);
 
             barsContainer.append(bar);
           });

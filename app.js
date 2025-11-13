@@ -4652,29 +4652,25 @@
           svg.removeAttribute('hidden');
           const points = [];
           let cumulative = 0;
-          const step = count > 0 ? 100 / count : 100;
-          let lastX = 0;
-          let lastShare = 0;
+          const columnWidth = count > 0 ? 100 / count : 100;
 
           entries.forEach((entry, index) => {
             cumulative += entry.value;
-            const shareValue = totalValue > 0 ? (cumulative / totalValue) * 100 : 0;
+            let shareValue = totalValue > 0 ? (cumulative / totalValue) * 100 : 0;
+            if (index === count - 1 && shareValue < 100) {
+              shareValue = 100;
+            }
+
             const clampedShare = Math.min(100, Math.max(0, shareValue));
-            const x = Math.min(100, Math.max(0, (index + 1) * step));
+            const centerX = Math.min(100, Math.max(0, (index + 0.5) * columnWidth));
             const y = 100 - clampedShare;
 
             if (index === 0) {
-              points.push(`${x.toFixed(2)},100`);
+              points.push(`${centerX.toFixed(2)},100`);
             }
 
-            lastX = x;
-            lastShare = clampedShare;
-            points.push(`${x.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
+            points.push(`${centerX.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
           });
-
-          if (lastX < 100 || lastShare < 100) {
-            points.push('100,0');
-          }
 
           targetPolyline.setAttribute('points', points.join(' '));
         }

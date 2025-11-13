@@ -4906,6 +4906,80 @@
     });
   };
 
+  const GENERAL_PARETO_METRICS = ['general', 'chaleur', 'froid', 'elec', 'eau', 'co2'];
+  const GENERAL_PARETO_TITLES = {
+    general: 'énergie',
+    chaleur: 'chaleur',
+    froid: 'froid',
+    elec: 'électricité',
+    eau: 'eau',
+    co2: 'carbone',
+  };
+  const GENERAL_PARETO_DESCRIPTIONS = {
+    general: 'consommation énergétique',
+    chaleur: 'consommation de chaleur',
+    froid: 'consommation de froid',
+    elec: 'consommation électrique',
+    eau: 'consommation d’eau',
+    co2: 'émissions de CO₂',
+  };
+  const GENERAL_PARETO_MAIN_LABELS = {
+    general: 'Consommation totale',
+    chaleur: 'Consommation totale',
+    froid: 'Consommation totale',
+    elec: 'Consommation totale',
+    eau: 'Volume total',
+    co2: 'Émissions totales',
+  };
+
+  const setupGeneralParetoControls = () => {
+    const figure = document.querySelector('[data-chart-slot="general-pareto"]');
+    if (!figure) return;
+    const select = figure.querySelector('[data-pareto-metric-switch]');
+    if (!(select instanceof HTMLSelectElement)) return;
+
+    const titleEl = figure.querySelector('.chart-card-title');
+    const subtitleEl = figure.querySelector('.chart-card-subtitle');
+    const chartLabelEl = figure.querySelector('.chart-title span:not([data-pareto-unit])');
+
+    const applyMetric = (rawMetric, { silent = false } = {}) => {
+      const normalized = typeof rawMetric === 'string' ? rawMetric.trim().toLowerCase() : '';
+      const metric = GENERAL_PARETO_METRICS.includes(normalized) ? normalized : 'general';
+      if (select.value !== metric) {
+        select.value = metric;
+      }
+
+      figure.dataset.chartMetric = metric;
+      figure.dataset.paretoMetric = metric;
+
+      const title = GENERAL_PARETO_TITLES[metric] || GENERAL_PARETO_TITLES.general;
+      const description = GENERAL_PARETO_DESCRIPTIONS[metric] || GENERAL_PARETO_DESCRIPTIONS.general;
+      const mainLabel = GENERAL_PARETO_MAIN_LABELS[metric] || GENERAL_PARETO_MAIN_LABELS.general;
+      if (titleEl) {
+        titleEl.textContent = `Pareto ${title}`;
+      }
+      if (subtitleEl) {
+        subtitleEl.textContent = `Contribution cumulée des bâtiments — ${description}`;
+      }
+      if (chartLabelEl) {
+        chartLabelEl.textContent = mainLabel;
+      }
+      figure.setAttribute('aria-label', `Pareto ${description} par bâtiment`);
+
+      if (!silent) {
+        updateEnergyVisuals();
+      }
+    };
+
+    select.addEventListener('change', (event) => {
+      const target = event.target;
+      const value = (target && typeof target.value === 'string') ? target.value : select.value;
+      applyMetric(value);
+    });
+
+    applyMetric(select.value || 'general', { silent: true });
+  };
+
   const updateTypologyChart = (mode, typologies = []) => {
     const cards = document.querySelectorAll('.energy-typology-card');
     if (!cards.length) return;
@@ -6359,6 +6433,7 @@
     setupChartCatalog();
     setupChartTileDragging();
     setupEnergyFilters();
+    setupGeneralParetoControls();
     setupTreeSearch();
 
     // 👇 ajoute ceci

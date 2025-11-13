@@ -633,6 +633,12 @@
     'distribution-line': { width: 'full', height: 'medium' },
     'cold-distribution': { width: 'full', height: 'medium' },
     'elec-distribution': { width: 'full', height: 'medium' },
+    'general-pareto': { width: 'full', height: 'tall' },
+    'heat-pareto': { width: 'full', height: 'tall' },
+    'cold-pareto': { width: 'full', height: 'tall' },
+    'elec-pareto': { width: 'full', height: 'tall' },
+    'co2-pareto': { width: 'full', height: 'tall' },
+    'water-pareto': { width: 'full', height: 'tall' },
     'water-sources-donut': { width: 'half', height: 'medium' },
     'water-sources-bars': { width: 'half', height: 'medium' },
     'water-uses-bars': { width: 'half', height: 'medium' },
@@ -673,6 +679,12 @@
     'elec-map': { width: 'full', height: 'tall' },
     'elec-monthly': { width: 'full', height: 'xl' },
     'elec-distribution': { width: 'full', height: 'medium' },
+    'general-pareto': { width: 'full', height: 'tall' },
+    'heat-pareto': { width: 'full', height: 'tall' },
+    'cold-pareto': { width: 'full', height: 'tall' },
+    'elec-pareto': { width: 'full', height: 'tall' },
+    'co2-pareto': { width: 'full', height: 'tall' },
+    'water-pareto': { width: 'full', height: 'tall' },
     'co2-scopes': { width: 'half', height: 'medium' },
     'co2-sources': { width: 'half', height: 'medium' },
     'co2-ranking': { width: 'half', height: 'tall' },
@@ -1113,12 +1125,12 @@
 
   const ENERGY_BASE_DATA = {
     metrics: {
-      general: { intensity: 196, decimals: 0 },
-      chaleur: { intensity: 118, decimals: 0 },
-      froid: { intensity: 13, decimals: 0 },
-      elec: { intensity: 78, decimals: 0 },
-      co2: { intensity: 26, decimals: 0 },
-      eau: { intensity: 1.45, decimals: 2 },
+      general: { intensity: 196, decimals: 0, totalDecimals: 0 },
+      chaleur: { intensity: 118, decimals: 0, totalDecimals: 0 },
+      froid: { intensity: 13, decimals: 0, totalDecimals: 0 },
+      elec: { intensity: 78, decimals: 0, totalDecimals: 0 },
+      co2: { intensity: 26, decimals: 0, totalDecimals: 0 },
+      eau: { intensity: 1.45, decimals: 2, totalDecimals: 0 },
     },
     thresholds: {
       legal: 180,
@@ -4441,7 +4453,7 @@
                 : 'general');
       const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
       const unit = getUnitLabel(metricKey, mode);
-      const decimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
+      const decimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : (Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0);
 
       const entries = Object.values(buildingSummaries || {}).map((entry) => {
         const metrics = entry?.metrics?.[metricKey] || {};
@@ -4510,6 +4522,147 @@
         li.append(rank, main, valueEl);
         list.append(li);
       });
+    });
+  };
+
+  const updateParetoCharts = (mode, buildingSummaries = {}) => {
+    const paretoFigures = document.querySelectorAll('[data-chart-type$="pareto"]');
+    if (!paretoFigures.length) return;
+
+    paretoFigures.forEach((figure) => {
+      const scope = figure.dataset.chartScope || '';
+      const metricKey = figure.dataset.chartMetric
+        || (scope === 'chaleur'
+          ? 'chaleur'
+          : scope === 'froid'
+            ? 'froid'
+            : scope === 'elec'
+              ? 'elec'
+              : scope === 'co2'
+                ? 'co2'
+                : scope === 'eau'
+                  ? 'eau'
+                  : 'general');
+      const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || ENERGY_BASE_DATA.metrics.general || { decimals: 0 };
+      const unit = getUnitLabel(metricKey, 'kwh');
+      const decimals = Number.isFinite(metricDef.totalDecimals) ? metricDef.totalDecimals : 0;
+
+      const barsContainer = figure.querySelector('[data-pareto-bars]');
+      const svg = figure.querySelector('[data-pareto-line]');
+      const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
+      const noteEl = figure.querySelector('[data-pareto-note]');
+      const totalEl = figure.querySelector('[data-pareto-total]');
+      const coverageEl = figure.querySelector('[data-pareto-coverage]');
+      const countEl = figure.querySelector('[data-pareto-count]');
+
+      figure.querySelectorAll('[data-pareto-unit]').forEach((el) => {
+        el.textContent = unit;
+      });
+
+      const entries = Object.values(buildingSummaries || {}).map((summary) => {
+        const metrics = summary?.metrics?.[metricKey] || {};
+        const total = Number(metrics.total);
+        const sre = Number(metrics.sre) || 0;
+        const intensity = Number(metrics.intensity);
+        const fallback = Number.isFinite(intensity) && sre > 0 ? intensity * sre : 0;
+        const rawValue = Number.isFinite(total) ? total : fallback;
+        return {
+          id: summary?.id || '',
+          label: summary?.label || summary?.id || '',
+          value: Number.isFinite(rawValue) ? rawValue : 0,
+        };
+      }).filter(entry => entry.value > 0);
+
+      entries.sort((a, b) => b.value - a.value);
+
+      const totalValue = entries.reduce((sum, entry) => sum + entry.value, 0);
+      const maxValue = entries.reduce((acc, entry) => (entry.value > acc ? entry.value : acc), 0);
+      const count = entries.length;
+
+      if (barsContainer) {
+        barsContainer.innerHTML = '';
+        barsContainer.classList.toggle('is-empty', count === 0);
+        barsContainer.style.setProperty('--pareto-count', String(Math.max(count, 1)));
+
+        if (!count) {
+          const empty = document.createElement('p');
+          empty.className = 'chart-empty';
+          empty.textContent = 'Aucune donnée disponible pour la sélection.';
+          barsContainer.append(empty);
+        } else {
+          entries.forEach((entry, index) => {
+            const percent = maxValue > 0 ? (entry.value / maxValue) * 100 : 0;
+            const label = entry.label || `Bâtiment ${index + 1}`;
+            const valueText = `${formatEnergyDisplay(entry.value, 'kwh', decimals)} ${unit}`;
+            const bar = document.createElement('div');
+            bar.className = 'pareto-chart__bar';
+            bar.setAttribute('role', 'listitem');
+            bar.tabIndex = 0;
+            bar.style.setProperty('--value', percent.toFixed(4));
+            bar.dataset.label = label;
+            bar.dataset.value = valueText;
+            bar.setAttribute('aria-label', `${label} : ${valueText}`);
+            bar.title = `${label} • ${valueText}`;
+            barsContainer.append(bar);
+          });
+        }
+      }
+
+      const noteMessages = [];
+      if (!count) {
+        noteMessages.push('Aucune consommation disponible pour afficher un Pareto.');
+      }
+      if (mode === 'kwhm2' && count) {
+        noteMessages.push('La courbe de Pareto est masquée en mode kWh/m² ; les barres affichent la consommation totale.');
+      }
+      if (noteEl) {
+        if (noteMessages.length) {
+          noteEl.textContent = noteMessages.join(' ');
+          noteEl.hidden = false;
+        } else {
+          noteEl.textContent = '';
+          noteEl.hidden = true;
+        }
+      }
+
+      const totalFormatted = `${formatEnergyDisplay(totalValue, 'kwh', decimals)} ${unit}`;
+      if (totalEl) {
+        totalEl.textContent = `Total : ${totalFormatted}`;
+      }
+
+      const topCount = count ? Math.max(1, Math.round(count * 0.2)) : 0;
+      const topValue = topCount > 0 ? entries.slice(0, topCount).reduce((sum, entry) => sum + entry.value, 0) : 0;
+      const share = totalValue > 0 ? (topValue / totalValue) * 100 : 0;
+      let shareText = 'Top 20 % : 0 %';
+      if (share > 0) {
+        shareText = share < 0.1
+          ? 'Top 20 % : <0,1 %'
+          : `Top 20 % : ${PERCENT_FORMAT.format(Math.min(share, 100))} %`;
+      }
+      if (coverageEl) coverageEl.textContent = shareText;
+      if (countEl) countEl.textContent = `${formatCount(count)} bât.`;
+
+      figure.classList.toggle('is-empty', count === 0 || totalValue <= 0);
+
+      if (svg) {
+        const targetPolyline = polyline instanceof SVGPolylineElement ? polyline : svg.querySelector('polyline');
+        if (!count || totalValue <= 0 || mode === 'kwhm2' || !targetPolyline) {
+          svg.setAttribute('hidden', '');
+        } else {
+          svg.removeAttribute('hidden');
+          const points = ['0,100'];
+          let cumulative = 0;
+          entries.forEach((entry, index) => {
+            cumulative += entry.value;
+            const shareValue = totalValue > 0 ? Math.min(100, (cumulative / totalValue) * 100) : 0;
+            const x = ((index + 0.5) / count) * 100;
+            const y = 100 - shareValue;
+            points.push(`${x.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
+          });
+          points.push('100,0');
+          targetPolyline.setAttribute('points', points.join(' '));
+        }
+      }
     });
   };
 
@@ -5237,6 +5390,7 @@
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
     updateTopConsumersCards(mode, buildings);
+    updateParetoCharts(mode, buildings);
     updateTypologyChart(mode, typologies);
     updateEnergyMap(mode, mapPoints, aggregated);
     updateMonthlyChart(mode, monthly, aggregated);

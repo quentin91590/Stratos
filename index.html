@@ -1191,6 +1191,28 @@
                           </div>
                         </div>
                       </template>
+                      <template id="chart-template-general-pareto" data-caption="Contribution cumulée des bâtiments sur la consommation totale.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto par bâtiment</span>
+                            <span class="chart-unit" data-pareto-unit>kWh</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 kWh</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
+                          </div>
+                        </div>
+                      </template>
                     </div>
                   </div>
                   <aside id="chart-catalog" class="chart-catalog" aria-label="Catalogue de graphiques" role="dialog" aria-modal="true" hidden aria-hidden="true" tabindex="-1" data-catalog-anchor="trigger">
@@ -2081,6 +2103,120 @@
                           </span>
                         </button>
                       </li>
+                      <li data-chart-scope="general">
+                        <button type="button" class="catalog-card" data-chart-type="general-pareto" data-chart-group="general-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:88"></span>
+                                <span style="--h:66"></span>
+                                <span style="--h:46"></span>
+                                <span style="--h:28"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto énergie</span>
+                            <span class="catalog-card__meta">Cumul des consommations</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-scope="chaleur">
+                        <button type="button" class="catalog-card" data-chart-type="heat-pareto" data-chart-group="heat-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:86"></span>
+                                <span style="--h:64"></span>
+                                <span style="--h:44"></span>
+                                <span style="--h:30"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto chaleur</span>
+                            <span class="catalog-card__meta">Lecture 80/20 par bâtiment</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-scope="froid">
+                        <button type="button" class="catalog-card" data-chart-type="cold-pareto" data-chart-group="cold-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:84"></span>
+                                <span style="--h:62"></span>
+                                <span style="--h:40"></span>
+                                <span style="--h:24"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto froid</span>
+                            <span class="catalog-card__meta">Prioriser les usages</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-scope="elec">
+                        <button type="button" class="catalog-card" data-chart-type="elec-pareto" data-chart-group="elec-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:88"></span>
+                                <span style="--h:70"></span>
+                                <span style="--h:50"></span>
+                                <span style="--h:32"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto électricité</span>
+                            <span class="catalog-card__meta">Cumul des kWh par site</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-scope="co2">
+                        <button type="button" class="catalog-card" data-chart-type="co2-pareto" data-chart-group="co2-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:82"></span>
+                                <span style="--h:60"></span>
+                                <span style="--h:46"></span>
+                                <span style="--h:26"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto CO₂</span>
+                            <span class="catalog-card__meta">Contribution des bâtiments</span>
+                          </span>
+                        </button>
+                      </li>
+                      <li data-chart-scope="eau">
+                        <button type="button" class="catalog-card" data-chart-type="water-pareto" data-chart-group="water-pareto" aria-pressed="false">
+                          <span class="catalog-card__preview" aria-hidden="true">
+                            <span class="preview-pareto">
+                              <span class="preview-pareto__bars">
+                                <span style="--h:86"></span>
+                                <span style="--h:58"></span>
+                                <span style="--h:42"></span>
+                                <span style="--h:30"></span>
+                              </span>
+                              <span class="preview-pareto__line"></span>
+                            </span>
+                          </span>
+                          <span class="catalog-card__text">
+                            <span class="catalog-card__title">Pareto eau</span>
+                            <span class="catalog-card__meta">Volumes cumulés par site</span>
+                          </span>
+                        </button>
+                      </li>
                       </ul>
                       <footer class="catalog-footer">
                         <button type="button" class="catalog-action">Voir toute la bibliothèque</button>
@@ -2392,6 +2528,28 @@
                           <p class="monthly-summary" data-monthly-summary></p>
                         </div>
                       </template>
+                      <template id="chart-template-heat-pareto" data-caption="Bâtiments les plus contributeurs sur la chaleur totale.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto chaleur</span>
+                            <span class="chart-unit" data-pareto-unit>kWh</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation de chaleur par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 kWh</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
+                          </div>
+                        </div>
+                      </template>
 
                       <template id="chart-template-cold-production-donut" data-caption="Répartition des technologies de production de froid.">
                         <div class="energy-mix-content mix-variant mix-variant--donut">
@@ -2490,6 +2648,28 @@
                           <div class="distribution-legend">
                             <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
                             <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>2 800 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
+                      <template id="chart-template-cold-pareto" data-caption="Priorisation des bâtiments consommateurs de froid.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto froid</span>
+                            <span class="chart-unit" data-pareto-unit>kWh</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation de froid par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 kWh</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
                           </div>
                         </div>
                       </template>
@@ -2593,6 +2773,29 @@
                           <div class="distribution-legend">
                             <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
                             <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>8 200 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template id="chart-template-elec-pareto" data-caption="Hiérarchisation des consommations électriques.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto électricité</span>
+                            <span class="chart-unit" data-pareto-unit>kWh</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation électrique par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 kWh</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
                           </div>
                         </div>
                       </template>
@@ -3489,6 +3692,29 @@
                         </div>
                       </template>
 
+                      <template id="chart-template-co2-pareto" data-caption="Contribution des bâtiments aux émissions totales.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto CO₂</span>
+                            <span class="chart-unit" data-pareto-unit>kgCO₂e</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Émissions de CO₂ par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 kgCO₂e</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
+                          </div>
+                        </div>
+                      </template>
+
                       <figure class="energy-typology-card" aria-label="Émissions par typologie" data-chart-scope="co2" data-chart-metric="co2" data-chart-slot="co2-typology" data-chart-type="typology-columns" data-chart-group="co2-typology" tabindex="0">
                         <button type="button" class="chart-delete-btn" aria-label="Supprimer ce graphique">
                           <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -3943,6 +4169,29 @@
                           <div class="distribution-legend">
                             <span><span class="legend-bar"></span> Sélection (<span data-distribution-selection>0 bât.</span>)</span>
                             <span><span class="legend-line"></span> Benchmark (<span data-distribution-benchmark>2 540 bât.</span>)</span>
+                          </div>
+                        </div>
+                      </template>
+
+                      <template id="chart-template-water-pareto" data-caption="Pareto des volumes d’eau consommés par bâtiment.">
+                        <div class="chart-variant chart-variant--pareto">
+                          <div class="chart-title">
+                            <span>Pareto eau</span>
+                            <span class="chart-unit" data-pareto-unit>m³</span>
+                          </div>
+                          <div class="pareto-chart" data-pareto-chart>
+                            <div class="pareto-chart__inner">
+                              <div class="pareto-chart__bars" data-pareto-bars role="list" aria-label="Consommation d’eau par bâtiment"></div>
+                              <svg class="pareto-chart__line" data-pareto-line viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+                                <polyline data-pareto-polyline points=""></polyline>
+                              </svg>
+                            </div>
+                          </div>
+                          <p class="chart-note" data-pareto-note hidden>La courbe de Pareto est masquée en mode kWh/m².</p>
+                          <div class="chart-footer">
+                            <span data-pareto-total>Total : 0 m³</span>
+                            <span data-pareto-coverage>Top 20 % : 0 %</span>
+                            <span data-pareto-count>0 bât.</span>
                           </div>
                         </div>
                       </template>

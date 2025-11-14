@@ -26,7 +26,7 @@
 
   const formatPercentCoord = (value) => clampPercent(value).toFixed(2);
 
-  const buildSmoothParetoPath = (points, tension = 0.65) => {
+  const buildSmoothParetoPath = (points, tension = 0.55) => {
     if (!Array.isArray(points) || points.length === 0) {
       return '';
     }
@@ -63,6 +63,16 @@
         x: p2.x - ((p3.x - p1.x) * smoothness) / 6,
         y: p2.y - ((p3.y - p1.y) * smoothness) / 6,
       };
+
+      const minX = Math.min(p1.x, p2.x);
+      const maxX = Math.max(p1.x, p2.x);
+      const minY = Math.min(p1.y, p2.y);
+      const maxY = Math.max(p1.y, p2.y);
+
+      cp1.x = clamp(cp1.x, minX, maxX);
+      cp2.x = clamp(cp2.x, minX, maxX);
+      cp1.y = clamp(cp1.y, minY, maxY);
+      cp2.y = clamp(cp2.y, minY, maxY);
 
       pathParts.push(
         `C ${formatPercentCoord(cp1.x)} ${formatPercentCoord(cp1.y)} ${formatPercentCoord(cp2.x)} ${formatPercentCoord(cp2.y)} ${formatPercentCoord(p2.x)} ${formatPercentCoord(p2.y)}`,

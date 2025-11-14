@@ -8,6 +8,11 @@
     maximumFractionDigits: 1,
     minimumFractionDigits: 0,
   });
+  const PARETO_MIN_LEFT_GAP = 68;
+  const PARETO_MIN_RIGHT_GAP = 40;
+  const PARETO_LEFT_LABEL_PADDING = 16;
+  const PARETO_RIGHT_LABEL_PADDING = 16;
+  const PARETO_SCALE_OFFSET = 12;
 
   const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
   const clamp = (value, min, max) => {
@@ -291,6 +296,19 @@
     medium: '#38bdf8',
     high: '#f97316',
     critical: '#ef4444',
+  };
+
+  const measureElementWidth = (element) => {
+    if (!element) return 0;
+    const rect = typeof element.getBoundingClientRect === 'function'
+      ? element.getBoundingClientRect()
+      : null;
+    const candidates = [
+      rect && Number.isFinite(rect.width) ? rect.width : 0,
+      typeof element.offsetWidth === 'number' && Number.isFinite(element.offsetWidth) ? element.offsetWidth : 0,
+      typeof element.scrollWidth === 'number' && Number.isFinite(element.scrollWidth) ? element.scrollWidth : 0,
+    ];
+    return candidates.reduce((max, value) => (Number.isFinite(value) && value > max ? value : max), 0);
   };
 
   const MAP_CARD_STATE = new WeakMap();
@@ -5191,6 +5209,7 @@
       const chartEl = figure.querySelector('[data-pareto-chart]');
       const barsContainer = figure.querySelector('[data-pareto-bars]');
       const valueScaleEl = figure.querySelector('[data-pareto-scale-values]');
+      const percentScaleEl = figure.querySelector('.pareto-chart__scale:not(.pareto-chart__scale--values)');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
       const markersContainer = figure.querySelector('[data-pareto-markers]');
@@ -5295,6 +5314,9 @@
         if (!scaleIntervals || scaleMax <= 0 || !scaleTicks.length) {
           valueScaleEl.innerHTML = '';
           valueScaleEl.setAttribute('hidden', '');
+          if (chartEl) {
+            chartEl.style.setProperty('--pareto-left-gap', `${PARETO_MIN_LEFT_GAP}px`);
+          }
         } else {
           const formatScaleValue = (rawValue) => {
             if (!Number.isFinite(rawValue) || rawValue <= 0) {
@@ -5320,7 +5342,26 @@
             valueScaleEl.append(item);
           });
           valueScaleEl.removeAttribute('hidden');
+          if (chartEl) {
+            const leftLabelsWidth = measureElementWidth(valueScaleEl);
+            const computedLeftGap = Math.max(
+              PARETO_MIN_LEFT_GAP,
+              Math.ceil(leftLabelsWidth + PARETO_SCALE_OFFSET + PARETO_LEFT_LABEL_PADDING),
+            );
+            chartEl.style.setProperty('--pareto-left-gap', `${computedLeftGap}px`);
+          }
         }
+      } else if (chartEl) {
+        chartEl.style.setProperty('--pareto-left-gap', `${PARETO_MIN_LEFT_GAP}px`);
+      }
+
+      if (chartEl) {
+        const rightLabelsWidth = measureElementWidth(percentScaleEl);
+        const computedRightGap = Math.max(
+          PARETO_MIN_RIGHT_GAP,
+          Math.ceil(rightLabelsWidth + PARETO_SCALE_OFFSET + PARETO_RIGHT_LABEL_PADDING),
+        );
+        chartEl.style.setProperty('--pareto-right-gap', `${computedRightGap}px`);
       }
 
       if (tooltipLayer) {

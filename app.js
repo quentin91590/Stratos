@@ -13,12 +13,90 @@
   const PARETO_LEFT_LABEL_PADDING = 16;
   const PARETO_RIGHT_LABEL_PADDING = 16;
   const PARETO_SCALE_OFFSET = 12;
+  const SVG_NS = 'http://www.w3.org/2000/svg';
 
   const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
   const clamp = (value, min, max) => {
     const num = Number(value);
     if (!Number.isFinite(num)) return min;
     return Math.min(Math.max(num, min), max);
+  };
+
+  const clampPercent = (value) => clamp(value, 0, 100);
+
+  const formatPercentCoord = (value) => clampPercent(value).toFixed(2);
+
+  const buildSmoothParetoPath = (points, tension = 0.65) => {
+    if (!Array.isArray(points) || points.length === 0) {
+      return '';
+    }
+
+    const normalizedPoints = points.map((point) => ({
+      x: clampPercent(point?.x ?? 0),
+      y: clampPercent(point?.y ?? 0),
+    }));
+
+    if (normalizedPoints.length === 1) {
+      const [p] = normalizedPoints;
+      return `M ${formatPercentCoord(p.x)} ${formatPercentCoord(p.y)}`;
+    }
+
+    if (normalizedPoints.length === 2) {
+      const [p1, p2] = normalizedPoints;
+      return `M ${formatPercentCoord(p1.x)} ${formatPercentCoord(p1.y)} L ${formatPercentCoord(p2.x)} ${formatPercentCoord(p2.y)}`;
+    }
+
+    const smoothness = clamp01(typeof tension === 'number' ? tension : 0.65);
+    const pathParts = [`M ${formatPercentCoord(normalizedPoints[0].x)} ${formatPercentCoord(normalizedPoints[0].y)}`];
+
+    for (let i = 0; i < normalizedPoints.length - 1; i += 1) {
+      const p0 = normalizedPoints[i - 1] || normalizedPoints[i];
+      const p1 = normalizedPoints[i];
+      const p2 = normalizedPoints[i + 1];
+      const p3 = normalizedPoints[i + 2] || p2;
+
+      const cp1 = {
+        x: p1.x + ((p2.x - p0.x) * smoothness) / 6,
+        y: p1.y + ((p2.y - p0.y) * smoothness) / 6,
+      };
+      const cp2 = {
+        x: p2.x - ((p3.x - p1.x) * smoothness) / 6,
+        y: p2.y - ((p3.y - p1.y) * smoothness) / 6,
+      };
+
+      pathParts.push(
+        `C ${formatPercentCoord(cp1.x)} ${formatPercentCoord(cp1.y)} ${formatPercentCoord(cp2.x)} ${formatPercentCoord(cp2.y)} ${formatPercentCoord(p2.x)} ${formatPercentCoord(p2.y)}`,
+      );
+    }
+
+    return pathParts.join(' ');
+  };
+
+  const ensureSvgPathElement = (element) => {
+    if (!element) return null;
+    if (element instanceof SVGPathElement) return element;
+    const tagName = typeof element.tagName === 'string' ? element.tagName.toLowerCase() : '';
+    if (element instanceof SVGPolylineElement || tagName === 'polyline') {
+      const pathEl = document.createElementNS(SVG_NS, 'path');
+      if (element.hasAttributes()) {
+        Array.from(element.attributes).forEach((attr) => {
+          if (attr.name === 'points') return;
+          pathEl.setAttribute(attr.name, attr.value);
+        });
+      }
+      Object.entries(element.dataset || {}).forEach(([key, value]) => {
+        pathEl.dataset[key] = value;
+      });
+      if (typeof element.className === 'string' && element.className) {
+        pathEl.setAttribute('class', element.className);
+      } else if (element.className && typeof element.className.baseVal === 'string' && element.className.baseVal) {
+        pathEl.setAttribute('class', element.className.baseVal);
+      }
+      pathEl.setAttribute('d', '');
+      element.replaceWith(pathEl);
+      return pathEl;
+    }
+    return element instanceof SVGPathElement ? element : null;
   };
 
   const hexToRgb = (hex) => {
@@ -5212,6 +5290,7 @@
       const percentScaleEl = figure.querySelector('.pareto-chart__scale:not(.pareto-chart__scale--values)');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
+      const lineElement = ensureSvgPathElement(polyline);
       const markersContainer = figure.querySelector('[data-pareto-markers]');
       const tooltipHost = figure.querySelector('.pareto-chart__inner');
       let tooltipLayer = figure.querySelector('[data-pareto-tooltips]');
@@ -5544,16 +5623,21 @@
       figure.classList.toggle('is-empty', activeCount === 0 || totalValue <= 0);
 
       if (svg) {
-        const targetPolyline = polyline instanceof SVGPolylineElement ? polyline : svg.querySelector('polyline');
-        if (!count || totalValue <= 0 || mode === 'kwhm2' || !targetPolyline) {
+        const targetLine = lineElement instanceof SVGPathElement ? lineElement : ensureSvgPathElement(svg?.querySelector('[data-pareto-polyline]') || null);
+        if (!count || totalValue <= 0 || mode === 'kwhm2' || !targetLine) {
           svg.setAttribute('hidden', '');
+          if (targetLine instanceof SVGPathElement) {
+            targetLine.setAttribute('d', '');
+          } else if (targetLine instanceof SVGPolylineElement) {
+            targetLine.setAttribute('points', '');
+          }
           if (markersContainer) {
             markersContainer.innerHTML = '';
             markersContainer.setAttribute('hidden', '');
           }
         } else {
           svg.removeAttribute('hidden');
-          const points = [];
+          const pathPoints = [];
           const markerData = [];
           let cumulative = 0;
           const columnWidth = count > 0 ? 100 / count : 100;
@@ -5569,20 +5653,25 @@
 
             const clampedShare = Math.min(100, Math.max(0, shareValue));
             const centerX = Math.min(100, Math.max(0, (index + 0.5) * columnWidth));
-            const y = 100 - clampedShare;
+            const y = Math.max(0, 100 - clampedShare);
 
-            points.push(`${centerX.toFixed(2)},${Math.max(0, y).toFixed(2)}`);
+            pathPoints.push({ x: centerX, y });
             if (entry.isActive) {
               markerData.push({
                 x: centerX,
-                y: Math.max(0, y),
+                y,
                 share: clampedShare,
                 label: entry.label || `Bâtiment ${index + 1}`,
               });
             }
           });
 
-          targetPolyline.setAttribute('points', points.join(' '));
+          if (targetLine instanceof SVGPathElement) {
+            targetLine.setAttribute('d', buildSmoothParetoPath(pathPoints));
+          } else if (targetLine instanceof SVGPolylineElement) {
+            const fallbackPoints = pathPoints.map((point) => `${formatPercentCoord(point.x)},${formatPercentCoord(point.y)}`);
+            targetLine.setAttribute('points', fallbackPoints.join(' '));
+          }
 
           if (markersContainer) {
             markersContainer.innerHTML = '';

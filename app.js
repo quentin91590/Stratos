@@ -8,6 +8,11 @@
     maximumFractionDigits: 1,
     minimumFractionDigits: 0,
   });
+  const PARETO_MIN_LEFT_GAP = 68;
+  const PARETO_MIN_RIGHT_GAP = 40;
+  const PARETO_LEFT_LABEL_PADDING = 16;
+  const PARETO_RIGHT_LABEL_PADDING = 16;
+  const PARETO_SCALE_OFFSET = 12;
 
   const clamp01 = (value) => Math.max(0, Math.min(1, Number(value) || 0));
   const clamp = (value, min, max) => {
@@ -291,6 +296,19 @@
     medium: '#38bdf8',
     high: '#f97316',
     critical: '#ef4444',
+  };
+
+  const measureElementWidth = (element) => {
+    if (!element) return 0;
+    const rect = typeof element.getBoundingClientRect === 'function'
+      ? element.getBoundingClientRect()
+      : null;
+    const candidates = [
+      rect && Number.isFinite(rect.width) ? rect.width : 0,
+      typeof element.offsetWidth === 'number' && Number.isFinite(element.offsetWidth) ? element.offsetWidth : 0,
+      typeof element.scrollWidth === 'number' && Number.isFinite(element.scrollWidth) ? element.scrollWidth : 0,
+    ];
+    return candidates.reduce((max, value) => (Number.isFinite(value) && value > max ? value : max), 0);
   };
 
   const MAP_CARD_STATE = new WeakMap();
@@ -2511,38 +2529,91 @@
     return NF.format(Math.max(0, Math.round(num)));
   };
 
-  const niceCeil = (value) => {
-    if (!Number.isFinite(value) || value <= 0) return 0;
-    const absolute = Math.abs(value);
-    const exponent = Math.floor(Math.log10(absolute));
-    const magnitude = 10 ** exponent;
-    const fraction = absolute / magnitude;
-    let niceFraction;
-    if (fraction <= 1) {
-      niceFraction = 1;
-    } else if (fraction <= 2) {
-      niceFraction = 2;
-    } else if (fraction <= 5) {
-      niceFraction = 5;
-    } else {
-      niceFraction = 10;
-    }
-    return niceFraction * magnitude;
-  };
-
   const computeParetoScaleTicks = (maxValue, intervals = 4) => {
     if (!Number.isFinite(maxValue) || maxValue <= 0) {
       return { max: 0, step: 0, ticks: [0] };
     }
-    const safeIntervals = Math.max(1, intervals);
-    const niceMax = niceCeil(maxValue);
-    const step = niceMax / safeIntervals;
-    const ticks = [];
-    for (let i = safeIntervals; i >= 0; i -= 1) {
-      const value = Number.parseFloat((step * i).toFixed(6));
-      ticks.push(value);
+    const safeIntervals = Math.max(1, Math.round(intervals));
+    const safeMax = Math.abs(maxValue);
+
+    const niceFractions = [1, 1.2, 1.25, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5, 6, 8, 10];
+    const computeStep = (intervalCount) => {
+      if (!Number.isFinite(intervalCount) || intervalCount <= 0) return 0;
+      const rawStep = safeMax / intervalCount;
+      if (!Number.isFinite(rawStep) || rawStep <= 0) return 0;
+      const exponent = Math.floor(Math.log10(rawStep));
+      const magnitude = 10 ** exponent;
+      const fraction = rawStep / magnitude;
+      let selected = niceFractions[niceFractions.length - 1];
+      for (let i = 0; i < niceFractions.length; i += 1) {
+        if (fraction <= niceFractions[i] + 1e-9) {
+          selected = niceFractions[i];
+          break;
+        }
+      }
+      return magnitude * selected;
+    };
+
+    const candidateIntervals = new Set([
+      safeIntervals,
+      safeIntervals + 1,
+      safeIntervals - 1,
+      safeIntervals + 2,
+    ]);
+
+    const evaluated = [];
+    candidateIntervals.forEach((candidate) => {
+      if (!Number.isFinite(candidate) || candidate <= 0) return;
+      const step = computeStep(candidate);
+      if (!Number.isFinite(step) || step <= 0) return;
+      const scaleMax = step * candidate;
+      if (!Number.isFinite(scaleMax) || scaleMax <= 0) return;
+      const overshootRatio = Math.max(0, scaleMax - safeMax) / (safeMax || 1);
+      evaluated.push({
+        intervals: Math.round(candidate),
+        step,
+        scaleMax,
+        overshootRatio,
+        intervalDistance: Math.abs(Math.round(candidate) - safeIntervals),
+      });
+    });
+
+    if (!evaluated.length) {
+      const fallbackStep = safeMax / safeIntervals;
+      const ticks = [];
+      for (let i = 0; i <= safeIntervals; i += 1) {
+        ticks.push(Number.parseFloat((fallbackStep * i).toFixed(6)));
+      }
+      return {
+        max: Number.parseFloat((fallbackStep * safeIntervals).toFixed(6)),
+        step: fallbackStep,
+        ticks,
+      };
     }
-    return { max: niceMax, step, ticks };
+
+    evaluated.sort((a, b) => {
+      if (Math.abs(a.overshootRatio - b.overshootRatio) > 1e-9) {
+        return a.overshootRatio - b.overshootRatio;
+      }
+      if (a.intervalDistance !== b.intervalDistance) {
+        return a.intervalDistance - b.intervalDistance;
+      }
+      if (a.scaleMax !== b.scaleMax) {
+        return a.scaleMax - b.scaleMax;
+      }
+      return a.intervals - b.intervals;
+    });
+
+    const best = evaluated[0];
+    const intervalCount = Math.max(1, best?.intervals || safeIntervals);
+    const step = Number.isFinite(best?.step) && best.step > 0 ? best.step : safeMax / intervalCount;
+    const ticks = [];
+    for (let i = 0; i <= intervalCount; i += 1) {
+      ticks.push(Number.parseFloat((step * i).toFixed(6)));
+    }
+
+    const maxTick = ticks[ticks.length - 1] || 0;
+    return { max: Number.isFinite(maxTick) ? maxTick : safeMax, step, ticks };
   };
 
   const describeMix = (shares, totalPerM2, mode, sre, unitLabel) => {
@@ -5138,6 +5209,7 @@
       const chartEl = figure.querySelector('[data-pareto-chart]');
       const barsContainer = figure.querySelector('[data-pareto-bars]');
       const valueScaleEl = figure.querySelector('[data-pareto-scale-values]');
+      const percentScaleEl = figure.querySelector('.pareto-chart__scale:not(.pareto-chart__scale--values)');
       const svg = figure.querySelector('[data-pareto-line]');
       const polyline = svg?.querySelector('[data-pareto-polyline]') || null;
       const markersContainer = figure.querySelector('[data-pareto-markers]');
@@ -5212,6 +5284,11 @@
               .map((tick) => (Number.isFinite(tick) ? Number(tick) : Number.parseFloat(tick)))
               .filter((tick) => Number.isFinite(tick));
             scaleTicks.sort((a, b) => b - a);
+            const hasZeroTick = scaleTicks.some((tick) => Math.abs(tick) < 1e-9);
+            if (!hasZeroTick) {
+              scaleTicks.push(0);
+              scaleTicks.sort((a, b) => b - a);
+            }
             if (scaleTicks.length && Number.isFinite(scaleTicks[0]) && scaleTicks[0] > 0) {
               scaleMax = scaleTicks[0];
             }
@@ -5237,6 +5314,9 @@
         if (!scaleIntervals || scaleMax <= 0 || !scaleTicks.length) {
           valueScaleEl.innerHTML = '';
           valueScaleEl.setAttribute('hidden', '');
+          if (chartEl) {
+            chartEl.style.setProperty('--pareto-left-gap', `${PARETO_MIN_LEFT_GAP}px`);
+          }
         } else {
           const formatScaleValue = (rawValue) => {
             if (!Number.isFinite(rawValue) || rawValue <= 0) {
@@ -5262,7 +5342,26 @@
             valueScaleEl.append(item);
           });
           valueScaleEl.removeAttribute('hidden');
+          if (chartEl) {
+            const leftLabelsWidth = measureElementWidth(valueScaleEl);
+            const computedLeftGap = Math.max(
+              PARETO_MIN_LEFT_GAP,
+              Math.ceil(leftLabelsWidth + PARETO_SCALE_OFFSET + PARETO_LEFT_LABEL_PADDING),
+            );
+            chartEl.style.setProperty('--pareto-left-gap', `${computedLeftGap}px`);
+          }
         }
+      } else if (chartEl) {
+        chartEl.style.setProperty('--pareto-left-gap', `${PARETO_MIN_LEFT_GAP}px`);
+      }
+
+      if (chartEl) {
+        const rightLabelsWidth = measureElementWidth(percentScaleEl);
+        const computedRightGap = Math.max(
+          PARETO_MIN_RIGHT_GAP,
+          Math.ceil(rightLabelsWidth + PARETO_SCALE_OFFSET + PARETO_RIGHT_LABEL_PADDING),
+        );
+        chartEl.style.setProperty('--pareto-right-gap', `${computedRightGap}px`);
       }
 
       if (tooltipLayer) {

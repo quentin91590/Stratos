@@ -869,19 +869,16 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 
 .energy-map{display:flex; gap:18px; align-items:stretch}
 .energy-map--grid{align-items:flex-start}
-.map-canvas{position:relative; flex:1 1 auto; min-height:260px; border-radius:18px; background:linear-gradient(135deg, rgba(226,232,240,0.45), rgba(203,213,225,0.2)); border:1px solid rgba(148,163,184,0.45); box-shadow:inset 0 1px 4px rgba(15,23,42,0.08); overflow:hidden; --map-scale:1; --map-translate-x:0%; --map-translate-y:0%}
-.map-canvas[data-map-transform] .map-viewport,.map-canvas[data-map-transform] .map-markers,.map-canvas[data-map-transform] .map-viewport__frame{transform-origin:0 0; transform:translate(var(--map-translate-x), var(--map-translate-y)) scale(var(--map-scale)); transition:transform .24s ease}
+.map-canvas{position:relative; flex:1 1 auto; min-height:260px; border-radius:18px; background:#dbeafe; border:1px solid rgba(148,163,184,0.45); box-shadow:inset 0 1px 4px rgba(15,23,42,0.08); overflow:hidden}
 .map-canvas--grid{display:grid; grid-template-columns:repeat(auto-fill, minmax(72px, 1fr)); gap:12px; padding:18px}
 .map-canvas--grid .map-markers{position:static; display:contents; pointer-events:auto}
-.map-viewport{position:absolute; inset:0; border-radius:inherit; overflow:hidden; background:
-  radial-gradient(120% 120% at 50% 50%, rgba(148,163,184,0.32), transparent 62%),
-  radial-gradient(130% 110% at 20% 20%, rgba(59,130,246,0.18), transparent 70%),
-  radial-gradient(140% 140% at 80% 30%, rgba(16,185,129,0.16), transparent 75%),
-  linear-gradient(135deg, rgba(226,232,240,0.5), rgba(203,213,225,0.3));
-}
-.map-viewport::before{content:""; position:absolute; inset:0; background-image:linear-gradient(to right, rgba(148,163,184,0.12) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,0.12) 1px, transparent 1px); background-size:48px 48px; opacity:0.7; pointer-events:none}
-.map-viewport__frame{position:absolute; border:1.5px solid rgba(15,23,42,0.25); border-radius:14px; box-shadow:0 12px 30px rgba(15,23,42,0.18); background:rgba(255,255,255,0.14); backdrop-filter:blur(4px); pointer-events:none; transition:all .18s ease}
-.map-markers{position:absolute; inset:0; pointer-events:none; margin:0; padding:0; list-style:none}
+.map-viewport{position:absolute; inset:0; border-radius:inherit; overflow:hidden; background:#cbd5f5}
+.map-canvas .leaflet-container{width:100%; height:100%; border-radius:inherit; font-family:inherit; background:#e0f2fe}
+.leaflet-control-attribution{background:rgba(255,255,255,0.85); border-radius:10px; padding:4px 8px; margin:0 8px 8px}
+.leaflet-div-icon{background:transparent; border:none}
+.leaflet-tooltip{background:rgba(15,23,42,0.85); color:#f8fafc; border:none; border-radius:8px; padding:6px 10px; box-shadow:0 12px 22px rgba(15,23,42,0.28); font-size:.75rem; font-weight:600}
+.leaflet-tooltip-top:before{border-top-color:rgba(15,23,42,0.85)}
+.map-markers{position:absolute; inset:0; margin:0; padding:0; list-style:none; pointer-events:none}
 .map-marker{position:absolute; transform:translate(-50%, -50%); display:flex; align-items:center; gap:8px; font-size:.82rem; font-weight:600; color:#0f172a; pointer-events:auto; transition:transform .18s ease, filter .18s ease}
 .map-marker:hover{transform:translate(-50%, -52%); filter:drop-shadow(0 10px 16px rgba(15,23,42,0.22))}
 .map-marker__dot{width:var(--marker-size,16px); height:var(--marker-size,16px); border-radius:999px; box-shadow:0 0 0 2px #fff, 0 6px 14px rgba(15,23,42,0.22)}

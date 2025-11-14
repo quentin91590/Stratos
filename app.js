@@ -5212,6 +5212,11 @@
               .map((tick) => (Number.isFinite(tick) ? Number(tick) : Number.parseFloat(tick)))
               .filter((tick) => Number.isFinite(tick));
             scaleTicks.sort((a, b) => b - a);
+            const hasZeroTick = scaleTicks.some((tick) => Math.abs(tick) < 1e-9);
+            if (!hasZeroTick) {
+              scaleTicks.push(0);
+              scaleTicks.sort((a, b) => b - a);
+            }
             if (scaleTicks.length && Number.isFinite(scaleTicks[0]) && scaleTicks[0] > 0) {
               scaleMax = scaleTicks[0];
             }

@@ -5555,7 +5555,6 @@
           svg.removeAttribute('hidden');
           const points = [];
           const markerData = [];
-          points.push('0,100');
           let cumulative = 0;
           const columnWidth = count > 0 ? 100 / count : 100;
 

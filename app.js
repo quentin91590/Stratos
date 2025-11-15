@@ -6271,14 +6271,9 @@
           labelEl.className = 'monthly-label';
           labelEl.textContent = item.label;
 
-          const valueBadge = document.createElement('span');
-          valueBadge.className = 'monthly-bar__value';
-          valueBadge.textContent = totalText;
-          valueBadge.setAttribute('aria-hidden', 'true');
-
           const stackWrap = document.createElement('div');
           stackWrap.className = 'monthly-stack-wrap';
-          stackWrap.append(stack, valueBadge);
+          stackWrap.append(stack);
 
           bar.append(stackWrap, labelEl);
           barsWrap.append(bar);

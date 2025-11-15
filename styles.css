@@ -929,10 +929,6 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .monthly-bar.is-tooltip-active .monthly-stack{transform:translateY(-6px); box-shadow:0 16px 32px rgba(15,23,42,0.18)}
 .monthly-bar:focus-visible .monthly-stack{box-shadow:0 0 0 4px var(--ring, rgba(37,99,235,0.28)), 0 18px 36px rgba(15,23,42,0.22)}
 .monthly-segment{width:100%; display:block; height:calc(var(--value,0) * var(--monthly-scale)); transition:height .24s ease}
-.monthly-bar__value{position:absolute; left:50%; bottom:calc(100% + 14px); transform:translate(-50%, 12px); opacity:0; pointer-events:none; background:#fff; color:#0f172a; font-size:.78rem; font-weight:700; padding:6px 14px; border-radius:999px; box-shadow:0 14px 30px rgba(15,23,42,0.22); white-space:nowrap; transition:opacity .18s ease, transform .18s ease; z-index:30; font-variant-numeric:tabular-nums}
-.monthly-bar:hover .monthly-bar__value,
-.monthly-bar:focus-visible .monthly-bar__value,
-.monthly-bar.is-tooltip-active .monthly-bar__value{opacity:1; transform:translate(-50%, 0)}
 .monthly-label{font-size:.78rem; font-weight:600; color:#475569; letter-spacing:.02em; text-transform:uppercase; text-align:center}
 .monthly-segment--chaleur{background:linear-gradient(180deg, #f97316, #fb923c)}
 .monthly-segment--electricite{background:linear-gradient(180deg, #38bdf8, #0ea5e9)}

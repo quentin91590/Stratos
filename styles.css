@@ -1367,12 +1367,12 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
   display:flex;
   flex-direction:column;
   gap:4px;
-  --tree-accent: var(--c-teal);
-  --tree-accent-bg: color-mix(in srgb, var(--tree-accent) 20%, transparent);
-  --tree-accent-glow: color-mix(in srgb, var(--tree-accent) 32%, transparent);
-  --tree-accent-ring: color-mix(in srgb, var(--tree-accent) 50%, transparent);
-  --tree-accent-focus: color-mix(in srgb, var(--tree-accent) 45%, transparent);
-  --tree-check-bg: color-mix(in srgb, var(--c-green) 22%, transparent);
+  --tree-accent: var(--c-green);
+  --tree-accent-bg: color-mix(in srgb, var(--tree-accent) 18%, white 82%);
+  --tree-accent-glow: color-mix(in srgb, var(--tree-accent) 36%, transparent);
+  --tree-accent-ring: color-mix(in srgb, var(--tree-accent) 52%, transparent);
+  --tree-accent-focus: color-mix(in srgb, var(--tree-accent) 42%, transparent);
+  --tree-check-bg: color-mix(in srgb, var(--tree-accent) 24%, white 76%);
   --tree-missing: var(--c-red);
   --tree-missing-soft: color-mix(in srgb, var(--tree-missing) 12%, white 88%);
   --tree-missing-hover: color-mix(in srgb, var(--tree-missing) 18%, white 82%);
@@ -1406,7 +1406,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
   border-radius:50%;
   border:1px solid var(--tree-missing-strong);
   background:var(--tree-missing-soft);
-  color:var(--c-red);
+  color:var(--tree-missing);
   cursor:pointer;
   transition: background .15s ease, border-color .15s ease, color .15s ease;
 }
@@ -1419,7 +1419,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 .tree-leaf__missing-info[aria-expanded="true"]{
   background:var(--tree-missing-hover);
   border-color:color-mix(in srgb, var(--tree-missing) 78%, transparent);
-  color:var(--c-red);
+  color:var(--tree-missing);
 }
 .tree-leaf__missing-info:focus-visible{
   outline:none;
@@ -1503,7 +1503,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
   display:grid;
   place-items:center;
   transition: border-color .15s ease, background .15s ease, color .15s ease, box-shadow .15s ease;
-  color:var(--c-teal);
+  color:var(--tree-accent);
   font-size: 11px;
   font-weight:700;
   line-height:1;
@@ -1519,7 +1519,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 }
 .tree-check:checked{
   background:var(--tree-check-bg);
-  border-color:var(--c-teal);
+  border-color:var(--tree-accent);
   box-shadow:0 0 0 2px var(--tree-accent-glow);
 }
 .tree-check:checked::after{
@@ -1532,7 +1532,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 }
 .tree-leaf.is-missing .tree-check,
 .tree-node.is-missing .tree-check{
-  color:var(--c-red);
+  color:var(--tree-missing);
 }
 .tree-leaf.is-missing .tree-check::after,
 .tree-node.is-missing .tree-check::after{
@@ -1541,9 +1541,9 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 }
 .tree-leaf.is-missing .tree-check:checked,
 .tree-node.is-missing .tree-check:checked{
-  background:color-mix(in srgb, var(--tree-missing) 16%, transparent);
-  border-color:var(--c-red);
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--tree-missing) 32%, transparent);
+  background:color-mix(in srgb, var(--tree-missing) 22%, white 78%);
+  border-color:var(--tree-missing);
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--tree-missing) 40%, transparent);
 }
 .tree-leaf.is-missing .tree-check:checked::after,
 .tree-node.is-missing .tree-check:checked::after{
@@ -1561,7 +1561,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 }
 .tree-leaf.is-missing.is-active .tree-check,
 .tree-node.is-missing.is-active .tree-check{
-  border-color:var(--c-red);
+  border-color:var(--tree-missing);
 }
 .tree-leaf.is-missing .tree-check:focus-visible,
 .tree-node.is-missing .tree-check:focus-visible{

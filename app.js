@@ -140,17 +140,69 @@
     return `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, ${ratio})`;
   };
 
+  const CSS_PALETTE_MAP = {
+    red: '--c-red',
+    orange1: '--c-orange-1',
+    orange2: '--c-orange-2',
+    orange3: '--c-orange-3',
+    yellow: '--c-yellow',
+    green: '--c-green',
+    teal: '--c-teal',
+    tealMuted: '--c-teal-muted',
+    blueSoft: '--c-blue-soft',
+    blueDeep: '--c-blue-deep',
+  };
+
+  const FALLBACK_PALETTE = {
+    red: '#F94144',
+    orange1: '#F3722C',
+    orange2: '#F8961E',
+    orange3: '#F9844A',
+    yellow: '#F9C74F',
+    green: '#90BE6D',
+    teal: '#43AA8B',
+    tealMuted: '#4D908E',
+    blueSoft: '#577590',
+    blueDeep: '#277DA1',
+  };
+
+  const readCssPalette = () => {
+    const styles = getComputedStyle(document.documentElement);
+    return Object.fromEntries(
+      Object.entries(CSS_PALETTE_MAP).map(([key, varName]) => {
+        const value = styles.getPropertyValue(varName).trim();
+        return [key, value || FALLBACK_PALETTE[key]];
+      }),
+    );
+  };
+
+  const COLOR_PALETTE = readCssPalette();
+
+  if (typeof window !== 'undefined') {
+    window.STRATOS_PALETTE = Object.freeze({ ...COLOR_PALETTE });
+  }
+
+  const paletteColor = (key) => COLOR_PALETTE[key] || FALLBACK_PALETTE[key];
+
   const TREEMAP_COLORS = [
-    '#277DA1',
-    '#4D908E',
-    '#577590',
-    '#90BE6D',
-    '#F3722C',
-    '#43AA8B',
-    '#F9844A',
-    '#F9C74F',
-    '#F94144',
+    paletteColor('blueDeep'),
+    paletteColor('tealMuted'),
+    paletteColor('blueSoft'),
+    paletteColor('green'),
+    paletteColor('orange1'),
+    paletteColor('teal'),
+    paletteColor('orange3'),
+    paletteColor('yellow'),
+    paletteColor('red'),
   ];
+
+  const SECTION_COLOR_KEYS = {
+    energie: 'blueDeep',
+    general: 'blueSoft',
+    etat: 'teal',
+    travaux: 'orange1',
+    financier: 'yellow',
+  };
 
   const computeTreemapLayout = (items, x = 0, y = 0, width = 1, height = 1, splitHorizontal = width >= height) => {
     if (!Array.isArray(items) || !items.length) return [];
@@ -380,10 +432,10 @@
   let energySubnavTabsGrid = null;
 
   const MAP_SEVERITY_COLORS = {
-    low: '#90BE6D',
-    medium: '#277DA1',
-    high: '#F3722C',
-    critical: '#F94144',
+    low: paletteColor('green'),
+    medium: paletteColor('blueDeep'),
+    high: paletteColor('orange1'),
+    critical: paletteColor('red'),
   };
 
   const measureElementWidth = (element) => {
@@ -3961,11 +4013,9 @@
     });
 
     // Couleur
-    if (name === 'energie') root.style.setProperty('--section-color', '#277DA1');
-    else {
-      const map = { general: '#577590', etat: '#43AA8B', travaux: '#F3722C', financier: '#F9C74F' };
-      root.style.setProperty('--section-color', map[name] || '#94a3b8');
-    }
+    const sectionKey = SECTION_COLOR_KEYS[name];
+    const sectionColor = sectionKey ? paletteColor(sectionKey) : '#94a3b8';
+    root.style.setProperty('--section-color', sectionColor);
 
     // Visuel actif
     topItems.forEach(btn => {

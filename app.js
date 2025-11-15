@@ -5161,6 +5161,7 @@
       const markersContainer = figure.querySelector('[data-pareto-markers]');
       const tooltipHost = figure.querySelector('.pareto-chart__inner');
       let tooltipLayer = figure.querySelector('[data-pareto-tooltips]');
+      const isGeneralPareto = figure?.dataset?.chartSlot === 'general-pareto';
       if (!tooltipLayer && tooltipHost) {
         tooltipLayer = document.createElement('div');
         tooltipLayer.className = 'pareto-chart__tooltip-layer';
@@ -5256,6 +5257,7 @@
         }
       }
 
+      let leftLabelsWidth = 0;
       if (valueScaleEl) {
         if (!scaleIntervals || scaleMax <= 0 || !scaleTicks.length) {
           valueScaleEl.innerHTML = '';
@@ -5289,7 +5291,7 @@
           });
           valueScaleEl.removeAttribute('hidden');
           if (chartEl) {
-            const leftLabelsWidth = measureElementWidth(valueScaleEl);
+            leftLabelsWidth = measureElementWidth(valueScaleEl);
             const computedLeftGap = Math.max(
               PARETO_MIN_LEFT_GAP,
               Math.ceil(leftLabelsWidth + PARETO_SCALE_OFFSET + PARETO_LEFT_LABEL_PADDING),
@@ -5301,13 +5303,23 @@
         chartEl.style.setProperty('--pareto-left-gap', `${PARETO_MIN_LEFT_GAP}px`);
       }
 
+      let rightLabelsWidth = 0;
       if (chartEl) {
-        const rightLabelsWidth = measureElementWidth(percentScaleEl);
+        rightLabelsWidth = measureElementWidth(percentScaleEl);
         const computedRightGap = Math.max(
           PARETO_MIN_RIGHT_GAP,
           Math.ceil(rightLabelsWidth + PARETO_SCALE_OFFSET + PARETO_RIGHT_LABEL_PADDING),
         );
         chartEl.style.setProperty('--pareto-right-gap', `${computedRightGap}px`);
+        const chartRect = chartEl.getBoundingClientRect();
+        const chartWidth = chartRect?.width || chartEl.clientWidth || 0;
+        const axisDemand = leftLabelsWidth + rightLabelsWidth;
+        const shouldUseCompactAxes = Boolean(
+          chartWidth &&
+          !isGeneralPareto &&
+          (chartWidth < 720 || axisDemand > chartWidth * 0.32),
+        );
+        chartEl.classList.toggle('pareto-chart--compact', shouldUseCompactAxes);
       }
 
       if (tooltipLayer) {

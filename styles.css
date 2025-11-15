@@ -943,12 +943,11 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .monthly-line{position:absolute; inset:0; width:100%; height:100%; stroke:#1e293b; fill:none; pointer-events:none}
 .monthly-line polyline{fill:none; stroke:#1f2937; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; opacity:.65}
 .monthly-tooltips{position:absolute; inset:0; pointer-events:none; z-index:10}
-.monthly-tooltip{position:absolute; left:var(--tooltip-left, 50%); bottom:calc(var(--tooltip-bottom, 0px) + 22px); transform:translate(-50%, 12px); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; background:rgba(15,23,42,0.92); color:#f8fafc; padding:16px 18px; border-radius:16px; box-shadow:0 20px 44px rgba(15,23,42,0.38); min-width:200px; max-width:260px; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center}
-.monthly-tooltip::after{content:""; position:absolute; left:50%; bottom:-10px; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid rgba(15,23,42,0.92)}
+.monthly-tooltip{position:absolute; left:var(--tooltip-left, 50%); bottom:calc(var(--tooltip-bottom, 0px) + 22px); transform:translate(-50%, 12px); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; display:flex; flex-direction:column; align-items:center; gap:12px; min-width:200px; max-width:260px; text-align:center}
 .monthly-tooltip[data-visible="true"]{opacity:1; transform:translate(-50%, 0)}
-.monthly-tooltip__header{display:flex; flex-direction:column; align-items:center; gap:8px; width:100%}
 .monthly-tooltip__value{background:#fff; color:#0f172a; font-size:.82rem; font-weight:700; padding:6px 16px; border-radius:999px; box-shadow:0 16px 32px rgba(15,23,42,0.24); white-space:nowrap}
-.monthly-tooltip__label{background:rgba(15,23,42,0.82); color:#e2e8f0; font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; padding:4px 12px; border-radius:999px; box-shadow:0 12px 26px rgba(15,23,42,0.28); white-space:nowrap}
+.monthly-tooltip__body{position:relative; background:rgba(15,23,42,0.92); color:#e2e8f0; padding:16px 18px; border-radius:16px; box-shadow:0 20px 44px rgba(15,23,42,0.38); width:100%; display:flex; flex-direction:column; align-items:center; gap:12px; text-align:center}
+.monthly-tooltip__body::after{content:""; position:absolute; left:50%; bottom:-10px; transform:translateX(-50%); width:0; height:0; border-left:10px solid transparent; border-right:10px solid transparent; border-top:10px solid rgba(15,23,42,0.92)}
 .monthly-tooltip__breakdown{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; width:100%; text-align:left}
 .monthly-tooltip__breakdown li{display:flex; align-items:flex-start; gap:10px; font-size:.78rem; line-height:1.4; color:#e2e8f0}
 .monthly-tooltip__dot{width:10px; height:10px; border-radius:999px; flex:0 0 10px; margin-top:4px; box-shadow:0 0 0 2px rgba(255,255,255,0.18)}

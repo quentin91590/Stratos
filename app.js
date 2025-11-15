@@ -6222,7 +6222,6 @@
 
           const tooltipLines = [
             `${item.label}`,
-            `Consommation totale : ${totalText}`,
             ...tooltipEntries.map(({ label, valueText, shareText }) => `${label} : ${valueText} ${unit} (${shareText})`),
           ].filter(Boolean);
           bar.setAttribute('title', tooltipLines.join('\n'));
@@ -6236,21 +6235,14 @@
             tooltip.dataset.visible = 'false';
             tooltip.setAttribute('aria-hidden', 'true');
 
-            const header = document.createElement('div');
-            header.className = 'monthly-tooltip__header';
-
             const totalBadge = document.createElement('span');
             totalBadge.className = 'monthly-tooltip__value';
             totalBadge.textContent = totalText;
-
-            const labelBadge = document.createElement('span');
-            labelBadge.className = 'monthly-tooltip__label';
-            labelBadge.textContent = item.label;
-
-            header.append(totalBadge, labelBadge);
-            tooltip.append(header);
+            tooltip.append(totalBadge);
 
             if (tooltipEntries.length) {
+              const body = document.createElement('div');
+              body.className = 'monthly-tooltip__body';
               const list = document.createElement('ul');
               list.className = 'monthly-tooltip__breakdown';
               tooltipEntries.forEach(({ cssKey, label, valueText, shareText }) => {
@@ -6264,7 +6256,8 @@
                 li.append(dot, text);
                 list.append(li);
               });
-              tooltip.append(list);
+              body.append(list);
+              tooltip.append(body);
             }
 
             tooltipId = `${card.dataset.chartSlot || 'monthly'}-tooltip-${index}`;

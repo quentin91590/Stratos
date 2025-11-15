@@ -141,15 +141,15 @@
   };
 
   const TREEMAP_COLORS = [
-    '#2563eb',
-    '#0ea5e9',
-    '#6366f1',
-    '#22c55e',
-    '#f97316',
-    '#14b8a6',
-    '#a855f7',
-    '#f59e0b',
-    '#ec4899',
+    '#277DA1',
+    '#4D908E',
+    '#577590',
+    '#90BE6D',
+    '#F3722C',
+    '#43AA8B',
+    '#F9844A',
+    '#F9C74F',
+    '#F94144',
   ];
 
   const computeTreemapLayout = (items, x = 0, y = 0, width = 1, height = 1, splitHorizontal = width >= height) => {
@@ -380,10 +380,10 @@
   let energySubnavTabsGrid = null;
 
   const MAP_SEVERITY_COLORS = {
-    low: '#4ade80',
-    medium: '#38bdf8',
-    high: '#f97316',
-    critical: '#ef4444',
+    low: '#90BE6D',
+    medium: '#277DA1',
+    high: '#F3722C',
+    critical: '#F94144',
   };
 
   const measureElementWidth = (element) => {
@@ -3961,9 +3961,9 @@
     });
 
     // Couleur
-    if (name === 'energie') root.style.setProperty('--section-color', '#60a5fa');
+    if (name === 'energie') root.style.setProperty('--section-color', '#277DA1');
     else {
-      const map = { general: '#6366f1', etat: '#10b981', travaux: '#b45309', financier: '#facc15' };
+      const map = { general: '#577590', etat: '#43AA8B', travaux: '#F3722C', financier: '#F9C74F' };
       root.style.setProperty('--section-color', map[name] || '#94a3b8');
     }
 

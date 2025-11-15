@@ -6064,6 +6064,45 @@
       return seriesKey;
     };
 
+    const calendar = ENERGY_BASE_DATA?.calendar || {};
+    const calendarKeys = Array.isArray(calendar.keys) ? calendar.keys : [];
+    const calendarShort = Array.isArray(calendar.short) ? calendar.short : [];
+    const calendarFull = Array.isArray(calendar.full) ? calendar.full : [];
+    const normalizeMonthKey = (value) => (typeof value === 'string' ? value.trim().toLowerCase() : '');
+    const computeLabelVariants = (item, fallbackIndex = -1) => {
+      const rawLabel = typeof item?.label === 'string' ? item.label.trim() : '';
+      const normalizedKey = normalizeMonthKey(item?.key || item?.month);
+      let index = typeof fallbackIndex === 'number' && fallbackIndex >= 0 ? fallbackIndex : -1;
+      if (index < 0 && normalizedKey) {
+        index = calendarKeys.findIndex((key) => normalizeMonthKey(key) === normalizedKey);
+      }
+
+      const fallbackShort = index >= 0 && typeof calendarShort[index] === 'string'
+        ? calendarShort[index].trim()
+        : '';
+      const fallbackFull = index >= 0 && typeof calendarFull[index] === 'string'
+        ? calendarFull[index].trim()
+        : '';
+      const baseLabel = rawLabel || fallbackShort || fallbackFull || (normalizedKey ? normalizedKey.slice(0, 3).toUpperCase() : '');
+      const baseChars = Array.from(baseLabel);
+      const compactLabel = baseChars.length <= 3 ? baseLabel : baseChars.slice(0, 3).join('');
+      let tinyLabel = baseChars[0] || '';
+      if (!tinyLabel && normalizedKey) {
+        const keyChars = Array.from(normalizedKey.toUpperCase());
+        tinyLabel = keyChars[0] || '';
+      }
+      if (!tinyLabel && compactLabel) {
+        tinyLabel = Array.from(compactLabel)[0] || '';
+      }
+      return {
+        base: baseLabel,
+        compact: compactLabel || baseLabel,
+        tiny: tinyLabel || (baseChars[0] || ''),
+        full: rawLabel || fallbackFull || baseLabel,
+      };
+    };
+
+
     cards.forEach((card) => {
       const metricKey = card.dataset.chartMetric
         || (card.dataset.chartScope === 'chaleur'
@@ -6094,7 +6133,7 @@
       const valueDecimals = mode === 'kwhm2' ? (metricDef.decimals || 0) : 0;
 
       const dataset = Array.isArray(monthly)
-        ? monthly.map(item => {
+        ? monthly.map((item, dataIndex) => {
           const key = item?.key || item?.month;
           const label = item?.label || item?.month || '';
           const climate = Number(item?.climate) || 0;
@@ -6104,7 +6143,7 @@
             values[seriesKey] = divisor > 0 ? rawValue / divisor : 0;
           });
           const total = series.reduce((acc, seriesKey) => acc + (values[seriesKey] || 0), 0);
-          return { key, label, values, total, climate };
+          return { key, label, values, total, climate, orderIndex: dataIndex };
         })
         : [];
 
@@ -6113,6 +6152,7 @@
       const hasData = dataset.length > 0;
 
       barsWrap.innerHTML = '';
+      delete barsWrap.dataset.density;
       barsWrap.setAttribute('role', 'list');
       if (!tooltipLayer && viewport) {
         tooltipLayer = document.createElement('div');
@@ -6187,6 +6227,10 @@
 
           const segmentsDescription = [];
           const tooltipEntries = [];
+          const monthIndex = typeof item.orderIndex === 'number' && item.orderIndex >= 0 ? item.orderIndex : index;
+          const labelVariants = computeLabelVariants(item, monthIndex);
+          const displayLabel = labelVariants.base || item.label || item.key || `M${index + 1}`;
+          const accessibleLabel = labelVariants.full || displayLabel;
           series.forEach((seriesKey) => {
             const cssKey = cssClassForSeries(seriesKey);
             const value = Math.max(item.values[seriesKey] || 0, 0);
@@ -6218,10 +6262,10 @@
 
           const totalValue = formatEnergyDisplay(item.total, mode, valueDecimals);
           const totalText = `${totalValue} ${unit}`;
-          bar.setAttribute('aria-label', `${item.label} : ${totalText} — ${segmentsDescription.join(', ')}`);
+          bar.setAttribute('aria-label', `${accessibleLabel} : ${totalText} — ${segmentsDescription.join(', ')}`);
 
           const tooltipLines = [
-            `${item.label}`,
+            `${accessibleLabel}`,
             ...tooltipEntries.map(({ label, valueText, shareText }) => `${label} : ${valueText} ${unit} (${shareText})`),
           ].filter(Boolean);
           bar.setAttribute('title', tooltipLines.join('\n'));
@@ -6269,7 +6313,10 @@
 
           const labelEl = document.createElement('span');
           labelEl.className = 'monthly-label';
-          labelEl.textContent = item.label;
+          labelEl.dataset.variantBase = displayLabel;
+          labelEl.dataset.variantCompact = labelVariants.compact || displayLabel;
+          labelEl.dataset.variantTiny = labelVariants.tiny || Array.from(displayLabel)[0] || '';
+          labelEl.textContent = displayLabel;
 
           const stackWrap = document.createElement('div');
           stackWrap.className = 'monthly-stack-wrap';
@@ -6330,6 +6377,92 @@
             });
           }
         });
+
+        const applyLabelVariant = (density) => {
+          const variantKey = density === 'ultra'
+            ? 'variantTiny'
+            : density === 'compact'
+              ? 'variantCompact'
+              : 'variantBase';
+          barsWrap.querySelectorAll('.monthly-label').forEach((labelEl) => {
+            const nextText = labelEl.dataset[variantKey] || labelEl.dataset.variantBase || '';
+            labelEl.textContent = nextText;
+          });
+        };
+
+        const updateDensity = () => {
+          const totalBars = dataset.length;
+          if (!totalBars) {
+            delete barsWrap.dataset.density;
+            applyLabelVariant('normal');
+            return;
+          }
+          const wrapRect = barsWrap.getBoundingClientRect();
+          let density = 'normal';
+          if (wrapRect.width > 0) {
+            const styles = window.getComputedStyle(barsWrap);
+            const gapValue = Number.parseFloat(styles.columnGap || styles.gap || styles.rowGap || '0') || 0;
+            const availableWidth = wrapRect.width - Math.max(0, totalBars - 1) * gapValue;
+            const perBar = availableWidth / totalBars;
+            density = 'normal';
+            if (!Number.isFinite(perBar) || perBar <= 0) {
+              density = 'ultra';
+            } else {
+              if (perBar < 34) density = 'compact';
+              if (perBar < 24) density = 'ultra';
+            }
+          }
+          if (density === 'normal') {
+            delete barsWrap.dataset.density;
+          } else {
+            barsWrap.dataset.density = density;
+          }
+          applyLabelVariant(density);
+        };
+
+        applyLabelVariant(barsWrap.dataset.density || 'normal');
+        card._activeMonthlyDensityUpdate = updateDensity;
+        updateDensity();
+        const densityUpdateRef = updateDensity;
+        if (typeof window !== 'undefined' && typeof window.requestAnimationFrame === 'function') {
+          window.requestAnimationFrame(() => {
+            if (typeof card._activeMonthlyDensityUpdate === 'function') {
+              if (card._activeMonthlyDensityUpdate === densityUpdateRef) {
+                densityUpdateRef();
+              } else {
+                card._activeMonthlyDensityUpdate();
+              }
+            }
+          });
+        }
+
+        if (typeof ResizeObserver === 'function') {
+          const observerTarget = viewport || barsWrap;
+          if (observerTarget) {
+            if (!card._monthlyDensityObserver) {
+              const densityObserver = new ResizeObserver(() => {
+                if (typeof card._activeMonthlyDensityUpdate === 'function') {
+                  card._activeMonthlyDensityUpdate();
+                }
+              });
+              densityObserver.observe(observerTarget);
+              card._monthlyDensityObserver = densityObserver;
+              card._monthlyDensityObserverTarget = observerTarget;
+            } else if (card._monthlyDensityObserverTarget !== observerTarget) {
+              card._monthlyDensityObserver.disconnect();
+              card._monthlyDensityObserver.observe(observerTarget);
+              card._monthlyDensityObserverTarget = observerTarget;
+            }
+          }
+        } else if (!card._monthlyDensityWindowListener) {
+          const handleResize = () => {
+            if (typeof card._activeMonthlyDensityUpdate === 'function') {
+              card._activeMonthlyDensityUpdate();
+            }
+          };
+          window.addEventListener('resize', handleResize);
+          card._monthlyDensityWindowListener = handleResize;
+        }
       }
 
       if (line) {

@@ -6,6 +6,16 @@
   /* palette */
   --c-red:#F94144; --c-orange-1:#F3722C; --c-orange-2:#F8961E; --c-orange-3:#F9844A; --c-yellow:#F9C74F;
   --c-green:#90BE6D; --c-teal:#43AA8B; --c-teal-muted:#4D908E; --c-blue-soft:#577590; --c-blue-deep:#277DA1;
+  /* energy accents */
+  --energy-chaleur:var(--c-red);
+  --energy-chaleur-soft:color-mix(in srgb, var(--energy-chaleur) 70%, white);
+  --energy-chaleur-shadow:color-mix(in srgb, var(--energy-chaleur) 26%, transparent);
+  --energy-electricite:var(--c-yellow);
+  --energy-electricite-soft:color-mix(in srgb, var(--energy-electricite) 68%, white);
+  --energy-electricite-shadow:color-mix(in srgb, var(--energy-electricite) 26%, transparent);
+  --energy-froid:var(--c-blue-deep);
+  --energy-froid-soft:color-mix(in srgb, var(--energy-froid) 60%, white);
+  --energy-froid-shadow:color-mix(in srgb, var(--energy-froid) 24%, transparent);
   --section-color:var(--c-blue-soft);
   /* sections */
   --sec-energie:var(--c-blue-deep); --sec-travaux:var(--c-orange-1); --sec-financier:var(--c-yellow); --sec-etat:var(--c-teal);
@@ -290,14 +300,14 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 .chart-line .line-target{stroke:var(--c-orange-1); stroke-width:3; stroke-dasharray:10 8; opacity:.8}
 .chart-variant--pareto{gap:18px; --pareto-bar-color:var(--c-blue-deep); --pareto-line-color:var(--c-blue-soft); --pareto-bar-shadow:rgba(39,125,161,0.2); --pareto-line-shadow:rgba(87,117,144,0.2)}
 .chart-variant--pareto .chart-title{padding-right:0}
-figure[data-chart-scope="chaleur"] .chart-variant--pareto{--pareto-bar-color:var(--c-orange-1); --pareto-line-color:var(--c-orange-2); --pareto-bar-shadow:rgba(243,114,44,0.24); --pareto-line-shadow:rgba(248,150,30,0.22)}
-figure[data-chart-scope="froid"] .chart-variant--pareto{--pareto-bar-color:var(--c-teal-muted); --pareto-line-color:var(--c-blue-soft); --pareto-bar-shadow:rgba(77,144,142,0.22); --pareto-line-shadow:rgba(87,117,144,0.2)}
-figure[data-chart-scope="elec"] .chart-variant--pareto{--pareto-bar-color:var(--c-teal); --pareto-line-color:var(--c-teal-muted); --pareto-bar-shadow:rgba(67,170,139,0.22); --pareto-line-shadow:rgba(77,144,142,0.22)}
+figure[data-chart-scope="chaleur"] .chart-variant--pareto{--pareto-bar-color:var(--energy-chaleur); --pareto-line-color:var(--energy-chaleur-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-chaleur) 28%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-chaleur-soft) 26%, transparent)}
+figure[data-chart-scope="froid"] .chart-variant--pareto{--pareto-bar-color:var(--energy-froid); --pareto-line-color:var(--energy-froid-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-froid) 26%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-froid-soft) 24%, transparent)}
+figure[data-chart-scope="elec"] .chart-variant--pareto{--pareto-bar-color:var(--energy-electricite); --pareto-line-color:var(--energy-electricite-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-electricite) 30%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-electricite-soft) 28%, transparent)}
 figure[data-chart-scope="co2"] .chart-variant--pareto{--pareto-bar-color:var(--c-green); --pareto-line-color:var(--c-teal); --pareto-bar-shadow:rgba(144,190,109,0.22); --pareto-line-shadow:rgba(67,170,139,0.2)}
 figure[data-chart-scope="eau"] .chart-variant--pareto{--pareto-bar-color:var(--c-blue-deep); --pareto-line-color:var(--c-teal-muted); --pareto-bar-shadow:rgba(39,125,161,0.22); --pareto-line-shadow:rgba(77,144,142,0.22)}
-figure[data-chart-slot="general-pareto"][data-pareto-metric="chaleur"] .chart-variant--pareto{--pareto-bar-color:var(--c-orange-1); --pareto-line-color:var(--c-orange-2); --pareto-bar-shadow:rgba(243,114,44,0.24); --pareto-line-shadow:rgba(248,150,30,0.22)}
-figure[data-chart-slot="general-pareto"][data-pareto-metric="froid"] .chart-variant--pareto{--pareto-bar-color:var(--c-teal-muted); --pareto-line-color:var(--c-blue-soft); --pareto-bar-shadow:rgba(77,144,142,0.22); --pareto-line-shadow:rgba(87,117,144,0.2)}
-figure[data-chart-slot="general-pareto"][data-pareto-metric="elec"] .chart-variant--pareto{--pareto-bar-color:var(--c-teal); --pareto-line-color:var(--c-teal-muted); --pareto-bar-shadow:rgba(67,170,139,0.22); --pareto-line-shadow:rgba(77,144,142,0.22)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="chaleur"] .chart-variant--pareto{--pareto-bar-color:var(--energy-chaleur); --pareto-line-color:var(--energy-chaleur-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-chaleur) 28%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-chaleur-soft) 26%, transparent)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="froid"] .chart-variant--pareto{--pareto-bar-color:var(--energy-froid); --pareto-line-color:var(--energy-froid-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-froid) 26%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-froid-soft) 24%, transparent)}
+figure[data-chart-slot="general-pareto"][data-pareto-metric="elec"] .chart-variant--pareto{--pareto-bar-color:var(--energy-electricite); --pareto-line-color:var(--energy-electricite-soft); --pareto-bar-shadow:color-mix(in srgb, var(--energy-electricite) 30%, transparent); --pareto-line-shadow:color-mix(in srgb, var(--energy-electricite-soft) 28%, transparent)}
 figure[data-chart-slot="general-pareto"][data-pareto-metric="co2"] .chart-variant--pareto{--pareto-bar-color:var(--c-green); --pareto-line-color:var(--c-teal); --pareto-bar-shadow:rgba(144,190,109,0.22); --pareto-line-shadow:rgba(67,170,139,0.2)}
 figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-variant--pareto{--pareto-bar-color:var(--c-blue-deep); --pareto-line-color:var(--c-teal-muted); --pareto-bar-shadow:rgba(39,125,161,0.22); --pareto-line-shadow:rgba(77,144,142,0.22)}
 .energy-chart-stack > [data-chart-slot][data-chart-type$="pareto"]{grid-column:1 / -1}
@@ -387,9 +397,9 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
   --catalog-closed-offset-y: 12px;
   --section-color:var(--c-blue-deep);
 }
-.heat-chart-zone{--section-color:var(--c-orange-1)}
-.cold-chart-zone{--section-color:var(--c-blue-soft)}
-.elec-chart-zone{--section-color:var(--c-blue-deep)}
+.heat-chart-zone{--section-color:var(--energy-chaleur)}
+.cold-chart-zone{--section-color:var(--energy-froid)}
+.elec-chart-zone{--section-color:var(--energy-electricite)}
 .co2-chart-zone{--section-color:var(--c-red)}
 .energy-chart-wrapper{position:relative; flex:1 1 420px; min-width:0}
 .energy-chart-stack{
@@ -434,16 +444,16 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-variant--bars{flex-direction:column; align-items:stretch; gap:20px}
 .mix-variant--rings{flex-direction:column; gap:20px}
 .mix-variant--columns{flex-direction:column; align-items:stretch; gap:18px}
-.mix-pie{--mix-chaleur:80%; --mix-elec:15%; --mix-froid:5%; position:relative; width:100%; max-width:clamp(140px, 42%, 220px); aspect-ratio:1 / 1; border-radius:50%; background:conic-gradient(var(--c-orange-1) 0 var(--mix-chaleur), var(--c-blue-deep) var(--mix-chaleur) calc(var(--mix-chaleur) + var(--mix-elec)), var(--c-blue-soft) calc(var(--mix-chaleur) + var(--mix-elec)) 100%); box-shadow:0 6px 18px rgba(15,23,42,0.08)}
+.mix-pie{--mix-chaleur:80%; --mix-elec:15%; --mix-froid:5%; position:relative; width:100%; max-width:clamp(140px, 42%, 220px); aspect-ratio:1 / 1; border-radius:50%; background:conic-gradient(var(--energy-chaleur) 0 var(--mix-chaleur), var(--energy-electricite) var(--mix-chaleur) calc(var(--mix-chaleur) + var(--mix-elec)), var(--energy-froid) calc(var(--mix-chaleur) + var(--mix-elec)) 100%); box-shadow:0 6px 18px rgba(15,23,42,0.08)}
 .energy-mix-card--secondary .mix-pie{--mix-chaleur:70%; --mix-elec:20%; --mix-froid:10%}
 .mix-pie::after{content:""; position:absolute; inset:18px; border-radius:50%; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.18)}
 .mix-legend{list-style:none; margin:0; padding:0; display:grid; gap:10px; min-width:160px; align-self:stretch}
 .mix-legend--compact{min-width:140px; gap:8px}
 .mix-legend li{display:grid; grid-template-columns:auto 1fr auto; align-items:center; gap:8px; font-size:.9rem; color:#334155; font-variant-numeric:tabular-nums}
 .mix-bullet{width:12px; height:12px; border-radius:999px; box-shadow:0 0 0 1px rgba(15,23,42,0.08)}
-.mix-bullet.chaleur{background:var(--c-orange-1)}
-.mix-bullet.electricite{background:var(--c-blue-deep)}
-.mix-bullet.froid{background:var(--c-blue-soft)}
+.mix-bullet.chaleur{background:var(--energy-chaleur)}
+.mix-bullet.electricite{background:var(--energy-electricite)}
+.mix-bullet.froid{background:var(--energy-froid)}
 .mix-bullet.gaz{background:var(--c-orange-1)}
 .mix-bullet.pac{background:var(--c-teal-muted)}
 .mix-bullet.reseau{background:var(--c-red)}
@@ -455,7 +465,7 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-bullet.scope2{background:var(--c-blue-deep)}
 .mix-bullet.combustibles{background:var(--c-orange-2)}
 .mix-bullet.reseau-chaleur{background:var(--c-red)}
-.mix-bullet.electricite-reseau{background:var(--c-blue-deep)}
+.mix-bullet.electricite-reseau{background:var(--energy-electricite)}
 .mix-bullet.electricite-verte{background:var(--c-green)}
 .mix-bullet.compression{background:var(--c-blue-soft)}
 .mix-bullet.freecooling{background:var(--c-teal-muted)}
@@ -478,7 +488,7 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-bullet.pertes{background:var(--c-orange-1)}
 .mix-label{font-weight:600}
 .mix-value{font-weight:700; color:#0f172a}
-.mix-donut{--mix-chaleur:80; --mix-elec:15; --mix-froid:5; position:relative; width:132px; height:132px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#0f172a; font-weight:700; background:conic-gradient(var(--c-orange-1) 0 calc(var(--mix-chaleur) * 1%), var(--c-blue-deep) calc(var(--mix-chaleur) * 1%) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%), var(--c-blue-soft) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%) 100%); box-shadow:0 8px 22px rgba(15,23,42,0.08)}
+.mix-donut{--mix-chaleur:80; --mix-elec:15; --mix-froid:5; position:relative; width:132px; height:132px; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; color:#0f172a; font-weight:700; background:conic-gradient(var(--energy-chaleur) 0 calc(var(--mix-chaleur) * 1%), var(--energy-electricite) calc(var(--mix-chaleur) * 1%) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%), var(--energy-froid) calc((var(--mix-chaleur) + var(--mix-elec)) * 1%) 100%); box-shadow:0 8px 22px rgba(15,23,42,0.08)}
 .mix-donut.heat{--mix-gaz:52; --mix-pac:20; --mix-reseau:18; --mix-biomasse:10; background:conic-gradient(var(--c-orange-1) 0 calc(var(--mix-gaz) * 1%), var(--c-teal-muted) calc(var(--mix-gaz) * 1%) calc((var(--mix-gaz) + var(--mix-pac)) * 1%), var(--c-red) calc((var(--mix-gaz) + var(--mix-pac)) * 1%) calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%), var(--c-green) calc((var(--mix-gaz) + var(--mix-pac) + var(--mix-reseau)) * 1%) 100%)}
 .mix-donut.cold{--mix-compression:58; --mix-freecooling:22; --mix-reseau:12; --mix-absorption:8; background:conic-gradient(var(--c-blue-soft) 0 calc(var(--mix-compression) * 1%), var(--c-teal-muted) calc(var(--mix-compression) * 1%) calc((var(--mix-compression) + var(--mix-freecooling)) * 1%), var(--c-red) calc((var(--mix-compression) + var(--mix-freecooling)) * 1%) calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%), var(--c-blue-soft) calc((var(--mix-compression) + var(--mix-freecooling) + var(--mix-reseau)) * 1%) 100%)}
 .mix-donut.elec{--mix-reseau:68; --mix-autoprod:22; --mix-verte:10; background:conic-gradient(var(--c-blue-deep) 0 calc(var(--mix-reseau) * 1%), var(--c-yellow) calc(var(--mix-reseau) * 1%) calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%), var(--c-green) calc((var(--mix-reseau) + var(--mix-autoprod)) * 1%) 100%)}
@@ -493,9 +503,9 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-bar__track{position:relative; height:10px; border-radius:999px; background:#e2e8f0; overflow:hidden}
 .mix-bar__fill{display:block; height:100%; border-radius:inherit; background:var(--mix-color); width:calc(var(--mix-value) * 1%); transition:width .24s ease}
 .mix-bar__value{font-weight:700; color:#0f172a}
-.mix-bar.chaleur{--mix-color:var(--c-orange-1)}
-.mix-bar.electricite{--mix-color:var(--c-blue-deep)}
-.mix-bar.froid{--mix-color:var(--c-blue-soft)}
+.mix-bar.chaleur{--mix-color:var(--energy-chaleur)}
+.mix-bar.electricite{--mix-color:var(--energy-electricite)}
+.mix-bar.froid{--mix-color:var(--energy-froid)}
 .mix-bar.gaz{--mix-color:var(--c-orange-1)}
 .mix-bar.pac{--mix-color:var(--c-teal-muted)}
 .mix-bar.reseau{--mix-color:var(--c-red)}
@@ -515,7 +525,7 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-bar.scope2{--mix-color:var(--c-blue-deep)}
 .mix-bar.combustibles{--mix-color:var(--c-orange-2)}
 .mix-bar.reseau-chaleur{--mix-color:var(--c-red)}
-.mix-bar.electricite-reseau{--mix-color:var(--c-blue-deep)}
+.mix-bar.electricite-reseau{--mix-color:var(--energy-electricite)}
 .mix-bar.electricite-verte{--mix-color:var(--c-green)}
 .mix-bar.services{--mix-color:#94a3b8}
 .mix-bar.reseau-eau{--mix-color:var(--c-blue-deep)}
@@ -527,13 +537,13 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-bar.irrigation{--mix-color:var(--c-green)}
 .mix-bar.pertes{--mix-color:var(--c-orange-1)}
 .mix-rings{display:flex; gap:18px; flex-wrap:wrap}
-.mix-ring{--mix-color:var(--c-orange-1); position:relative; width:96px; height:96px; border-radius:50%; background:conic-gradient(var(--mix-color) 0 calc(var(--mix-value) * 1%), rgba(226,232,240,0.7) calc(var(--mix-value) * 1%) 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(15,23,42,0.08)}
+.mix-ring{--mix-color:var(--energy-chaleur); position:relative; width:96px; height:96px; border-radius:50%; background:conic-gradient(var(--mix-color) 0 calc(var(--mix-value) * 1%), rgba(226,232,240,0.7) calc(var(--mix-value) * 1%) 100%); display:flex; align-items:center; justify-content:center; box-shadow:0 6px 18px rgba(15,23,42,0.08)}
 .mix-ring::after{content:""; position:absolute; inset:20px; border-radius:inherit; background:var(--card); box-shadow:inset 0 0 0 1px rgba(148,163,184,0.16)}
 .mix-ring__inner{position:relative; z-index:1; display:flex; flex-direction:column; gap:2px; align-items:center; text-align:center}
 .mix-ring__value{font-weight:700; font-size:1rem; color:#0f172a}
 .mix-ring__label{font-size:.75rem; text-transform:uppercase; letter-spacing:.06em; color:#475569}
-.mix-ring.electricite{--mix-color:var(--c-blue-deep)}
-.mix-ring.froid{--mix-color:var(--c-blue-soft)}
+.mix-ring.electricite{--mix-color:var(--energy-electricite)}
+.mix-ring.froid{--mix-color:var(--energy-froid)}
 .mix-ring.pac{--mix-color:var(--c-teal-muted)}
 .mix-ring.reseau{--mix-color:var(--c-red)}
 .mix-ring.biomasse{--mix-color:var(--c-green)}
@@ -557,9 +567,9 @@ figure[data-chart-slot="general-pareto"][data-pareto-metric="eau"] .chart-varian
 .mix-columns{display:flex; gap:18px; align-items:flex-end; justify-content:flex-start; height:128px; padding:0 4px}
 .mix-column{flex:1; min-width:18px; border-radius:10px 10px 4px 4px; background:linear-gradient(180deg, rgba(39,125,161,0.25), rgba(39,125,161,0)); position:relative; height:100%}
 .mix-column::before{content:""; position:absolute; left:0; right:0; bottom:0; border-radius:inherit; background:var(--mix-color); opacity:.85; height:calc(var(--mix-value) * 1%)}
-.mix-column.chaleur{--mix-color:var(--c-orange-1)}
-.mix-column.electricite{--mix-color:var(--c-blue-deep)}
-.mix-column.froid{--mix-color:var(--c-blue-soft)}
+.mix-column.chaleur{--mix-color:var(--energy-chaleur)}
+.mix-column.electricite{--mix-color:var(--energy-electricite)}
+.mix-column.froid{--mix-color:var(--energy-froid)}
 .mix-columns-legend{list-style:none; margin:0; padding:0; display:grid; gap:8px; font-size:.85rem; color:#475569}
 .mix-columns-legend li{display:flex; justify-content:space-between; font-variant-numeric:tabular-nums}
 .energy-ranking-header{display:flex; justify-content:space-between; align-items:flex-start; gap:12px}
@@ -941,9 +951,9 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .monthly-label{font-size:.78rem; font-weight:600; color:#475569; letter-spacing:.02em; text-transform:uppercase; text-align:center}
 .monthly-bars[data-density="compact"] .monthly-label{font-size:.72rem}
 .monthly-bars[data-density="ultra"] .monthly-label{font-size:.68rem; letter-spacing:.01em}
-.monthly-segment--chaleur{background:linear-gradient(180deg, var(--c-orange-1), var(--c-orange-2))}
-.monthly-segment--electricite{background:linear-gradient(180deg, var(--c-blue-deep), var(--c-teal-muted))}
-.monthly-segment--froid{background:linear-gradient(180deg, var(--c-blue-soft), var(--c-blue-deep))}
+.monthly-segment--chaleur{background:linear-gradient(180deg, var(--energy-chaleur), var(--energy-chaleur-soft))}
+.monthly-segment--electricite{background:linear-gradient(180deg, var(--energy-electricite), var(--energy-electricite-soft))}
+.monthly-segment--froid{background:linear-gradient(180deg, var(--energy-froid-soft), var(--energy-froid))}
 .monthly-segment--scope1{background:linear-gradient(180deg, var(--c-red), var(--c-orange-3))}
 .monthly-segment--scope2{background:linear-gradient(180deg, var(--c-blue-deep), var(--c-teal-muted))}
 .monthly-segment--eau{background:linear-gradient(180deg, var(--c-teal-muted), var(--c-blue-deep))}
@@ -968,9 +978,9 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .monthly-tooltip__breakdown{margin:0; padding:0; list-style:none; display:flex; flex-direction:column; gap:6px; width:100%; text-align:left}
 .monthly-tooltip__breakdown li{display:flex; align-items:flex-start; gap:10px; font-size:.78rem; line-height:1.4; color:#e2e8f0}
 .monthly-tooltip__dot{width:10px; height:10px; border-radius:999px; flex:0 0 10px; margin-top:4px; box-shadow:0 0 0 2px rgba(255,255,255,0.18)}
-.monthly-tooltip__dot--chaleur{background:linear-gradient(180deg, var(--c-orange-1), var(--c-orange-2))}
-.monthly-tooltip__dot--electricite{background:linear-gradient(180deg, var(--c-blue-deep), var(--c-teal-muted))}
-.monthly-tooltip__dot--froid{background:linear-gradient(180deg, var(--c-blue-soft), var(--c-blue-deep))}
+.monthly-tooltip__dot--chaleur{background:linear-gradient(180deg, var(--energy-chaleur), var(--energy-chaleur-soft))}
+.monthly-tooltip__dot--electricite{background:linear-gradient(180deg, var(--energy-electricite), var(--energy-electricite-soft))}
+.monthly-tooltip__dot--froid{background:linear-gradient(180deg, var(--energy-froid-soft), var(--energy-froid))}
 .monthly-tooltip__dot--scope1{background:linear-gradient(180deg, var(--c-red), var(--c-orange-3))}
 .monthly-tooltip__dot--scope2{background:linear-gradient(180deg, var(--c-blue-deep), var(--c-teal-muted))}
 .monthly-tooltip__dot--co2{background:linear-gradient(180deg, var(--c-red), var(--c-orange-3))}
@@ -982,22 +992,22 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .monthly-legend{display:flex; flex-wrap:wrap; gap:12px 16px; align-items:center; font-size:.85rem; color:#475569}
 .monthly-legend--compact{gap:10px 14px}
 .legend-dot{display:inline-flex; width:12px; height:12px; border-radius:999px; margin-right:6px; box-shadow:0 0 0 1px rgba(15,23,42,0.12)}
-.legend-dot.chaleur{background:var(--c-orange-1)}
-.legend-dot.elec,.legend-dot.electricite{background:var(--c-blue-deep)}
-.legend-dot.froid{background:var(--c-blue-soft)}
+.legend-dot.chaleur{background:var(--energy-chaleur)}
+.legend-dot.elec,.legend-dot.electricite{background:var(--energy-electricite)}
+.legend-dot.froid{background:var(--energy-froid)}
 .legend-dot.scope1{background:var(--c-red)}
 .legend-dot.scope2{background:var(--c-blue-deep)}
 .legend-line-wrap{display:inline-flex; align-items:center; gap:6px}
 .legend-line{display:inline-block; width:32px; height:2px; background:linear-gradient(90deg, rgba(15,23,42,0.1), rgba(15,23,42,0.7)); border-radius:999px}
-.monthly-chart--heat .monthly-stack{background:linear-gradient(180deg, rgba(249,115,22,0.18), rgba(249,115,22,0.04))}
-.monthly-chart--heat .monthly-line polyline{stroke:var(--c-orange-1)}
-.monthly-chart--heat .legend-line{background:linear-gradient(90deg, rgba(249,115,22,0.2), rgba(249,115,22,0.85))}
-.monthly-chart--cold .monthly-stack{background:linear-gradient(180deg, rgba(87,117,144,0.18), rgba(87,117,144,0.04))}
-.monthly-chart--cold .monthly-line polyline{stroke:var(--c-blue-soft)}
-.monthly-chart--cold .legend-line{background:linear-gradient(90deg, rgba(87,117,144,0.2), rgba(67,170,139,0.85))}
-.monthly-chart--elec .monthly-stack{background:linear-gradient(180deg, rgba(39,125,161,0.18), rgba(39,125,161,0.04))}
-.monthly-chart--elec .monthly-line polyline{stroke:var(--c-blue-deep)}
-.monthly-chart--elec .legend-line{background:linear-gradient(90deg, rgba(39,125,161,0.2), rgba(67,170,139,0.85))}
+.monthly-chart--heat .monthly-stack{background:linear-gradient(180deg, color-mix(in srgb, var(--energy-chaleur) 22%, transparent), color-mix(in srgb, var(--energy-chaleur) 6%, transparent))}
+.monthly-chart--heat .monthly-line polyline{stroke:var(--energy-chaleur)}
+.monthly-chart--heat .legend-line{background:linear-gradient(90deg, color-mix(in srgb, var(--energy-chaleur) 24%, transparent), color-mix(in srgb, var(--energy-chaleur) 70%, transparent))}
+.monthly-chart--cold .monthly-stack{background:linear-gradient(180deg, color-mix(in srgb, var(--energy-froid) 20%, transparent), color-mix(in srgb, var(--energy-froid) 6%, transparent))}
+.monthly-chart--cold .monthly-line polyline{stroke:var(--energy-froid)}
+.monthly-chart--cold .legend-line{background:linear-gradient(90deg, color-mix(in srgb, var(--energy-froid) 24%, transparent), color-mix(in srgb, var(--energy-froid) 68%, transparent))}
+.monthly-chart--elec .monthly-stack{background:linear-gradient(180deg, color-mix(in srgb, var(--energy-electricite) 24%, transparent), color-mix(in srgb, var(--energy-electricite) 8%, transparent))}
+.monthly-chart--elec .monthly-line polyline{stroke:var(--energy-electricite)}
+.monthly-chart--elec .legend-line{background:linear-gradient(90deg, color-mix(in srgb, var(--energy-electricite) 26%, transparent), color-mix(in srgb, var(--energy-electricite) 72%, transparent))}
 .monthly-chart--co2 .monthly-stack{background:linear-gradient(180deg, rgba(249,65,68,0.18), rgba(39,125,161,0.04))}
 .monthly-chart--co2 .monthly-line polyline{stroke:var(--c-red)}
 .monthly-chart--co2 .legend-line{background:linear-gradient(90deg, rgba(67,170,139,0.2), rgba(251,113,133,0.85))}
@@ -1027,11 +1037,11 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .distribution-bar__label{font-size:.8rem; color:#475569}
 .distribution-bar__value{font-weight:700; font-size:.9rem}
 .distribution-line{position:absolute; inset:0; width:100%; height:100%; pointer-events:none}
-.distribution-line polyline{fill:none; stroke:var(--c-orange-1); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 10px 16px rgba(249,115,22,0.25))}
+.distribution-line polyline{fill:none; stroke:var(--energy-chaleur); stroke-width:2.6; stroke-linecap:round; stroke-linejoin:round; filter:drop-shadow(0 10px 16px color-mix(in srgb, var(--energy-chaleur) 32%, transparent))}
 .distribution-legend{display:flex; flex-wrap:wrap; gap:12px 20px; font-size:.85rem; color:#475569}
 .distribution-legend .legend-bar{display:inline-flex; width:14px; height:14px; border-radius:4px; background:linear-gradient(180deg, rgba(39,125,161,0.18), rgba(39,125,161,0.82)); box-shadow:0 4px 10px rgba(39,125,161,0.18); margin-right:6px}
 .distribution-chart--line .distribution-legend .legend-bar{background:rgba(148,163,184,0.26); box-shadow:none}
-.distribution-legend .legend-line{display:inline-flex; width:32px; height:3px; background:var(--c-orange-1); border-radius:999px; margin-right:6px; box-shadow:0 4px 10px rgba(249,115,22,0.2)}
+.distribution-legend .legend-line{display:inline-flex; width:32px; height:3px; background:var(--energy-chaleur); border-radius:999px; margin-right:6px; box-shadow:0 4px 10px color-mix(in srgb, var(--energy-chaleur) 32%, transparent)}
 
 .preview-typology{position:relative; display:block; width:100%; height:36px}
 .preview-typology span{position:absolute; border-radius:0; box-shadow:0 6px 12px rgba(39,125,161,0.18)}
@@ -1042,33 +1052,33 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .preview-pareto__bars{position:absolute; inset:2px 0 8px; display:grid; grid-auto-flow:column; grid-auto-columns:minmax(6px,1fr); align-items:flex-end; gap:4px}
 .preview-pareto__bars span{display:block; height:calc(var(--h,60) * 1%); border-radius:6px 6px 4px 4px; background:linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0)) , currentColor; box-shadow:0 4px 8px rgba(15,23,42,0.08)}
 .preview-pareto__line{position:absolute; inset:0 0 6px; display:block; background:linear-gradient(135deg, transparent 35%, currentColor 35%, currentColor 65%, transparent 65%); opacity:.55; clip-path:polygon(0 100%, 16% 78%, 36% 58%, 62% 36%, 100% 8%, 100% 100%); border-radius:6px}
-[data-chart-scope="chaleur"] .preview-pareto{color:var(--c-orange-1)}
-[data-chart-scope="froid"] .preview-pareto{color:var(--c-blue-deep)}
-[data-chart-scope="elec"] .preview-pareto{color:var(--c-blue-soft)}
+[data-chart-scope="chaleur"] .preview-pareto{color:var(--energy-chaleur)}
+[data-chart-scope="froid"] .preview-pareto{color:var(--energy-froid)}
+[data-chart-scope="elec"] .preview-pareto{color:var(--energy-electricite)}
 [data-chart-scope="co2"] .preview-pareto{color:var(--c-green)}
 [data-chart-scope="eau"] .preview-pareto{color:var(--c-teal-muted)}
 .preview-ranking{display:flex; flex-direction:column; gap:4px; width:64px; padding:6px 0}
 .preview-ranking span{height:6px; border-radius:999px; background:linear-gradient(90deg, rgba(39,125,161,0.25), rgba(39,125,161,0.8))}
-.preview-ranking span:nth-child(1){background:linear-gradient(90deg, rgba(249,115,22,0.25), rgba(249,115,22,0.85))}
+.preview-ranking span:nth-child(1){background:linear-gradient(90deg, color-mix(in srgb, var(--energy-chaleur) 28%, transparent), color-mix(in srgb, var(--energy-chaleur) 72%, transparent))}
 .preview-ranking span:nth-child(3){background:linear-gradient(90deg, rgba(16,185,129,0.25), rgba(16,185,129,0.75))}
 .preview-table{display:grid; gap:4px; width:100%; padding:4px 0}
 .preview-table span{height:6px; border-radius:3px; background:rgba(148,163,184,0.55)}
 .preview-map{display:grid; position:relative; width:100%; height:40px; background:linear-gradient(135deg, rgba(226,232,240,0.6), rgba(203,213,225,0.3)); border-radius:12px; overflow:hidden}
 .preview-map--bubbles{place-items:center}
-.preview-map--bubbles .bubble{position:absolute; border-radius:50%; opacity:.75; background:var(--c-blue-deep)}
+.preview-map--bubbles .bubble{position:absolute; border-radius:50%; opacity:.75; background:var(--energy-electricite)}
 .preview-map--bubbles .bubble--1{width:12px; height:12px; left:18px; top:20px}
-.preview-map--bubbles .bubble--2{width:20px; height:20px; left:42px; top:12px; background:var(--c-orange-1)}
-.preview-map--bubbles .bubble--3{width:16px; height:16px; left:70px; top:24px; background:var(--c-blue-soft)}
+.preview-map--bubbles .bubble--2{width:20px; height:20px; left:42px; top:12px; background:var(--energy-chaleur)}
+.preview-map--bubbles .bubble--3{width:16px; height:16px; left:70px; top:24px; background:var(--energy-froid)}
 .preview-map--grid{grid-template-columns:repeat(3, 1fr); gap:4px; padding:8px}
 .preview-map--grid span{background:rgba(148,163,184,0.45); border-radius:6px; height:100%}
 .preview-monthly{display:flex; align-items:flex-end; gap:3px; width:100%; height:36px}
-.preview-monthly--stacked span{flex:1; height:100%; border-radius:4px 4px 2px 2px; background:linear-gradient(180deg, rgba(249,115,22,0.2), rgba(249,115,22,0.78))}
+.preview-monthly--stacked span{flex:1; height:100%; border-radius:4px 4px 2px 2px; background:linear-gradient(180deg, color-mix(in srgb, var(--energy-chaleur) 22%, transparent), color-mix(in srgb, var(--energy-chaleur) 68%, transparent))}
 .preview-monthly--line{display:flex; align-items:center; justify-content:center}
 .preview-monthly--line svg{width:100%; height:32px; display:block; color:#1f2937}
 .preview-distribution{display:flex; align-items:flex-end; gap:4px; width:100%; height:32px}
 .preview-distribution--bars span{flex:1; min-width:6px; background:linear-gradient(180deg, rgba(39,125,161,0.18), rgba(39,125,161,0.82)); border-radius:4px 4px 2px 2px; height:calc(var(--h,40) * 1%)}
 .preview-distribution--line{display:flex; align-items:center; justify-content:center}
-.preview-distribution--line svg{width:100%; height:32px; display:block; color:var(--c-orange-1)}
+.preview-distribution--line svg{width:100%; height:32px; display:block; color:var(--energy-chaleur)}
 
 @media (max-width: 1024px){
   .map-marker__label{display:none}
@@ -1235,28 +1245,28 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 .chart-catalog-drag-ghost .catalog-card__meta{font-size:.82rem; color:rgba(226,232,240,0.74)}
 .preview-bars{display:flex; align-items:flex-end; gap:6px; width:64px; height:40px}
 .preview-bars span{flex:1; display:block; height:calc(var(--h, 40) * 1px); border-radius:6px 6px 4px 4px; background:linear-gradient(180deg, var(--c-blue-soft), var(--c-blue-deep)); opacity:.7; transition:opacity .15s ease}
-.preview-bars span[data-active]{background:linear-gradient(180deg, var(--c-orange-1), var(--c-orange-2)); opacity:1}
+.preview-bars span[data-active]{background:linear-gradient(180deg, var(--energy-chaleur), var(--energy-chaleur-soft)); opacity:1}
 .preview-line{display:block; width:70px; height:42px}
 .preview-line svg{width:100%; height:100%}
 .preview-line__area{fill:url(#previewLine)}
 .preview-line__stroke{fill:none; stroke:var(--c-blue-deep); stroke-width:3; stroke-linecap:round; stroke-linejoin:round}
-.preview-line__target{stroke:var(--c-orange-1); stroke-width:2; stroke-dasharray:4 4; opacity:.8}
+.preview-line__target{stroke:var(--energy-chaleur); stroke-width:2; stroke-dasharray:4 4; opacity:.8}
 .preview-breakdown{display:flex; flex-direction:column; gap:6px; width:72px}
 .preview-breakdown span{display:block; height:8px; border-radius:999px; background:linear-gradient(90deg, var(--c-red), var(--c-orange-3)); opacity:.75}
 .preview-breakdown span:nth-child(2){width:calc(var(--w, 46) * 1%); background:linear-gradient(90deg, var(--c-teal-muted), var(--c-teal))}
 .preview-breakdown span:nth-child(3){width:calc(var(--w, 34) * 1%); background:linear-gradient(90deg, var(--c-green), var(--c-teal))}
 .preview-mix{display:flex; align-items:center; justify-content:center}
 .preview-mix--pie-primary,.preview-mix--pie-secondary{width:58px; height:58px; border-radius:50%; position:relative; box-shadow:0 0 0 1px rgba(79,70,229,0.16);}
-.preview-mix--pie-primary{background:conic-gradient(var(--c-orange-1) 0 78%, var(--c-blue-deep) 78% 93%, var(--c-blue-soft) 93% 100%)}
-.preview-mix--pie-secondary{background:conic-gradient(var(--c-orange-1) 0 70%, var(--c-blue-deep) 70% 90%, var(--c-blue-soft) 90% 100%)}
+.preview-mix--pie-primary{background:conic-gradient(var(--energy-chaleur) 0 78%, var(--energy-electricite) 78% 93%, var(--energy-froid) 93% 100%)}
+.preview-mix--pie-secondary{background:conic-gradient(var(--energy-chaleur) 0 70%, var(--energy-electricite) 70% 90%, var(--energy-froid) 90% 100%)}
 .preview-mix--pie-primary::after,.preview-mix--pie-secondary::after{content:""; position:absolute; inset:12px; border-radius:inherit; background:#fff; opacity:.9}
-.preview-mix--donut-primary{width:58px; height:58px; border-radius:50%; position:relative; background:conic-gradient(var(--c-orange-1) 0 80%, var(--c-blue-deep) 80% 95%, var(--c-blue-soft) 95% 100%); color:#0f172a; font-weight:700; font-size:.95rem; letter-spacing:-0.01em}
+.preview-mix--donut-primary{width:58px; height:58px; border-radius:50%; position:relative; background:conic-gradient(var(--energy-chaleur) 0 80%, var(--energy-electricite) 80% 95%, var(--energy-froid) 95% 100%); color:#0f172a; font-weight:700; font-size:.95rem; letter-spacing:-0.01em}
 .preview-mix--donut-primary::after{content:""; position:absolute; inset:16px; border-radius:inherit; background:#fff; opacity:.95}
 .preview-mix--donut-primary span{position:relative; z-index:1}
 .preview-mix--bars-primary{flex-direction:column; align-items:flex-start; gap:6px; width:64px}
-.preview-mix__bar{display:block; height:7px; border-radius:999px; background:linear-gradient(90deg, var(--c-orange-1), var(--c-orange-2)); opacity:.9}
+.preview-mix__bar{display:block; height:7px; border-radius:999px; background:linear-gradient(90deg, var(--energy-chaleur), var(--energy-chaleur-soft)); opacity:.9}
 .preview-mix__bar:nth-child(2){background:linear-gradient(90deg, var(--c-teal-muted), var(--c-teal)); opacity:.75}
-.preview-mix__bar:nth-child(3){background:linear-gradient(90deg, var(--c-blue-soft), var(--c-blue-soft)); opacity:.7}
+.preview-mix__bar:nth-child(3){background:linear-gradient(90deg, var(--energy-froid), var(--energy-froid)); opacity:.7}
 .preview-mix--rings{gap:6px}
 .preview-mix--rings span{display:block; width:16px; height:16px; border-radius:50%; background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 35%, rgba(39,125,161,0.25) 36%, rgba(39,125,161,0.6) 100%); box-shadow:0 0 0 1px rgba(39,125,161,0.25)}
 .preview-mix--rings span:nth-child(1){background:radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9) 35%, rgba(243,114,44,0.35) 36%, rgba(243,114,44,0.75) 100%)}

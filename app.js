@@ -6397,21 +6397,44 @@
             applyLabelVariant('normal');
             return;
           }
+
           const wrapRect = barsWrap.getBoundingClientRect();
-          let density = 'normal';
-          if (wrapRect.width > 0) {
-            const styles = window.getComputedStyle(barsWrap);
-            const gapValue = Number.parseFloat(styles.columnGap || styles.gap || styles.rowGap || '0') || 0;
-            const availableWidth = wrapRect.width - Math.max(0, totalBars - 1) * gapValue;
-            const perBar = availableWidth / totalBars;
-            density = 'normal';
-            if (!Number.isFinite(perBar) || perBar <= 0) {
-              density = 'ultra';
-            } else {
-              if (perBar < 34) density = 'compact';
-              if (perBar < 24) density = 'ultra';
+          const gapStyles = window.getComputedStyle(barsWrap);
+          const gapValue = Number.parseFloat(gapStyles.columnGap || gapStyles.gap || gapStyles.rowGap || '0') || 0;
+
+          let containerWidth = 0;
+          const measurementTarget = viewport || barsWrap;
+          if (measurementTarget) {
+            containerWidth = measurementTarget.clientWidth || 0;
+            if (!containerWidth && typeof measurementTarget.getBoundingClientRect === 'function') {
+              const measurementRect = measurementTarget.getBoundingClientRect();
+              containerWidth = measurementRect.width || 0;
+              if (containerWidth && measurementTarget !== barsWrap) {
+                const measurementStyles = window.getComputedStyle(measurementTarget);
+                const paddingLeft = Number.parseFloat(measurementStyles.paddingLeft || '0') || 0;
+                const paddingRight = Number.parseFloat(measurementStyles.paddingRight || '0') || 0;
+                containerWidth -= paddingLeft + paddingRight;
+              }
             }
           }
+
+          if (!containerWidth) {
+            containerWidth = wrapRect.width || 0;
+          }
+
+          containerWidth = Math.max(0, containerWidth);
+
+          const availableWidth = containerWidth - Math.max(0, totalBars - 1) * gapValue;
+          const perBar = availableWidth / totalBars;
+
+          let density = 'normal';
+          if (!Number.isFinite(perBar) || perBar <= 0) {
+            density = 'ultra';
+          } else {
+            if (perBar < 34) density = 'compact';
+            if (perBar < 22) density = 'ultra';
+          }
+
           if (density === 'normal') {
             delete barsWrap.dataset.density;
           } else {

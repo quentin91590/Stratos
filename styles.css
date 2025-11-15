@@ -919,12 +919,14 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
   justify-content:space-between;
   gap:14px;
   min-height:200px;
+  width:100%;
+  min-width:0;
 }
 .monthly-bars[data-density="compact"]{gap:10px}
-.monthly-bars[data-density="ultra"]{gap:4px}
+.monthly-bars[data-density="ultra"]{gap:2px}
 .monthly-bar{position:relative; flex:1 1 0; display:flex; flex-direction:column; align-items:center; gap:12px; font-variant-numeric:tabular-nums; color:#0f172a; cursor:default; outline:none; min-width:40px}
-.monthly-bars[data-density="compact"] .monthly-bar{min-width:24px}
-.monthly-bars[data-density="ultra"] .monthly-bar{min-width:14px}
+.monthly-bars[data-density="compact"] .monthly-bar{min-width:22px}
+.monthly-bars[data-density="ultra"] .monthly-bar{min-width:12px}
 .monthly-bar:focus-visible{outline:none}
 .monthly-stack-wrap{position:relative; width:100%; display:flex; justify-content:center; align-items:flex-end}
 .monthly-stack{position:relative; width:100%; display:grid; gap:2px; border-radius:12px 12px 8px 8px; overflow:hidden; background:#e2e8f0; transition:transform .18s ease, box-shadow .18s ease; will-change:transform}

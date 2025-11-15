@@ -6131,30 +6131,37 @@
           stack.className = 'monthly-stack';
 
           const segmentsDescription = [];
+          const tooltipEntries = [];
           series.forEach((seriesKey) => {
             const cssKey = cssClassForSeries(seriesKey);
             const value = item.values[seriesKey] || 0;
+            const sharePercent = item.total > 0 ? PERCENT_FORMAT.format((value / item.total) * 100) : '0';
+            const energyText = formatEnergyDisplay(value, mode, valueDecimals);
+            const shareText = `${sharePercent} %`;
             const segment = document.createElement('span');
             segment.className = `monthly-segment monthly-segment--${cssKey}`;
             segment.style.setProperty('--value', Math.max(value, 0));
             segment.setAttribute('aria-hidden', 'true');
             stack.append(segment);
-            segmentsDescription.push(`${seriesLabel(seriesKey)} ${formatEnergyDisplay(value, mode, valueDecimals)} ${unit}`);
+            segmentsDescription.push(`${seriesLabel(seriesKey)} ${energyText} ${unit} (${shareText})`);
+            tooltipEntries.push(`${seriesLabel(seriesKey)} : ${energyText} ${unit} (${shareText})`);
           });
 
           const totalValue = formatEnergyDisplay(item.total, mode, valueDecimals);
           bar.setAttribute('aria-label', `${item.label} : ${totalValue} ${unit} — ${segmentsDescription.join(', ')}`);
 
-          const valueEl = document.createElement('span');
-          valueEl.className = 'monthly-total';
-          valueEl.textContent = totalValue;
-          valueEl.setAttribute('aria-hidden', 'true');
+          const tooltipLines = [
+            `${item.label}`,
+            `Consommation totale : ${totalValue} ${unit}`,
+            ...tooltipEntries,
+          ].filter(Boolean);
+          bar.setAttribute('title', tooltipLines.join('\n'));
 
           const labelEl = document.createElement('span');
           labelEl.className = 'monthly-label';
           labelEl.textContent = item.label;
 
-          bar.append(stack, valueEl, labelEl);
+          bar.append(stack, labelEl);
           barsWrap.append(bar);
         });
       }

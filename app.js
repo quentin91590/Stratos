@@ -6081,6 +6081,8 @@
       const barsWrap = card.querySelector('[data-monthly-bars]');
       const line = card.querySelector('[data-monthly-line]');
       const summary = card.querySelector('[data-monthly-summary]');
+      const viewport = card.querySelector('.monthly-chart__viewport');
+      let tooltipLayer = viewport?.querySelector('[data-monthly-tooltips]');
       if (!barsWrap) return;
 
       const seriesAttr = card.dataset.monthlySeries || 'chaleur,elec,froid';
@@ -6111,50 +6113,167 @@
       const hasData = dataset.length > 0;
 
       barsWrap.innerHTML = '';
+      if (!tooltipLayer && viewport) {
+        tooltipLayer = document.createElement('div');
+        tooltipLayer.className = 'monthly-tooltips';
+        tooltipLayer.setAttribute('data-monthly-tooltips', '');
+        viewport.append(tooltipLayer);
+      }
+      if (tooltipLayer) {
+        tooltipLayer.innerHTML = '';
+      }
       if (!hasData) {
         const empty = document.createElement('p');
         empty.className = 'chart-empty';
         empty.textContent = 'Aucune donnée mensuelle disponible pour ce périmètre.';
         barsWrap.append(empty);
+        if (tooltipLayer) {
+          tooltipLayer.innerHTML = '';
+        }
       } else {
         const scale = maxTotal > 0 ? (140 / maxTotal) : 0;
         if (scale > 0) barsWrap.style.setProperty('--monthly-scale', `${scale}px`);
         else barsWrap.style.removeProperty('--monthly-scale');
 
-        dataset.forEach((item) => {
+        const hideAllTooltips = () => {
+          if (!tooltipLayer) return;
+          tooltipLayer.querySelectorAll('.monthly-tooltip[data-visible="true"]').forEach((tooltipEl) => {
+            tooltipEl.dataset.visible = 'false';
+            tooltipEl.setAttribute('aria-hidden', 'true');
+          });
+        };
+
+        if (tooltipLayer && !card.dataset.monthlyTooltipInit) {
+          const handleCardLeave = () => {
+            hideAllTooltips();
+          };
+          const handleCardFocusOut = (event) => {
+            if (!card.contains(event.relatedTarget)) {
+              hideAllTooltips();
+            }
+          };
+          const handleCardKey = (event) => {
+            if (event.key === 'Escape') {
+              hideAllTooltips();
+            }
+          };
+          card.addEventListener('mouseleave', handleCardLeave);
+          card.addEventListener('focusout', handleCardFocusOut);
+          card.addEventListener('keydown', handleCardKey);
+          card.dataset.monthlyTooltipInit = 'true';
+        }
+
+        dataset.forEach((item, index) => {
           const bar = document.createElement('div');
           bar.className = 'monthly-bar';
           bar.dataset.monthKey = item.key || '';
           bar.setAttribute('role', 'listitem');
+          bar.tabIndex = 0;
 
           const stack = document.createElement('div');
           stack.className = 'monthly-stack';
 
           const segmentsDescription = [];
+          const tooltipEntries = [];
           series.forEach((seriesKey) => {
             const cssKey = cssClassForSeries(seriesKey);
             const value = item.values[seriesKey] || 0;
+            const sharePercent = item.total > 0 ? PERCENT_FORMAT.format((value / item.total) * 100) : '0';
+            const energyText = formatEnergyDisplay(value, mode, valueDecimals);
+            const shareText = `${sharePercent} %`;
             const segment = document.createElement('span');
             segment.className = `monthly-segment monthly-segment--${cssKey}`;
             segment.style.setProperty('--value', Math.max(value, 0));
             segment.setAttribute('aria-hidden', 'true');
             stack.append(segment);
-            segmentsDescription.push(`${seriesLabel(seriesKey)} ${formatEnergyDisplay(value, mode, valueDecimals)} ${unit}`);
+            segmentsDescription.push(`${seriesLabel(seriesKey)} ${energyText} ${unit} (${shareText})`);
+            tooltipEntries.push(`${seriesLabel(seriesKey)} : ${energyText} ${unit} (${shareText})`);
           });
 
           const totalValue = formatEnergyDisplay(item.total, mode, valueDecimals);
           bar.setAttribute('aria-label', `${item.label} : ${totalValue} ${unit} — ${segmentsDescription.join(', ')}`);
 
-          const valueEl = document.createElement('span');
-          valueEl.className = 'monthly-total';
-          valueEl.textContent = totalValue;
-          valueEl.setAttribute('aria-hidden', 'true');
+          const tooltipLines = [
+            `${item.label}`,
+            `Consommation totale : ${totalValue} ${unit}`,
+            ...tooltipEntries,
+          ].filter(Boolean);
+          bar.setAttribute('title', tooltipLines.join('\n'));
+
+          let tooltipId = '';
+          if (tooltipLayer) {
+            const tooltip = document.createElement('div');
+            tooltip.className = 'monthly-tooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            tooltip.dataset.visible = 'false';
+            tooltip.setAttribute('aria-hidden', 'true');
+
+            const titleEl = document.createElement('div');
+            titleEl.className = 'monthly-tooltip__title';
+            titleEl.textContent = item.label;
+
+            const totalEl = document.createElement('div');
+            totalEl.className = 'monthly-tooltip__total';
+            totalEl.textContent = `Consommation totale : ${totalValue} ${unit}`;
+
+            tooltip.append(titleEl, totalEl);
+
+            if (tooltipEntries.length) {
+              const list = document.createElement('ul');
+              list.className = 'monthly-tooltip__breakdown';
+              tooltipEntries.forEach((entry) => {
+                const li = document.createElement('li');
+                li.textContent = entry;
+                list.append(li);
+              });
+              tooltip.append(list);
+            }
+
+            tooltipId = `${card.dataset.chartSlot || 'monthly'}-tooltip-${index}`;
+            tooltip.id = tooltipId;
+            tooltipLayer.append(tooltip);
+            bar.setAttribute('aria-describedby', tooltipId);
+
+            const showTooltip = () => {
+              if (!tooltipLayer) return;
+              hideAllTooltips();
+              const layerRect = tooltipLayer.getBoundingClientRect();
+              const stackRect = stack.getBoundingClientRect();
+              const centerX = stackRect.left + stackRect.width / 2 - layerRect.left;
+              const clampedX = Math.max(16, Math.min(layerRect.width - 16, centerX));
+              const offsetFromBottom = layerRect.bottom - stackRect.top + 8;
+              tooltip.style.setProperty('--tooltip-left', `${clampedX}px`);
+              tooltip.style.setProperty('--tooltip-bottom', `${offsetFromBottom}px`);
+              tooltip.dataset.visible = 'true';
+              tooltip.setAttribute('aria-hidden', 'false');
+            };
+
+            const hideTooltip = () => {
+              tooltip.dataset.visible = 'false';
+              tooltip.setAttribute('aria-hidden', 'true');
+            };
+
+            bar.addEventListener('pointerenter', showTooltip);
+            bar.addEventListener('pointerleave', hideTooltip);
+            bar.addEventListener('pointerdown', (event) => {
+              if (event.pointerType === 'touch') {
+                showTooltip();
+              }
+            });
+            bar.addEventListener('focus', showTooltip);
+            bar.addEventListener('blur', hideTooltip);
+            bar.addEventListener('keydown', (event) => {
+              if (event.key === 'Escape') {
+                hideTooltip();
+              }
+            });
+          }
 
           const labelEl = document.createElement('span');
           labelEl.className = 'monthly-label';
           labelEl.textContent = item.label;
 
-          bar.append(stack, valueEl, labelEl);
+          bar.append(stack, labelEl);
           barsWrap.append(bar);
         });
       }

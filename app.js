@@ -6081,6 +6081,8 @@
       const barsWrap = card.querySelector('[data-monthly-bars]');
       const line = card.querySelector('[data-monthly-line]');
       const summary = card.querySelector('[data-monthly-summary]');
+      const viewport = card.querySelector('.monthly-chart__viewport');
+      let tooltipLayer = viewport?.querySelector('[data-monthly-tooltips]');
       if (!barsWrap) return;
 
       const seriesAttr = card.dataset.monthlySeries || 'chaleur,elec,froid';
@@ -6111,51 +6113,227 @@
       const hasData = dataset.length > 0;
 
       barsWrap.innerHTML = '';
+      barsWrap.setAttribute('role', 'list');
+      if (!tooltipLayer && viewport) {
+        tooltipLayer = document.createElement('div');
+        tooltipLayer.className = 'monthly-tooltips';
+        tooltipLayer.setAttribute('data-monthly-tooltips', '');
+        viewport.append(tooltipLayer);
+      }
+      if (tooltipLayer) {
+        tooltipLayer.innerHTML = '';
+      }
       if (!hasData) {
         const empty = document.createElement('p');
         empty.className = 'chart-empty';
         empty.textContent = 'Aucune donnée mensuelle disponible pour ce périmètre.';
         barsWrap.append(empty);
+        if (tooltipLayer) {
+          tooltipLayer.innerHTML = '';
+        }
       } else {
         const scale = maxTotal > 0 ? (140 / maxTotal) : 0;
         if (scale > 0) barsWrap.style.setProperty('--monthly-scale', `${scale}px`);
         else barsWrap.style.removeProperty('--monthly-scale');
 
-        dataset.forEach((item) => {
+        const hideAllTooltips = () => {
+          if (!tooltipLayer) return;
+          tooltipLayer.querySelectorAll('.monthly-tooltip[data-visible="true"]').forEach((tooltipEl) => {
+            if (typeof tooltipEl._cleanup === 'function') {
+              tooltipEl._cleanup();
+              tooltipEl._cleanup = null;
+            }
+            if (tooltipEl._bar) {
+              tooltipEl._bar.classList.remove('is-tooltip-active');
+            }
+            tooltipEl.dataset.visible = 'false';
+            tooltipEl.setAttribute('aria-hidden', 'true');
+          });
+          barsWrap.querySelectorAll('.monthly-bar.is-tooltip-active').forEach((barEl) => {
+            barEl.classList.remove('is-tooltip-active');
+          });
+        };
+
+        if (tooltipLayer && !card.dataset.monthlyTooltipInit) {
+          const handleCardLeave = () => {
+            hideAllTooltips();
+          };
+          const handleCardFocusOut = (event) => {
+            if (!card.contains(event.relatedTarget)) {
+              hideAllTooltips();
+            }
+          };
+          const handleCardKey = (event) => {
+            if (event.key === 'Escape') {
+              hideAllTooltips();
+            }
+          };
+          card.addEventListener('mouseleave', handleCardLeave);
+          card.addEventListener('focusout', handleCardFocusOut);
+          card.addEventListener('keydown', handleCardKey);
+          card.dataset.monthlyTooltipInit = 'true';
+        }
+
+        dataset.forEach((item, index) => {
           const bar = document.createElement('div');
           bar.className = 'monthly-bar';
           bar.dataset.monthKey = item.key || '';
           bar.setAttribute('role', 'listitem');
+          bar.tabIndex = 0;
 
           const stack = document.createElement('div');
           stack.className = 'monthly-stack';
+          stack.setAttribute('role', 'presentation');
 
           const segmentsDescription = [];
+          const tooltipEntries = [];
           series.forEach((seriesKey) => {
             const cssKey = cssClassForSeries(seriesKey);
-            const value = item.values[seriesKey] || 0;
+            const value = Math.max(item.values[seriesKey] || 0, 0);
+            const sharePercent = item.total > 0 ? (value / item.total) * 100 : 0;
+            let shareText = '0 %';
+            if (sharePercent > 0) {
+              if (sharePercent < 0.1) {
+                shareText = '<0,1 %';
+              } else {
+                shareText = `${PERCENT_FORMAT.format(Math.min(sharePercent, 100))} %`;
+              }
+            }
+            const energyText = formatEnergyDisplay(value, mode, valueDecimals);
             const segment = document.createElement('span');
             segment.className = `monthly-segment monthly-segment--${cssKey}`;
-            segment.style.setProperty('--value', Math.max(value, 0));
+            segment.style.setProperty('--value', value);
             segment.setAttribute('aria-hidden', 'true');
             stack.append(segment);
-            segmentsDescription.push(`${seriesLabel(seriesKey)} ${formatEnergyDisplay(value, mode, valueDecimals)} ${unit}`);
+            segmentsDescription.push(`${seriesLabel(seriesKey)} ${energyText} ${unit} (${shareText})`);
+            if (value > 0) {
+              tooltipEntries.push({
+                cssKey,
+                label: seriesLabel(seriesKey),
+                valueText: energyText,
+                shareText,
+              });
+            }
           });
 
           const totalValue = formatEnergyDisplay(item.total, mode, valueDecimals);
-          bar.setAttribute('aria-label', `${item.label} : ${totalValue} ${unit} — ${segmentsDescription.join(', ')}`);
+          const totalText = `${totalValue} ${unit}`;
+          bar.setAttribute('aria-label', `${item.label} : ${totalText} — ${segmentsDescription.join(', ')}`);
 
-          const valueEl = document.createElement('span');
-          valueEl.className = 'monthly-total';
-          valueEl.textContent = totalValue;
-          valueEl.setAttribute('aria-hidden', 'true');
+          const tooltipLines = [
+            `${item.label}`,
+            ...tooltipEntries.map(({ label, valueText, shareText }) => `${label} : ${valueText} ${unit} (${shareText})`),
+          ].filter(Boolean);
+          bar.setAttribute('title', tooltipLines.join('\n'));
+
+          let tooltipId = '';
+          let tooltip = null;
+          if (tooltipLayer) {
+            tooltip = document.createElement('div');
+            tooltip.className = 'monthly-tooltip';
+            tooltip.setAttribute('role', 'tooltip');
+            tooltip.dataset.visible = 'false';
+            tooltip.setAttribute('aria-hidden', 'true');
+
+            const totalBadge = document.createElement('span');
+            totalBadge.className = 'monthly-tooltip__value';
+            totalBadge.textContent = totalText;
+            tooltip.append(totalBadge);
+
+            if (tooltipEntries.length) {
+              const body = document.createElement('div');
+              body.className = 'monthly-tooltip__body';
+              const list = document.createElement('ul');
+              list.className = 'monthly-tooltip__breakdown';
+              tooltipEntries.forEach(({ cssKey, label, valueText, shareText }) => {
+                const li = document.createElement('li');
+                const dot = document.createElement('span');
+                dot.className = `monthly-tooltip__dot monthly-tooltip__dot--${cssKey}`;
+                dot.setAttribute('aria-hidden', 'true');
+                const text = document.createElement('span');
+                text.className = 'monthly-tooltip__entry-text';
+                text.textContent = `${label} : ${valueText} ${unit} (${shareText})`;
+                li.append(dot, text);
+                list.append(li);
+              });
+              body.append(list);
+              tooltip.append(body);
+            }
+
+            tooltipId = `${card.dataset.chartSlot || 'monthly'}-tooltip-${index}`;
+            tooltip.id = tooltipId;
+            tooltipLayer.append(tooltip);
+            bar.setAttribute('aria-describedby', tooltipId);
+            tooltip._bar = bar;
+          }
 
           const labelEl = document.createElement('span');
           labelEl.className = 'monthly-label';
           labelEl.textContent = item.label;
 
-          bar.append(stack, valueEl, labelEl);
+          const valueBadge = document.createElement('span');
+          valueBadge.className = 'monthly-bar__value';
+          valueBadge.textContent = totalText;
+          valueBadge.setAttribute('aria-hidden', 'true');
+
+          const stackWrap = document.createElement('div');
+          stackWrap.className = 'monthly-stack-wrap';
+          stackWrap.append(stack, valueBadge);
+
+          bar.append(stackWrap, labelEl);
           barsWrap.append(bar);
+
+          if (tooltip) {
+            const repositionTooltip = () => {
+              if (!tooltipLayer) return;
+              const layerRect = tooltipLayer.getBoundingClientRect();
+              const stackRect = stack.getBoundingClientRect();
+              const centerX = stackRect.left + (stackRect.width / 2) - layerRect.left;
+              const clampedX = Math.max(16, Math.min(layerRect.width - 16, centerX));
+              const offsetFromBottom = layerRect.bottom - stackRect.top + 12;
+              tooltip.style.setProperty('--tooltip-left', `${clampedX}px`);
+              tooltip.style.setProperty('--tooltip-bottom', `${Math.max(12, offsetFromBottom)}px`);
+            };
+
+            const cleanup = () => {
+              window.removeEventListener('resize', repositionTooltip);
+              window.removeEventListener('scroll', repositionTooltip, true);
+            };
+
+            const showTooltip = () => {
+              hideAllTooltips();
+              bar.classList.add('is-tooltip-active');
+              tooltip.dataset.visible = 'true';
+              tooltip.setAttribute('aria-hidden', 'false');
+              repositionTooltip();
+              tooltip._cleanup = cleanup;
+              window.addEventListener('resize', repositionTooltip);
+              window.addEventListener('scroll', repositionTooltip, true);
+            };
+
+            const hideTooltip = () => {
+              if (typeof tooltip._cleanup === 'function') {
+                tooltip._cleanup();
+                tooltip._cleanup = null;
+              }
+              tooltip.dataset.visible = 'false';
+              tooltip.setAttribute('aria-hidden', 'true');
+              bar.classList.remove('is-tooltip-active');
+            };
+
+            bar.addEventListener('mouseenter', showTooltip);
+            bar.addEventListener('mouseleave', hideTooltip);
+            bar.addEventListener('focus', showTooltip);
+            bar.addEventListener('blur', hideTooltip);
+            bar.addEventListener('touchstart', showTooltip, { passive: true });
+            bar.addEventListener('touchend', hideTooltip, { passive: true });
+            bar.addEventListener('touchcancel', hideTooltip);
+            bar.addEventListener('keydown', (event) => {
+              if (event.key === 'Escape') {
+                hideTooltip();
+              }
+            });
+          }
         });
       }
 

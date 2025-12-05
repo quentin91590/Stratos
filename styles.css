@@ -283,34 +283,27 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .top-subnav[hidden]{display:none}
 .top-subnav{
-  position:absolute;
-  top:100%;
-  left:0;
-  right:0;
   display:flex;
   gap:14px;
   align-items:center;
   flex-wrap:wrap;
   width:100%;
   margin:0;
-  padding:10px 16px 10px;
-  background:rgba(246,247,249,.97);
-  backdrop-filter:blur(12px);
-  border-top:1px solid rgba(15,23,42,.06);
-  box-shadow:0 10px 30px rgba(15,23,42,.12);
-  border-radius:0 0 14px 14px;
+  padding:0;
+  border-top:1px solid rgba(15,23,42,.08);
   opacity:0;
-  transform:translateY(-10px);
+  max-height:0;
+  overflow:hidden;
   pointer-events:none;
-  transition:opacity .2s ease-out, transform .25s cubic-bezier(.22,1,.36,1);
-  overflow-x:auto;
+  transition:opacity .25s ease, max-height .3s cubic-bezier(.33,1,.68,1), padding .3s ease;
   scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
-  z-index:999;
 }
 .top-subnav.is-visible{
   opacity:1;
-  transform:translateY(0);
+  max-height:80px;
+  padding:12px 0 4px;
+  overflow-x:auto;
   pointer-events:auto;
 }
 .top-subnav::-webkit-scrollbar{height:6px}

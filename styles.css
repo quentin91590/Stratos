@@ -283,8 +283,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .top-subnav[hidden]{display:none}
 .top-subnav{
-  position:absolute;
-  top:100%;
+  position:fixed;
+  top:var(--subnav-top, 70px);
   left:0;
   right:0;
   display:flex;

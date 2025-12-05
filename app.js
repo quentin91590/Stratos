@@ -3989,8 +3989,11 @@
   function syncStickyTop() {
     const topNavWrap = document.querySelector('.top-nav-wrap');
     const header = document.querySelector('.sidebar-header');
-    const h = (topNavWrap ? topNavWrap.offsetHeight : 0) + (header ? header.offsetHeight : 0);
+    const navHeight = topNavWrap ? topNavWrap.offsetHeight : 0;
+    const h = navHeight + (header ? header.offsetHeight : 0);
     document.documentElement.style.setProperty('--sticky-top', h + 'px');
+    // Position de la subnav juste sous la top-nav-wrap
+    document.documentElement.style.setProperty('--subnav-top', navHeight + 'px');
   }
   function selectSection(name) {
     syncStickyTop();

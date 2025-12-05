@@ -290,19 +290,20 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   width:100%;
   margin:0;
   padding:0;
-  border-top:1px solid rgba(15,23,42,.08);
+  background:transparent;
+  border:none;
   opacity:0;
   max-height:0;
   overflow:hidden;
   pointer-events:none;
-  transition:opacity .25s ease, max-height .3s cubic-bezier(.33,1,.68,1), padding .3s ease;
+  transition:opacity .22s ease-out, max-height .28s ease-out, padding .28s ease-out;
   scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
 }
 .top-subnav.is-visible{
   opacity:1;
-  max-height:80px;
-  padding:12px 0 4px;
+  max-height:70px;
+  padding:10px 0 2px;
   overflow-x:auto;
   pointer-events:auto;
 }

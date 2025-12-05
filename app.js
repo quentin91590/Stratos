@@ -430,6 +430,7 @@
   let energySubnavMeasureRaf = null;
   let energySubnavGeometryEnabled = false;
   let energySubnavTabsGrid = null;
+  let energySubnavShowDebounce = null;
 
   const MAP_SEVERITY_COLORS = {
     low: paletteColor('green'),
@@ -755,45 +756,52 @@
     }
   }
 
-  function updateEnergySubnavVisibility() {
+  function updateEnergySubnavVisibility(immediate = false) {
     if (!energySubnav) return;
     const shouldShow = energySubnavEnabled && !energySubnavSentinelVisible;
-    energySubnav.setAttribute('aria-hidden', shouldShow ? 'false' : 'true');
 
     if (shouldShow) {
+      // Annule tout timer de masquage en cours
       if (energySubnavHideTimer) {
         clearTimeout(energySubnavHideTimer);
         energySubnavHideTimer = null;
       }
+      if (energySubnavShowDebounce) {
+        clearTimeout(energySubnavShowDebounce);
+        energySubnavShowDebounce = null;
+      }
+      energySubnav.setAttribute('aria-hidden', 'false');
       if (energySubnav.hidden) {
         energySubnav.hidden = false;
         energySubnav.classList.remove('is-visible');
-        if (typeof requestAnimationFrame === 'function') {
-          requestAnimationFrame(() => energySubnav.classList.add('is-visible'));
-        } else {
-          energySubnav.classList.add('is-visible');
-        }
+        requestAnimationFrame(() => energySubnav.classList.add('is-visible'));
       } else {
         energySubnav.classList.add('is-visible');
       }
     } else {
-      energySubnav.classList.remove('is-visible');
-      if (!energySubnav.hidden) {
-        if (energySubnavHideTimer) clearTimeout(energySubnavHideTimer);
-        if (isReducedMotionPreferred()) {
-          energySubnav.hidden = true;
-        } else {
-          // Délai aligné sur la transition CSS (max-height .3s + marge)
-          energySubnavHideTimer = window.setTimeout(() => {
-            energySubnav.hidden = true;
-            energySubnavHideTimer = null;
-          }, 350);
-        }
+      // Debounce pour éviter le clignotement lors du scroll rapide
+      if (energySubnavShowDebounce) {
+        clearTimeout(energySubnavShowDebounce);
       }
+      const hideDelay = immediate ? 0 : 150;
+      energySubnavShowDebounce = setTimeout(() => {
+        energySubnavShowDebounce = null;
+        energySubnav.setAttribute('aria-hidden', 'true');
+        energySubnav.classList.remove('is-visible');
+        if (!energySubnav.hidden) {
+          if (energySubnavHideTimer) clearTimeout(energySubnavHideTimer);
+          if (isReducedMotionPreferred()) {
+            energySubnav.hidden = true;
+          } else {
+            // Délai aligné sur la transition CSS
+            energySubnavHideTimer = window.setTimeout(() => {
+              energySubnav.hidden = true;
+              energySubnavHideTimer = null;
+            }, 320);
+          }
+        }
+      }, hideDelay);
     }
-
-    // Délai pour laisser la transition CSS se terminer avant de recalculer
-    setTimeout(() => requestSyncStickyTop(), 50);
   }
 
   function setEnergySubnavActive(tabId) {
@@ -4003,7 +4011,7 @@
     // Force le sentinel comme visible car on va scroller vers le haut
     // La subnav ne doit s'afficher que quand les KPI tabs ne sont plus visibles après scroll
     energySubnavSentinelVisible = true;
-    updateEnergySubnavVisibility();
+    updateEnergySubnavVisibility(true); // immediate = true pour éviter le délai au changement de section
     if (energySubnavGeometryEnabled) {
       // Délai pour laisser le scroll vers le haut se faire avant de remesurer
       setTimeout(() => scheduleEnergySubnavMeasure(true), 350);

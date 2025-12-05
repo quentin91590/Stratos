@@ -5850,10 +5850,13 @@
             footer.append(valueEl, countEl);
 
             const area = width * height;
-            if (area < 0.12) node.classList.add('is-compact');
-            if (area < 0.07) node.classList.add('is-tight');
-            if (area < 0.045) node.classList.add('is-mini');
-            if (area < 0.02) node.classList.add('is-micro');
+            const minDim = Math.min(width, height);
+            if (area < 0.15 || minDim < 0.25) node.classList.add('is-compact');
+            if (area < 0.09 || minDim < 0.18) node.classList.add('is-tight');
+            if (area < 0.05 || minDim < 0.12) node.classList.add('is-mini');
+            if (area < 0.025 || minDim < 0.08) node.classList.add('is-micro');
+            if (area < 0.012 || minDim < 0.05) node.classList.add('is-nano');
+            if (area < 0.005 || minDim < 0.03) node.classList.add('is-hidden-text');
 
             node.setAttribute('aria-label', `${item.label} : ${valueEl.textContent}, ${countEl.textContent} (${shareText})`);
             node.title = `${item.label} • ${valueEl.textContent} • ${countEl.textContent} (${shareText})`;

@@ -3998,10 +3998,14 @@
     const root = document.documentElement;
 
     energySubnavEnabled = (name === 'energie');
-    if (energySubnavGeometryEnabled) {
-      scheduleEnergySubnavMeasure(true);
-    }
+    // Force le sentinel comme visible car on va scroller vers le haut
+    // La subnav ne doit s'afficher que quand les KPI tabs ne sont plus visibles après scroll
+    energySubnavSentinelVisible = true;
     updateEnergySubnavVisibility();
+    if (energySubnavGeometryEnabled) {
+      // Délai pour laisser le scroll vers le haut se faire avant de remesurer
+      setTimeout(() => scheduleEnergySubnavMeasure(true), 350);
+    }
 
     // Affiche uniquement le tabset de la section active
     const energyBlock = document.getElementById('energy-block');

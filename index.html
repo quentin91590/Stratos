@@ -4548,10 +4548,326 @@
 
       <!-- GÉNÉRAL -->
       <div class="section" id="section-general" hidden>
-        <section aria-labelledby="general-heading">
-          <h2 id="general-heading">Vue d’ensemble</h2>
-          <p>Section générale pour présenter les informations clés du parc immobilier.</p>
-        </section>
+        <div id="general-block" class="tabset">
+
+          <!-- Onglets KPI Général -->
+          <div class="kpi-subnav-sentinel-general" aria-hidden="true"></div>
+          <div class="kpi-tabs" role="tablist" aria-label="Indicateurs généraux">
+
+            <!-- Patrimoine -->
+            <button role="tab" aria-selected="true" aria-expanded="true" id="tab-general-patrimoine"
+              aria-controls="panel-general-patrimoine" class="kpi" data-status="good">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M3 21h18"/>
+                    <path d="M5 21V7l7-4 7 4v14"/>
+                    <path d="M9 21v-6h6v6"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Patrimoine</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Nombre de bâtiments</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">147</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 3%</span></span>
+              <span class="kpi-unit">bâtiments</span>
+            </button>
+
+            <!-- Localisation -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-general-localisation"
+              aria-controls="panel-general-localisation" class="kpi" data-status="good">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M12 21c-4-4-8-7.5-8-11a8 8 0 1116 0c0 3.5-4 7-8 11z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Localisation</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Sites géolocalisés</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">142</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 5</span></span>
+              <span class="kpi-unit">sites</span>
+            </button>
+
+            <!-- Affectations -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-general-affectations"
+              aria-controls="panel-general-affectations" class="kpi" data-status="good">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="3" width="7" height="7" rx="1"/>
+                    <rect x="14" y="3" width="7" height="7" rx="1"/>
+                    <rect x="3" y="14" width="7" height="7" rx="1"/>
+                    <rect x="14" y="14" width="7" height="7" rx="1"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Affectations</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Types d'usage</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">12</span></span>
+              <span class="kpi-unit">catégories</span>
+            </button>
+
+            <!-- Surface -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-general-surface"
+              aria-controls="panel-general-surface" class="kpi" data-status="good">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <rect x="3" y="3" width="18" height="18" rx="2"/>
+                    <path d="M3 9h18"/>
+                    <path d="M9 21V9"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Surface</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Surface totale SRE</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">245 800</span><span class="kpi-trend trend-up"><span class="arr">▲</span> 2%</span></span>
+              <span class="kpi-unit">m²</span>
+            </button>
+
+            <!-- Âge -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-general-age"
+              aria-controls="panel-general-age" class="kpi" data-status="warn">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 7v5l3 3"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Âge</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Âge moyen du parc</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">42</span></span>
+              <span class="kpi-unit">ans</span>
+            </button>
+
+            <!-- Documents -->
+            <button role="tab" aria-selected="false" aria-expanded="false" id="tab-general-documents"
+              aria-controls="panel-general-documents" class="kpi" data-status="warn">
+              <span class="kpi-head">
+                <span class="kpi-icon" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                    <path d="M14 2v6h6"/>
+                    <path d="M16 13H8"/>
+                    <path d="M16 17H8"/>
+                    <path d="M10 9H8"/>
+                  </svg>
+                </span>
+                <span class="kpi-label">Documents</span>
+                <span class="kpi-dot" aria-hidden="true"></span>
+              </span>
+              <span class="kpi-title">Documents manquants</span>
+              <span class="kpi-value-wrap"><span class="kpi-value">23</span><span class="kpi-trend trend-down"><span class="arr">▼</span> 5</span></span>
+              <span class="kpi-unit">docs</span>
+            </button>
+
+          </div>
+
+          <!-- Panneaux de contenu -->
+          <div class="panels-area">
+
+            <!-- Panel Patrimoine -->
+            <section id="panel-general-patrimoine" role="tabpanel" aria-labelledby="tab-general-patrimoine" class="panel">
+              <h3 class="panel-title">Vue d'ensemble du patrimoine</h3>
+              <div class="panel-body two-col">
+                <div class="chart-wrap">
+                  <h4 class="chart-title">Répartition par type de bâtiment</h4>
+                  <canvas id="chart-patrimoine-types" height="260"></canvas>
+                </div>
+                <div class="info-cards">
+                  <div class="info-card">
+                    <span class="info-label">Bâtiments actifs</span>
+                    <span class="info-value">142</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">En travaux</span>
+                    <span class="info-value">5</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Inoccupés</span>
+                    <span class="info-value">3</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Surface moyenne</span>
+                    <span class="info-value">1 672 m²</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel Localisation -->
+            <section id="panel-general-localisation" role="tabpanel" aria-labelledby="tab-general-localisation" class="panel" hidden>
+              <h3 class="panel-title">Localisation des sites</h3>
+              <div class="panel-body">
+                <div class="map-container" id="map-general-localisation" style="height:400px; background: var(--bg-card); border-radius: 12px; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: var(--txt-muted);">Carte interactive des bâtiments</span>
+                </div>
+                <div class="map-stats">
+                  <div class="info-card">
+                    <span class="info-label">Communes couvertes</span>
+                    <span class="info-value">18</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Départements</span>
+                    <span class="info-value">3</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Zones urbaines</span>
+                    <span class="info-value">85%</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel Affectations -->
+            <section id="panel-general-affectations" role="tabpanel" aria-labelledby="tab-general-affectations" class="panel" hidden>
+              <h3 class="panel-title">Répartition par affectation</h3>
+              <div class="panel-body two-col">
+                <div class="chart-wrap">
+                  <h4 class="chart-title">Types d'affectation</h4>
+                  <canvas id="chart-affectations" height="300"></canvas>
+                </div>
+                <div class="affectation-list">
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #3b82f6;"></span>
+                    <span class="affectation-label">Bureaux administratifs</span>
+                    <span class="affectation-value">38 bât.</span>
+                  </div>
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #10b981;"></span>
+                    <span class="affectation-label">Établissements scolaires</span>
+                    <span class="affectation-value">32 bât.</span>
+                  </div>
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #f59e0b;"></span>
+                    <span class="affectation-label">Équipements sportifs</span>
+                    <span class="affectation-value">24 bât.</span>
+                  </div>
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #ef4444;"></span>
+                    <span class="affectation-label">Équipements culturels</span>
+                    <span class="affectation-value">18 bât.</span>
+                  </div>
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #8b5cf6;"></span>
+                    <span class="affectation-label">Logements sociaux</span>
+                    <span class="affectation-value">15 bât.</span>
+                  </div>
+                  <div class="affectation-item">
+                    <span class="affectation-color" style="background: #ec4899;"></span>
+                    <span class="affectation-label">Autres</span>
+                    <span class="affectation-value">20 bât.</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel Surface -->
+            <section id="panel-general-surface" role="tabpanel" aria-labelledby="tab-general-surface" class="panel" hidden>
+              <h3 class="panel-title">Analyse des surfaces</h3>
+              <div class="panel-body two-col">
+                <div class="chart-wrap">
+                  <h4 class="chart-title">Répartition des surfaces par usage</h4>
+                  <canvas id="chart-surfaces" height="260"></canvas>
+                </div>
+                <div class="info-cards">
+                  <div class="info-card">
+                    <span class="info-label">Surface totale SRE</span>
+                    <span class="info-value">245 800 m²</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Surface utile</span>
+                    <span class="info-value">198 640 m²</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Surface plancher</span>
+                    <span class="info-value">312 500 m²</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Taux d'occupation</span>
+                    <span class="info-value">87%</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel Âge -->
+            <section id="panel-general-age" role="tabpanel" aria-labelledby="tab-general-age" class="panel" hidden>
+              <h3 class="panel-title">Âge du patrimoine</h3>
+              <div class="panel-body two-col">
+                <div class="chart-wrap">
+                  <h4 class="chart-title">Distribution par décennie de construction</h4>
+                  <canvas id="chart-age" height="260"></canvas>
+                </div>
+                <div class="info-cards">
+                  <div class="info-card">
+                    <span class="info-label">Avant 1950</span>
+                    <span class="info-value">23 bât.</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">1950-1980</span>
+                    <span class="info-value">58 bât.</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">1980-2000</span>
+                    <span class="info-value">42 bât.</span>
+                  </div>
+                  <div class="info-card">
+                    <span class="info-label">Après 2000</span>
+                    <span class="info-value">24 bât.</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Panel Documents -->
+            <section id="panel-general-documents" role="tabpanel" aria-labelledby="tab-general-documents" class="panel" hidden>
+              <h3 class="panel-title">Gestion documentaire</h3>
+              <div class="panel-body two-col">
+                <div class="chart-wrap">
+                  <h4 class="chart-title">Complétude documentaire par type</h4>
+                  <canvas id="chart-documents" height="260"></canvas>
+                </div>
+                <div class="doc-status-list">
+                  <div class="doc-status-item">
+                    <span class="doc-status-icon good">✓</span>
+                    <span class="doc-status-label">Plans d'évacuation</span>
+                    <span class="doc-status-value">142/147</span>
+                  </div>
+                  <div class="doc-status-item">
+                    <span class="doc-status-icon good">✓</span>
+                    <span class="doc-status-label">DPE / Audits énergétiques</span>
+                    <span class="doc-status-value">138/147</span>
+                  </div>
+                  <div class="doc-status-item">
+                    <span class="doc-status-icon warn">!</span>
+                    <span class="doc-status-label">Diagnostics amiante</span>
+                    <span class="doc-status-value">125/147</span>
+                  </div>
+                  <div class="doc-status-item">
+                    <span class="doc-status-icon warn">!</span>
+                    <span class="doc-status-label">Carnet d'entretien</span>
+                    <span class="doc-status-value">118/147</span>
+                  </div>
+                  <div class="doc-status-item">
+                    <span class="doc-status-icon bad">✗</span>
+                    <span class="doc-status-label">DAPP (accessibilité)</span>
+                    <span class="doc-status-value">98/147</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
       </div>
 
       <!-- ÉTAT -->

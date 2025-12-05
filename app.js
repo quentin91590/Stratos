@@ -783,15 +783,17 @@
         if (isReducedMotionPreferred()) {
           energySubnav.hidden = true;
         } else {
+          // Délai aligné sur la transition CSS (max-height .3s + marge)
           energySubnavHideTimer = window.setTimeout(() => {
             energySubnav.hidden = true;
             energySubnavHideTimer = null;
-          }, 220);
+          }, 350);
         }
       }
     }
 
-    requestSyncStickyTop();
+    // Délai pour laisser la transition CSS se terminer avant de recalculer
+    setTimeout(() => requestSyncStickyTop(), 50);
   }
 
   function setEnergySubnavActive(tabId) {

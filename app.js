@@ -771,35 +771,24 @@
         energySubnavShowDebounce = null;
       }
       energySubnav.setAttribute('aria-hidden', 'false');
-      if (energySubnav.hidden) {
-        energySubnav.hidden = false;
-        energySubnav.classList.remove('is-visible');
-        requestAnimationFrame(() => energySubnav.classList.add('is-visible'));
-      } else {
-        energySubnav.classList.add('is-visible');
-      }
+      energySubnav.hidden = false;
+      requestAnimationFrame(() => energySubnav.classList.add('is-visible'));
     } else {
       // Debounce pour éviter le clignotement lors du scroll rapide
       if (energySubnavShowDebounce) {
         clearTimeout(energySubnavShowDebounce);
       }
-      const hideDelay = immediate ? 0 : 150;
+      const hideDelay = immediate ? 0 : 120;
       energySubnavShowDebounce = setTimeout(() => {
         energySubnavShowDebounce = null;
         energySubnav.setAttribute('aria-hidden', 'true');
         energySubnav.classList.remove('is-visible');
-        if (!energySubnav.hidden) {
-          if (energySubnavHideTimer) clearTimeout(energySubnavHideTimer);
-          if (isReducedMotionPreferred()) {
-            energySubnav.hidden = true;
-          } else {
-            // Délai aligné sur la transition CSS
-            energySubnavHideTimer = window.setTimeout(() => {
-              energySubnav.hidden = true;
-              energySubnavHideTimer = null;
-            }, 320);
-          }
-        }
+        // Délai court pour laisser la transition CSS se terminer
+        if (energySubnavHideTimer) clearTimeout(energySubnavHideTimer);
+        energySubnavHideTimer = window.setTimeout(() => {
+          energySubnav.hidden = true;
+          energySubnavHideTimer = null;
+        }, 280);
       }, hideDelay);
     }
   }

@@ -964,33 +964,41 @@ body.chart-tiles-dragging{user-select:none; cursor:grabbing; touch-action:none; 
 .typology-node.is-selected:hover{transform:translateY(-4px)}
 .typology-bar.is-selected{box-shadow:0 16px 34px rgba(15,23,42,0.22), 0 0 0 3px rgba(15,23,42,0.18)}
 .typology-node:hover{transform:translateY(-2px); box-shadow:0 16px 32px rgba(15,23,42,0.18)}
-.typology-node__header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px}
-.typology-node__label{font-weight:600; font-size:.94rem; color:#0f172a; line-height:1.25; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:break-word}
-.typology-node__share{font-size:.78rem; font-weight:600; color:var(--treemap-color-strong, var(--c-blue-deep)); background:rgba(255,255,255,0.6); border-radius:999px; padding:3px 9px; white-space:nowrap; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35)}
-.typology-node__footer{display:flex; align-items:flex-end; justify-content:space-between; gap:10px}
-.typology-node__value{font-weight:700; font-size:1.08rem}
-.typology-node__count{font-size:.8rem; color:#334155; font-weight:600}
+.typology-node__header{display:flex; align-items:flex-start; justify-content:space-between; gap:12px; min-width:0}
+.typology-node__label{font-weight:600; font-size:.94rem; color:#0f172a; line-height:1.25; overflow:hidden; text-overflow:ellipsis; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; word-break:break-word; min-width:0; flex:1}
+.typology-node__share{font-size:.78rem; font-weight:600; color:var(--treemap-color-strong, var(--c-blue-deep)); background:rgba(255,255,255,0.6); border-radius:999px; padding:3px 9px; white-space:nowrap; box-shadow:inset 0 0 0 1px rgba(255,255,255,0.35); flex-shrink:0}
+.typology-node__footer{display:flex; align-items:flex-end; justify-content:space-between; gap:10px; min-width:0}
+.typology-node__value{font-weight:700; font-size:1.08rem; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; min-width:0}
+.typology-node__count{font-size:.8rem; color:#334155; font-weight:600; white-space:nowrap; flex-shrink:0}
 .typology-node.is-compact{padding:12px 14px; gap:10px}
 .typology-node.is-compact .typology-node__label{font-size:.85rem}
 .typology-node.is-compact .typology-node__value{font-size:.94rem}
+.typology-node.is-compact .typology-node__share{font-size:.72rem; padding:2px 7px}
+.typology-node.is-tight{padding:10px 12px; gap:8px}
+.typology-node.is-tight .typology-node__label{font-size:.8rem; -webkit-line-clamp:2}
+.typology-node.is-tight .typology-node__value{font-size:.88rem}
 .typology-node.is-tight .typology-node__count{display:none}
-.typology-node.is-tight .typology-node__share{font-size:.72rem}
-.typology-node.is-mini{padding:10px; gap:8px}
-.typology-node.is-mini .typology-node__label{font-size:.78rem}
-.typology-node.is-mini .typology-node__value{font-size:.86rem}
-.typology-node.is-mini .typology-node__share{display:none}
-.typology-node.is-micro{padding:8px 9px; gap:6px}
-.typology-node.is-micro .typology-node__header{flex-direction:column; align-items:flex-start; gap:4px}
-.typology-node.is-micro .typology-node__share{display:none}
-.typology-node.is-micro .typology-node__label{font-size:.74rem; -webkit-line-clamp:1}
-.typology-node.is-micro .typology-node__value{font-size:.78rem}
+.typology-node.is-tight .typology-node__share{font-size:.68rem; padding:2px 6px}
+.typology-node.is-mini{padding:8px 10px; gap:6px}
+.typology-node.is-mini .typology-node__header{gap:6px}
+.typology-node.is-mini .typology-node__label{font-size:.72rem; -webkit-line-clamp:1}
+.typology-node.is-mini .typology-node__value{font-size:.76rem}
+.typology-node.is-mini .typology-node__share{font-size:.6rem; padding:2px 5px}
+.typology-node.is-mini .typology-node__count{display:none}
+.typology-node.is-micro{padding:6px 8px; gap:4px}
+.typology-node.is-micro .typology-node__header{flex-direction:column; align-items:flex-start; gap:3px}
+.typology-node.is-micro .typology-node__label{font-size:.65rem; -webkit-line-clamp:1}
+.typology-node.is-micro .typology-node__value{font-size:.62rem}
+.typology-node.is-micro .typology-node__share{font-size:.55rem; padding:1px 4px}
 .typology-node.is-micro .typology-node__count{display:none}
-.typology-node.is-nano{padding:5px 6px; gap:3px}
-.typology-node.is-nano .typology-node__header{flex-direction:column; align-items:flex-start; gap:2px}
-.typology-node.is-nano .typology-node__share{display:none}
-.typology-node.is-nano .typology-node__label{font-size:.62rem; -webkit-line-clamp:1; line-height:1.15}
-.typology-node.is-nano .typology-node__value{font-size:.58rem}
-.typology-node.is-nano .typology-node__footer{display:none}
+.typology-node.is-micro .typology-node__footer{gap:4px}
+.typology-node.is-nano{padding:4px 5px; gap:2px}
+.typology-node.is-nano .typology-node__header{flex-direction:column; align-items:flex-start; gap:1px}
+.typology-node.is-nano .typology-node__label{font-size:.55rem; -webkit-line-clamp:1; line-height:1.1}
+.typology-node.is-nano .typology-node__value{font-size:.5rem}
+.typology-node.is-nano .typology-node__share{font-size:.48rem; padding:1px 3px}
+.typology-node.is-nano .typology-node__footer{gap:2px}
+.typology-node.is-nano .typology-node__count{display:none}
 .typology-node.is-hidden-text .typology-node__header{display:none}
 .typology-node.is-hidden-text .typology-node__footer{display:none}
 .typology-summary{margin:0; font-size:.88rem; color:#475569; text-align:left}

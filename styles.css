@@ -289,19 +289,21 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   flex-wrap:wrap;
   width:100%;
   margin:0;
-  padding:12px 0 4px;
+  padding:0;
   border-top:1px solid rgba(15,23,42,.08);
   opacity:0;
-  transform:translateY(-12px);
+  max-height:0;
+  overflow:hidden;
   pointer-events:none;
-  transition:opacity .28s ease, transform .32s cubic-bezier(.33,1,.68,1);
-  overflow-x:auto;
+  transition:opacity .25s ease, max-height .3s cubic-bezier(.33,1,.68,1), padding .3s ease;
   scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
 }
 .top-subnav.is-visible{
   opacity:1;
-  transform:translateY(0);
+  max-height:80px;
+  padding:12px 0 4px;
+  overflow-x:auto;
   pointer-events:auto;
 }
 .top-subnav::-webkit-scrollbar{height:6px}

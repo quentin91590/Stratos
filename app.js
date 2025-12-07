@@ -4060,6 +4060,9 @@
   /* ========== Sidebar (cases + hamburger) ========== */
   const treeCheckboxMap = new WeakMap();
 
+  let parcBtn = null;
+  let siteBtns = [];
+
   function hydrateTreeCheckboxMap() {
     $$('.tree-check').forEach(cb => {
       if (!(cb instanceof HTMLElement)) return;
@@ -4090,10 +4093,11 @@
     });
   }
 
-  hydrateTreeCheckboxMap();
-
-  const parcBtn = $('.tree > .tree-node:not(.toggle)');
-  const siteBtns = $$('.tree-group > .tree-node.toggle');
+  function hydrateTreeReferences() {
+    hydrateTreeCheckboxMap();
+    parcBtn = $('.tree > .tree-node:not(.toggle)');
+    siteBtns = $$('.tree-group > .tree-node.toggle');
+  }
   const resolveTreeCheckbox = (btn, fallback) => {
     if (!btn) return null;
     const cached = treeCheckboxMap.get(btn);
@@ -7130,33 +7134,87 @@
   });
 
   // === Root "Parc" : (dé)sélectionner tout, bindé une seule fois ===
-  const initialParcCheck = getParcCheck();
-  if (parcBtn && initialParcCheck && !parcBtn.dataset.bound) {
-    parcBtn.dataset.bound = '1';
+  function setupTreeSelectionControls() {
+    hydrateTreeReferences();
 
-    // Cliquer n'importe où sur la ligne (sauf directement sur la checkbox)
-    parcBtn.addEventListener('click', (e) => {
-      const parcCheck = getParcCheck();
-      if (!parcCheck) return;
-      if (e.target === parcCheck) return;
-      parcCheck.indeterminate = false;
-      parcCheck.checked = !parcCheck.checked;
-      parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
+    $$('.tree-leaf').forEach(leafBtn => {
+      const cb = leafCheck(leafBtn);
+      if (!cb) return;
+      if (leafBtn.dataset.bound) return;
+      leafBtn.dataset.bound = '1';
+      cb.dataset.bound = '1';
+
+      leafBtn.addEventListener('click', (e) => {
+        if (e.target === cb) return;
+        cb.checked = !cb.checked;
+        cb.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      cb.addEventListener('change', () => {
+        clearActiveTypologyFilter();
+        setActive(leafBtn, cb.checked);
+        const siteBtn = leafBtn.closest('.tree-group')?.querySelector('.tree-node.toggle');
+        if (siteBtn) updateSiteFromLeaves(siteBtn);
+        updateParcFromSites();
+      });
     });
 
-    // Quand la checkbox change -> (dé)sélectionne tout le parc
-    initialParcCheck.addEventListener('change', () => {
-      clearActiveTypologyFilter();
-      const parcCheck = getParcCheck();
-      checkWholeParc(parcCheck?.checked);
+    siteBtns.forEach(siteBtn => {
+      const cb = siteCheck(siteBtn);
+      if (!cb) return;
+      if (siteBtn.dataset.bound) return;
+      siteBtn.dataset.bound = '1';
+      cb.dataset.bound = '1';
 
-      // // Option : auto-déployer les groupes après (dé)sélection,
-      // siteBtns.forEach(site => {
-      //   const list = site.parentElement.querySelector('.tree-children');
-      //   site.setAttribute('aria-expanded', 'true');
-      //   if (list) list.style.display = 'flex';
-      // });
+      siteBtn.addEventListener('click', (e) => {
+        const onChevron = !!e.target.closest?.('.chev');
+        if (onChevron) {
+          const expanded = siteBtn.getAttribute('aria-expanded') === 'true';
+          siteBtn.setAttribute('aria-expanded', String(!expanded));
+          const list = siteBtn.parentElement.querySelector('.tree-children');
+          if (list) list.style.display = expanded ? 'none' : 'flex';
+          return;
+        }
+        if (e.target !== cb) {
+          cb.checked = !cb.checked;
+          cb.indeterminate = false;
+          cb.dispatchEvent(new Event('change', { bubbles: true }));
+        }
+      });
+
+      cb.addEventListener('change', () => {
+        clearActiveTypologyFilter();
+        checkWholeSite(siteBtn, cb.checked);
+      });
     });
+
+    const initialParcCheck = getParcCheck();
+    if (parcBtn && initialParcCheck && !parcBtn.dataset.bound) {
+      parcBtn.dataset.bound = '1';
+
+      // Cliquer n'importe où sur la ligne (sauf directement sur la checkbox)
+      parcBtn.addEventListener('click', (e) => {
+        const parcCheck = getParcCheck();
+        if (!parcCheck) return;
+        if (e.target === parcCheck) return;
+        parcCheck.indeterminate = false;
+        parcCheck.checked = !parcCheck.checked;
+        parcCheck.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+
+      // Quand la checkbox change -> (dé)sélectionne tout le parc
+      initialParcCheck.addEventListener('change', () => {
+        clearActiveTypologyFilter();
+        const parcCheck = getParcCheck();
+        checkWholeParc(parcCheck?.checked);
+
+        // // Option : auto-déployer les groupes après (dé)sélection,
+        // siteBtns.forEach(site => {
+        //   const list = site.parentElement.querySelector('.tree-children');
+        //   site.setAttribute('aria-expanded', 'true');
+        //   if (list) list.style.display = 'flex';
+        // });
+      });
+    }
   }
 
 
@@ -7670,13 +7728,13 @@
     await loadBuildingsData();
     renderTreeFromJSON();
     syncTreeLeafLabelsFromDataset();
+    setupTreeSelectionControls();
 
     syncStickyTop();
     $$('.tabset').forEach(initTabset);
     selectSection('energie');
 
     // Par défaut on coche tout le parc et on affiche immédiatement les totaux.
-    hydrateTreeCheckboxMap();
     checkWholeParc(true);
     syncTreeSelectionState();
     updateTreeMissingState();

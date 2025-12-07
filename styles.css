@@ -283,32 +283,26 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 .top-subnav[hidden]{display:none}
 .top-subnav{
-  position:fixed;
-  top:var(--subnav-top, 70px);
-  left:50%;
-  transform:translateX(-50%) translateY(-10px);
   display:flex;
   gap:14px;
   align-items:center;
   flex-wrap:wrap;
-  width:100%;
-  max-width:calc(var(--container-max) - 260px - 16px - 24px);
   margin:0;
-  padding:10px 16px 10px 22px;
+  padding:0;
   background:transparent;
   border:none;
   opacity:0;
-  pointer-events:none;
-  transition:opacity .2s ease-out, transform .25s cubic-bezier(.22,1,.36,1);
+  max-height:0;
+  overflow:hidden;
+  transition:opacity .2s ease-out, max-height .25s ease;
   overflow-x:auto;
   scrollbar-width:thin;
   -webkit-overflow-scrolling:touch;
-  z-index:999;
 }
 .top-subnav.is-visible{
   opacity:1;
-  transform:translateX(-50%) translateY(0);
-  pointer-events:auto;
+  max-height:200px;
+  padding:10px 0;
 }
 .top-subnav::-webkit-scrollbar{height:6px}
 .top-subnav::-webkit-scrollbar-thumb{background:rgba(15,23,42,.18); border-radius:999px}
@@ -1720,10 +1714,6 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 @media (max-width: 960px){
   .hamburger{ display:flex; }
   .kpi-tabs{ padding-left: calc(38px + 20px + 8px); } /* Aligner avec hamburger + gap + padding top-item */
-  .top-subnav{
-    padding-left: calc(16px + 38px + 20px + 6px); /* Aligner avec kpi-wrap padding + hamburger + gap + top-item padding */
-    max-width: calc(100vw - 24px); /* En mobile, pas de sidebar, juste padding de .app */
-  }
   .side-overlay{ position: fixed; inset:0; background: rgba(16,24,40,.28); backdrop-filter: blur(2px); z-index: 40; }
   body.menu-open #sidebar{ transform: translateX(0); }
   body.menu-open .side-overlay{ display:block; }

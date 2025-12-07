@@ -81,8 +81,8 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   white-space:nowrap;
   justify-self:start;
 }
-.trend-up{color:var(--kpi-good)}
-.trend-down{color:var(--kpi-bad)}
+.trend-up{color:var(--kpi-bad)}
+.trend-down{color:var(--kpi-good)}
 @keyframes up2{0%{transform:translateY(0)}35%{transform:translateY(-4px)}55%{transform:translateY(0)}75%{transform:translateY(-2px)}100%{transform:translateY(0)}}
 @keyframes down2{0%{transform:translateY(0)}35%{transform:translateY(4px)}55%{transform:translateY(0)}75%{transform:translateY(2px)}100%{transform:translateY(0)}}
 .arr{display:inline-block;} .animate-up{animation:up2 .9s ease-out both;} .animate-down{animation:down2 .9s ease-out both;}

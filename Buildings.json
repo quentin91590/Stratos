@@ -2,7 +2,6 @@
   "sites": {
     "rive": {
       "label": "Campus de la Rive",
-      "tags": "école campus",
       "buildings": {
         "rive-1": {
           "label": "Pavillon Horizon",
@@ -2428,7 +2427,6 @@
     },
     "aug": {
       "label": "Quartier des Augustins",
-      "tags": "piscine aquatique",
       "buildings": {
         "aug-1": {
           "label": "Piscine Bellefontaine",

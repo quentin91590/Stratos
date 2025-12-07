@@ -1,4 +1,14 @@
 {
+  "sites": {
+    "rive": {
+      "label": "Campus de la Rive",
+      "tags": "école campus"
+    },
+    "aug": {
+      "label": "Quartier des Augustins",
+      "tags": "piscine aquatique"
+    }
+  },
   "buildings": {
     "rive-1": {
       "label": "Pavillon Horizon",

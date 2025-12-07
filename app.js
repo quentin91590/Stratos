@@ -6761,7 +6761,7 @@
     const allLeaves = $$('.tree-leaf');
     const selectedLeaves = allLeaves.filter(leaf => leafCheck(leaf)?.checked);
     const hasExplicitSelection = selectedLeaves.length > 0;
-    const activeLeaves = hasExplicitSelection ? selectedLeaves : allLeaves;
+    const activeLeaves = hasExplicitSelection ? selectedLeaves : [];
     const fallbackSre = computeFallbackSre(allLeaves);
     const {
       metrics: aggregated,

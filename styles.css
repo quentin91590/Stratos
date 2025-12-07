@@ -31,7 +31,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 
 /* ======= KPI cards ======= */
 .kpi-wrap{max-width:1200px; margin:24px auto; padding:0 16px}
-.kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch}
+.kpi-tabs{display:grid; grid-template-columns:repeat(6,minmax(170px,1fr)); gap:12px; align-items:stretch; padding-left:8px}
 
 .kpi{
   --status:#8a8a8a; --tint:rgba(0,0,0,.04);
@@ -1719,6 +1719,7 @@ body.chart-catalog-dragging{cursor:grabbing; user-select:none; touch-action:none
 .hamburger span{ display:block; width:22px; height:2px; background:#0f172a; border-radius:2px; }
 @media (max-width: 960px){
   .hamburger{ display:flex; }
+  .kpi-tabs{ padding-left: calc(38px + 20px + 8px); } /* Aligner avec hamburger + gap + padding top-item */
   .side-overlay{ position: fixed; inset:0; background: rgba(16,24,40,.28); backdrop-filter: blur(2px); z-index: 40; }
   body.menu-open #sidebar{ transform: translateX(0); }
   body.menu-open .side-overlay{ display:block; }

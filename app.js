@@ -4559,7 +4559,65 @@
     };
   };
 
-  const updateEnergyKpis = (mode, aggregated) => {
+  const updateEnergyKpis = (mode, aggregated, options = {}) => {
+    const { leaves = [], fallbackSre = 0 } = options || {};
+    const selectedYear = Number(FILTERS?.year);
+
+    const trendCache = new Map();
+
+    const resolveTrendData = (metricKey) => {
+      if (trendCache.has(metricKey)) return trendCache.get(metricKey);
+      const data = computeTrendFromBuildings(leaves, metricKey, fallbackSre) || [];
+      trendCache.set(metricKey, data);
+      return data;
+    };
+
+    const resolveValueFromEntry = (entry) => {
+      if (!entry || typeof entry !== 'object') return null;
+      const intensity = Number(entry.intensity);
+      const total = Number(entry.total);
+      if (mode === 'kwhm2') {
+        return Number.isFinite(intensity) ? intensity : null;
+      }
+      if (Number.isFinite(total)) return total;
+      const sre = Number(entry.sre);
+      if (Number.isFinite(intensity) && Number.isFinite(sre)) {
+        return intensity * sre;
+      }
+      return null;
+    };
+
+    const computePercentChange = (current, previous) => {
+      if (!Number.isFinite(current) || !Number.isFinite(previous)) return null;
+      if (Math.abs(previous) < 1e-9) {
+        if (Math.abs(current) < 1e-9) return 0;
+        return 100;
+      }
+      return ((current - previous) / Math.abs(previous)) * 100;
+    };
+
+    const updateTrendDisplay = (trendEl, percentChange) => {
+      if (!trendEl) return;
+      const existingArr = trendEl.querySelector('.arr');
+      const arrow = existingArr || document.createElement('span');
+      arrow.className = 'arr';
+
+      trendEl.classList.remove('trend-up', 'trend-down');
+      trendEl.innerHTML = '';
+
+      if (!Number.isFinite(percentChange)) {
+        arrow.textContent = '—';
+        trendEl.append(arrow, document.createTextNode(' —'));
+        return;
+      }
+
+      const direction = percentChange >= 0 ? 'up' : 'down';
+      trendEl.classList.add(direction === 'up' ? 'trend-up' : 'trend-down');
+      arrow.textContent = direction === 'up' ? '▲' : '▼';
+      const label = `${PERCENT_FORMAT.format(Math.abs(percentChange))}%`;
+      trendEl.append(arrow, document.createTextNode(` ${label}`));
+    };
+
     const map = {
       general: '#tab-energie .kpi-value',
       chaleur: '#tab-chaleur .kpi-value',
@@ -4577,6 +4635,19 @@
       const value = mode === 'kwhm2' ? data.intensity : data.total;
       const decimals = mode === 'kwhm2' ? (metric.decimals || 0) : 0;
       el.textContent = formatEnergyDisplay(value, mode, decimals);
+
+      const trendEl = el.closest('.kpi-value-wrap')?.querySelector('.kpi-trend');
+      const trendData = resolveTrendData(key);
+      const currentEntry = Number.isFinite(selectedYear)
+        ? trendData.find((entry) => Number(entry.year) === selectedYear)
+        : null;
+      const previousEntry = Number.isFinite(selectedYear)
+        ? [...trendData].filter((entry) => Number(entry.year) < selectedYear).pop()
+        : null;
+      const currentValue = resolveValueFromEntry(currentEntry) ?? value;
+      const previousValue = resolveValueFromEntry(previousEntry);
+      const percentChange = computePercentChange(currentValue, previousValue);
+      updateTrendDisplay(trendEl, percentChange);
     });
   };
 
@@ -6903,7 +6974,10 @@
     }
     const effectiveSre = Number(aggregated?.general?.sre) || fallbackSre || 0;
 
-    updateEnergyKpis(mode, aggregated);
+    updateEnergyKpis(mode, aggregated, {
+      leaves: hasExplicitSelection ? selectedLeaves : allLeaves,
+      fallbackSre,
+    });
     updateWaterSummary(mode, aggregated);
     updateEnergyTrendCharts(mode, aggregated, {
       leaves: hasExplicitSelection ? selectedLeaves : allLeaves,

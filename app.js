@@ -4630,7 +4630,55 @@
     });
   };
 
-  const updateEnergyTrendCharts = (mode, aggregatedMetrics = {}) => {
+  const computeTrendFromBuildings = (leaves, metricKey, fallbackSre) => {
+    const hasSelection = Array.isArray(leaves) && leaves.length > 0;
+    const list = hasSelection ? leaves : $$('.tree-leaf');
+    const fallbackIntensity = Number(ENERGY_BASE_DATA.metrics?.[metricKey]?.intensity) || 0;
+    const totalsByYear = {};
+
+    list.forEach((leaf) => {
+      const sre = Number.parseFloat(leaf?.dataset?.sre);
+      if (!Number.isFinite(sre) || sre <= 0) return;
+
+      const buildingId = leaf.dataset?.building || '';
+      const buildingInfo = ENERGY_BASE_DATA.buildings?.[buildingId];
+      if (!buildingInfo || typeof buildingInfo !== 'object') return;
+
+      const metricsByYear = buildingInfo.metrics && typeof buildingInfo.metrics === 'object'
+        ? buildingInfo.metrics
+        : {};
+
+      Object.entries(metricsByYear).forEach(([year, metrics]) => {
+        if (!metrics || typeof metrics !== 'object') return;
+        const rawValue = metrics[metricKey];
+        const intensity = Number.isFinite(Number(rawValue)) ? Number(rawValue) : fallbackIntensity;
+        const bucket = totalsByYear[year] || { energy: 0, sre: 0 };
+        bucket.energy += intensity * sre;
+        bucket.sre += sre;
+        totalsByYear[year] = bucket;
+      });
+    });
+
+    const hasTotals = Object.keys(totalsByYear).length > 0;
+    if (!hasTotals) return [];
+
+    return Object.entries(totalsByYear)
+      .map(([year, data]) => {
+        const resolvedSre = data.sre || (Number.isFinite(fallbackSre) ? fallbackSre : 0) || 0;
+        const resolvedIntensity = resolvedSre > 0
+          ? data.energy / resolvedSre
+          : fallbackIntensity;
+        return {
+          year: Number(year),
+          intensity: resolvedIntensity,
+          total: resolvedIntensity * resolvedSre,
+          sre: resolvedSre,
+        };
+      })
+      .sort((a, b) => a.year - b.year);
+  };
+
+  const updateEnergyTrendCharts = (mode, aggregatedMetrics = {}, context = {}) => {
     document.querySelectorAll('.energy-trend-chart').forEach((chart) => {
       const scope = chart.dataset.chartScope || 'general';
       let metricKey = chart.dataset.chartMetric;
@@ -4643,17 +4691,8 @@
         else metricKey = 'general';
       }
       const unitLabel = getUnitLabel(metricKey, mode);
-      const baseTrend = scope === 'chaleur'
-        ? HEAT_BASE_DATA.trend
-        : scope === 'froid'
-          ? COLD_BASE_DATA.trend
-          : scope === 'elec'
-            ? ELEC_BASE_DATA.trend
-            : scope === 'co2'
-              ? CO2_BASE_DATA.trend
-              : scope === 'eau'
-                ? WATER_BASE_DATA.trend
-                : ENERGY_BASE_DATA.trend;
+      const trendData = computeTrendFromBuildings(context.leaves, metricKey, context.fallbackSre);
+      const trendMap = new Map(trendData.map(item => [String(item.year), item]));
       const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
       const sre = mode === 'kwhm2' ? 1 : (Number(metricData.sre) || Number(aggregatedMetrics.general?.sre) || computeFallbackSre());
       const metricDef = ENERGY_BASE_DATA.metrics[metricKey] || { decimals: 0 };
@@ -4663,14 +4702,23 @@
 
       const barsWrap = chart.querySelector('.chart-bars');
       const values = [];
-      baseTrend.forEach(({ year, intensity }) => {
-        const bar = chart.querySelector(`.chart-bar[data-year="${year}"]`);
-        if (!bar) return;
-        const resolvedIntensity = Number(intensity) || 0;
-        const displayValue = mode === 'kwhm2' ? resolvedIntensity : resolvedIntensity * sre;
+      chart.querySelectorAll('.chart-bar').forEach((bar) => {
+        const year = bar.dataset?.year || '';
+        const trendEntry = trendMap.get(year) || null;
+        const barValue = bar.querySelector('.bar-value');
+
+        if (!trendEntry || !Number.isFinite(trendEntry.intensity)) {
+          if (barValue) barValue.textContent = '—';
+          bar.removeAttribute('style');
+          bar.setAttribute('aria-label', `${year} : données indisponibles`);
+          return;
+        }
+
+        const displayValue = mode === 'kwhm2'
+          ? trendEntry.intensity
+          : (Number(trendEntry.total) || (trendEntry.intensity * (Number(trendEntry.sre) || sre)));
         values.push(displayValue);
         const valueText = formatEnergyDisplay(displayValue, mode, decimals);
-        const barValue = bar.querySelector('.bar-value');
         if (barValue) barValue.textContent = valueText;
         bar.setAttribute('aria-label', `${year} : ${valueText} ${unitLabel}`);
         bar.style.setProperty('--value', Number(displayValue) || 0);
@@ -6857,7 +6905,10 @@
 
     updateEnergyKpis(mode, aggregated);
     updateWaterSummary(mode, aggregated);
-    updateEnergyTrendCharts(mode, aggregated);
+    updateEnergyTrendCharts(mode, aggregated, {
+      leaves: hasExplicitSelection ? selectedLeaves : allLeaves,
+      fallbackSre,
+    });
     updateMixCards(mode, aggregated);
     updateEnergyMeters(aggregated);
     updateTopConsumersCards(mode, buildings);

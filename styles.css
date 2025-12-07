@@ -311,9 +311,9 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   --accent-soft:rgba(39,125,161,.18);
   --accent-strong:rgba(39,125,161,.32);
   appearance:none;
-  border:2px solid var(--accent);
-  background:#fff;
-  color:var(--accent);
+  border:2px solid transparent;
+  background:transparent;
+  color:#64748b;
   padding:12px 18px;
   border-radius:16px;
   display:inline-flex;
@@ -323,7 +323,7 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
   font-size:.92rem;
   letter-spacing:.01em;
   cursor:pointer;
-  transition:transform .22s ease, box-shadow .24s ease, background .24s ease, color .24s ease;
+  transition:transform .22s ease, box-shadow .24s ease, background .24s ease, color .24s ease, border-color .24s ease;
   box-shadow:none;
 }
 .top-subnav-item .top-subnav-icon{
@@ -338,8 +338,11 @@ body{background:var(--bg); color:var(--ink); font-family:Inter,system-ui,Segoe U
 }
 .top-subnav-item .top-subnav-icon svg{width:18px; height:18px; display:block}
 .top-subnav-item .top-subnav-text{white-space:nowrap; display:inline-flex; align-items:center;}
-.top-subnav-item:hover{transform:translateY(-2px); box-shadow:0 8px 20px var(--accent-soft);}
+.top-subnav-item:hover{opacity:.8;}
 .top-subnav-item.is-active{
+  border-color:var(--accent);
+  background:#fff;
+  color:var(--accent);
   box-shadow:0 0 0 4px var(--accent-soft), 0 12px 28px var(--accent-strong);
 }
 .top-subnav-item.is-active .top-subnav-icon{

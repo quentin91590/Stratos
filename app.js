@@ -1553,54 +1553,64 @@
     sites: {},
   };
 
+  const normalizeBuildingsPayload = (payload) => {
+    if (!payload || typeof payload !== 'object' || Array.isArray(payload)) {
+      return null;
+    }
+
+    const normalized = { buildings: {}, sites: {} };
+
+    const hasSiteStructure = payload.sites && typeof payload.sites === 'object' && !Array.isArray(payload.sites);
+    if (hasSiteStructure) {
+      Object.entries(payload.sites).forEach(([siteId, siteData]) => {
+        if (!siteId || !siteData || typeof siteData !== 'object') return;
+
+        const { buildings: siteBuildings, ...siteInfo } = siteData;
+        const buildingEntries = siteBuildings && typeof siteBuildings === 'object' && !Array.isArray(siteBuildings)
+          ? Object.entries(siteBuildings)
+          : [];
+
+        normalized.sites[siteId] = {
+          ...siteInfo,
+          buildingIds: buildingEntries.map(([id]) => id),
+        };
+
+        buildingEntries.forEach(([buildingId, buildingData]) => {
+          if (!buildingId || !buildingData || typeof buildingData !== 'object') return;
+          normalized.buildings[buildingId] = { ...buildingData, siteId };
+        });
+      });
+    }
+
+    const hasFlatBuildings = payload.buildings && typeof payload.buildings === 'object' && !Array.isArray(payload.buildings);
+    if (hasFlatBuildings) {
+      Object.entries(payload.buildings).forEach(([buildingId, buildingData]) => {
+        if (!buildingId || !buildingData || typeof buildingData !== 'object') return;
+        normalized.buildings[buildingId] = buildingData;
+      });
+    }
+
+    if (!hasSiteStructure && !hasFlatBuildings) {
+      return null;
+    }
+
+    return normalized;
+  };
+
   const assignBuildingsData = (payload, options = {}) => {
     const { globalObject = null, updateGlobal = false } = options;
-    if (!payload || typeof payload !== 'object') {
+
+    const normalizedPayload = normalizeBuildingsPayload(payload);
+    if (!normalizedPayload) {
       return false;
     }
 
-    const normalizedPayload = payload?.buildings && typeof payload.buildings === 'object'
-      ? payload
-      : { buildings: payload };
-
-    const buildings = normalizedPayload.buildings;
-    if (!buildings || typeof buildings !== 'object' || Array.isArray(buildings)) {
-      return false;
-    }
-
-    ENERGY_BASE_DATA.buildings = buildings;
-
-    // Stocker aussi les sites si présents
-    if (normalizedPayload.sites && typeof normalizedPayload.sites === 'object') {
-      ENERGY_BASE_DATA.sites = normalizedPayload.sites;
-    }
-
+    ENERGY_BASE_DATA.buildings = normalizedPayload.buildings || {};
+    ENERGY_BASE_DATA.sites = normalizedPayload.sites || {};
     MAP_DOMAIN_CACHE = null;
 
     if (updateGlobal && globalObject && typeof globalObject === 'object') {
-      const target = globalObject.STRATOS_BUILDINGS;
-      if (target && typeof target === 'object') {
-        Object.keys(target).forEach((key) => {
-          if (!(key in normalizedPayload)) {
-            delete target[key];
-          }
-        });
-
-        const targetBuildings = target.buildings && typeof target.buildings === 'object' ? target.buildings : {};
-        Object.keys(targetBuildings).forEach((key) => {
-          if (!(key in buildings)) {
-            delete targetBuildings[key];
-          }
-        });
-        Object.keys(buildings).forEach((key) => {
-          targetBuildings[key] = buildings[key];
-        });
-
-        Object.assign(target, normalizedPayload);
-        target.buildings = targetBuildings;
-      } else {
-        globalObject.STRATOS_BUILDINGS = normalizedPayload;
-      }
+      globalObject.STRATOS_BUILDINGS = normalizedPayload;
     }
 
     return true;
@@ -7574,42 +7584,71 @@
     const sites = ENERGY_BASE_DATA.sites || {};
     const buildings = ENERGY_BASE_DATA.buildings || {};
 
-    // Grouper les bâtiments par site (préfixe de l'ID)
-    const buildingsBySite = {};
-    Object.entries(buildings).forEach(([id, building]) => {
-      const siteId = id.replace(/-\d+$/, ''); // rive-1 -> rive
-      if (!buildingsBySite[siteId]) {
-        buildingsBySite[siteId] = [];
-      }
-      buildingsBySite[siteId].push({ id, ...building });
-    });
+    // Préparer la structure de regroupement par site
+    const siteIds = Object.keys(sites);
+    let groupedSites;
 
-    // Compter le nombre de sites
-    const siteIds = Object.keys(buildingsBySite);
+    if (siteIds.length > 0) {
+      groupedSites = siteIds.map((siteId) => {
+        const siteInfo = sites[siteId] || {};
+        const declaredIds = Array.isArray(siteInfo.buildingIds) ? siteInfo.buildingIds : [];
+
+        const siteBuildings = (declaredIds.length > 0 ? declaredIds : Object.keys(buildings))
+          .map((id) => {
+            const info = buildings[id];
+            if (info && typeof info === 'object') {
+              return { id, ...info };
+            }
+            if (declaredIds.includes(id)) {
+              return { id, label: id, siteId };
+            }
+            return null;
+          })
+          .filter((b) => b && (b.siteId === siteId || declaredIds.includes(b.id)));
+
+        return { siteId, siteInfo, siteBuildings };
+      });
+    } else {
+      const buildingsBySite = {};
+      Object.entries(buildings).forEach(([id, building]) => {
+        const siteId = building?.siteId || id.replace(/-\d+$/, '');
+        if (!buildingsBySite[siteId]) {
+          buildingsBySite[siteId] = [];
+        }
+        buildingsBySite[siteId].push({ id, ...building });
+      });
+
+      groupedSites = Object.entries(buildingsBySite).map(([siteId, siteBuildings]) => ({
+        siteId,
+        siteInfo: sites[siteId] || { label: siteId, tags: '' },
+        siteBuildings,
+      }));
+    }
 
     // Générer le HTML
     let html = `
       <button class="tree-node" role="treeitem" aria-selected="true" aria-level="1">
         <input type="checkbox" class="tree-check" />
-        Parc <span class="badge">${siteIds.length} site${siteIds.length > 1 ? 's' : ''}</span>
+        Parc <span class="badge">${groupedSites.length} site${groupedSites.length > 1 ? 's' : ''}</span>
       </button>
     `;
 
-    siteIds.forEach(siteId => {
-      const siteInfo = sites[siteId] || { label: siteId, tags: '' };
-      const siteBuildings = buildingsBySite[siteId];
+    groupedSites.forEach(({ siteId, siteInfo, siteBuildings }) => {
+      const safeInfo = siteInfo && typeof siteInfo === 'object' ? siteInfo : { label: siteId, tags: '' };
+      const label = safeInfo.label || siteId;
+      const buildingsForSite = Array.isArray(siteBuildings) ? siteBuildings : [];
 
       html += `
         <div class="tree-group" role="group" aria-level="2">
           <button class="tree-node toggle" role="treeitem" aria-expanded="true">
             <span class="chev" aria-hidden="true">▾</span>
             <input type="checkbox" class="tree-check" />
-            ${siteInfo.label} <span class="badge">${siteBuildings.length} bât.</span>
+            ${label} <span class="badge">${buildingsForSite.length} bât.</span>
           </button>
           <ul class="tree-children" role="group">
       `;
 
-      siteBuildings.forEach(building => {
+      buildingsForSite.forEach((building) => {
         const tags = building.typology || '';
         html += `
             <li><button class="tree-leaf" data-building="${building.id}" data-sre="${building.sre || 0}" data-tags="${tags}"><input type="checkbox" class="tree-check" /> ${building.label}</button></li>

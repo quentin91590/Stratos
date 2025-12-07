@@ -4393,12 +4393,20 @@
       ? fallbackSre
       : 0;
 
+    const hasSelection = Array.isArray(leaves) && leaves.length > 0;
+
     METRIC_KEYS.forEach((key) => {
       const hasData = totals[key].sre > 0;
-      const totalSre = hasData ? totals[key].sre : safeFallbackSre;
+      const totalSre = hasData
+        ? totals[key].sre
+        : hasSelection
+          ? safeFallbackSre
+          : 0;
       const intensity = hasData && totals[key].sre > 0
         ? totals[key].energy / totals[key].sre
-        : fallbackIntensity[key];
+        : hasSelection
+          ? fallbackIntensity[key]
+          : 0;
       const totalEnergy = hasData
         ? totals[key].energy
         : intensity * totalSre;
@@ -4685,12 +4693,17 @@
     const fallbackSre = computeFallbackSre();
 
     const updateLegendValues = (containerList, shares, baseAmount, unitLabel) => {
+      const hasData = baseAmount > 0;
       containerList.forEach((el) => {
         const label = el.querySelector('.mix-label')?.textContent || '';
         const valueEl = el.querySelector('.mix-value');
         const key = resolveMixKey(label);
         if (!valueEl || !key || !(key in shares)) return;
-        const share = shares[key] || 0;
+        const share = hasData ? (shares[key] || 0) : 0;
+        if (!hasData) {
+          valueEl.textContent = '—';
+          return;
+        }
         const value = baseAmount * share;
         const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
         const pct = Math.round(share * 100);
@@ -4699,12 +4712,18 @@
     };
 
     const updateBars = (bars, shares, baseAmount, unitLabel) => {
+      const hasData = baseAmount > 0;
       bars.forEach((bar) => {
         const label = bar.querySelector('.mix-bar__label')?.textContent || '';
         const valueEl = bar.querySelector('.mix-bar__value');
         const key = resolveMixKey(label);
         if (!valueEl || !key || !(key in shares)) return;
-        const share = shares[key] || 0;
+        const share = hasData ? (shares[key] || 0) : 0;
+        if (!hasData) {
+          valueEl.textContent = '—';
+          bar.style.setProperty('--mix-value', '0');
+          return;
+        }
         const value = baseAmount * share;
         const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
         const pct = Math.round(share * 100);
@@ -4714,12 +4733,19 @@
     };
 
     const updateRings = (rings, shares, baseAmount, unitLabel) => {
+      const hasData = baseAmount > 0;
       rings.forEach((ring) => {
         const label = ring.querySelector('.mix-ring__label')?.textContent || '';
         const valueEl = ring.querySelector('.mix-ring__value');
         const key = resolveMixKey(label);
         if (!valueEl || !key || !(key in shares)) return;
-        const share = shares[key] || 0;
+        const share = hasData ? (shares[key] || 0) : 0;
+        if (!hasData) {
+          valueEl.textContent = '—';
+          ring.style.setProperty('--mix-value', '0');
+          ring.setAttribute('aria-label', `${label} : —`);
+          return;
+        }
         const value = baseAmount * share;
         const formatted = formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0);
         const pct = Math.round(share * 100);
@@ -4760,6 +4786,7 @@
         const sre = Number(heatMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
         const total = Number(heatMetric.total) || perM2 * sre;
         const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const hasData = baseAmount > 0;
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
         updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);
@@ -4768,12 +4795,12 @@
 
         const donut = card.querySelector('.mix-donut.heat');
         if (donut) {
-          donut.style.setProperty('--mix-gaz', `${(shares.gaz || 0) * 100}`);
-          donut.style.setProperty('--mix-pac', `${(shares.pac || 0) * 100}`);
-          donut.style.setProperty('--mix-reseau', `${(shares.reseau || 0) * 100}`);
-          donut.style.setProperty('--mix-biomasse', `${(shares.biomasse || 0) * 100}`);
+          donut.style.setProperty('--mix-gaz', `${(hasData ? shares.gaz || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-pac', `${(hasData ? shares.pac || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-reseau', `${(hasData ? shares.reseau || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-biomasse', `${(hasData ? shares.biomasse || 0 : 0) * 100}`);
           const center = donut.querySelector('.mix-donut__center');
-          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          if (center) center.textContent = hasData ? formatCompactEnergy(baseAmount) : '—';
           const labelEl = donut.querySelector('.mix-donut__label');
           if (labelEl) labelEl.textContent = unit;
         }
@@ -4781,11 +4808,13 @@
         const roleImg = card.querySelector('[role="img"]');
         if (roleImg) {
           const labelBase = card.getAttribute('aria-label') || 'Mix chaleur';
-          const description = Object.entries(labels).map(([key, text]) => {
-            const share = shares[key] || 0;
-            const value = baseAmount * share;
-            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
-          }).join(', ');
+          const description = hasData
+            ? Object.entries(labels).map(([key, text]) => {
+              const share = shares[key] || 0;
+              const value = baseAmount * share;
+              return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+            }).join(', ')
+            : 'Aucune donnée sélectionnée';
           roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
         }
         card.classList.toggle('is-empty', baseAmount <= 0);
@@ -4945,6 +4974,7 @@
         const sre = Number(waterMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
         const total = Number(waterMetric.total) || perM2 * sre;
         const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const hasData = baseAmount > 0;
         const unit = getUnitLabel('eau', mode);
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
@@ -4954,12 +4984,12 @@
 
         const donut = card.querySelector('.mix-donut.water');
         if (donut && datasetName !== 'uses') {
-          donut.style.setProperty('--mix-reseau-eau', `${(shares.reseauEau || 0) * 100}`);
-          donut.style.setProperty('--mix-nappe', `${(shares.nappe || 0) * 100}`);
-          donut.style.setProperty('--mix-pluie', `${(shares.pluie || 0) * 100}`);
-          donut.style.setProperty('--mix-recyclee', `${(shares.recyclee || 0) * 100}`);
+          donut.style.setProperty('--mix-reseau-eau', `${(hasData ? shares.reseauEau || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-nappe', `${(hasData ? shares.nappe || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-pluie', `${(hasData ? shares.pluie || 0 : 0) * 100}`);
+          donut.style.setProperty('--mix-recyclee', `${(hasData ? shares.recyclee || 0 : 0) * 100}`);
           const center = donut.querySelector('.mix-donut__center');
-          if (center) center.textContent = formatCompactEnergy(baseAmount);
+          if (center) center.textContent = hasData ? formatCompactEnergy(baseAmount) : '—';
           const labelEl = donut.querySelector('.mix-donut__label');
           if (labelEl) labelEl.textContent = unit;
         }
@@ -4967,11 +4997,13 @@
         const roleImg = card.querySelector('[role="img"]');
         if (roleImg) {
           const labelBase = card.getAttribute('aria-label') || 'Répartition de l’eau';
-          const description = Object.entries(labels).map(([key, text]) => {
-            const share = shares[key] || 0;
-            const value = baseAmount * share;
-            return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
-          }).join(', ');
+          const description = hasData
+            ? Object.entries(labels).map(([key, text]) => {
+              const share = shares[key] || 0;
+              const value = baseAmount * share;
+              return `${text} : ${formatEnergyDisplay(value, mode, mode === 'kwhm2' ? 1 : 0)} ${unit} (${Math.round(share * 100)} %)`;
+            }).join(', ')
+            : 'Aucune donnée sélectionnée';
           roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
         }
 
@@ -4984,6 +5016,7 @@
       const sre = Number(generalMetric.sre) || fallbackSre || 1;
       const baseTotal = Number(generalMetric.total) || totalPerM2 * sre;
       const baseAmount = mode === 'kwhm2' ? totalPerM2 : baseTotal;
+      const hasData = baseAmount > 0;
 
       const slot = card.dataset.chartSlot || '';
       const shares = slot === 'mix-secondary'
@@ -4998,22 +5031,25 @@
 
       const donutCenter = card.querySelector('.mix-donut__center');
       if (donutCenter) {
-        const share = shares.chaleur || 0;
+        const share = hasData ? (shares.chaleur || 0) : 0;
         const value = baseAmount * share;
-        donutCenter.textContent = `${formatCompactEnergy(value)} ${unit}`;
+        donutCenter.textContent = hasData ? `${formatCompactEnergy(value)} ${unit}` : '—';
       }
 
       const donut = card.querySelector('.mix-donut');
       if (donut && !donut.classList.contains('heat')) {
-        donut.style.setProperty('--mix-chaleur', `${(shares.chaleur || 0) * 100}%`);
-        donut.style.setProperty('--mix-elec', `${(shares.electricite || 0) * 100}%`);
-        donut.style.setProperty('--mix-froid', `${(shares.froid || 0) * 100}%`);
+        donut.style.setProperty('--mix-chaleur', `${(hasData ? shares.chaleur || 0 : 0) * 100}%`);
+        donut.style.setProperty('--mix-elec', `${(hasData ? shares.electricite || 0 : 0) * 100}%`);
+        donut.style.setProperty('--mix-froid', `${(hasData ? shares.froid || 0 : 0) * 100}%`);
       }
 
       const roleImg = card.querySelector('[role="img"]');
       if (roleImg) {
         const labelBase = card.getAttribute('aria-label') || 'Mix énergétique';
-        roleImg.setAttribute('aria-label', `${labelBase} : ${describeMix(shares, totalPerM2, mode, sre, unit)}.`);
+        const description = hasData
+          ? describeMix(shares, totalPerM2, mode, sre, unit)
+          : 'Aucune donnée sélectionnée';
+        roleImg.setAttribute('aria-label', `${labelBase} : ${description}.`);
       }
       card.classList.toggle('is-empty', baseAmount <= 0);
     });

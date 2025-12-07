@@ -4692,6 +4692,30 @@
   const updateMixCards = (mode, aggregated) => {
     const fallbackSre = computeFallbackSre();
 
+    const computeEnergyMixShares = () => {
+      const valueFor = (metricKey) => {
+        const metric = aggregated?.[metricKey] || {};
+        return mode === 'kwhm2'
+          ? Number(metric.intensity) || 0
+          : Number(metric.total) || 0;
+      };
+
+      const chaleur = valueFor('chaleur');
+      const electricite = valueFor('elec');
+      const froid = valueFor('froid');
+      const total = chaleur + electricite + froid;
+
+      if (total <= 0) {
+        return null;
+      }
+
+      return {
+        chaleur: chaleur / total,
+        electricite: electricite / total,
+        froid: froid / total,
+      };
+    };
+
     const updateLegendValues = (containerList, shares, baseAmount, unitLabel) => {
       const hasData = baseAmount > 0;
       containerList.forEach((el) => {
@@ -5018,11 +5042,11 @@
       const baseAmount = mode === 'kwhm2' ? totalPerM2 : baseTotal;
       const hasData = baseAmount > 0;
 
-      const slot = card.dataset.chartSlot || '';
-      const shares = slot === 'mix-secondary'
-        ? ENERGY_BASE_DATA.mix.secondary
-        : ENERGY_BASE_DATA.mix.primary;
-      if (!shares) return;
+      const shares = computeEnergyMixShares();
+      if (!shares) {
+        card.classList.add('is-empty');
+        return;
+      }
 
       updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
       updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);

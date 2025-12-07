@@ -4574,13 +4574,20 @@
 
     const resolveValueFromEntry = (entry) => {
       if (!entry || typeof entry !== 'object') return null;
+
       const intensity = Number(entry.intensity);
       const total = Number(entry.total);
-      if (mode === 'kwhm2') {
-        return Number.isFinite(intensity) ? intensity : null;
-      }
-      if (Number.isFinite(total)) return total;
       const sre = Number(entry.sre);
+
+      if (mode === 'kwhm2') {
+        if (Number.isFinite(intensity)) return intensity;
+        if (Number.isFinite(total) && Number.isFinite(sre) && sre > 0) {
+          return total / sre;
+        }
+        return null;
+      }
+
+      if (Number.isFinite(total)) return total;
       if (Number.isFinite(intensity) && Number.isFinite(sre)) {
         return intensity * sre;
       }

@@ -1550,6 +1550,7 @@
       kwh: [150000, 300000, 500000],
     },
     buildings: {},
+    sites: {},
   };
 
   const assignBuildingsData = (payload, options = {}) => {
@@ -1568,6 +1569,12 @@
     }
 
     ENERGY_BASE_DATA.buildings = buildings;
+
+    // Stocker aussi les sites si présents
+    if (normalizedPayload.sites && typeof normalizedPayload.sites === 'object') {
+      ENERGY_BASE_DATA.sites = normalizedPayload.sites;
+    }
+
     MAP_DOMAIN_CACHE = null;
 
     if (updateGlobal && globalObject && typeof globalObject === 'object') {
@@ -7559,10 +7566,70 @@
     applySidebarFilters();
   }
 
+  /* ========== Génération dynamique de l'arborescence ========== */
+  function renderTreeFromJSON() {
+    const treeNav = document.querySelector('.tree');
+    if (!treeNav) return;
+
+    const sites = ENERGY_BASE_DATA.sites || {};
+    const buildings = ENERGY_BASE_DATA.buildings || {};
+
+    // Grouper les bâtiments par site (préfixe de l'ID)
+    const buildingsBySite = {};
+    Object.entries(buildings).forEach(([id, building]) => {
+      const siteId = id.replace(/-\d+$/, ''); // rive-1 -> rive
+      if (!buildingsBySite[siteId]) {
+        buildingsBySite[siteId] = [];
+      }
+      buildingsBySite[siteId].push({ id, ...building });
+    });
+
+    // Compter le nombre de sites
+    const siteIds = Object.keys(buildingsBySite);
+
+    // Générer le HTML
+    let html = `
+      <button class="tree-node" role="treeitem" aria-selected="true" aria-level="1">
+        <input type="checkbox" class="tree-check" />
+        Parc <span class="badge">${siteIds.length} site${siteIds.length > 1 ? 's' : ''}</span>
+      </button>
+    `;
+
+    siteIds.forEach(siteId => {
+      const siteInfo = sites[siteId] || { label: siteId, tags: '' };
+      const siteBuildings = buildingsBySite[siteId];
+
+      html += `
+        <div class="tree-group" role="group" aria-level="2">
+          <button class="tree-node toggle" role="treeitem" aria-expanded="true">
+            <span class="chev" aria-hidden="true">▾</span>
+            <input type="checkbox" class="tree-check" />
+            ${siteInfo.label} <span class="badge">${siteBuildings.length} bât.</span>
+          </button>
+          <ul class="tree-children" role="group">
+      `;
+
+      siteBuildings.forEach(building => {
+        const tags = building.typology || '';
+        html += `
+            <li><button class="tree-leaf" data-building="${building.id}" data-sre="${building.sre || 0}" data-tags="${tags}"><input type="checkbox" class="tree-check" /> ${building.label}</button></li>
+        `;
+      });
+
+      html += `
+          </ul>
+        </div>
+      `;
+    });
+
+    treeNav.innerHTML = html;
+  }
+
   /* ========== Boot ==========
      On attend DOMContentLoaded (plus sûr que 'load' qui dépend des images/polices) */
   async function initializeApp() {
     await loadBuildingsData();
+    renderTreeFromJSON();
     syncTreeLeafLabelsFromDataset();
 
     syncStickyTop();

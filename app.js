@@ -4406,8 +4406,8 @@
       const intensity = hasData && totals[key].sre > 0
         ? totals[key].energy / totals[key].sre
         : hasSelection
-          ? fallbackIntensity[key]
-          : 0;
+          ? 0
+          : fallbackIntensity[key];
       const totalEnergy = hasData ? totals[key].energy : 0;
       aggregated[key] = {
         intensity,

@@ -181,7 +181,7 @@
           "2022": {"general": 223.05, "chaleur": 124.864705882353, "froid": 12.7088235294118, "elec": 85.4764705882353, "co2": 22.4255588235294, "eau": 1.47647058823529},
           "2023": {"general": 230.164705882353, "chaleur": 128.844117647059, "froid": 13.1176470588235, "elec": 88.2029411764706, "co2": 22.5080441176471, "eau": 1.52647058823529},
           "2024": {"general": 237.285294117647, "chaleur": 132.832352941176, "froid": 13.5235294117647, "elec": 90.9294117647059, "co2": 23.3318529411765, "eau": 1.57058823529412},
-          "2025": {"general": 244.405882352941, "chaleur": 136.820588235294, "froid": 13.9294117647059, "elec": 93.6558823529412, "co2": 24.0554264705882, "eau": 1.61470588235294},
+          "2025": {"general": 244.405882352941, "chaleur": 0, "froid": 13.9294117647059, "elec": 93.6558823529412, "co2": 24.0554264705882, "eau": 1.61470588235294},
           "2026": {"general": 249.15, "chaleur": 139.473529411765, "froid": 14.2, "elec": 95.4764705882353, "co2": 24.0554264705882, "eau": 1.65}
         },
         "monthly": {
@@ -231,7 +231,7 @@
             {"month": "jan", "chaleur": 6513, "elec": 2710, "froid": 0, "eau": 44, "climate": 1.25, "co2": 982.64},
             {"month": "f\u00E9v", "chaleur": 5582, "elec": 2710, "froid": 0, "eau": 41, "climate": 1.18, "co2": 842.06},
             {"month": "mar", "chaleur": 5117, "elec": 2710, "froid": 95, "eau": 41, "climate": 1.02, "co2": 791.65},
-            {"month": "avr", "chaleur": 4187, "elec": 2614, "froid": 283, "eau": 44, "climate": 0.9, "co2": 691.54},
+            {"month": "avr", "chaleur": 0, "elec": 2614, "froid": 283, "eau": 44, "climate": 0.9, "co2": 691.54},
             {"month": "mai", "chaleur": 3256, "elec": 2614, "froid": 474, "eau": 46, "climate": 0.78, "co2": 618.055},
             {"month": "jun", "chaleur": 2326, "elec": 2614, "froid": 757, "eau": 49, "climate": 0.62, "co2": 521.14},
             {"month": "jul", "chaleur": 1860, "elec": 2645, "froid": 948, "eau": 53, "climate": 0.55, "co2": 498.42},
@@ -265,7 +265,7 @@
         "metrics": {
           "2022": {"general": 154.411538461538, "chaleur": 86.4403846153846, "froid": 8.8, "elec": 59.1711538461538, "co2": 15.8411923076923, "eau": 1.01538461538462},
           "2023": {"general": 159.330769230769, "chaleur": 89.2019230769231, "froid": 9.08269230769231, "elec": 61.0461538461538, "co2": 16.0842307692308, "eau": 1.05192307692308},
-          "2024": {"general": 164.263461538462, "chaleur": 91.9576923076923, "froid": 9.36153846153846, "elec": 62.9442307692308, "co2": 16.70275, "eau": 1.08269230769231},
+          "2024": {"general": 164.263461538462, "chaleur": 91.9576923076923, "froid": 9.36153846153846, "elec": 0, "co2": 16.70275, "eau": 1.08269230769231},
           "2025": {"general": 169.196153846154, "chaleur": 94.7134615384615, "froid": 9.64038461538462, "elec": 64.8423076923077, "co2": 17.1478653846154, "eau": 1.11346153846154},
           "2026": {"general": 172.473076923077, "chaleur": 96.5557692307692, "froid": 9.82884615384615, "elec": 66.0884615384615, "co2": 17.1485480769231, "eau": 1.13653846153846}
         },
@@ -303,7 +303,7 @@
             {"month": "f\u00E9v", "chaleur": 5738, "elec": 2785, "froid": 0, "eau": 42, "climate": 1.18, "co2": 897.795},
             {"month": "mar", "chaleur": 5260, "elec": 2785, "froid": 97, "eau": 42, "climate": 1.02, "co2": 851.29},
             {"month": "avr", "chaleur": 4304, "elec": 2687, "froid": 292, "eau": 45, "climate": 0.9, "co2": 759.7},
-            {"month": "mai", "chaleur": 3347, "elec": 2687, "froid": 487, "eau": 48, "climate": 0.78, "co2": 660.3},
+            {"month": "mai", "chaleur": 3347, "elec": 0, "froid": 487, "eau": 48, "climate": 0.78, "co2": 660.3},
             {"month": "jun", "chaleur": 2391, "elec": 2687, "froid": 779, "eau": 51, "climate": 0.62, "co2": 565.515},
             {"month": "jul", "chaleur": 1913, "elec": 2719, "froid": 974, "eau": 53, "climate": 0.55, "co2": 536.05},
             {"month": "ao\u00FB", "chaleur": 1913, "elec": 2719, "froid": 974, "eau": 59, "climate": 0.6, "co2": 536.05},
@@ -689,141 +689,7 @@
       }
     }
   },
-  "huz": {
-    "label": "Square Hugz",
-    "buildings": {
-      "huz-1": {
-        "label": "H\u00F4tel 5 \u00E9toiles",
-        "typology": "habitat_collectif",
-        "sre": 450,
-        "position": {"x": 20, "y": 62, "lat": 46.5197, "lng": 6.6323},
-        "metrics": {
-          "2023": {"general": 159.66, "chaleur": 90.6466666666667, "froid": 10.0755555555556, "elec": 58.9377777777778, "co2": 17.3508222222222, "eau": 1.10666666666667},
-          "2024": {"general": 164.591111111111, "chaleur": 93.4488888888889, "froid": 10.3844444444444, "elec": 60.7577777777778, "co2": 17.2616777777778, "eau": 1.13777777777778},
-          "2025": {"general": 169.522222222222, "chaleur": 96.2511111111111, "froid": 10.6933333333333, "elec": 62.5777777777778, "co2": 17.9133, "eau": 1.16888888888889},
-          "2026": {"general": 172.815555555556, "chaleur": 98.1155555555556, "froid": 10.9044444444444, "elec": 63.7955555555556, "co2": 18.1894111111111, "eau": 1.19555555555556}
-        },
-        "monthly": {
-          "2022": [
-            {"month": "jan", "chaleur": 5534, "elec": 2186, "froid": 0, "eau": 39, "climate": 1.3, "co2": 876.495},
-            {"month": "f\u00E9v", "chaleur": 4743, "elec": 2186, "froid": 0, "eau": 37, "climate": 1.23, "co2": 767.51},
-            {"month": "mar", "chaleur": 4348, "elec": 2186, "froid": 88, "eau": 37, "climate": 1.06, "co2": 725.265},
-            {"month": "avr", "chaleur": 3557, "elec": 2109, "froid": 264, "eau": 39, "climate": 0.94, "co2": 636.515},
-            {"month": "mai", "chaleur": 2766, "elec": 2109, "froid": 439, "eau": 40, "climate": 0.81, "co2": 549.185},
-            {"month": "jun", "chaleur": 1977, "elec": 2109, "froid": 703, "eau": 43, "climate": 0.64, "co2": 460.435},
-            {"month": "jul", "chaleur": 1582, "elec": 2136, "froid": 878, "eau": 46, "climate": 0.57, "co2": 429.195},
-            {"month": "ao\u00FB", "chaleur": 1582, "elec": 2136, "froid": 878, "eau": 51, "climate": 0.62, "co2": 429.195},
-            {"month": "sep", "chaleur": 2372, "elec": 2136, "froid": 615, "eau": 48, "climate": 0.77, "co2": 513.685},
-            {"month": "oct", "chaleur": 3162, "elec": 2109, "froid": 352, "eau": 40, "climate": 0.98, "co2": 596.755},
-            {"month": "nov", "chaleur": 3953, "elec": 2161, "froid": 132, "eau": 31, "climate": 1.12, "co2": 676.275},
-            {"month": "d\u00E9c", "chaleur": 3953, "elec": 2136, "froid": 44, "eau": 31, "climate": 1.25, "co2": 652.49}
-          ],
-          "2023": [
-            {"month": "jan", "chaleur": 5710, "elec": 2256, "froid": 0, "eau": 40, "climate": 1.3, "co2": 907.735},
-            {"month": "f\u00E9v", "chaleur": 4895, "elec": 2256, "froid": 0, "eau": 38, "climate": 1.23, "co2": 808.335},
-            {"month": "mar", "chaleur": 4487, "elec": 2256, "froid": 91, "eau": 38, "climate": 1.06, "co2": 763.605},
-            {"month": "avr", "chaleur": 3670, "elec": 2177, "froid": 273, "eau": 40, "climate": 0.94, "co2": 680.89},
-            {"month": "mai", "chaleur": 2855, "elec": 2177, "froid": 453, "eau": 42, "climate": 0.81, "co2": 591.785},
-            {"month": "jun", "chaleur": 2040, "elec": 2177, "froid": 726, "eau": 45, "climate": 0.64, "co2": 501.97},
-            {"month": "jul", "chaleur": 1633, "elec": 2204, "froid": 906, "eau": 48, "climate": 0.57, "co2": 469.665},
-            {"month": "ao\u00FB", "chaleur": 1633, "elec": 2204, "froid": 906, "eau": 52, "climate": 0.62, "co2": 469.665},
-            {"month": "sep", "chaleur": 2447, "elec": 2204, "froid": 634, "eau": 49, "climate": 0.77, "co2": 555.22},
-            {"month": "oct", "chaleur": 3263, "elec": 2177, "froid": 363, "eau": 42, "climate": 0.98, "co2": 636.16},
-            {"month": "nov", "chaleur": 4079, "elec": 2230, "froid": 136, "eau": 32, "climate": 1.12, "co2": 714.615},
-            {"month": "d\u00E9c", "chaleur": 4079, "elec": 2204, "froid": 46, "eau": 32, "climate": 1.25, "co2": 708.225}
-          ],
-          "2024": [
-            {"month": "jan", "chaleur": 5887, "elec": 2326, "froid": 0, "eau": 41, "climate": 1.3, "co2": 937.91},
-            {"month": "f\u00E9v", "chaleur": 5046, "elec": 2326, "froid": 0, "eau": 39, "climate": 1.23, "co2": 803.365},
-            {"month": "mar", "chaleur": 4626, "elec": 2326, "froid": 94, "eau": 39, "climate": 1.06, "co2": 757.57},
-            {"month": "avr", "chaleur": 3784, "elec": 2244, "froid": 281, "eau": 41, "climate": 0.94, "co2": 674.145},
-            {"month": "mai", "chaleur": 2943, "elec": 2244, "froid": 467, "eau": 43, "climate": 0.81, "co2": 585.75},
-            {"month": "jun", "chaleur": 2103, "elec": 2244, "froid": 748, "eau": 46, "climate": 0.64, "co2": 496.645},
-            {"month": "jul", "chaleur": 1683, "elec": 2272, "froid": 934, "eau": 49, "climate": 0.57, "co2": 463.275},
-            {"month": "ao\u00FB", "chaleur": 1683, "elec": 2272, "froid": 934, "eau": 54, "climate": 0.62, "co2": 463.275},
-            {"month": "sep", "chaleur": 2523, "elec": 2272, "froid": 654, "eau": 51, "climate": 0.77, "co2": 547.055},
-            {"month": "oct", "chaleur": 3364, "elec": 2244, "froid": 374, "eau": 43, "climate": 0.98, "co2": 630.835},
-            {"month": "nov", "chaleur": 4205, "elec": 2299, "froid": 140, "eau": 33, "climate": 1.12, "co2": 709.645},
-            {"month": "d\u00E9c", "chaleur": 4205, "elec": 2272, "froid": 47, "eau": 33, "climate": 1.25, "co2": 698.285}
-          ],
-          "2025": [
-            {"month": "jan", "chaleur": 6064, "elec": 2396, "froid": 0, "eau": 42, "climate": 1.3, "co2": 968.795},
-            {"month": "f\u00E9v", "chaleur": 5197, "elec": 2396, "froid": 0, "eau": 40, "climate": 1.23, "co2": 833.54},
-            {"month": "mar", "chaleur": 4765, "elec": 2396, "froid": 97, "eau": 40, "climate": 1.06, "co2": 787.39},
-            {"month": "avr", "chaleur": 3898, "elec": 2311, "froid": 289, "eau": 42, "climate": 0.94, "co2": 700.06},
-            {"month": "mai", "chaleur": 3031, "elec": 2311, "froid": 481, "eau": 44, "climate": 0.81, "co2": 610.245},
-            {"month": "jun", "chaleur": 2166, "elec": 2311, "froid": 770, "eau": 47, "climate": 0.64, "co2": 519.01},
-            {"month": "jul", "chaleur": 1733, "elec": 2340, "froid": 962, "eau": 50, "climate": 0.57, "co2": 485.285},
-            {"month": "ao\u00FB", "chaleur": 1733, "elec": 2340, "froid": 962, "eau": 56, "climate": 0.62, "co2": 485.285},
-            {"month": "sep", "chaleur": 2599, "elec": 2340, "froid": 674, "eau": 53, "climate": 0.77, "co2": 568.71},
-            {"month": "oct", "chaleur": 3465, "elec": 2311, "froid": 385, "eau": 44, "climate": 0.98, "co2": 651.78},
-            {"month": "nov", "chaleur": 4331, "elec": 2368, "froid": 144, "eau": 34, "climate": 1.12, "co2": 730.59},
-            {"month": "d\u00E9c", "chaleur": 4331, "elec": 2340, "froid": 48, "eau": 34, "climate": 1.25, "co2": 720.295}
-          ],
-          "2026": [
-            {"month": "jan", "chaleur": 6181, "elec": 2442, "froid": 0, "eau": 43, "climate": 1.3, "co2": 987.965},
-            {"month": "f\u00E9v", "chaleur": 5298, "elec": 2442, "froid": 0, "eau": 41, "climate": 1.23, "co2": 846.675},
-            {"month": "mar", "chaleur": 4857, "elec": 2442, "froid": 99, "eau": 41, "climate": 1.06, "co2": 799.815},
-            {"month": "avr", "chaleur": 3973, "elec": 2356, "froid": 295, "eau": 43, "climate": 0.94, "co2": 711.42},
-            {"month": "mai", "chaleur": 3090, "elec": 2356, "froid": 490, "eau": 45, "climate": 0.81, "co2": 620.54},
-            {"month": "jun", "chaleur": 2208, "elec": 2356, "froid": 785, "eau": 48, "climate": 0.64, "co2": 528.24},
-            {"month": "jul", "chaleur": 1767, "elec": 2386, "froid": 981, "eau": 51, "climate": 0.57, "co2": 492.74},
-            {"month": "ao\u00FB", "chaleur": 1767, "elec": 2386, "froid": 981, "eau": 57, "climate": 0.62, "co2": 492.74},
-            {"month": "sep", "chaleur": 2649, "elec": 2386, "froid": 687, "eau": 54, "climate": 0.77, "co2": 577.585},
-            {"month": "oct", "chaleur": 3532, "elec": 2356, "froid": 393, "eau": 45, "climate": 0.98, "co2": 660.655},
-            {"month": "nov", "chaleur": 4415, "elec": 2414, "froid": 147, "eau": 35, "climate": 1.12, "co2": 739.465},
-            {"month": "d\u00E9c", "chaleur": 4415, "elec": 2386, "froid": 49, "eau": 35, "climate": 1.25, "co2": 727.395}
-          ]
-        }
-      },
-      "huz-2": {
-        "label": "Bureau des commerces",
-        "typology": "administration",
-        "sre": 810,
-        "position": {"x": 24, "y": 63, "lat": 46.5205, "lng": 6.631},
-        "metrics": {
-          "2022": {"general": 91.4259259259259, "chaleur": 51.9111111111111, "froid": 5.76666666666667, "elec": 33.7481481481481, "co2": 10.1109259259259, "eau": 0.628395061728395},
-          "2023": {"general": 94.341975308642, "chaleur": 53.5654320987654, "froid": 5.95185185185185, "elec": 34.8246913580247, "co2": 10.2651975308642, "eau": 0.649382716049383},
-          "2024": {"general": 97.2604938271605, "chaleur": 55.2234567901235, "froid": 6.13703703703704, "elec": 35.9, "co2": 11.4774567901235, "eau": 0.667901234567901},
-          "2025": {"general": 100.179012345679, "chaleur": 56.8814814814815, "froid": 6.32222222222222, "elec": 36.9753086419753, "co2": 11.225012345679, "eau": 0.68641975308642},
-          "2026": {"general": 102.123456790123, "chaleur": 57.983950617284, "froid": 6.44444444444444, "elec": 37.6950617283951, "co2": 11.3323888888889, "eau": 0.701234567901235}
-        },
-        "monthly": {
-          "2022": [
-            {"month": "jan", "chaleur": 5886, "elec": 2326, "froid": 0, "eau": 40, "climate": 1.3, "co2": 994.71},
-            {"month": "f\u00E9v", "chaleur": 5046, "elec": 2326, "froid": 0, "eau": 39, "climate": 1.23, "co2": 865.135},
-            {"month": "mar", "chaleur": 4625, "elec": 2326, "froid": 94, "eau": 39, "climate": 1.06, "co2": 815.79},
-            {"month": "avr", "chaleur": 3784, "elec": 2244, "froid": 280, "eau": 40, "climate": 0.94, "co2": 704.675},
-            {"month": "mai", "chaleur": 2943, "elec": 2244, "froid": 467, "eau": 43, "climate": 0.81, "co2": 597.465},
-            {"month": "jun", "chaleur": 2103, "elec": 2244, "froid": 747, "eau": 46, "climate": 0.64, "co2": 489.545},
-            {"month": "jul", "chaleur": 1682, "elec": 2271, "froid": 934, "eau": 48, "climate": 0.57, "co2": 459.015},
-            {"month": "ao\u00FB", "chaleur": 1682, "elec": 2271, "froid": 934, "eau": 54, "climate": 0.62, "co2": 459.015},
-            {"month": "sep", "chaleur": 2523, "elec": 2271, "froid": 654, "eau": 51, "climate": 0.77, "co2": 571.905},
-            {"month": "oct", "chaleur": 3364, "elec": 2244, "froid": 374, "eau": 43, "climate": 0.98, "co2": 681.955},
-            {"month": "nov", "chaleur": 4205, "elec": 2298, "froid": 140, "eau": 33, "climate": 1.12, "co2": 782.065},
-            {"month": "d\u00E9c", "chaleur": 4205, "elec": 2271, "froid": 47, "eau": 33, "climate": 1.25, "co2": 768.575}
-          ],
-          "2023": [
-            {"month": "jan", "chaleur": 6074, "elec": 2400, "froid": 0, "eau": 42, "climate": 1.3, "co2": 1035.18},
-            {"month": "f\u00E9v", "chaleur": 5207, "elec": 2400, "froid": 0, "eau": 40, "climate": 1.23, "co2": 887.145},
-            {"month": "mar", "chaleur": 4772, "elec": 2400, "froid": 97, "eau": 40, "climate": 1.06, "co2": 837.09},
-            {"month": "avr", "chaleur": 3905, "elec": 2315, "froid": 289, "eau": 42, "climate": 0.94, "co2": 722.78},
-            {"month": "mai", "chaleur": 3037, "elec": 2315, "froid": 482, "eau": 45, "climate": 0.81, "co2": 611.665},
-            {"month": "jun", "chaleur": 2170, "elec": 2315, "froid": 771, "eau": 48, "climate": 0.64, "co2": 498.42},
-            {"month": "jul", "chaleur": 1735, "elec": 2344, "froid": 964, "eau": 49, "climate": 0.57, "co2": 468.955},
-            {"month": "ao\u00FB", "chaleur": 1735, "elec": 2344, "froid": 964, "eau": 55, "climate": 0.62, "co2": 468.955},
-            {"month": "sep", "chaleur": 2603, "elec": 2344, "froid": 675, "eau": 52, "climate": 0.77, "co2": 572.615},
-            {"month": "oct", "chaleur": 3472, "elec": 2315, "froid": 386, "eau": 45, "climate": 0.98, "co2": 669.175},
-            {"month": "nov", "chaleur": 4339, "elec": 2372, "froid": 145, "eau": 34, "climate": 1.12, "co2": 773.545},
-            {"month": "d\u00E9c", "chaleur": 4339, "elec": 2344, "froid": 48, "eau": 34, "climate": 1.25, "co2": 769.285}
-          ],
-          "2024": [
-            {"month": "jan", "chaleur": 6262, "elec": 2474, "froid": 0, "eau": 43, "climate": 1.3, "co2": 1074.94},
-            {"month": "f\u00E9v", "chaleur": 5368, "elec": 2474, "froid": 0, "eau": 41, "climate": 1.23, "co2": 974.475},
-            {"month": "mar", "chaleur": 4920, "elec": 2474, "froid": 100, "eau": 41, "climate": 1.06, "co2": 920.87},
-            {"month": "avr", "chaleur": 4026, "elec": 2387, "froid": 298, "eau": 43, "climate": 0.94, "co2": 812.95},
-            {"month": "mai", "chaleur": 3131, "elec": 2387, "froid": 497, "eau": 46, "climate": 0.81, "co2": 702.545},
-            {"month": "jun", "chaleur": 2237, "elec": 2387, "froid": 795, "eau": 49, "climate": 0.64, "co2": 590.01},
+  chaleur": 2237, "elec": 2387, "froid": 795, "eau": 49, "climate": 0.64, "co2": 590.01},
             {"month": "jul", "chaleur": 1789, "elec": 2416, "froid": 994, "eau": 51, "climate": 0.57, "co2": 554.155},
             {"month": "ao\u00FB", "chaleur": 1789, "elec": 2416, "froid": 994, "eau": 57, "climate": 0.62, "co2": 554.155},
             {"month": "sep", "chaleur": 2684, "elec": 2416, "froid": 696, "eau": 54, "climate": 0.77, "co2": 667.755},
@@ -943,91 +809,6 @@
             {"month": "oct", "chaleur": 4057, "elec": 2707, "froid": 450, "eau": 52, "climate": 0.98, "co2": 933.65},
             {"month": "nov", "chaleur": 5073, "elec": 2773, "froid": 169, "eau": 40, "climate": 1.12, "co2": 1025.95},
             {"month": "d\u00E9c", "chaleur": 5073, "elec": 2739, "froid": 57, "eau": 40, "climate": 1.25, "co2": 1015.3}
-          ]
-        }
-      },
-      "huz-4": {
-        "label": "Amphith\u00E9\u00E2tre Hugz",
-        "typology": "lieux_rassemblement",
-        "sre": 155,
-        "position": {"x": 21, "y": 68, "lat": 46.5178, "lng": 6.6308},
-        "metrics": {
-          "2022": {"general": 535.058064516129, "chaleur": 303.793548387097, "froid": 33.7354838709677, "elec": 197.529032258065, "co2": 67.7248387096774, "eau": 3.6258064516129},
-          "2023": {"general": 552.141935483871, "chaleur": 313.503225806452, "froid": 34.8193548387097, "elec": 203.81935483871, "co2": 69.0761290322581, "eau": 3.74193548387097},
-          "2024": {"general": 569.18064516129, "chaleur": 323.18064516129, "froid": 35.8903225806452, "elec": 210.109677419355, "co2": 70.9312903225807, "eau": 3.85806451612903},
-          "2025": {"general": 586.21935483871, "chaleur": 332.858064516129, "froid": 36.9612903225806, "elec": 216.4, "co2": 72.7635483870968, "eau": 3.9741935483871},
-          "2026": {"general": 597.645161290323, "chaleur": 339.329032258065, "froid": 37.6903225806452, "elec": 220.625806451613, "co2": 73.5193548387097, "eau": 4.03870967741936}
-        },
-        "monthly": {
-          "2022": [
-            {"month": "jan", "chaleur": 6592, "elec": 2605, "froid": 0, "eau": 45, "climate": 1.3, "co2": 1185.7},
-            {"month": "f\u00E9v", "chaleur": 5650, "elec": 2605, "froid": 0, "eau": 42, "climate": 1.23, "co2": 1075.65},
-            {"month": "mar", "chaleur": 5179, "elec": 2605, "froid": 104, "eau": 42, "climate": 1.06, "co2": 1079.2},
-            {"month": "avr", "chaleur": 4238, "elec": 2513, "froid": 314, "eau": 45, "climate": 0.94, "co2": 912.35},
-            {"month": "mai", "chaleur": 3297, "elec": 2513, "froid": 524, "eau": 47, "climate": 0.81, "co2": 773.9},
-            {"month": "jun", "chaleur": 2354, "elec": 2513, "froid": 837, "eau": 51, "climate": 0.64, "co2": 660.3},
-            {"month": "jul", "chaleur": 1884, "elec": 2544, "froid": 1046, "eau": 54, "climate": 0.57, "co2": 603.5},
-            {"month": "ao\u00FB", "chaleur": 1884, "elec": 2544, "froid": 1046, "eau": 59, "climate": 0.62, "co2": 617.7},
-            {"month": "sep", "chaleur": 2825, "elec": 2544, "froid": 731, "eau": 56, "climate": 0.77, "co2": 759.7},
-            {"month": "oct", "chaleur": 3767, "elec": 2513, "froid": 418, "eau": 47, "climate": 0.98, "co2": 887.5},
-            {"month": "nov", "chaleur": 4709, "elec": 2574, "froid": 157, "eau": 37, "climate": 1.12, "co2": 979.8},
-            {"month": "d\u00E9c", "chaleur": 4709, "elec": 2544, "froid": 52, "eau": 37, "climate": 1.25, "co2": 962.05}
-          ],
-          "2023": [
-            {"month": "jan", "chaleur": 6803, "elec": 2688, "froid": 0, "eau": 47, "climate": 1.3, "co2": 1224.75},
-            {"month": "f\u00E9v", "chaleur": 5831, "elec": 2688, "froid": 0, "eau": 44, "climate": 1.23, "co2": 1107.6},
-            {"month": "mar", "chaleur": 5345, "elec": 2688, "froid": 108, "eau": 44, "climate": 1.06, "co2": 1114.7},
-            {"month": "avr", "chaleur": 4373, "elec": 2593, "froid": 324, "eau": 47, "climate": 0.94, "co2": 937.2},
-            {"month": "mai", "chaleur": 3402, "elec": 2593, "froid": 540, "eau": 48, "climate": 0.81, "co2": 788.1},
-            {"month": "jun", "chaleur": 2429, "elec": 2593, "froid": 863, "eau": 52, "climate": 0.64, "co2": 667.4},
-            {"month": "jul", "chaleur": 1944, "elec": 2625, "froid": 1080, "eau": 55, "climate": 0.57, "co2": 610.6},
-            {"month": "ao\u00FB", "chaleur": 1944, "elec": 2625, "froid": 1080, "eau": 61, "climate": 0.62, "co2": 624.8},
-            {"month": "sep", "chaleur": 2915, "elec": 2625, "froid": 755, "eau": 58, "climate": 0.77, "co2": 773.9},
-            {"month": "oct", "chaleur": 3887, "elec": 2593, "froid": 432, "eau": 48, "climate": 0.98, "co2": 894.6},
-            {"month": "nov", "chaleur": 4860, "elec": 2656, "froid": 162, "eau": 38, "climate": 1.12, "co2": 986.9},
-            {"month": "d\u00E9c", "chaleur": 4860, "elec": 2625, "froid": 53, "eau": 38, "climate": 1.25, "co2": 976.25}
-          ],
-          "2024": [
-            {"month": "jan", "chaleur": 7013, "elec": 2771, "froid": 0, "eau": 48, "climate": 1.3, "co2": 1260.25},
-            {"month": "f\u00E9v", "chaleur": 6011, "elec": 2771, "froid": 0, "eau": 45, "climate": 1.23, "co2": 1136},
-            {"month": "mar", "chaleur": 5510, "elec": 2771, "froid": 111, "eau": 45, "climate": 1.06, "co2": 1143.1},
-            {"month": "avr", "chaleur": 4508, "elec": 2673, "froid": 334, "eau": 48, "climate": 0.94, "co2": 965.6},
-            {"month": "mai", "chaleur": 3507, "elec": 2673, "froid": 557, "eau": 50, "climate": 0.81, "co2": 812.95},
-            {"month": "jun", "chaleur": 2504, "elec": 2673, "froid": 890, "eau": 54, "climate": 0.64, "co2": 688.7},
-            {"month": "jul", "chaleur": 2004, "elec": 2706, "froid": 1113, "eau": 57, "climate": 0.57, "co2": 631.9},
-            {"month": "ao\u00FB", "chaleur": 2004, "elec": 2706, "froid": 1113, "eau": 63, "climate": 0.62, "co2": 646.1},
-            {"month": "sep", "chaleur": 3005, "elec": 2706, "froid": 778, "eau": 60, "climate": 0.77, "co2": 798.75},
-            {"month": "oct", "chaleur": 4007, "elec": 2673, "froid": 445, "eau": 50, "climate": 0.98, "co2": 912.35},
-            {"month": "nov", "chaleur": 5010, "elec": 2738, "froid": 167, "eau": 39, "climate": 1.12, "co2": 1004.65},
-            {"month": "d\u00E9c", "chaleur": 5010, "elec": 2706, "froid": 55, "eau": 39, "climate": 1.25, "co2": 994}
-          ],
-          "2025": [
-            {"month": "jan", "chaleur": 7223, "elec": 2854, "froid": 0, "eau": 49, "climate": 1.3, "co2": 1292.2},
-            {"month": "f\u00E9v", "chaleur": 6191, "elec": 2854, "froid": 0, "eau": 46, "climate": 1.23, "co2": 1164.4},
-            {"month": "mar", "chaleur": 5675, "elec": 2854, "froid": 114, "eau": 46, "climate": 1.06, "co2": 1167.95},
-            {"month": "avr", "chaleur": 4643, "elec": 2753, "froid": 344, "eau": 49, "climate": 0.94, "co2": 986.9},
-            {"month": "mai", "chaleur": 3612, "elec": 2753, "froid": 574, "eau": 52, "climate": 0.81, "co2": 834.25},
-            {"month": "jun", "chaleur": 2579, "elec": 2753, "froid": 917, "eau": 56, "climate": 0.64, "co2": 706.45},
-            {"month": "jul", "chaleur": 2064, "elec": 2787, "froid": 1146, "eau": 59, "climate": 0.57, "co2": 646.1},
-            {"month": "ao\u00FB", "chaleur": 2064, "elec": 2787, "froid": 1146, "eau": 65, "climate": 0.62, "co2": 663.85},
-            {"month": "sep", "chaleur": 3095, "elec": 2787, "froid": 801, "eau": 62, "climate": 0.77, "co2": 820.05},
-            {"month": "oct", "chaleur": 4127, "elec": 2753, "froid": 458, "eau": 52, "climate": 0.98, "co2": 940.75},
-            {"month": "nov", "chaleur": 5160, "elec": 2820, "froid": 172, "eau": 40, "climate": 1.12, "co2": 1033.05},
-            {"month": "d\u00E9c", "chaleur": 5160, "elec": 2787, "froid": 57, "eau": 40, "climate": 1.25, "co2": 1022.4}
-          ],
-          "2026": [
-            {"month": "jan", "chaleur": 7364, "elec": 2910, "froid": 0, "eau": 50, "climate": 1.3, "co2": 1324.15},
-            {"month": "f\u00E9v", "chaleur": 6312, "elec": 2910, "froid": 0, "eau": 47, "climate": 1.23, "co2": 1182.15},
-            {"month": "mar", "chaleur": 5786, "elec": 2910, "froid": 117, "eau": 47, "climate": 1.06, "co2": 1189.25},
-            {"month": "avr", "chaleur": 4733, "elec": 2807, "froid": 351, "eau": 50, "climate": 0.94, "co2": 994},
-            {"month": "mai", "chaleur": 3682, "elec": 2807, "froid": 585, "eau": 52, "climate": 0.81, "co2": 841.35},
-            {"month": "jun", "chaleur": 2629, "elec": 2807, "froid": 934, "eau": 57, "climate": 0.64, "co2": 706.45},
-            {"month": "jul", "chaleur": 2104, "elec": 2841, "froid": 1169, "eau": 60, "climate": 0.57, "co2": 649.65},
-            {"month": "ao\u00FB", "chaleur": 2104, "elec": 2841, "froid": 1169, "eau": 66, "climate": 0.62, "co2": 667.4},
-            {"month": "sep", "chaleur": 3155, "elec": 2841, "froid": 817, "eau": 63, "climate": 0.77, "co2": 820.05},
-            {"month": "oct", "chaleur": 4207, "elec": 2807, "froid": 467, "eau": 52, "climate": 0.98, "co2": 947.85},
-            {"month": "nov", "chaleur": 5260, "elec": 2875, "froid": 175, "eau": 41, "climate": 1.12, "co2": 1043.7},
-            {"month": "d\u00E9c", "chaleur": 5260, "elec": 2841, "froid": 58, "eau": 41, "climate": 1.25, "co2": 1029.5}
           ]
         }
       }

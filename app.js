@@ -4406,8 +4406,8 @@
       const intensity = hasData && totals[key].sre > 0
         ? totals[key].energy / totals[key].sre
         : hasSelection
-          ? fallbackIntensity[key]
-          : 0;
+          ? 0
+          : fallbackIntensity[key];
       const totalEnergy = hasData ? totals[key].energy : 0;
       aggregated[key] = {
         intensity,
@@ -4579,7 +4579,7 @@
 
     const resolveTrendData = (metricKey) => {
       if (trendCache.has(metricKey)) return trendCache.get(metricKey);
-      const data = computeTrendFromBuildings(leaves, metricKey, fallbackSre) || [];
+      const data = computeTrendFromBuildings(leaves, metricKey) || [];
       trendCache.set(metricKey, data);
       return data;
     };
@@ -4720,7 +4720,7 @@
     });
   };
 
-  const computeTrendFromBuildings = (leaves, metricKey, fallbackSre) => {
+  const computeTrendFromBuildings = (leaves, metricKey) => {
     const hasSelection = Array.isArray(leaves) && leaves.length > 0;
     const list = hasSelection ? leaves : $$('.tree-leaf');
     const fallbackIntensity = Number(ENERGY_BASE_DATA.metrics?.[metricKey]?.intensity) || 0;
@@ -4754,14 +4754,14 @@
 
     return Object.entries(totalsByYear)
       .map(([year, data]) => {
-        const resolvedSre = data.sre || (Number.isFinite(fallbackSre) ? fallbackSre : 0) || 0;
+        const resolvedSre = data.sre || 0;
         const resolvedIntensity = resolvedSre > 0
           ? data.energy / resolvedSre
           : fallbackIntensity;
         return {
           year: Number(year),
           intensity: resolvedIntensity,
-          total: resolvedIntensity * resolvedSre,
+          total: resolvedSre > 0 ? data.energy : Number.NaN,
           sre: resolvedSre,
         };
       })
@@ -4781,7 +4781,7 @@
         else metricKey = 'general';
       }
       const unitLabel = getUnitLabel(metricKey, mode);
-      const trendData = computeTrendFromBuildings(context.leaves, metricKey, context.fallbackSre);
+      const trendData = computeTrendFromBuildings(context.leaves, metricKey);
       const trendMap = new Map(trendData.map(item => [String(item.year), item]));
       const metricData = aggregatedMetrics[metricKey] || aggregatedMetrics.general || {};
       const sre = mode === 'kwhm2' ? 1 : (Number(metricData.sre) || Number(aggregatedMetrics.general?.sre) || computeFallbackSre());
@@ -4828,8 +4828,6 @@
   };
 
   const updateMixCards = (mode, aggregated) => {
-    const fallbackSre = computeFallbackSre();
-
     const computeEnergyMixShares = () => {
       const valueFor = (metricKey) => {
         const metric = aggregated?.[metricKey] || {};
@@ -4945,9 +4943,10 @@
 
         const heatMetric = aggregated?.chaleur || {};
         const perM2 = Number(heatMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.chaleur?.intensity) || 0;
-        const sre = Number(heatMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
-        const total = Number(heatMetric.total) || perM2 * sre;
-        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const sre = Number(heatMetric.sre) || 0;
+        const total = Number(heatMetric.total);
+        const resolvedTotal = Number.isFinite(total) ? total : perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : resolvedTotal;
         const hasData = baseAmount > 0;
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
@@ -4995,9 +4994,10 @@
 
         const coldMetric = aggregated?.froid || {};
         const perM2 = Number(coldMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.froid?.intensity) || 0;
-        const sre = Number(coldMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
-        const total = Number(coldMetric.total) || perM2 * sre;
-        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const sre = Number(coldMetric.sre) || 0;
+        const total = Number(coldMetric.total);
+        const resolvedTotal = Number.isFinite(total) ? total : perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : resolvedTotal;
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
         updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);
@@ -5042,9 +5042,10 @@
 
         const elecMetric = aggregated?.elec || {};
         const perM2 = Number(elecMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.elec?.intensity) || 0;
-        const sre = Number(elecMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
-        const total = Number(elecMetric.total) || perM2 * sre;
-        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const sre = Number(elecMetric.sre) || 0;
+        const total = Number(elecMetric.total);
+        const resolvedTotal = Number.isFinite(total) ? total : perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : resolvedTotal;
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
         updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);
@@ -5088,9 +5089,10 @@
 
         const co2Metric = aggregated?.co2 || {};
         const perM2 = Number(co2Metric.intensity) || Number(ENERGY_BASE_DATA.metrics.co2?.intensity) || 0;
-        const sre = Number(co2Metric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
-        const total = Number(co2Metric.total) || perM2 * sre;
-        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const sre = Number(co2Metric.sre) || 0;
+        const total = Number(co2Metric.total);
+        const resolvedTotal = Number.isFinite(total) ? total : perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : resolvedTotal;
 
         updateLegendValues(card.querySelectorAll('.mix-legend li'), shares, baseAmount, unit);
         updateLegendValues(card.querySelectorAll('.mix-columns-legend li'), shares, baseAmount, unit);
@@ -5133,9 +5135,10 @@
 
         const waterMetric = aggregated?.eau || {};
         const perM2 = Number(waterMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.eau?.intensity) || 0;
-        const sre = Number(waterMetric.sre) || Number(aggregated?.general?.sre) || fallbackSre || 1;
-        const total = Number(waterMetric.total) || perM2 * sre;
-        const baseAmount = mode === 'kwhm2' ? perM2 : total;
+        const sre = Number(waterMetric.sre) || 0;
+        const total = Number(waterMetric.total);
+        const resolvedTotal = Number.isFinite(total) ? total : perM2 * sre;
+        const baseAmount = mode === 'kwhm2' ? perM2 : resolvedTotal;
         const hasData = baseAmount > 0;
         const unit = getUnitLabel('eau', mode);
 
@@ -5175,8 +5178,10 @@
 
       const generalMetric = aggregated?.general || {};
       const totalPerM2 = Number(generalMetric.intensity) || Number(ENERGY_BASE_DATA.metrics.general?.intensity) || 0;
-      const sre = Number(generalMetric.sre) || fallbackSre || 1;
-      const baseTotal = Number(generalMetric.total) || totalPerM2 * sre;
+      const sre = Number(generalMetric.sre) || 0;
+      const baseTotal = Number.isFinite(Number(generalMetric.total))
+        ? Number(generalMetric.total)
+        : totalPerM2 * sre;
       const baseAmount = mode === 'kwhm2' ? totalPerM2 : baseTotal;
       const hasData = baseAmount > 0;
 

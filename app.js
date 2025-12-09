@@ -4346,14 +4346,23 @@
 
         METRIC_KEYS.forEach((key) => {
           const candidate = Number(buildingMetrics?.[key]);
-          const intensity = Number.isFinite(candidate) ? candidate : fallbackIntensity[key];
+          const hasValidMetric = Number.isFinite(candidate);
+
+          const metricEntry = summary.metrics[key] || { energy: 0, sre: 0, valid: false };
+
+          if (!hasValidMetric) {
+            summary.metrics[key] = metricEntry;
+            return;
+          }
+
+          const intensity = candidate;
           const energyValue = intensity * sre;
           totals[key].energy += energyValue;
           totals[key].sre += sre;
 
-          const metricEntry = summary.metrics[key] || { energy: 0, sre: 0 };
           metricEntry.energy += energyValue;
           metricEntry.sre += sre;
+          metricEntry.valid = true;
           summary.metrics[key] = metricEntry;
 
           const typologyEnergyMap = typologySummary.energyByMetric || {};
@@ -4389,27 +4398,17 @@
       });
     }
 
-    const safeFallbackSre = Number.isFinite(fallbackSre) && fallbackSre > 0
-      ? fallbackSre
-      : 0;
-
     const hasSelection = Array.isArray(leaves) && leaves.length > 0;
 
     METRIC_KEYS.forEach((key) => {
       const hasData = totals[key].sre > 0;
-      const totalSre = hasData
-        ? totals[key].sre
-        : hasSelection
-          ? safeFallbackSre
-          : 0;
+      const totalSre = hasData ? totals[key].sre : 0;
       const intensity = hasData && totals[key].sre > 0
         ? totals[key].energy / totals[key].sre
         : hasSelection
           ? fallbackIntensity[key]
           : 0;
-      const totalEnergy = hasData
-        ? totals[key].energy
-        : intensity * totalSre;
+      const totalEnergy = hasData ? totals[key].energy : 0;
       aggregated[key] = {
         intensity,
         total: totalEnergy,
@@ -4420,14 +4419,25 @@
     Object.values(buildingSummaries).forEach((summary) => {
       METRIC_KEYS.forEach((key) => {
         const metricData = summary.metrics[key];
-        if (!metricData) return;
-        const energy = Number(metricData.energy) || 0;
-        const sre = Number(metricData.sre) || 0;
-        const intensity = sre > 0 ? energy / sre : fallbackIntensity[key];
+        if (!metricData || metricData.valid !== true || !Number.isFinite(metricData.energy) || !Number.isFinite(metricData.sre)) {
+          summary.metrics[key] = {
+            intensity: NaN,
+            total: NaN,
+            sre: 0,
+            energy: NaN,
+            valid: false,
+          };
+          return;
+        }
+        const energy = Number(metricData.energy);
+        const sre = Number(metricData.sre);
+        const intensity = sre > 0 && Number.isFinite(energy) ? energy / sre : NaN;
         summary.metrics[key] = {
           intensity,
           total: energy,
           sre,
+          energy,
+          valid: true,
         };
       });
 
@@ -4436,14 +4446,16 @@
       METRIC_KEYS.forEach((metricKey) => {
         const metricData = summary.metrics[metricKey] || {};
         const metricSre = Number(metricData.sre) || 0;
-        const metricIntensity = Number(metricData.intensity);
-        const resolvedIntensity = Number.isFinite(metricIntensity) ? metricIntensity : fallbackIntensity[metricKey];
-        const totalEnergy = Number(metricData.total);
-        const resolvedTotal = Number.isFinite(totalEnergy) ? totalEnergy : resolvedIntensity * metricSre;
+        const metricValid = metricData.valid === true && metricSre > 0;
+        const totalEnergy = Number(metricData.energy);
+        const resolvedTotal = metricValid && Number.isFinite(totalEnergy) ? totalEnergy : NaN;
+        const resolvedIntensity = metricValid && metricSre > 0 && Number.isFinite(resolvedTotal)
+          ? resolvedTotal / metricSre
+          : NaN;
         metricsMap[metricKey] = {
           intensity: resolvedIntensity,
           total: resolvedTotal,
-          sre: metricSre,
+          sre: metricValid ? metricSre : 0,
         };
       });
 
@@ -4728,10 +4740,10 @@
 
       Object.entries(metricsByYear).forEach(([year, metrics]) => {
         if (!metrics || typeof metrics !== 'object') return;
-        const rawValue = metrics[metricKey];
-        const intensity = Number.isFinite(Number(rawValue)) ? Number(rawValue) : fallbackIntensity;
+        const rawValue = Number(metrics[metricKey]);
+        if (!Number.isFinite(rawValue)) return;
         const bucket = totalsByYear[year] || { energy: 0, sre: 0 };
-        bucket.energy += intensity * sre;
+        bucket.energy += rawValue * sre;
         bucket.sre += sre;
         totalsByYear[year] = bucket;
       });
